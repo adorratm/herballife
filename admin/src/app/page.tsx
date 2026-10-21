@@ -1,0 +1,327 @@
+'use client';
+
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { api } from '@/lib/api';
+import { StatsCard } from '@/components/StatsCard';
+import { EChart } from '@/components/EChart';
+import { Reveal, Stagger } from '@/components/Reveal';
+import { asArray, asPaged, formatMoney } from '@/lib/utils';
+import {
+  revenueSeriesOption,
+  revenuecatSeriesOption,
+  statusPieOption,
+  topProductsOption,
+} from '@/lib/charts';
+import type {
+  DashboardStats,
+  MarketplaceAccount,
+  Order,
+  Product,
+} from '@/lib/types';
+
+const REVENUE_STATUSES = new Set([
+  'paid',
+  'processing',
+  'shipped',
+  'delivered',
+]);
+
+function isToday(iso?: string): boolean {
+  if (!iso) return false;
+  const d = new Date(iso);
+  const now = new Date();
+  return (
+    d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() &&
+    d.getDate() === now.getDate()
+  );
+}
+
+export default function DashboardPage() {
+  const [ordersToday, setOrdersToday] = useState<number | string>('—');
+  const [lowStock, setLowStock] = useState<number | string>('—');
+  const [revenueToday, setRevenueToday] = useState<number | string>('—');
+  const [syncRows, setSyncRows] = useState<
+    { platform: string; storeName: string; status: string; at: string }[]
+  >([]);
+  const [series, setSeries] = useState<DashboardStats['series']>([]);
+  const [byStatus, setByStatus] = useState<DashboardStats['byStatus']>([]);
+  const [topProducts, setTopProducts] = useState<DashboardStats['topProducts']>(
+    [],
+  );
+  const [pendingOrders, setPendingOrders] = useState<number | string>('—');
+  const [loading, setLoading] = useState(true);
+  const [note, setNote] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setNote(null);
+      try {
+        try {
+          const stats = await api<DashboardStats>('/admin/stats');
+          if (cancelled) return;
+          if (typeof stats.ordersToday === 'number') {
+            setOrdersToday(stats.ordersToday);
+          }
+          if (typeof stats.lowStockCount === 'number') {
+            setLowStock(stats.lowStockCount);
+          }
+          if (typeof stats.totalRevenueToday === 'number') {
+            setRevenueToday(
+              new Intl.NumberFormat('tr-TR', {
+                style: 'currency',
+                currency: 'TRY',
+                maximumFractionDigits: 0,
+              }).format(stats.totalRevenueToday),
+            );
+          } else if (typeof stats.revenueToday === 'number') {
+            setRevenueToday(
+              new Intl.NumberFormat('tr-TR', {
+                style: 'currency',
+                currency: 'TRY',
+                maximumFractionDigits: 0,
+              }).format(
+                stats.revenueToday + (stats.cashRevenueToday || 0),
+              ),
+            );
+          }
+          if (typeof stats.pendingOrders === 'number') {
+            setPendingOrders(stats.pendingOrders);
+          }
+          if (stats.series?.length) setSeries(stats.series);
+          if (stats.byStatus?.length) setByStatus(stats.byStatus);
+          if (stats.topProducts?.length) setTopProducts(stats.topProducts);
+          if (stats.marketplaceSync?.length) {
+            setSyncRows(
+              stats.marketplaceSync.map((s) => ({
+                platform: s.platform,
+                storeName: s.storeName,
+                status: s.lastSyncStatus || '—',
+                at: s.lastSyncAt
+                  ? new Date(s.lastSyncAt).toLocaleString('tr-TR')
+                  : '—',
+              })),
+            );
+          }
+          return;
+        } catch {
+          // fallback: derive from list endpoints
+        }
+
+        const [ordersRes, productsRes, marketRes] = await Promise.allSettled([
+          api<unknown>('/orders/admin/all?limit=100'),
+          api<unknown>('/products/admin/all?limit=100&includeInactive=true'),
+          api<unknown>('/marketplace/accounts'),
+        ]);
+
+        if (cancelled) return;
+
+        if (ordersRes.status === 'fulfilled') {
+          const orders = asPaged<Order>(ordersRes.value, 100).items;
+          const todayOrders = orders.filter((o) => isToday(o.createdAt));
+          setOrdersToday(todayOrders.length);
+          const revenue = todayOrders
+            .filter((o) => REVENUE_STATUSES.has(o.status))
+            .reduce((sum, o) => sum + Number(o.total || 0), 0);
+          setRevenueToday(formatMoney(revenue, 'TRY'));
+        }
+
+        if (productsRes.status === 'fulfilled') {
+          const products = asPaged<Product>(productsRes.value, 100).items;
+          setLowStock(products.filter((p) => Number(p.stock) <= 10).length);
+        }
+
+        if (marketRes.status === 'fulfilled') {
+          const accounts = asArray<MarketplaceAccount>(marketRes.value);
+          setSyncRows(
+            accounts.map((a) => ({
+              platform: a.platform,
+              storeName: a.storeName,
+              status: a.lastSyncStatus || (a.isEnabled ? 'idle' : 'disabled'),
+              at: a.lastSyncAt
+                ? new Date(a.lastSyncAt).toLocaleString('tr-TR')
+                : '—',
+            })),
+          );
+        }
+
+        if (
+          ordersRes.status === 'rejected' &&
+          productsRes.status === 'rejected'
+        ) {
+          setNote('API istatistikleri şu an alınamadı. API çalışır durumda mı?');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    <div className="space-y-6">
+      <Reveal>
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-wide text-muted">
+            Operasyon özeti
+          </p>
+          <h2 className="admin-page-title mt-1">Günlük durum</h2>
+          <p className="admin-page-sub">Sipariş, ciro ve stok özeti</p>
+        </div>
+      </Reveal>
+
+      {note ? (
+        <Reveal delay={40}>
+          <p className="rounded-xl border border-warning/40 bg-warning/5 px-4 py-3 text-sm text-warning">
+            {note}
+          </p>
+        </Reveal>
+      ) : null}
+
+      <Stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" step={70}>
+        <StatsCard
+          label="Bugünkü siparişler"
+          value={loading ? '…' : ordersToday}
+          tone="accent"
+        />
+        <StatsCard
+          label="Bugünkü ciro"
+          value={loading ? '…' : revenueToday}
+          hint="Ödenmiş / işlenen"
+        />
+        <StatsCard
+          label="Hazırlanan sipariş"
+          value={loading ? '…' : pendingOrders}
+          hint="processing"
+        />
+        <StatsCard
+          label="Düşük stok"
+          value={loading ? '…' : lowStock}
+          hint="Stok ≤ 10"
+          tone={
+            typeof lowStock === 'number' && lowStock > 0 ? 'warning' : 'default'
+          }
+        />
+      </Stagger>
+
+      {(series?.length || byStatus?.length || topProducts?.length) ? (
+        <div className="grid gap-4 lg:grid-cols-5">
+          {series?.length ? (
+            <Reveal delay={80} variant="up" className="rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-wide text-muted">
+                Son 14 gün · ciro ve sipariş
+              </h3>
+              <EChart option={revenueSeriesOption(series)} height={300} />
+            </Reveal>
+          ) : null}
+          {series?.length ? (
+            <Reveal delay={90} variant="up" className="rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
+              <h3 className="text-[11px] font-bold uppercase tracking-wide text-muted">
+                RevenueCat · mobil mağaza
+              </h3>
+              <EChart option={revenuecatSeriesOption(series)} height={300} />
+            </Reveal>
+          ) : null}
+          {byStatus?.length ? (
+            <Reveal delay={100} variant="up" className="rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
+              <h3 className="text-[11px] font-bold uppercase tracking-wide text-muted">
+                Sipariş durumları
+              </h3>
+              <EChart option={statusPieOption(byStatus)} height={300} />
+            </Reveal>
+          ) : null}
+          {topProducts?.length ? (
+            <Reveal delay={120} variant="up" className="rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-5">
+              <h3 className="text-[11px] font-bold uppercase tracking-wide text-muted">
+                En çok satanlar · 30 gün
+              </h3>
+              <EChart option={topProductsOption(topProducts)} height={260} />
+            </Reveal>
+          ) : null}
+        </div>
+      ) : null}
+
+      <Reveal delay={120} variant="up">
+        <section>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-sm font-bold text-foreground">
+              Pazaryeri senkron
+            </h3>
+            <Link
+              href="/pazaryeri"
+              className="text-xs font-semibold text-accent hover:underline"
+            >
+              Yönet →
+            </Link>
+          </div>
+          {syncRows.length === 0 ? (
+            <div className="rounded-xl border border-border-muted bg-surface px-4 py-8 text-center text-sm text-muted shadow-sm">
+              {loading ? 'Yükleniyor…' : (
+                <>
+                  Henüz pazaryeri hesabı yok.{' '}
+                  <Link href="/pazaryeri" className="font-semibold text-accent underline">
+                    Hesap ekle
+                  </Link>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="overflow-hidden rounded-xl border border-border-muted bg-surface shadow-sm">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-surface-high/80">
+                  <tr>
+                    <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-muted">
+                      Platform
+                    </th>
+                    <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-muted">
+                      Mağaza
+                    </th>
+                    <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-muted">
+                      Durum
+                    </th>
+                    <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-muted">
+                      Son sync
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {syncRows.map((row) => (
+                    <tr
+                      key={`${row.platform}-${row.storeName}`}
+                      className="row-motion border-t border-border-muted bg-surface hover:bg-surface-high/70"
+                    >
+                      <td className="px-4 py-3.5 font-semibold uppercase">{row.platform}</td>
+                      <td className="px-4 py-3.5">{row.storeName}</td>
+                      <td
+                        className={`px-4 py-3.5 text-xs font-semibold ${
+                          row.status === 'error'
+                            ? 'text-danger'
+                            : row.status === 'success'
+                              ? 'text-success'
+                              : 'text-muted'
+                        }`}
+                      >
+                        {row.status}
+                      </td>
+                      <td className="px-4 py-3.5 text-xs text-muted">
+                        {row.at}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </Reveal>
+    </div>
+  );
+}

@@ -1,0 +1,339 @@
+export type ProductVariant = {
+  id?: string;
+  sku: string;
+  weightLabel: string;
+  price: string | number;
+  stock: number;
+  isActive?: boolean;
+};
+
+export type Category = {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  isActive?: boolean;
+};
+
+export type Product = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  shortDescription?: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  originCountry?: string | null;
+  originRegion?: string | null;
+  altitude?: string | null;
+  process?: string | null;
+  varietal?: string | null;
+  batchId?: string | null;
+  flavorNotes?: string[];
+  imageUrl?: string | null;
+  gallery?: string[];
+  badge?: string | null;
+  basePrice: string | number;
+  currency?: string;
+  stock: number;
+  isActive: boolean;
+  isFeatured?: boolean;
+  categoryId?: string | null;
+  hepsiburadaCategoryId?: string | null;
+  hepsiburadaAttributes?: Record<string, string | number | boolean> | null;
+  kind?: string;
+  unit?: string;
+  vatRate?: string | number;
+  brewGuide?: {
+    method?: string;
+    ratio?: string;
+    notes?: string;
+  } | null;
+  storageNotes?: string | null;
+  variants?: ProductVariant[];
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type OrderStatus =
+  | 'pending_payment'
+  | 'paid'
+  | 'processing'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled'
+  | 'refunded';
+
+export type OrderItem = {
+  id: string;
+  productName: string;
+  variantLabel?: string | null;
+  quantity: number;
+  unitPrice: string | number;
+  lineTotal: string | number;
+};
+
+export type Shipment = {
+  id: string;
+  provider: string;
+  status: string;
+  trackingNumber?: string | null;
+  trackingUrl?: string | null;
+};
+
+export type OrderPayment = {
+  id?: string;
+  provider?: string;
+  status?: string;
+  amount?: string | number;
+  currency?: string;
+  paymentId?: string | null;
+};
+
+export type PaytrSettlement = {
+  provider: 'paytr';
+  grossAmount: string;
+  commissionRatePercent: string;
+  commissionAmount: string;
+  netAmount: string;
+};
+
+export type Order = {
+  id: string;
+  orderNumber: string;
+  status: OrderStatus;
+  customerEmail: string;
+  customerName: string;
+  customerPhone: string;
+  shippingAddress?: Record<string, string>;
+  billingAddress?: Record<string, string> | null;
+  subtotal: string | number;
+  shippingFee?: string | number;
+  discountAmount?: string | number;
+  couponCode?: string | null;
+  taxAmount?: string | number;
+  total: string | number;
+  currency?: string;
+  shippingProvider?: string | null;
+  notes?: string | null;
+  legalAcceptances?: Record<string, unknown> | null;
+  payment?: OrderPayment | null;
+  paymentSettlement?: PaytrSettlement | null;
+  items?: OrderItem[];
+  shipments?: Shipment[];
+  userId?: string | null;
+  createdAt?: string;
+};
+
+export type ShippingProviderConfig = {
+  id: string;
+  provider: string;
+  displayName: string;
+  isEnabled: boolean;
+  credentials: Record<string, string>;
+  settings?: Record<string, unknown>;
+};
+
+export type MarketplaceAccount = {
+  id: string;
+  platform: string;
+  storeName: string;
+  isEnabled: boolean;
+  credentials?: Record<string, string>;
+  lastSyncAt?: string | null;
+  lastSyncStatus?: string | null;
+};
+
+export type LegalDocument = {
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  version: string;
+  isPublished: boolean;
+  publishedAt?: string | null;
+  locale?: string;
+};
+
+export type BlogPost = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt?: string | null;
+  content: string;
+  coverImageUrl?: string | null;
+  authorName?: string | null;
+  tags?: string[];
+  relatedProductSlugs?: string[];
+  relatedCategorySlugs?: string[];
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  isPublished: boolean;
+  publishedAt?: string | null;
+  locale?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type ContactMessage = {
+  id: string;
+  senderName: string;
+  senderEmail: string;
+  protocolType: string;
+  message: string;
+  isRead: boolean;
+  createdAt?: string;
+};
+
+export type NewsletterSubscriber = {
+  id: string;
+  email: string;
+  isActive: boolean;
+  source?: string;
+  createdAt?: string;
+};
+
+export type DashboardStats = {
+  ordersToday?: number;
+  lowStockCount?: number;
+  revenueToday?: number;
+  cashRevenueToday?: number;
+  revenuecatRevenueToday?: number;
+  totalRevenueToday?: number;
+  pendingOrders?: number;
+  marketplaceSync?: {
+    platform: string;
+    storeName: string;
+    lastSyncAt?: string | null;
+    lastSyncStatus?: string | null;
+  }[];
+  series?: {
+    date: string;
+    orders: number;
+    revenue: number;
+    cashRevenue?: number;
+    revenuecatRevenue?: number;
+  }[];
+  byStatus?: { status: string; label: string; count: number }[];
+  topProducts?: { name: string; quantity: number; revenue: number }[];
+};
+
+export type Coupon = {
+  id: string;
+  code: string;
+  title: string | null;
+  type: 'percent' | 'fixed';
+  value: string;
+  minSubtotal: string;
+  maxUses: number | null;
+  usedCount: number;
+  firstOrderOnly: boolean;
+  startsAt: string | null;
+  endsAt: string | null;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type ProductReview = {
+  id: string;
+  productId: string;
+  userId: string;
+  rating: number;
+  title: string | null;
+  body: string;
+  authorName: string;
+  isApproved: boolean;
+  isVerifiedPurchase: boolean;
+  createdAt?: string;
+  product?: { id: string; name: string; slug?: string } | null;
+};
+
+export type CustomerListItem = {
+  id: string;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  provider: string;
+  avatarUrl: string | null;
+  isActive: boolean;
+  emailVerified: boolean;
+  createdAt?: string;
+  orderCount: number;
+  totalSpent: number;
+  addressCount: number;
+};
+
+export type CustomerAddress = {
+  id: string;
+  title: string;
+  fullName: string;
+  phone: string;
+  city: string;
+  district: string;
+  neighborhood?: string | null;
+  addressLine: string;
+  postalCode: string;
+  isDefaultShipping: boolean;
+  isDefaultBilling: boolean;
+};
+
+export type CustomerDetail = {
+  user: {
+    id: string;
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+    phone: string | null;
+    provider: string;
+    role: string;
+    avatarUrl: string | null;
+    isActive: boolean;
+    emailVerified: boolean;
+    hasPassword: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+  stats: {
+    orderCount: number;
+    guestOrderCount: number;
+    totalSpent: number;
+    addressCount: number;
+    returnCount: number;
+    reviewCount: number;
+    wishlistCount: number;
+  };
+  addresses: CustomerAddress[];
+  orders: Order[];
+  guestOrders: Order[];
+  returns: {
+    id: string;
+    orderId: string;
+    orderNumber: string | null;
+    type: string;
+    status: string;
+    reason: string;
+    adminNote?: string | null;
+    refundAmount?: string | number | null;
+    createdAt?: string;
+  }[];
+  reviews: {
+    id: string;
+    productId: string;
+    productName: string | null;
+    rating: number;
+    title: string | null;
+    body: string;
+    isApproved: boolean;
+    createdAt?: string;
+  }[];
+  wishlist: {
+    id: string;
+    productId: string;
+    productName: string | null;
+    createdAt?: string;
+  }[];
+};

@@ -1,0 +1,19 @@
+[
+  {
+    "AllowedHeaders": ["*"],
+    "AllowedMethods": ["GET", "HEAD"],
+    "AllowedOrigins": [
+      "https://herballife.com.tr",
+      "https://www.herballife.com.tr",
+      "https://admin.herballife.com.tr",
+      "https://api.herballife.com.tr",
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:5173",
+      "http://127.0.0.1:3000",
+      "http://127.0.0.1:3001"
+    ],
+    "ExposeHeaders": ["ETag", "Content-Length", "Content-Type"],
+    "MaxAgeSeconds": 86400
+  }
+]

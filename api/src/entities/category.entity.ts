@@ -1,0 +1,31 @@
+import { Column, Entity, Index, OneToMany } from 'typeorm';
+import { BaseEntity } from '@entities/base.entity';
+import type { Product } from '@entities/product.entity';
+
+@Entity('categories')
+export class Category extends BaseEntity {
+  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 160 })
+  slug!: string;
+
+  @Column({ type: 'varchar', length: 160 })
+  name!: string;
+
+  @Column({ type: 'text', nullable: true })
+  description!: string | null;
+
+  @Column({ name: 'seo_title', type: 'varchar', length: 220, nullable: true })
+  seoTitle!: string | null;
+
+  @Column({ name: 'seo_description', type: 'text', nullable: true })
+  seoDescription!: string | null;
+
+  @Column({ name: 'sort_order', type: 'int', default: 0 })
+  sortOrder!: number;
+
+  @Column({ name: 'is_active', type: 'boolean', default: true })
+  isActive!: boolean;
+
+  @OneToMany('Product', 'category')
+  products!: Product[];
+}

@@ -1,0 +1,590 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { EntityManager } from 'typeorm';
+import { Order } from '@entities/order.entity';
+import { Shipment } from '@entities/shipment.entity';
+import { AdminAllowlist } from '@entities/admin-allowlist.entity';
+import {
+  NotificationChannel,
+  NotificationLog,
+  NotificationStatus,
+} from '@entities/notification-log.entity';
+import {
+  QUEUE_NOTIFICATIONS,
+  NotificationJobPayload,
+  NotificationChannelName,
+} from '@modules/queues/queue.constants';
+import { EmailProvider } from '@modules/notifications/providers/email.provider';
+import { WhatsAppProviderRouter } from '@modules/notifications/providers/whatsapp.provider';
+import {
+  buildAbandonedCartEmail,
+  buildEmailContent,
+  buildLowStockEmail,
+  buildOpsAccessDecisionEmail,
+  buildPasswordResetEmail,
+  buildWhatsAppBody,
+  resolveFrontendUrl,
+  resolveAdminUrl,
+  statusLabel,
+} from '@modules/notifications/notification.templates';
+import { InboxService } from '@modules/notifications/inbox.service';
+import {
+  OPS_ACCESS_REJECT_REASON,
+  opsAccessDecisionCopy,
+  opsAccessRequestedCopy,
+} from '@modules/notifications/inbox.templates';
+import { ConfigService } from '@nestjs/config';
+import { normalizePhoneE164 } from '@common/utils/phone';
+
+const DEFAULT_ORDER_CHANNELS: NotificationChannelName[] = ['email', 'whatsapp'];
+
+const DEFAULT_ORDER_ALERT_EMAIL = 'info@herballife.com.tr';
+
+@Injectable()
+export class NotificationsService {
+  private readonly logger = new Logger(NotificationsService.name);
+
+  constructor(
+    @InjectQueue(QUEUE_NOTIFICATIONS) private readonly notifyQueue: Queue,
+    @InjectEntityManager() private readonly em: EntityManager,
+    private readonly email: EmailProvider,
+    private readonly whatsapp: WhatsAppProviderRouter,
+    private readonly config: ConfigService,
+    private readonly inbox: InboxService,
+  ) {}
+
+  async enqueueOrderStatus(
+    orderId: string,
+    template: string,
+    channels: NotificationChannelName[] = DEFAULT_ORDER_CHANNELS,
+    context: Record<string, unknown> = {},
+  ) {
+    const payload: NotificationJobPayload = {
+      orderId,
+      template,
+      channels,
+      context,
+    };
+    await this.notifyQueue.add(template, payload, {
+      attempts: 3,
+      backoff: { type: 'exponential', delay: 3000 },
+      removeOnComplete: 100,
+      removeOnFail: 200,
+    });
+  }
+
+  /**
+   * Admin / info@ sipariş bildirimi — ürün, adres, telefon dahil.
+   * Alıcılar: ORDER_ALERT_EMAILS ∪ DB admin_allowlist (yoksa info@).
+   */
+  async enqueueOrderOpsAlert(
+    orderId: string,
+    event: 'received' | 'paid',
+  ): Promise<void> {
+    const emails = await this.resolveOrderAlertEmails();
+    if (!emails.length) {
+      this.logger.warn('Order ops alert skipped — no recipients');
+      return;
+    }
+    for (const recipientEmail of emails) {
+      const payload: NotificationJobPayload = {
+        orderId,
+        template: 'order_ops_alert',
+        channels: ['email'],
+        recipientEmail,
+        context: { opsEvent: event },
+      };
+      await this.notifyQueue.add('order_ops_alert', payload, {
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 3000 },
+        removeOnComplete: 100,
+        removeOnFail: 200,
+      });
+    }
+  }
+
+  async enqueueShipmentStatus(
+    orderId: string,
+    shipmentId: string,
+    template: string,
+    channels: NotificationChannelName[] = DEFAULT_ORDER_CHANNELS,
+    context: Record<string, unknown> = {},
+  ) {
+    const payload: NotificationJobPayload = {
+      orderId,
+      shipmentId,
+      template,
+      channels,
+      context,
+    };
+    await this.notifyQueue.add(template, payload, {
+      attempts: 3,
+      backoff: { type: 'exponential', delay: 3000 },
+      removeOnComplete: 100,
+      removeOnFail: 200,
+    });
+  }
+
+  async enqueueAbandonedCart(input: {
+    cartId: string;
+    email: string;
+    name?: string | null;
+    itemCount: number;
+    reminder?: 1 | 2;
+    userId?: string | null;
+  }) {
+    const reminder = input.reminder === 2 ? 2 : 1;
+    const template = reminder === 2 ? 'abandoned_cart_2' : 'abandoned_cart';
+    const payload: NotificationJobPayload = {
+      cartId: input.cartId,
+      template,
+      channels: ['email'],
+      recipientEmail: input.email,
+      recipientName: input.name || undefined,
+      userId: input.userId || undefined,
+      context: { itemCount: input.itemCount, reminder },
+    };
+    await this.notifyQueue.add(template, payload, {
+      attempts: 2,
+      backoff: { type: 'exponential', delay: 5000 },
+      removeOnComplete: 50,
+      removeOnFail: 100,
+    });
+  }
+
+  async enqueueLowStockAlert(
+    row: {
+      productId: string;
+      variantId: string | null;
+      name: string;
+      sku: string | null;
+      weightLabel: string | null;
+      stock: number;
+    },
+    emails: string[],
+  ) {
+    void this.inbox.notifyLowStock(
+      row.weightLabel ? `${row.name} · ${row.weightLabel}` : row.name,
+      row.stock,
+    );
+    for (const email of emails) {
+      const payload: NotificationJobPayload = {
+        template: 'low_stock',
+        channels: ['email'],
+        recipientEmail: email,
+        context: { ...row },
+      };
+      await this.notifyQueue.add('low_stock', payload, {
+        attempts: 2,
+        backoff: { type: 'exponential', delay: 5000 },
+        removeOnComplete: 50,
+        removeOnFail: 100,
+      });
+    }
+  }
+
+  /** Şifre sıfırlama / ilk şifre belirleme — kuyruk beklemeden doğrudan gönderilir */
+  async sendPasswordResetEmail(input: {
+    email: string;
+    name?: string | null;
+    resetUrl: string;
+    appResetUrl?: string;
+    isSetPassword?: boolean;
+  }): Promise<void> {
+    const name = input.name?.trim() || 'Merhaba';
+    const content = buildPasswordResetEmail({
+      name,
+      resetUrl: input.resetUrl,
+      appResetUrl: input.appResetUrl,
+      isSetPassword: input.isSetPassword,
+    });
+    await this.email.send({
+      to: input.email,
+      subject: content.subject,
+      html: content.html,
+      text: content.text,
+    });
+  }
+
+  /** Yeni personel erişim talebi — admin inbox */
+  async notifyOpsAccessRequested(input: {
+    name?: string | null;
+    email: string;
+  }): Promise<void> {
+    const name = input.name?.trim() || input.email.split('@')[0] || 'Kullanıcı';
+    try {
+      await this.inbox.notifyAdmins(opsAccessRequestedCopy(name, input.email));
+    } catch (err) {
+      this.logger.warn(
+        `Ops access request inbox failed: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+    }
+  }
+
+  /** Onay / red — e-posta + kullanıcı inbox (aynı metin) */
+  async notifyOpsAccessDecision(input: {
+    userId: string;
+    email: string;
+    name?: string | null;
+    approved: boolean;
+  }): Promise<void> {
+    const name = input.name?.trim() || 'Merhaba';
+    const frontendUrl = resolveFrontendUrl(this.config);
+    const accountUrl = `${frontendUrl}/hesabim`;
+    const copy = opsAccessDecisionCopy(input.approved);
+
+    try {
+      await this.inbox.notifyUser(input.userId, copy);
+    } catch (err) {
+      this.logger.warn(
+        `Ops access decision inbox failed: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+    }
+
+    try {
+      const content = buildOpsAccessDecisionEmail({
+        name,
+        approved: input.approved,
+        accountUrl,
+        rejectReason: input.approved ? undefined : OPS_ACCESS_REJECT_REASON,
+      });
+      await this.email.send({
+        to: input.email,
+        subject: content.subject,
+        html: content.html,
+        text: content.text,
+      });
+    } catch (err) {
+      this.logger.warn(
+        `Ops access decision email failed for ${input.email}: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+    }
+  }
+
+  async processJob(payload: NotificationJobPayload): Promise<void> {
+    if (
+      payload.template === 'abandoned_cart' ||
+      payload.template === 'abandoned_cart_2'
+    ) {
+      await this.processAbandonedCart(payload);
+      return;
+    }
+
+    if (payload.template === 'low_stock') {
+      await this.processLowStock(payload);
+      return;
+    }
+
+    if (!payload.orderId) {
+      this.logger.warn('Notification missing orderId');
+      return;
+    }
+
+    const order = await this.em.findOne(Order, {
+      where: { id: payload.orderId },
+      relations: { items: true },
+    });
+    if (!order) {
+      this.logger.warn(`Order not found for notification: ${payload.orderId}`);
+      return;
+    }
+
+    let shipment: Shipment | null = null;
+    if (payload.shipmentId) {
+      shipment = await this.em.findOne(Shipment, {
+        where: { id: payload.shipmentId },
+      });
+    }
+
+    const frontendUrl = resolveFrontendUrl(this.config);
+    const adminUrl = resolveAdminUrl(this.config);
+    const opsEventRaw = payload.context?.opsEvent;
+    const opsEvent: 'received' | 'paid' | undefined =
+      opsEventRaw === 'paid' || opsEventRaw === 'received'
+        ? opsEventRaw
+        : undefined;
+
+    const ctx = {
+      order,
+      shipment,
+      statusLabel:
+        typeof payload.context?.statusLabel === 'string'
+          ? payload.context.statusLabel
+          : statusLabel(
+              (payload.context?.status as string) ||
+                shipment?.status ||
+                order.status,
+            ),
+      trackingUrl:
+        typeof payload.context?.trackingUrl === 'string'
+          ? payload.context.trackingUrl
+          : undefined,
+      frontendUrl,
+      adminUrl,
+      opsEvent,
+    };
+
+    const recipientOverride = payload.recipientEmail?.trim() || undefined;
+
+    for (const channel of payload.channels) {
+      if (channel === 'email') {
+        await this.sendEmail(
+          order,
+          shipment,
+          payload.template,
+          ctx,
+          recipientOverride,
+        );
+      } else if (
+        (channel === 'whatsapp' || channel === 'sms') &&
+        payload.template !== 'order_ops_alert'
+      ) {
+        await this.sendWhatsApp(order, shipment, payload.template, ctx);
+      }
+    }
+
+    if (payload.template !== 'order_ops_alert') {
+      await this.inbox.fromOrderTemplate(
+        payload.template,
+        order,
+        shipment,
+        ctx.statusLabel,
+      );
+    }
+  }
+
+  private async resolveOrderAlertEmails(): Promise<string[]> {
+    const configured = this.config.get<string[]>('mail.orderAlertEmails') || [];
+    let dbEmails: string[] = [];
+    try {
+      const rows = await this.em.find(AdminAllowlist, {
+        where: { active: true },
+      });
+      dbEmails = rows.map((r) => r.email);
+    } catch {
+      /* tablo yoksa yoksay */
+    }
+    const merged = [
+      ...new Set(
+        [...configured, ...dbEmails]
+          .map((e) => e.toLowerCase().trim())
+          .filter(Boolean),
+      ),
+    ];
+    if (merged.length) return merged;
+    return [DEFAULT_ORDER_ALERT_EMAIL];
+  }
+
+  private async sendEmail(
+    order: Order,
+    shipment: Shipment | null,
+    template: string,
+    ctx: Parameters<typeof buildEmailContent>[1],
+    recipientOverride?: string,
+  ) {
+    const to = recipientOverride || order.customerEmail;
+    const log = this.em.create(NotificationLog, {
+      channel: NotificationChannel.EMAIL,
+      recipient: to,
+      template,
+      orderId: order.id,
+      shipmentId: shipment?.id ?? null,
+      status: NotificationStatus.PENDING,
+      payload: { template },
+    });
+    await this.em.save(log);
+
+    try {
+      const content = buildEmailContent(template, ctx);
+      const result = await this.email.send({
+        to,
+        subject: content.subject,
+        html: content.html,
+        text: content.text,
+      });
+      log.status = NotificationStatus.SENT;
+      log.providerMessageId = result.id ?? null;
+      await this.em.save(log);
+    } catch (err) {
+      log.status = NotificationStatus.FAILED;
+      log.errorMessage = err instanceof Error ? err.message : String(err);
+      await this.em.save(log);
+      throw err;
+    }
+  }
+
+  private async sendWhatsApp(
+    order: Order,
+    shipment: Shipment | null,
+    template: string,
+    ctx: Parameters<typeof buildWhatsAppBody>[1],
+  ) {
+    if (!order.customerPhone) {
+      this.logger.warn(`Order ${order.id} has no phone — skip WhatsApp`);
+      return;
+    }
+
+    const to = normalizePhoneE164(order.customerPhone) || order.customerPhone;
+
+    const log = this.em.create(NotificationLog, {
+      channel: NotificationChannel.WHATSAPP,
+      recipient: to,
+      template,
+      orderId: order.id,
+      shipmentId: shipment?.id ?? null,
+      status: NotificationStatus.PENDING,
+      payload: { template },
+    });
+    await this.em.save(log);
+
+    try {
+      const body = buildWhatsAppBody(template, ctx);
+      const result = await this.whatsapp.send({ to, body });
+      log.status = NotificationStatus.SENT;
+      log.providerMessageId = result.id ?? null;
+      await this.em.save(log);
+    } catch (err) {
+      log.status = NotificationStatus.FAILED;
+      log.errorMessage = err instanceof Error ? err.message : String(err);
+      await this.em.save(log);
+      throw err;
+    }
+  }
+
+  async listForOrder(orderId: string): Promise<NotificationLog[]> {
+    return this.em.find(NotificationLog, {
+      where: { orderId },
+      order: { createdAt: 'DESC' },
+      take: 50,
+    });
+  }
+
+  private async processAbandonedCart(
+    payload: NotificationJobPayload,
+  ): Promise<void> {
+    const email = payload.recipientEmail;
+    if (!email) {
+      this.logger.warn('Abandoned cart notification missing email');
+      return;
+    }
+    const frontendUrl = resolveFrontendUrl(this.config);
+    const name = payload.recipientName || 'Değerli müşterimiz';
+    const itemCount =
+      typeof payload.context?.itemCount === 'number'
+        ? payload.context.itemCount
+        : 1;
+    const cartUrl = `${frontendUrl}/sepet`;
+
+    const log = this.em.create(NotificationLog, {
+      channel: NotificationChannel.EMAIL,
+      recipient: email,
+      template: payload.template || 'abandoned_cart',
+      orderId: null,
+      shipmentId: null,
+      status: NotificationStatus.PENDING,
+      payload: { cartId: payload.cartId, itemCount },
+    });
+    await this.em.save(log);
+
+    try {
+      const reminder =
+        payload.template === 'abandoned_cart_2' ||
+        payload.context?.reminder === 2
+          ? 2
+          : 1;
+      const content = buildAbandonedCartEmail({
+        name,
+        itemCount,
+        cartUrl,
+        reminder,
+      });
+      const result = await this.email.send({
+        to: email,
+        subject: content.subject,
+        html: content.html,
+        text: content.text,
+      });
+      log.status = NotificationStatus.SENT;
+      log.providerMessageId = result.id ?? null;
+      await this.em.save(log);
+      await this.inbox.notifyAbandonedCart(payload.userId || null, itemCount);
+    } catch (err) {
+      log.status = NotificationStatus.FAILED;
+      log.errorMessage = err instanceof Error ? err.message : String(err);
+      await this.em.save(log);
+      throw err;
+    }
+  }
+
+  private async processLowStock(
+    payload: NotificationJobPayload,
+  ): Promise<void> {
+    const email = payload.recipientEmail;
+    if (!email) {
+      this.logger.warn('Low stock notification missing email');
+      return;
+    }
+
+    const ctx = payload.context || {};
+    const productName = typeof ctx.name === 'string' ? ctx.name : 'Ürün';
+    const variantLabel =
+      typeof ctx.weightLabel === 'string' ? ctx.weightLabel : null;
+    const sku = typeof ctx.sku === 'string' ? ctx.sku : null;
+    const stock = typeof ctx.stock === 'number' ? ctx.stock : 0;
+    const productId = typeof ctx.productId === 'string' ? ctx.productId : null;
+    const variantId = typeof ctx.variantId === 'string' ? ctx.variantId : null;
+    const adminUrl = resolveAdminUrl(this.config);
+    const label = variantLabel
+      ? `${productName} · ${variantLabel}`
+      : productName;
+
+    const log = this.em.create(NotificationLog, {
+      channel: NotificationChannel.EMAIL,
+      recipient: email,
+      template: 'low_stock',
+      orderId: null,
+      shipmentId: null,
+      status: NotificationStatus.PENDING,
+      payload: {
+        productId,
+        variantId,
+        name: productName,
+        sku,
+        weightLabel: variantLabel,
+        stock,
+      },
+    });
+    await this.em.save(log);
+
+    try {
+      const content = buildLowStockEmail({
+        label,
+        stock,
+        sku,
+        adminUrl,
+      });
+      const result = await this.email.send({
+        to: email,
+        subject: content.subject,
+        html: content.html,
+        text: content.text,
+      });
+      log.status = NotificationStatus.SENT;
+      log.providerMessageId = result.id ?? null;
+      await this.em.save(log);
+    } catch (err) {
+      log.status = NotificationStatus.FAILED;
+      log.errorMessage = err instanceof Error ? err.message : String(err);
+      await this.em.save(log);
+      throw err;
+    }
+  }
+}

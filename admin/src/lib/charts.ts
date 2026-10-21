@@ -1,0 +1,299 @@
+import type { EChartsOption } from 'echarts';
+
+export const CHART = {
+  accent: '#cc5b3e',
+  accentSoft: '#ffb4a2',
+  success: '#6b9f7a',
+  warning: '#c9a227',
+  danger: '#c45c5c',
+  muted: '#a58b84',
+  text: '#e5e2e1',
+  border: '#57423d',
+  surface: '#1c1b1b',
+  revenuecat: '#5b8def',
+};
+
+export type DashboardSeriesPoint = {
+  date: string;
+  orders: number;
+  revenue: number;
+  cashRevenue?: number;
+  revenuecatRevenue?: number;
+};
+
+const STATUS_COLOR: Record<string, string> = {
+  pending_payment: CHART.warning,
+  paid: CHART.accent,
+  processing: CHART.accentSoft,
+  shipped: '#8d6e63',
+  delivered: CHART.success,
+  cancelled: CHART.danger,
+  refunded: '#7a4a4a',
+};
+
+const axis = {
+  axisLine: { lineStyle: { color: CHART.border } },
+  axisLabel: { color: CHART.muted, fontSize: 11 },
+  splitLine: { lineStyle: { color: '#2a2a2a' } },
+};
+
+export function baseOption(): EChartsOption {
+  return {
+    backgroundColor: 'transparent',
+    textStyle: { color: CHART.muted, fontFamily: 'inherit' },
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: CHART.surface,
+      borderColor: CHART.border,
+      textStyle: { color: CHART.text },
+    },
+    legend: {
+      textStyle: { color: CHART.muted },
+      top: 0,
+    },
+    grid: { left: 52, right: 48, top: 36, bottom: 28 },
+  };
+}
+
+export function revenueSeriesOption(series: DashboardSeriesPoint[]): EChartsOption {
+  const labels = series.map((s) => {
+    const [, m, d] = s.date.split('-');
+    return `${d}.${m}`;
+  });
+  return {
+    ...baseOption(),
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: CHART.surface,
+      borderColor: CHART.border,
+      textStyle: { color: CHART.text },
+    },
+    legend: {
+      data: ['Toplam ciro', 'PayTR (web)', 'RevenueCat', 'Kasa', 'Sipariş'],
+      textStyle: { color: CHART.muted },
+    },
+    xAxis: { type: 'category', data: labels, ...axis },
+    yAxis: [
+      {
+        type: 'value',
+        name: '₺',
+        ...axis,
+        splitLine: { lineStyle: { color: '#2a2a2a' } },
+      },
+      {
+        type: 'value',
+        name: 'adet',
+        ...axis,
+        splitLine: { show: false },
+      },
+    ],
+    series: [
+      {
+        name: 'Toplam ciro',
+        type: 'line',
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 6,
+        itemStyle: { color: CHART.accent },
+        areaStyle: { color: 'rgba(204,91,62,0.18)' },
+        data: series.map((s) =>
+          Math.round(s.revenue + (s.cashRevenue || 0)),
+        ),
+      },
+      {
+        name: 'PayTR (web)',
+        type: 'bar',
+        stack: 'online',
+        itemStyle: { color: CHART.accentSoft },
+        data: series.map((s) =>
+          Math.round(
+            Math.max(0, s.revenue - (s.revenuecatRevenue || 0)),
+          ),
+        ),
+      },
+      {
+        name: 'RevenueCat',
+        type: 'bar',
+        stack: 'online',
+        itemStyle: { color: CHART.revenuecat },
+        data: series.map((s) => Math.round(s.revenuecatRevenue || 0)),
+      },
+      {
+        name: 'Kasa',
+        type: 'bar',
+        itemStyle: { color: CHART.success },
+        data: series.map((s) => Math.round(s.cashRevenue || 0)),
+      },
+      {
+        name: 'Sipariş',
+        type: 'bar',
+        yAxisIndex: 1,
+        itemStyle: { color: CHART.muted },
+        data: series.map((s) => s.orders),
+      },
+    ],
+  };
+}
+
+export function revenuecatSeriesOption(series: DashboardSeriesPoint[]): EChartsOption {
+  const labels = series.map((s) => {
+    const [, m, d] = s.date.split('-');
+    return `${d}.${m}`;
+  });
+  const hasData = series.some((s) => (s.revenuecatRevenue || 0) > 0);
+  return {
+    ...baseOption(),
+    legend: {
+      data: ['RevenueCat ciro'],
+      textStyle: { color: CHART.muted },
+    },
+    xAxis: { type: 'category', data: labels, ...axis },
+    yAxis: { type: 'value', name: '₺', ...axis },
+    series: [
+      {
+        name: 'RevenueCat ciro',
+        type: 'bar',
+        itemStyle: { color: CHART.revenuecat },
+        data: series.map((s) => Math.round(s.revenuecatRevenue || 0)),
+        markLine: hasData
+          ? undefined
+          : {
+              silent: true,
+              symbol: 'none',
+              lineStyle: { color: CHART.border, type: 'dashed' },
+              data: [{ yAxis: 0 }],
+            },
+      },
+    ],
+  };
+}
+
+export function statusPieOption(
+  rows: { status: string; label: string; count: number }[],
+): EChartsOption {
+  return {
+    ...baseOption(),
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: CHART.surface,
+      borderColor: CHART.border,
+      textStyle: { color: CHART.text },
+      formatter: '{b}: {c} ({d}%)',
+    },
+    legend: { show: false },
+    series: [
+      {
+        type: 'pie',
+        radius: ['48%', '72%'],
+        itemStyle: { borderColor: '#131313', borderWidth: 2 },
+        label: { color: CHART.muted, fontSize: 11 },
+        data: rows
+          .filter((r) => r.count > 0)
+          .map((r) => ({
+            name: r.label,
+            value: r.count,
+            itemStyle: { color: STATUS_COLOR[r.status] || CHART.muted },
+          })),
+      },
+    ],
+  };
+}
+
+export function topProductsOption(
+  rows: { name: string; quantity: number }[],
+): EChartsOption {
+  const data = [...rows].reverse();
+  return {
+    ...baseOption(),
+    grid: { left: 120, right: 24, top: 16, bottom: 24 },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      backgroundColor: CHART.surface,
+      borderColor: CHART.border,
+      textStyle: { color: CHART.text },
+    },
+    legend: { show: false },
+    xAxis: { type: 'value', ...axis },
+    yAxis: {
+      type: 'category',
+      data: data.map((r) =>
+        r.name.length > 22 ? `${r.name.slice(0, 20)}…` : r.name,
+      ),
+      ...axis,
+    },
+    series: [
+      {
+        type: 'bar',
+        data: data.map((r) => r.quantity),
+        itemStyle: { color: CHART.accent },
+      },
+    ],
+  };
+}
+
+export function mixPieOption(
+  rows: { name: string; value: number }[],
+  colors: string[],
+): EChartsOption {
+  return {
+    ...baseOption(),
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: CHART.surface,
+      borderColor: CHART.border,
+      textStyle: { color: CHART.text },
+      formatter: '{b}: {c} ₺ ({d}%)',
+    },
+    legend: { show: false },
+    series: [
+      {
+        type: 'pie',
+        radius: ['42%', '70%'],
+        itemStyle: { borderColor: '#131313', borderWidth: 2 },
+        label: { color: CHART.muted, fontSize: 11 },
+        data: rows.map((r, i) => ({
+          name: r.name,
+          value: Math.round(r.value),
+          itemStyle: { color: colors[i % colors.length] },
+        })),
+      },
+    ],
+  };
+}
+
+export function stockBarOption(
+  rows: { name: string; stock: number }[],
+): EChartsOption {
+  const data = rows.slice(0, 8);
+  return {
+    ...baseOption(),
+    grid: { left: 110, right: 16, top: 12, bottom: 24 },
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: CHART.surface,
+      borderColor: CHART.border,
+      textStyle: { color: CHART.text },
+    },
+    legend: { show: false },
+    xAxis: { type: 'value', ...axis },
+    yAxis: {
+      type: 'category',
+      data: data.map((r) =>
+        r.name.length > 18 ? `${r.name.slice(0, 16)}…` : r.name,
+      ),
+      ...axis,
+    },
+    series: [
+      {
+        type: 'bar',
+        data: data.map((r) => ({
+          value: r.stock,
+          itemStyle: {
+            color: r.stock <= 10 ? CHART.warning : CHART.accent,
+          },
+        })),
+      },
+    ],
+  };
+}

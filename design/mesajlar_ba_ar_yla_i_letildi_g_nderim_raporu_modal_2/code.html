@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html lang="tr"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-fixed": "#c5ecd2", "secondary": "#496455", "surface-variant": "#dde4e6", "on-error-container": "#93000a", "secondary-fixed": "#ccead6", "on-primary-fixed": "#002112", "secondary-fixed-dim": "#b0cdbb", "primary": "#426450", "secondary-container": "#ccead6", "on-surface": "#161d1f", "surface-bright": "#f4fafd", "on-secondary-fixed-variant": "#324c3e", "on-tertiary": "#ffffff", "surface-container-highest": "#dde4e6", "primary-fixed-dim": "#aacfb7", "on-primary-fixed-variant": "#2c4e3b", "surface": "#f4fafd", "tertiary-fixed": "#ffdbd0", "on-secondary-fixed": "#062014", "on-secondary-container": "#4f6a5b", "surface-tint": "#436652", "surface-container-lowest": "#ffffff", "primary-container": "#5a7d68", "tertiary-fixed-dim": "#ffb59f", "on-error": "#ffffff", "tertiary": "#8a4c3a", "surface-dim": "#d4dbdd", "on-background": "#161d1f", "inverse-surface": "#2b3234", "on-primary-container": "#fbfff9", "error": "#ba1a1a", "outline-variant": "#c1c8c1", "on-tertiary-fixed": "#380d02", "background": "#f4fafd", "outline": "#727973", "inverse-on-surface": "#ebf2f4", "on-primary": "#ffffff", "tertiary-container": "#a76450", "surface-container-high": "#e2e9ec", "on-tertiary-fixed-variant": "#6f3726", "error-container": "#ffdad6", "on-secondary": "#ffffff", "inverse-primary": "#aacfb7", "on-surface-variant": "#424843", "surface-container": "#e8eff1", "surface-container-low": "#eef5f7", "on-tertiary-container": "#fffeff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1rem", "space-xl": "2.5rem", "space-md": "1rem", "space-xs": "0.25rem", "gutter": "1.5rem", "space-sm": "0.5rem", "margin": "2.5rem", "space-lg": "1.5rem", "gutter-mobile": "0.75rem" }, "fontFamily": { "headline-lg-mobile": [ "Plus Jakarta Sans" ], "label-lg": [ "Inter" ], "label-md": [ "Inter" ], "headline-lg": [ "Plus Jakarta Sans" ], "body-lg": [ "Inter" ], "label-sm": [ "Inter" ], "body-sm": [ "Inter" ], "headline-xl-mobile": [ "Plus Jakarta Sans" ], "headline-sm": [ "Plus Jakarta Sans" ], "body-md": [ "Inter" ], "headline-xl": [ "Plus Jakarta Sans" ], "headline-md": [ "Plus Jakarta Sans" ] }, "fontSize": { "headline-lg-mobile": [ "26px", { "lineHeight": "34px", "fontWeight": "600" } ], "label-lg": [ "14px", { "lineHeight": "20px", "fontWeight": "600" } ], "label-md": [ "12px", { "lineHeight": "16px", "fontWeight": "600" } ], "headline-lg": [ "32px", { "lineHeight": "40px", "fontWeight": "600" } ], "body-lg": [ "18px", { "lineHeight": "28px", "fontWeight": "400" } ], "label-sm": [ "11px", { "lineHeight": "14px", "fontWeight": "500" } ], "body-sm": [ "13px", { "lineHeight": "20px", "fontWeight": "400" } ], "headline-xl-mobile": [ "32px", { "lineHeight": "40px", "fontWeight": "700" } ], "headline-sm": [ "20px", { "lineHeight": "28px", "fontWeight": "600" } ], "body-md": [ "15px", { "lineHeight": "24px", "fontWeight": "400" } ], "headline-xl": [ "44px", { "lineHeight": "52px", "fontWeight": "700" } ], "headline-md": [ "24px", { "lineHeight": "32px", "fontWeight": "600" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen relative overflow-x-hidden">
+<!-- Left Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest z-30 flex flex-col justify-between py-6 px-4 shadow-[0_1px_8px_rgba(0,0,0,0.03)] border-r border-surface-container"><div class="flex flex-col gap-6"><div class="px-3 flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm"><span class="material-symbols-outlined text-[22px]">spa</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight leading-none">herbalurunleri</span><span class="font-label-sm text-label-sm text-on-surface-variant font-medium mt-1">Koç &amp; Distribütör Portalı</span></div></div><div class="px-3 py-3 rounded-xl bg-surface-container-low flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-headline-sm text-[14px]">MC</div><div class="flex flex-col min-w-0"><span class="font-label-lg text-label-lg text-on-surface truncate">Mehmet COŞ</span><span class="font-label-sm text-label-sm text-primary font-semibold">Kıdemli Beslenme Koçu</span></div></div><nav class="flex flex-col gap-1" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-xl"><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="danisan-yonetim-merkezi" href="#"><span class="material-symbols-outlined text-[20px]">group</span>Danışan Takip &amp; Liste</a><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-label-lg text-label-lg bg-primary-container text-on-primary-container font-semibold transition-colors" data-path="toplu-whatsapp-motivasyon" href="#"><span class="material-symbols-outlined text-[20px]">chat</span>Toplu WhatsApp İletişim</a><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="beslenme-programlari" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span>Beslenme &amp; Kilo Takip</a><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="siparisler-ve-urunler" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span>Siparişler &amp; Ürünler</a><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="koc-raporlari" href="#"><span class="material-symbols-outlined text-[20px]">insights</span>Performans Raporları</a></nav></div><div class="px-3 flex flex-col gap-2"><div class="p-3 rounded-xl bg-primary-fixed text-on-primary-fixed-variant flex flex-col gap-1"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">verified</span><span class="font-label-md text-label-md font-semibold">Aktif Koçluk Seviyesi</span></div><p class="font-body-sm text-body-sm text-on-primary-fixed">48 Aktif Danışan • 9 Hedefe Ulaşan</p></div><a class="flex items-center gap-3 px-3 py-2 rounded-xl font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ayarlar" href="#"><span class="material-symbols-outlined text-[18px]">settings</span>Panel Tercihleri</a></div></aside>
+<!-- Main Shell Container -->
+<div class="pl-72 min-h-screen flex flex-col">
+<!-- Top App Header -->
+<header class="fixed top-0 left-72 right-0 h-16 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-20 flex items-center justify-between px-8 border-b border-surface-container"><div class="flex items-center gap-6"><span class="font-headline-sm text-headline-sm text-on-surface">Danışan Yönetim &amp; Takip Merkezi</span><div class="h-5 w-[1px] bg-outline-variant"></div><div class="flex items-center gap-2 text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">hub</span><span class="font-label-md text-label-md">herbalurunleri.com Distribütör Ağı</span></div></div><div class="flex items-center gap-4"><div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">search</span><span class="font-body-sm text-body-sm">Danışan veya telefon ara...</span></div><button class="w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors relative"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="w-2 h-2 rounded-full bg-tertiary-container absolute top-2 right-2"></span></button><button class="w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">help</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header>
+<!-- Background Dashboard Content (Simulated underlying active coach dashboard) -->
+<main class="pt-20 px-8 pb-12 w-full flex flex-col gap-6 opacity-40 select-none pointer-events-none filter blur-[1px]">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-2xl font-bold font-headline-md text-on-surface">Toplu WhatsApp Motivasyon İstasyonu</h1>
+<p class="text-sm text-on-surface-variant">Hedefe yönelik şablonlar ile danışanlarınızın su ve kilo takibini anlık tetikleyin.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-primary text-white rounded-lg font-medium">Yeni Mesaj Oluştur</button>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-surface-container">
+<div class="text-xs text-on-surface-variant uppercase font-semibold">Toplam Danışan</div>
+<div class="text-2xl font-bold text-on-surface mt-1">48</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-surface-container">
+<div class="text-xs text-on-surface-variant uppercase font-semibold">Hedefe Ulaşan Su</div>
+<div class="text-2xl font-bold text-primary mt-1">36 (%75)</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-surface-container">
+<div class="text-xs text-on-surface-variant uppercase font-semibold">Eksik Kalanlar</div>
+<div class="text-2xl font-bold text-tertiary mt-1">12 Danışan</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-surface-container">
+<div class="text-xs text-on-surface-variant uppercase font-semibold">Bugünkü Hatırlatma</div>
+<div class="text-2xl font-bold text-secondary mt-1">1 Gönderim</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container p-6 h-96 flex items-center justify-center text-on-surface-variant">
+      Danışan listesi arka plan tablosu
+    </div>
+</main>
+</div>
+<!-- ================= MODAL OVERLAY DIALOG ================= -->
+<div class="fixed inset-0 bg-on-surface/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 lg:p-6 overflow-y-auto">
+<!-- Modal Dialog Window -->
+<div class="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-[#d4dbdd] overflow-hidden my-auto flex flex-col animate-in fade-in zoom-in-95 duration-200">
+<!-- Top Decorative Subtle Ambient Glow -->
+<div class="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-primary-fixed/50 blur-3xl pointer-events-none"></div>
+<div class="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-secondary-fixed/40 blur-2xl pointer-events-none"></div>
+<!-- 1. Modal Header -->
+<div class="relative px-8 pt-7 pb-5 flex flex-col gap-3 border-b border-surface-container">
+<div class="flex items-start justify-between gap-4">
+<div class="flex flex-col gap-2">
+<!-- Green badge: '✓ 12 / 12 BAŞARIYLA İLETİLDİ' with sparkle icon -->
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#c5ecd2] text-[#2c4e3b] self-start border border-[#aacfb7]/60">
+<span class="font-bold text-xs">✓</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-bold">12 / 12 BAŞARIYLA İLETİLDİ</span>
+<span class="material-symbols-outlined text-[15px] text-[#426450]">auto_awesome</span>
+</div>
+<!-- Title -->
+<h2 class="font-headline-md text-headline-md text-on-surface tracking-tight font-bold">
+            Toplu Motivasyon Mesajları İletildi!
+          </h2>
+<!-- Subtitle -->
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-2xl leading-relaxed">
+            Akşam Su &amp; Hidratasyon şablonu seçilen 12 danışanın WhatsApp hattına anti-spam kuyruk korumasıyla iletildi <span class="text-outline-variant mx-1">•</span> <span class="font-medium text-on-surface">04 Kasım 2026, 20:14</span>
+</p>
+</div>
+<!-- Close '✕' button in top-right -->
+<button class="w-9 h-9 rounded-full bg-surface-container-low hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors flex-shrink-0" title="Kapat">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+</div>
+<!-- 2. Metric Highlight Cards (3-column grid) -->
+<div class="px-8 pt-5 pb-4">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+<!-- Card 1: İletilen Mesaj -->
+<div class="p-4 rounded-xl bg-surface-container-low/70 border border-surface-container flex flex-col gap-1.5 relative overflow-hidden group">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-md text-label-md font-medium">İletilen Mesaj</span>
+<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">mark_chat_read</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">12 / 12</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">(%100 Başarı)</span>
+</div>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>0 Hata / 0 Engel</span>
+</div>
+</div>
+<!-- Card 2: Toplam Gönderim Süresi -->
+<div class="p-4 rounded-xl bg-surface-container-low/70 border border-surface-container flex flex-col gap-1.5 relative overflow-hidden group">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-md text-label-md font-medium">Toplam Gönderim Süresi</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">timer</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">28 Saniye</span>
+</div>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px] text-secondary">security</span>
+<span>Ort. 2.3 sn / danışan gecikme</span>
+</div>
+</div>
+<!-- Card 3: Anlık Etkileşim -->
+<div class="p-4 rounded-xl bg-surface-container-low/70 border border-surface-container flex flex-col gap-1.5 relative overflow-hidden group">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-md text-label-md font-medium">Anlık Etkileşim</span>
+<span class="material-symbols-outlined text-[20px] text-tertiary">bolt</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">10 Danışan</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">Çevrim içi</span>
+</div>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-primary font-medium">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span>2 danışan yazıyor...</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 3. Danışan İletim Günlüğü (Delivery Log Table) -->
+<div class="px-8 py-2 flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-[16px] leading-6 font-semibold text-on-surface">Danışan İletim Günlüğü</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high font-label-sm text-[11px] text-on-surface-variant font-medium">Canlı WhatsApp Durumu</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary"></span> WhatsApp Web Entegrasyonu Aktif
+        </span>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto rounded-xl border border-surface-container bg-surface-container-lowest shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md border-b border-surface-container">
+<th class="py-2.5 px-4 font-semibold">Danışan</th>
+<th class="py-2.5 px-4 font-semibold">Paket</th>
+<th class="py-2.5 px-4 font-semibold">Dinamik Veri (Kalan Su)</th>
+<th class="py-2.5 px-4 font-semibold">İletim Durumu</th>
+<th class="py-2.5 px-4 text-right font-semibold">Hızlı Sohbet</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container/70 text-on-surface font-body-sm text-body-sm">
+<!-- Row 1: Ahmet Yılmaz -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center font-label-sm text-[11px] font-bold">
+                    AY
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface truncate">Ahmet Yılmaz</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">+90 532 ••• 41 89</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-4">
+<span class="px-2 py-0.5 rounded-md bg-surface-container font-label-sm text-label-sm text-on-surface-variant">
+                  2026 Paket 1 Shaker
+                </span>
+</td>
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">water_drop</span>
+<span class="font-semibold text-primary">Kalan: 350 ml</span>
+</div>
+</td>
+<td class="py-2.5 px-4">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-800 font-label-sm text-label-sm border border-sky-200">
+<span class="material-symbols-outlined text-[16px] text-sky-600" style="font-variation-settings: 'FILL' 1;">done_all</span>
+<span>İletildi &amp; Okundu (20:13, çift mavi tık)</span>
+</div>
+</td>
+<td class="py-2.5 px-4 text-right">
+<button class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors font-label-sm text-label-sm">
+<span>Sohbete Git</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Burak Şen -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant flex items-center justify-center font-label-sm text-[11px] font-bold">
+                    BŞ
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface truncate">Burak Şen</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">+90 544 ••• 19 02</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-4">
+<span class="px-2 py-0.5 rounded-md bg-surface-container font-label-sm text-label-sm text-on-surface-variant">
+                  Yoğun Ofis Paketi
+                </span>
+</td>
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary">water_drop</span>
+<span class="font-semibold text-tertiary">Kalan: 1.200 ml</span>
+</div>
+</td>
+<td class="py-2.5 px-4">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">done_all</span>
+<span>İletildi (20:13, çift gri tık)</span>
+</div>
+</td>
+<td class="py-2.5 px-4 text-right">
+<button class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors font-label-sm text-label-sm">
+<span>Sohbete Git</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Merve Aydın -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant flex items-center justify-center font-label-sm text-[11px] font-bold">
+                    MA
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface truncate">Merve Aydın</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">+90 505 ••• 88 44</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-4">
+<span class="px-2 py-0.5 rounded-md bg-surface-container font-label-sm text-label-sm text-on-surface-variant">
+                  Temel Enerji Paketi
+                </span>
+</td>
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">water_drop</span>
+<span class="font-semibold text-primary">Kalan: 900 ml</span>
+</div>
+</td>
+<td class="py-2.5 px-4">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-800 font-label-sm text-label-sm border border-sky-200">
+<span class="material-symbols-outlined text-[16px] text-sky-600" style="font-variation-settings: 'FILL' 1;">done_all</span>
+<span>İletildi &amp; Okundu (20:14, çift mavi tık)</span>
+</div>
+</td>
+<td class="py-2.5 px-4 text-right">
+<button class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors font-label-sm text-label-sm">
+<span>Sohbete Git</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Selin Aydın -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center font-label-sm text-[11px] font-bold">
+                    SA
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface truncate">Selin Aydın</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">+90 533 ••• 62 10</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-4">
+<span class="px-2 py-0.5 rounded-md bg-surface-container font-label-sm text-label-sm text-on-surface-variant">
+                  Kilo Kontrol Plus
+                </span>
+</td>
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">water_drop</span>
+<span class="font-semibold text-primary">Kalan: 600 ml</span>
+</div>
+</td>
+<td class="py-2.5 px-4">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">done_all</span>
+<span>İletildi (20:14, çift gri tık)</span>
+</div>
+</td>
+<td class="py-2.5 px-4 text-right">
+<button class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors font-label-sm text-label-sm">
+<span>Sohbete Git</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: Caner Demir -->
+<tr class="hover:bg-surface-container-low/50 transition-colors bg-secondary-fixed/10">
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-sm text-[11px] font-bold">
+                    CD
+                  </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-semibold text-on-surface truncate">Caner Demir</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">+90 541 ••• 73 31</span>
+</div>
+</div>
+</td>
+<td class="py-2.5 px-4">
+<span class="px-2 py-0.5 rounded-md bg-surface-container font-label-sm text-label-sm text-on-surface-variant">
+                  Sporcu H24
+                </span>
+</td>
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">water_drop</span>
+<span class="font-semibold text-primary">Kalan: 500 ml</span>
+</div>
+</td>
+<td class="py-2.5 px-4">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span>İletildi &amp; Yazıyor...</span>
+</div>
+</td>
+<td class="py-2.5 px-4 text-right">
+<button class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary-container text-on-primary-container hover:bg-primary transition-colors font-label-sm text-label-sm shadow-sm font-semibold">
+<span>Sohbete Git</span>
+<span class="material-symbols-outlined text-[14px]">chat</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- +7 Danışana daha başarıyla iletildi dökümü -->
+<div class="flex items-center justify-center pt-1">
+<button class="inline-flex items-center gap-1.5 font-label-sm text-label-sm text-primary hover:text-on-surface transition-colors py-0.5 font-semibold">
+<span class="material-symbols-outlined text-[16px]">expand_circle_down</span>
+<span>+7 Danışana daha başarıyla iletildi (Tümünü Göster)</span>
+</button>
+</div>
+</div>
+<!-- 4. Koç Asistanı Bilgi Kutusu -->
+<div class="px-8 pt-1 pb-4">
+<div class="p-3.5 rounded-xl bg-surface-container-low border border-surface-container flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed text-primary flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Koç Asistanı Otomasyon Notu</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            Danışanlar su bildiriminde bulunduğunda bildirim doğrudan panelinizdeki <strong class="text-on-surface">Acil Onay sırasına</strong> düşecektir. Hedefini tamamlayanlara otomatik tebrik mesajı tanımlandı.
+          </p>
+</div>
+</div>
+</div>
+<!-- 5. Alt Aksiyon Çubuğu (Footer) -->
+<div class="px-8 py-4 bg-surface-container-low/80 border-t border-surface-container flex flex-col sm:flex-row items-center justify-between gap-3">
+<!-- 'Raporu İndir (.CSV / PDF)' butonu -->
+<button class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors font-label-md text-label-md border border-outline-variant/40">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Raporu İndir (.CSV / PDF)</span>
+</button>
+<div class="w-full sm:w-auto flex items-center justify-end gap-2.5">
+<!-- 'Yeni Toplu Mesaj Hazırla' butonu -->
+<button class="w-full sm:w-auto px-4 py-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors border border-outline-variant/40">
+          Yeni Toplu Mesaj Hazırla
+        </button>
+<!-- 'Danışan Onay Paneline Dön' (birincil yeşil buton) -->
+<button class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2 rounded-full bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-sm transition-all font-semibold">
+<span>Danışan Onay Paneline Dön</span>
+<span class="material-symbols-outlined text-[18px]">dashboard</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

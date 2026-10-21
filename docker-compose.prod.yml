@@ -1,0 +1,216 @@
+# Herballife — production (Hetzner, paylaşımlı VPS)
+# Prefer CI→GHCR (HERBALLIFE_USE_REGISTRY=1); VPS compose build is last resort (sibling 502).
+# Host portları TTEN (3000/4000) ve Portfolio (3100–3102 / 5433 / 6380) ile çakışmaz.
+# Kullanım: bash deploy/deploy.sh
+#
+# TTEN ağı: compose ile DEĞİL, deploy/sync-tten-nginx.sh ile bağlanır.
+# Sebep: compose service adı "frontend" TTEN nginx upstream'i (frontend:3000) ile çakışır.
+#
+# Zero-downtime yaklaşımı (deploy.sh):
+# 1) Pull/build image (eski container'lar ayakta)
+# 2) migrate one-shot (fail → eski container'lara dokunulmaz)
+# 3) Servisleri tek tek recreate + health; fail → :rollback image
+
+name: herballife-prod
+
+x-api-build: &api-build
+  context: .
+  dockerfile: docker/api.Dockerfile
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: herballife-prod-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-herballife}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-herballife}
+    ports:
+      - "${POSTGRES_HOST_PORT:-5434}:5432"
+    # PG18+: mount parent dir (data → /var/lib/postgresql/18/docker)
+    volumes:
+      - herballife_postgres_data:/var/lib/postgresql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} || pg_isready -U $${POSTGRES_USER}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    networks:
+      - herballife
+
+  redis:
+    image: redis:7-alpine
+    container_name: herballife-prod-redis
+    restart: unless-stopped
+    # aof-use-rdb-preamble: base RDB + incr; ani kill'de incr bozulabilir (deploy.sh onarır)
+    command:
+      [
+        "redis-server",
+        "--appendonly",
+        "yes",
+        "--appendfsync",
+        "everysec",
+        "--aof-use-rdb-preamble",
+        "yes",
+      ]
+    ports:
+      - "${REDIS_HOST_PORT:-6381}:6379"
+    volumes:
+      - herballife_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 15s
+    networks:
+      - herballife
+
+  api:
+    image: herballife-prod-api:live
+    build: *api-build
+    container_name: herballife-prod-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - deploy/.env
+    environment:
+      NODE_ENV: production
+      API_PORT: 4000
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-herballife}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-herballife}
+      REDIS_URL: redis://redis:6379
+      FRONTEND_URL: ${FRONTEND_URL:-https://herballife.com.tr}
+      ADMIN_URL: ${ADMIN_URL:-https://admin.herballife.com.tr}
+      API_URL: ${API_URL:-https://api.herballife.com.tr}
+      DATABASE_SYNCHRONIZE: ${DATABASE_SYNCHRONIZE:-false}
+      # Migration deploy.sh one-shot; boot'ta çalıştırma
+      DATABASE_MIGRATIONS_RUN: "false"
+    ports:
+      - "${API_HOST_PORT:-3202}:4000"
+    volumes:
+      - herballife_uploads:/app/api/uploads
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:4000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 45s
+    networks:
+      - herballife
+
+  frontend:
+    image: herballife-prod-frontend:live
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+        NEXT_PUBLIC_ADMIN_URL: ${NEXT_PUBLIC_ADMIN_URL:-}
+        NEXT_PUBLIC_CDN_URL: ${NEXT_PUBLIC_CDN_URL:-}
+        NEXT_PUBLIC_GA4_ID: ${NEXT_PUBLIC_GA4_ID:-}
+        NEXT_PUBLIC_GTM_ID: ${NEXT_PUBLIC_GTM_ID:-}
+        NEXT_PUBLIC_GOOGLE_ADS_ID: ${NEXT_PUBLIC_GOOGLE_ADS_ID:-}
+        NEXT_PUBLIC_META_PIXEL_ID: ${NEXT_PUBLIC_META_PIXEL_ID:-}
+        NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: ${NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION:-}
+        AWS_S3_BUCKET: ${AWS_S3_BUCKET:-}
+        AWS_REGION: ${AWS_REGION:-eu-central-1}
+        AWS_CDN_URL: ${AWS_CDN_URL:-}
+    container_name: herballife-prod-frontend
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      # SSR: container içinden public API URL'ine (Cloudflare) çıkmak 404/timeout yapar
+      API_INTERNAL_URL: http://api:4000
+      APPLE_TEAM_ID: ${APPLE_TEAM_ID:-}
+      ANDROID_SHA256_FINGERPRINTS: ${ANDROID_SHA256_FINGERPRINTS:-}
+    ports:
+      - "${FRONTEND_HOST_PORT:-3200}:3000"
+    volumes:
+      # scp → host path; Next public/downloads (rebuild gerekmez)
+      - ./frontend/public/downloads:/app/frontend/public/downloads
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 8s
+      retries: 8
+      start_period: 60s
+    networks:
+      - herballife
+
+  admin:
+    image: herballife-prod-admin:live
+    build:
+      context: .
+      dockerfile: docker/admin.Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_ADMIN_URL: ${NEXT_PUBLIC_ADMIN_URL}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
+        NEXT_PUBLIC_CDN_URL: ${NEXT_PUBLIC_CDN_URL:-}
+    container_name: herballife-prod-admin
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      HOSTNAME: 0.0.0.0
+      API_INTERNAL_URL: http://api:4000
+    ports:
+      - "${ADMIN_HOST_PORT:-3201}:3001"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/').then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 8s
+      retries: 8
+      start_period: 60s
+    networks:
+      - herballife
+
+volumes:
+  herballife_postgres_data:
+  herballife_redis_data:
+  herballife_uploads:
+
+networks:
+  herballife:
+    driver: bridge

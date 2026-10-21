@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+
+<html lang="tr"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>Koç &amp; Distribütör Yönetim Paneli</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-tertiary-container": "#fffeff", "on-secondary-fixed": "#062014", "on-secondary-fixed-variant": "#324c3e", "outline": "#727973", "tertiary-fixed": "#ffdbd0", "secondary-container": "#ccead6", "secondary-fixed": "#ccead6", "on-error": "#ffffff", "on-surface": "#161d1f", "on-primary-fixed-variant": "#2c4e3b", "on-primary-container": "#fbfff9", "error-container": "#ffdad6", "inverse-on-surface": "#ebf2f4", "tertiary-container": "#a76450", "secondary-fixed-dim": "#b0cdbb", "on-tertiary": "#ffffff", "surface-tint": "#436652", "surface-container": "#e8eff1", "inverse-surface": "#2b3234", "surface-container-highest": "#dde4e6", "on-secondary": "#ffffff", "inverse-primary": "#aacfb7", "tertiary": "#8a4c3a", "background": "#f4fafd", "on-tertiary-fixed": "#380d02", "primary-fixed": "#c5ecd2", "on-primary-fixed": "#002112", "surface-container-lowest": "#ffffff", "primary-fixed-dim": "#aacfb7", "surface-variant": "#dde4e6", "primary-container": "#5a7d68", "on-error-container": "#93000a", "on-surface-variant": "#424843", "error": "#ba1a1a", "surface-container-low": "#eef5f7", "surface": "#f4fafd", "secondary": "#496455", "on-secondary-container": "#4f6a5b", "surface-dim": "#d4dbdd", "surface-bright": "#f4fafd", "on-primary": "#ffffff", "surface-container-high": "#e2e9ec", "tertiary-fixed-dim": "#ffb59f", "outline-variant": "#c1c8c1", "on-tertiary-fixed-variant": "#6f3726", "on-background": "#161d1f" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin": "2.5rem", "margin-mobile": "1rem", "gutter": "1.5rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "space-lg": "1.5rem", "space-xl": "2.5rem", "space-md": "1rem", "gutter-mobile": "0.75rem" }, "fontFamily": { "label-sm": ["Inter"], "body-md": ["Inter"], "headline-lg": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "headline-xl": ["Plus Jakarta Sans"], "label-lg": ["Inter"], "label-md": ["Inter"], "body-sm": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-xl-mobile": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"] }, "fontSize": { "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }], "body-md": ["15px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }], "headline-xl": ["44px", { "lineHeight": "52px", "fontWeight": "700" }], "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "600" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "600" }], "body-sm": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "600" }], "headline-xl-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }] } } } };</script></head><body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md text-body-md antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-full px-margin h-20 flex items-center justify-between gap-gutter"><div class="flex items-center gap-space-lg"><a class="flex items-center gap-space-sm group" data-path="tum-danisanlar" href="#"><div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-primary"><span class="material-symbols-outlined text-headline-sm">eco</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">herbalurunleri.com</span><span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Koç &amp; Distribütör Yönetim Paneli</span></div></a><div class="h-8 w-px bg-surface-container-high hidden xl:block"></div><div class="hidden xl:flex flex-col"><span class="font-label-lg text-label-lg text-on-surface font-semibold">Mehmet COŞ</span><span class="font-label-sm text-label-sm text-secondary font-medium">Bağımsız Herbalife Yaşam Koçu</span></div></div><nav class="hidden lg:flex items-center gap-space-xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-full"><a class="px-space-md py-space-sm text-on-surface-variant hover:text-on-surface font-label-lg text-label-lg transition-colors rounded-full" data-path="tum-danisanlar" href="#">Tüm Danışanlar</a><a class="px-space-md py-space-sm text-on-surface-variant hover:text-on-surface font-label-lg text-label-lg transition-colors rounded-full" data-path="ogun-ve-olcum-onaylari" href="#">Öğün &amp; Ölçüm Onayları</a><a class="px-space-md py-space-sm text-on-surface-variant hover:text-on-surface font-label-lg text-label-lg transition-colors rounded-full" data-path="gelisim-raporlari" href="#">Gelişim Raporları</a><a class="px-space-md py-space-sm text-on-surface-variant hover:text-on-surface font-label-lg text-label-lg transition-colors rounded-full" data-path="hizli-whatsapp-iletisimi" href="#">Hızlı WhatsApp İletişimi</a></nav><div class="flex items-center gap-space-md"><div class="relative flex items-center"><a class="p-space-sm rounded-full text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors flex items-center justify-center relative" data-path="ogun-ve-olcum-onaylari" href="#"><span class="material-symbols-outlined text-headline-sm">notifications</span><span class="absolute top-1 right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-tertiary text-on-tertiary font-label-sm text-label-sm" title="3 bekleyen öğün/ölçüm onayı">3</span></a></div><a class="hidden sm:inline-flex items-center gap-space-xs bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container px-space-lg py-space-sm rounded-full font-label-lg text-label-lg transition-all shadow-[0_4px_16px_-2px_rgba(90,125,104,0.1)]" data-path="danisan-ekle" href="#"><span class="material-symbols-outlined text-label-lg">person_add</span><span>Danışan Ekle</span></a><div class="h-8 w-px bg-surface-container-high hidden sm:block"></div><a class="flex items-center gap-space-sm p-space-xs rounded-full hover:bg-surface-container transition-colors" data-path="koc-profili" href="#"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1WIJEidAJdAzBMOcYv_xuvGgi9IO24KCciZ4sPORy6D-P6xLvxFbss6qvVvOZzgkMOFpgUbLnIaqfSvv7WNtgrpjBX0fYrbJ0y36QTS_SjTgEuSUEL0U6MsTXh_YuSOuhSgXwKUDOVeYzEq5Wf34VjWPad9Lik05Hm76kDNbEJNjUSPzHMF99hiBbQazpZElNihcbrpvDad52EgvKEPXrYCkL6iXF-yAFAZLMSlNgDwJ202FzryQYrf6QO4"/><div class="hidden md:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface leading-tight">Mehmet COŞ</span><span class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Koç Hesabı</span></div><span class="material-symbols-outlined text-on-surface-variant text-label-lg hidden md:block">expand_more</span></a></div></div></header><main class="w-full pt-20 bg-surface flex-1"><div class="flex flex-col w-full">
+<!-- Dynamic Top Alert Notification Banner -->
+<div class="w-full bg-secondary-container/40 border-b border-secondary-container/60 px-margin py-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="flex h-2.5 w-2.5 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-secondary-fixed">Canlı Senkronizasyon Aktif:</span>
+<span class="font-body-sm text-body-sm text-on-secondary-fixed-variant">Ahmet Yılmaz az önce akşam shake gönderisini iletti. Bekleyen 3 işlem var.</span>
+</div>
+<div class="flex items-center gap-space-md text-label-sm font-label-sm text-secondary">
+<span class="hidden sm:inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">sync</span>
+        Son güncelleme: 19:47
+      </span>
+<a class="font-semibold text-primary underline hover:text-primary-container transition-colors" href="#pending-queue">İncelemeye Git →</a>
+</div>
+</div>
+<!-- Main Workspace -->
+<div class="w-full px-margin py-space-xl flex flex-col gap-space-xl">
+<!-- 1. Header & KPI Metrik Özeti -->
+<div class="flex flex-col gap-space-lg">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="inline-flex items-center gap-space-xs text-primary font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+<span>HERBALIFE NUTRITION RESMİ DİSTRİBÜTÖR KONSOLU</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Koç Mehmet COŞ • Danışan Yönetim &amp; Onay Merkezi</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Aktif 48 Danışan • 3 Bekleyen Onay • Bugün İletilen 18 Öğün &amp; Ölçüm Raporu</p>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="inline-flex items-center gap-space-xs px-space-md py-space-sm rounded-full bg-surface-container-lowest hover:bg-surface-container transition-all text-on-surface font-label-lg text-label-lg shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary">download</span>
+<span>Haftalık Rapor</span>
+</button>
+<button class="inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-full bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg shadow-md transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>Yeni Danışan Kaydı</span>
+</button>
+</div>
+</div>
+<!-- KPI Summary Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- KPI 1: Bekleyen İncelemeler -->
+<div class="relative overflow-hidden bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between gap-space-md group hover:shadow-md transition-all">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 rounded-full bg-tertiary-fixed/30 pointer-events-none blur-xl"></div>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-tertiary">Öncelikli İşlem</span>
+<span class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[18px]">hourglass_top</span>
+</span>
+</div>
+<div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface">3 Onay</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-semibold">Acil</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">2 Öğün Fotoğrafı, 1 Haftalık Tartı</p>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-surface-container-high/40 text-label-sm font-label-sm text-tertiary font-semibold">
+<span>En eski bekleme: 42 dk</span>
+</div>
+</div>
+<!-- KPI 2: Aktif Danışanlar -->
+<div class="relative overflow-hidden bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between gap-space-md hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Portföy Büyüklüğü</span>
+<span class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">group</span>
+</span>
+</div>
+<div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface">48 Kişi</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-semibold">+4 Bu Ay</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">%92 Aktif Katılım ve Öğün Paylaşımı</p>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-1.5 rounded-full" style="width: 92%"></div>
+</div>
+</div>
+<!-- KPI 3: Hidratasyon Başarısı -->
+<div class="relative overflow-hidden bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between gap-space-md hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Günlük Su Takibi</span>
+<span class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">water_drop</span>
+</span>
+</div>
+<div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface">%88</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Hedef ≥ %85</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Ortalama 2.7L danışan su ortalaması</p>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-secondary-container h-1.5 rounded-full" style="width: 88%"></div>
+</div>
+</div>
+<!-- KPI 4: Kilo Kaybı & Sağlık Skoru -->
+<div class="relative overflow-hidden bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between gap-space-md hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Aylık Toplam Sonuç</span>
+<span class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">trending_down</span>
+</span>
+</div>
+<div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-lg text-headline-lg text-primary">-0.74 kg</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Haftalık Ort.</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Bu ay toplam -35.8 kg sağlıklı incelme</p>
+</div>
+<div class="flex items-center gap-1.5 text-label-sm font-label-sm text-primary font-semibold">
+<span class="material-symbols-outlined text-[16px]">celebration</span>
+<span>12 Danışan İdeal Kilosuna Ulaştı</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. Filtre ve Hızlı Araç Çubuğu -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-space-md">
+<!-- Search input -->
+<div class="relative flex-1 max-w-xl">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-surface-container-low text-on-surface placeholder:text-on-surface-variant text-body-sm font-body-sm focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" placeholder="Danışan adı, telefon veya ürün programı ara (örn. Ahmet Yılmaz, 2026 Paket)..." type="text"/>
+</div>
+<!-- Quick Filter Pills -->
+<div class="flex flex-wrap items-center gap-space-xs">
+<button class="px-space-md py-1.5 rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-xs transition-colors">
+          Tümü (48)
+        </button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors flex items-center gap-1">
+<span>Onay Bekleyenler</span>
+<span class="w-5 h-5 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center text-[10px] font-bold">3</span>
+</button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors">
+          Bugün Öğün Gönderenler (18)
+        </button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors">
+          Haftalık Tartı Günü (6)
+        </button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container text-error hover:bg-error-container/40 font-label-md text-label-md transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">warning</span>
+<span>Düşük Uyum (2)</span>
+</button>
+</div>
+<!-- Batch Actions -->
+<div class="flex items-center gap-space-xs shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-surface-container">
+<button class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-md py-2 rounded-lg bg-secondary-container text-on-secondary-fixed hover:bg-secondary-fixed-dim transition-colors font-label-md text-label-md" type="button">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+<span>Toplu WhatsApp Duyurusu</span>
+</button>
+</div>
+</div>
+<!-- 3. Acil Onay Bekleyenler Vitrini (Pending Review Stream) -->
+<div class="flex flex-col gap-space-md" id="pending-queue">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-tertiary text-headline-sm">pending_actions</span>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Acil Onay &amp; Geri Bildirim Bekleyenler</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Danışanların motivasyonunu korumak için 30 dakika içinde yanıtlanması önerilir.</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">3 Bekleyen Bildirim</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-md">
+<!-- Onay Kartı 1: Ahmet Yılmaz (Öncelikli Danışan) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-md relative overflow-hidden border-2 border-primary/20">
+<div class="absolute top-0 right-0 bg-primary text-on-primary px-3 py-1 rounded-bl-lg font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span>15 dk önce</span>
+</div>
+<div class="flex flex-col gap-space-sm">
+<!-- User Info Header -->
+<div class="flex items-center gap-space-sm pr-20">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="A smiling 38 year old healthy Turkish man wearing a casual grey athletic t-shirt against a clean warm indoor backdrop, soft morning daylight, professional wellness coach client portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM44J5DqQsZJYf4Fj_2VJV-OvKGVdoRTXPuV-dMGvCOMF90_DxjgKyy6Z2P32XxyrQ0qoHOOb6UXs3p6CD-vypCCQBHg1HvdWhGoUlAO-oFfGqekSNX-W0axhhSXrUtbULCLuZ77c46GuIMp1qbL8DxQCKpSXCcWpw9H0RjucKmb-Jd3zEn18aOF1MRqVTqH4BRMwl3XjCAdUeGEtQIOBZcmrqoBGUVKwVRxd85OccYsUGcDwwVBQNRA"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-secondary-container border-2 border-surface-container-lowest"></span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold leading-tight">Ahmet Yılmaz</h3>
+<span class="font-label-sm text-label-sm text-secondary">21 Gün Değişim Kampı • 14. Gün</span>
+</div>
+</div>
+<!-- Content preview -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
+<span class="font-semibold text-primary">5. Akşam Yemeği: Formül 1 Shake</span>
+<span>19:42</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface italic">
+                “Badem sütü ile yaptım, vanilya aroması harika oldu. Yanında 250ml suyumu da içtim Koçum.”
+              </p>
+</div>
+<!-- Visual Meal Attachment -->
+<div class="relative rounded-lg overflow-hidden h-36 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Creamy Herbalife Formula 1 vanilla shake in a tall transparent glass tumbler garnished with a cinnamon stick and fresh mint, placed on a light oak wooden tabletop next to a modern green sports water bottle, botanical warm minimalism lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1UBaRPSSX_LucSr-58hjrIHLc6ioQc5O2ywWUIEZ-3aQt7iSwJCzaIBSfITJRL35sya90LsrqVVW2sHzapP3JPhxJ1jGSVxr4lokADPpEOTm4jCesfG81P1tRxob_sAleSP4PWOV2KyCMSzwiN01Om756wrCdwYE67w_4DNpTwK-sjSGz7aaoXoIGY_sUarpDzDqvc3-hQRrTEfbjn5FZCd0Epvt2HHgA0VH_eLUYBW4cGAV5BICUFg"/>
+<div class="absolute bottom-2 left-2 bg-inverse-surface/80 text-inverse-on-surface text-label-sm font-label-sm px-2 py-0.5 rounded backdrop-blur-sm">
+                Shake + 250ml Su
+              </div>
+</div>
+<!-- Current Daily Status Snapshot -->
+<div class="grid grid-cols-2 gap-space-xs pt-1 text-center">
+<div class="bg-surface-container-low p-1.5 rounded">
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Bugün Su</span>
+<span class="font-headline-sm text-headline-sm text-primary">2.650 ml</span>
+<span class="text-[11px] text-secondary font-medium">Hedef: 3.000 ml</span>
+</div>
+<div class="bg-surface-container-low p-1.5 rounded">
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Güncel Tartı</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">80.2 kg</span>
+<span class="text-[11px] text-primary font-medium">-3.8 kg toplam</span>
+</div>
+</div>
+</div>
+<!-- Coach Action Group -->
+<div class="flex flex-col gap-1.5 pt-2 border-t border-surface-container">
+<button class="w-full py-2 px-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">thumb_up</span>
+<span>Tek Tıkla Onayla (Harikasın Ahmet Bey!)</span>
+</button>
+<div class="grid grid-cols-2 gap-1.5">
+<button class="py-1.5 px-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm flex items-center justify-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">edit_note</span>
+<span>Not Ekle &amp; Onayla</span>
+</button>
+<button class="py-1.5 px-2 rounded-lg bg-secondary-container hover:bg-secondary-fixed-dim text-on-secondary-fixed font-label-sm text-label-sm flex items-center justify-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">chat</span>
+<span>WhatsApp Ses/Yazı</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Onay Kartı 2: Zeynep Kaya (Haftalık Tartı ve Ölçüm) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-md relative overflow-hidden">
+<div class="absolute top-0 right-0 bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-bl-lg font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>42 dk önce</span>
+</div>
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm pr-20">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="A portrait of a cheerful 29-year-old woman with pulled back hair in workout clothing holding a soft measuring tape, smiling softly, natural warm lighting with herbal plants in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBh8FCVgA93yhzTd4KZlhkxxjoGzr7BNIHGT3gRuicUWwka_64D_wLMv9AOhVMmX552ausoVbTIT4Irg6BpGNyRE0e77Okq4Ht2iPxR7wV_BM0mWpBBr5BRBQekoOrxXri9k4eE4G92IiVlm_oXJjEWq4LR3sHe7dkvf6RP76CVIiSJr5uiSWIHDv0YUIR65LSAayXFT-Ia2dSgCs7943noDQ35WoOo48NdwLMUmVKPIdPBW3n7Evq2A"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-secondary-container border-2 border-surface-container-lowest"></span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold leading-tight">Zeynep Kaya</h3>
+<span class="font-label-sm text-label-sm text-secondary">Kilo Kontrol Paketi • 3. Hafta</span>
+</div>
+</div>
+<!-- Content preview -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
+<span class="font-semibold text-tertiary">3. Hafta Mezura &amp; Tartı Bildirimi</span>
+<span>19:15</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">
+                “Sabah aç karnına tartıldım. Enerjim çok yüksek, pantolonum belirgin şekilde bollaşıyor!”
+              </p>
+</div>
+<!-- Measurement Display Card -->
+<div class="p-space-md rounded-lg bg-surface-container flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Aç Karnına Tartı:</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">68.4 kg <span class="text-primary text-label-sm font-semibold">(-0.8 kg)</span></span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Bel Çevresi:</span>
+<span class="font-semibold text-on-surface">76 cm <span class="text-primary text-label-sm">(-2.0 cm)</span></span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant font-label-sm">Basen Çevresi:</span>
+<span class="font-semibold text-on-surface">98 cm <span class="text-primary text-label-sm">(-1.5 cm)</span></span>
+</div>
+</div>
+<div class="rounded-lg bg-secondary-container/50 p-2 flex items-center gap-2 text-label-sm text-on-secondary-fixed">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span>Fotoğraflı tartı teyidi doğrulandı (Omron Dijital).</span>
+</div>
+</div>
+<!-- Coach Action Group -->
+<div class="flex flex-col gap-1.5 pt-2 border-t border-surface-container">
+<button class="w-full py-2 px-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">fact_check</span>
+<span>Ölçümü Onayla &amp; Gelişim Kartı Üret</span>
+</button>
+<div class="grid grid-cols-2 gap-1.5">
+<button class="py-1.5 px-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm flex items-center justify-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">celebration</span>
+<span>Tebrik Kartı Gönder</span>
+</button>
+<button class="py-1.5 px-2 rounded-lg bg-secondary-container hover:bg-secondary-fixed-dim text-on-secondary-fixed font-label-sm text-label-sm flex items-center justify-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">chat</span>
+<span>WhatsApp Mesaj</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Onay Kartı 3: Caner Demir (Renkli Sağlıklı Öğle Yemeği) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-md relative overflow-hidden">
+<div class="absolute top-0 right-0 bg-surface-container text-on-surface-variant px-3 py-1 rounded-bl-lg font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>1 saat önce</span>
+</div>
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm pr-20">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="Athletic 32 year old Turkish male athlete smiling softly in gym activewear, subtle sage green background, clean natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8sxDK8QTd8bB2C2pewpBE289TE4u4GQVqzZFZm71q4ZE2bqdiB9_nB-7_BvbncTJEpC_DquXYLIocFoOAnnoBUYL1q2v7nRfhJTWoql8kx2OqIwRwI1mH_r1kXw-aLPXRFtCohkwJJ70yIbR2CuL7sPReNOemW7Wx8UGI0rmShAStr5Y_5-GYCez2gTOAbqfRb3Fgjs58JagJ-n10Co3iU2x-8cVzv9EL2vOphRJJE5fb08EHg2J9YQ"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-secondary-container border-2 border-surface-container-lowest"></span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold leading-tight">Caner Demir</h3>
+<span class="font-label-sm text-label-sm text-secondary">Herbalife24 Sporcu Paketi • 2. Ay</span>
+</div>
+</div>
+<!-- Content preview -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
+<span class="font-semibold text-primary">Serbest Sağlıklı Öğün</span>
+<span>13:30</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface italic">
+                “Izgara somon, kinoa ve bol limonlu roka salatası. Zeytinyağını 1 tatlı kaşığı ekledim.”
+              </p>
+</div>
+<!-- Visual Meal Attachment -->
+<div class="relative rounded-lg overflow-hidden h-36 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Gourmet healthy lunch plate featuring grilled salmon fillet with crisp grill marks, fluffy quinoa with fresh herbs, and an organic arugula salad with cherry tomatoes on a clean ceramic minimalist plate, warm daylight overhead photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9OeT73K5u_1gpwPex06cP4tfsLf2WsBxhap-fLzbhUDi0ehHCT28q_FRr3yqwL3vBK7MgxhoIIVHxJfLytgbz6n1XCqKITlauCrnaM9cph0C7GWZcdGIG22nF6OO-UqKHMtqTjXvyDFXxSwVhGgvV0BajD2rCNVd9iS_4hLxO8zaN1OD7_l7o16hZnxOKF1yOsJlU5HKpcM1l-lfV70asswejR4SKhrFNftqowouuyNZFuiWiwgQjXQ"/>
+<div class="absolute bottom-2 left-2 bg-inverse-surface/80 text-inverse-on-surface text-label-sm font-label-sm px-2 py-0.5 rounded backdrop-blur-sm">
+                Izgara Somon + Salata
+              </div>
+</div>
+<div class="flex items-center justify-between text-body-sm bg-surface-container-low p-2 rounded">
+<span class="text-on-surface-variant font-label-sm">Tahmini Kalori:</span>
+<span class="font-semibold text-on-surface">~480 kcal • 34g Protein</span>
+</div>
+</div>
+<!-- Coach Action Group -->
+<div class="flex flex-col gap-1.5 pt-2 border-t border-surface-container">
+<button class="w-full py-2 px-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span>Porsiyonu Onayla (Kusursuz Tabak)</span>
+</button>
+<div class="grid grid-cols-2 gap-1.5">
+<button class="py-1.5 px-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm flex items-center justify-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">mode_comment</span>
+<span>Geri Bildirim Yaz</span>
+</button>
+<button class="py-1.5 px-2 rounded-lg bg-secondary-container hover:bg-secondary-fixed-dim text-on-secondary-fixed font-label-sm text-label-sm flex items-center justify-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">chat</span>
+<span>WhatsApp Aç</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. Ana Gövde İki Kolonlu Düzen: Roster Tablosu (Sol 70%) & Koçluk Asistan Paneli (Sağ 30%) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- Sol Sütun: Danışan Takip Tablosu (Client Roster Table) -->
+<div class="xl:col-span-8 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Table Header / Title -->
+<div class="p-space-lg border-b border-surface-container flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Aktif Danışanlar Detaylı Takip Listesi</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Öğün disiplini, su takibi ve kilo hedeflerinin canlı durum haritası</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm text-on-surface-variant">Sırala:</span>
+<select class="text-label-sm font-label-sm bg-surface-container-low text-on-surface rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary border-0">
+<option>En Son Etkileşim</option>
+<option>En Yüksek Kilo Kaybı</option>
+<option>Düşük Uyum Skoru</option>
+<option>Alfabetik (A-Z)</option>
+</select>
+</div>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/60 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3 px-space-md">Danışan</th>
+<th class="py-3 px-space-md">Program &amp; Paket</th>
+<th class="py-3 px-space-md">Başlangıç → Güncel (Hedef)</th>
+<th class="py-3 px-space-md text-center">Bugün Su &amp; Öğün</th>
+<th class="py-3 px-space-md text-center">Uyum Skoru</th>
+<th class="py-3 px-space-md text-right">İşlemler</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container/60 font-body-sm text-body-sm">
+<!-- Satır 1: Ahmet Yılmaz -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-sm">
+<img class="w-10 h-10 rounded-full object-cover shrink-0" data-alt="A portrait of 38-year-old Turkish male in athletic outfit, clean lighting, friendly and motivated expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxdFs89vWzoatmTvQ1kYROVMtQbpPZzkIHX7jTgzcvkm9OcE309UpjD-okYecm0A-v2RTZ3FvpjszkR2XvKa6CXc6gfJE0ukLzoF7F-mC0pCDNT7rerhzEpAOcdF-HqGiGpQWE9V4lkdW9Hy8DAQL0Li3JZ-XjAH9LxmCr0LCzsUNXcOYrTsAaIpcXTvn_pGXKTP79jnPQWGo3vQidbNzzdVnqCrI9nLDxmLmsVbUwBfAkgTlnNhAkWQ"/>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold truncate">Ahmet Yılmaz</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">38 Yaş • Başlama: 10 Ocak</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">2026 Paket 1 Shaker Hediyeli</span>
+<span class="text-secondary font-label-sm text-label-sm">21 Gün Değişim Kampı</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-1 font-semibold text-on-surface">
+<span>84.0</span>
+<span class="text-on-surface-variant text-[12px]">→</span>
+<span class="text-primary font-bold">80.2 kg</span>
+<span class="text-label-sm text-on-surface-variant font-normal">(Hedef: 76.0)</span>
+</div>
+<span class="text-primary font-label-sm font-semibold">-3.8 kg (%4.5)</span>
+</div>
+</td>
+<td class="py-4 px-space-md text-center">
+<div class="inline-flex flex-col items-center">
+<span class="font-semibold text-on-surface">2.650 ml</span>
+<span class="text-[11px] text-secondary font-medium">5/5 Öğün Tamam</span>
+</div>
+</td>
+<td class="py-4 px-space-md text-center">
+<span class="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm font-bold">
+                      %94
+                    </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Karnesini Gör">
+<span class="material-symbols-outlined text-[18px]">assessment</span>
+</button>
+<button class="p-1.5 rounded-lg text-secondary hover:text-primary hover:bg-secondary-container transition-colors" title="WhatsApp Aç">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Detay / Düzenle">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Satır 2: Zeynep Kaya -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-sm">
+<img class="w-10 h-10 rounded-full object-cover shrink-0" data-alt="Close up face portrait of smiling Turkish woman 29 years old, soft gentle daylight, clean lifestyle styling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMsuojusvvNImppflYpnCp6eu1QqT6UTzzxHYKyU8N0aVdeIP5TUIMaqrsK3TMEakOgc4V0m-90cPhJSE-dEFolZdSC09-yT3ukcvkB-UAZ2snrV9EtbTZDmZJeiWRP8BOsHupLOcrBBFFLnNQ77dadGbMd6q9s7SqdNAlEXGFMNHmmOzh-jmmaB7VW94aCtougqKwCjChBrl3MdVGkuRv06v2kYYbBVCN_ZsuqiljADYQo9eEH9yrQg"/>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold truncate">Zeynep Kaya</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">29 Yaş • Başlama: 02 Ocak</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">Kilo Kontrol Plus Paketi</span>
+<span class="text-secondary font-label-sm text-label-sm">Formül 1 + Çay 100g + Aloe</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-1 font-semibold text-on-surface">
+<span>73.2</span>
+<span class="text-on-surface-variant text-[12px]">→</span>
+<span class="text-primary font-bold">68.4 kg</span>
+<span class="text-label-sm text-on-surface-variant font-normal">(Hedef: 62.0)</span>
+</div>
+<span class="text-primary font-label-sm font-semibold">-4.8 kg (%6.5)</span>
+</div>
+</td>
+<td class="py-4 px-space-md text-center">
+<div class="inline-flex flex-col items-center">
+<span class="font-semibold text-on-surface">3.000 ml</span>
+<span class="text-[11px] text-secondary font-medium">4/5 Öğün Tamam</span>
+</div>
+</td>
+<td class="py-4 px-space-md text-center">
+<span class="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm font-bold">
+                      %96
+                    </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Karnesini Gör">
+<span class="material-symbols-outlined text-[18px]">assessment</span>
+</button>
+<button class="p-1.5 rounded-lg text-secondary hover:text-primary hover:bg-secondary-container transition-colors" title="WhatsApp Aç">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Detay / Düzenle">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Satır 3: Caner Demir -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-sm">
+<img class="w-10 h-10 rounded-full object-cover shrink-0" data-alt="Athletic young man 32 years old with short haircut and athletic jersey in bright gym environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkc46BlQeEGRFoer5R8_1FNvyQj4yAykvX_eHNwH8v9ngY39Er7go55LkQh5f9TXKrrxAQXUVna2tg48-Ef-zqdc9Hdh6JgvtWfnnr8BcerHm07bb6NTe2Efl9kqqeDmVf_UJYCS0jFdpT-i7lmG6wgAoWEyL6jFbRegl81okLz3ju84KR0JhD5OX1Ue6XsCA0HuwioCB3BAUPDTGlGLBpD7X-dwHJtb2PiC4lFrMSJ2K0dFBfHgI_BQ"/>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold truncate">Caner Demir</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">32 Yaş • Başlama: 15 Aralık</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">Sporcu Beslenmesi H24</span>
+<span class="text-secondary font-label-sm text-label-sm">Rebuild Strength + CR7 Drive</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-1 font-semibold text-on-surface">
+<span>78.5</span>
+<span class="text-on-surface-variant text-[12px]">→</span>
+<span class="text-primary font-bold">79.2 kg</span>
+<span class="text-label-sm text-on-surface-variant font-normal">(Kas Kazanımı)</span>
+</div>
+<span class="text-secondary font-label-sm font-semibold">+0.7 kg (Yağ -%3)</span>
+</div>
+</td>
+<td class="py-4 px-space-md text-center">
+<div class="inline-flex flex-col items-center">
+<span class="font-semibold text-on-surface">3.500 ml</span>
+<span class="text-[11px] text-secondary font-medium">5/5 Öğün Tamam</span>
+</div>
+</td>
+<td class="py-4 px-space-md text-center">
+<span class="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm font-bold">
+                      %98
+                    </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Karnesini Gör">
+<span class="material-symbols-outlined text-[18px]">assessment</span>
+</button>
+<button class="p-1.5 rounded-lg text-secondary hover:text-primary hover:bg-secondary-container transition-colors" title="WhatsApp Aç">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Detay / Düzenle">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Satır 4: Merve Aydın -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-sm">
+<img class="w-10 h-10 rounded-full object-cover shrink-0" data-alt="A portrait of a cheerful 42 year old woman wearing warm knitted sweater, calm and friendly expression, natural botanical room lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAg3CrZ7kIADromNSbl-gMSezrIZ5PTe383ZpAGQ7mcAtEe4naVHuVQuOJZepzX2F1pU20bXHZN-bI69GZKLYTUdXURXeevzKNhxLzII2MFOyyX6cEb7lWZ1SfoLdpqJIk8Y176qinDT7CrUBlFS5mDWyG_hvJgaiQfHQikt6N-1F8DczVgfzEgX_lz39JCANMSosKQ1s9gjkUHqJ27yidzPFFjr9MsGNlJKCE8OAMl-T87Cqjxz7pOqg"/>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold truncate">Merve Aydın</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">42 Yaş • Başlama: 20 Ocak</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">Temel Enerji Paketi</span>
+<span class="text-secondary font-label-sm text-label-sm">Formül 1 Çikolata + Bitkisel Çay</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-1 font-semibold text-on-surface">
+<span>71.0</span>
+<span class="text-on-surface-variant text-[12px]">→</span>
+<span class="text-primary font-bold">69.8 kg</span>
+<span class="text-label-sm text-on-surface-variant font-normal">(Hedef: 64.0)</span>
+</div>
+<span class="text-primary font-label-sm font-semibold">-1.2 kg (%1.7)</span>
+</div>
+</td>
+<td class="py-4 px-space-md text-center">
+<div class="inline-flex flex-col items-center">
+<span class="font-semibold text-on-surface">2.100 ml</span>
+<span class="text-[11px] text-secondary font-medium">4/5 Öğün Tamam</span>
+</div>
+</td>
+<td class="py-4 px-space-md text-center">
+<span class="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm font-bold">
+                      %89
+                    </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Karnesini Gör">
+<span class="material-symbols-outlined text-[18px]">assessment</span>
+</button>
+<button class="p-1.5 rounded-lg text-secondary hover:text-primary hover:bg-secondary-container transition-colors" title="WhatsApp Aç">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Detay / Düzenle">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Satır 5: Burak Şen (Düşük Uyum / Dikkat Uyarılı) -->
+<tr class="hover:bg-error-container/10 transition-colors">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-sm">
+<img class="w-10 h-10 rounded-full object-cover shrink-0" data-alt="Portrait of a 35-year-old man looking slightly tired with eyeglasses in a simple office environment, muted colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApjM9PWPnJeC93LJPZ9-94TAPkxVjQR5kRYrhfyyM-yssgkSJKHboqJCRXNy6ZBrrfRrBovRkcyuAtZBGZo_O0cPL-PBelO9DEIPwGe7lNU9ikRZw-DPfRnFUEiNPPnwOo7gKlOLlnanEFB9rAMdg1HZPsKed2QLOGgOaK-0_TJjMbFhrawNcVxEFEo6T4QKxhLDecErl6tnHyGTqQ1nWGIvhAYMNdyIFHCgqMPytgrKxdun0LRb3P-A"/>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold truncate">Burak Şen</span>
+<span class="material-symbols-outlined text-error text-[16px]" title="2 gündür öğün bildirmedi">error</span>
+</div>
+<span class="font-label-sm text-label-sm text-error font-medium">Son bildirim: 2 gün önce</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">Yoğun Ofis Paketi</span>
+<span class="text-secondary font-label-sm text-label-sm">Thermo Complete + Shake</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-1 font-semibold text-on-surface">
+<span>92.0</span>
+<span class="text-on-surface-variant text-[12px]">→</span>
+<span class="text-on-surface font-bold">90.8 kg</span>
+<span class="text-label-sm text-on-surface-variant font-normal">(Hedef: 82.0)</span>
+</div>
+<span class="text-on-surface-variant font-label-sm">Durgun Dönem</span>
+</div>
+</td>
+<td class="py-4 px-space-md text-center">
+<div class="inline-flex flex-col items-center">
+<span class="font-semibold text-error">1.200 ml</span>
+<span class="text-[11px] text-error font-medium">1/5 Öğün Gönderildi</span>
+</div>
+</td>
+<td class="py-4 px-space-md text-center">
+<span class="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">
+                      %62
+                    </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="px-2.5 py-1 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed hover:bg-tertiary hover:text-on-tertiary font-label-sm text-label-sm flex items-center gap-1 transition-colors" title="Motivasyon WhatsApp Mesajı Gönder">
+<span class="material-symbols-outlined text-[15px]">chat</span>
+<span>Destek Ol</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer Pagination -->
+<div class="p-space-md border-t border-surface-container flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<span>Toplam 48 danışandan 1 - 5 arası gösteriliyor</span>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container transition-colors disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-primary text-on-primary font-semibold flex items-center justify-center text-label-sm">1</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface font-semibold flex items-center justify-center text-label-sm transition-colors">2</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface font-semibold flex items-center justify-center text-label-sm transition-colors">3</button>
+<span class="px-1 text-on-surface-variant">…</span>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface font-semibold flex items-center justify-center text-label-sm transition-colors">10</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Sağ Sütun: Hızlı Koçluk & İletişim Araçları (Right Sidebar) -->
+<div class="xl:col-span-4 flex flex-col gap-space-md">
+<!-- Kart 1: Tek Tıkla WhatsApp Motivasyon Şablonları -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[22px]">send</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Hızlı Motivasyon Şablonları</h3>
+</div>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary-container px-2 py-0.5 rounded-full">Tek Tık</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Seçtiğiniz hazır koçluk mesajını doğrudan danışanın WhatsApp penceresine gönderin.
+          </p>
+<div class="flex flex-col gap-space-xs">
+<!-- Template 1 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container transition-all flex flex-col gap-1 cursor-pointer group">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">water_drop</span>
+                  Akşam Hidratasyon Hatırlatması
+                </span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors text-[18px]">chevron_right</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                “İyi akşamlar canım danışanım! Günlük su hedefin için son 1 saat. Bir bardak ılık Aloe'li suyunu alıp dinlenmeye geçelim mi?”
+              </p>
+</div>
+<!-- Template 2 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container transition-all flex flex-col gap-1 cursor-pointer group">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">celebration</span>
+                  Tebrikler: Harika Gidişat!
+                </span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors text-[18px]">chevron_right</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                “Bugünkü öğün disiplinine ve shake kıvamına bayıldım! Bu kararlılıkla ay sonu hedefine çok daha erken varacağız.”
+              </p>
+</div>
+<!-- Template 3 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container transition-all flex flex-col gap-1 cursor-pointer group">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-tertiary text-[16px]">alarm</span>
+                  Yarın Sabah Aç Karnına Tartı Günü!
+                </span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-tertiary transition-colors text-[18px]">chevron_right</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                “Yarın haftalık tartı sabahımız! Uyanır uyanmaz lavabo sonrası hafif kıyafetlerle tartılıp mezura ölçülerini bana iletmeyi unutma.”
+              </p>
+</div>
+</div>
+<button class="w-full py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors flex items-center justify-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+<span>Özel Şablon Oluştur</span>
+</button>
+</div>
+<!-- Kart 2: Distribütör Ürün & Stok Takip Uyarısı (Product Lifecycle Alert) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md border-l-4 border-tertiary">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-tertiary text-[22px]">inventory_2</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Ürün &amp; Stok İkazı</h3>
+<span class="font-label-sm text-label-sm text-tertiary font-semibold">3 Danışanın Shake'i Bitmek Üzere</span>
+</div>
+</div>
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary shrink-0 animate-ping"></span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Beslenme programının aksamaması için 5 gün içinde kutusu bitecek danışanlar:
+          </p>
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low text-body-sm">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Ahmet Yılmaz</span>
+<span class="text-[12px] text-on-surface-variant">Formül 1 Vanilya (Kalan ~3 Porsiyon)</span>
+</div>
+<button class="px-2.5 py-1 rounded bg-secondary-container text-on-secondary-fixed hover:bg-secondary-fixed-dim text-label-sm font-semibold transition-colors">
+                Hatırlat
+              </button>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low text-body-sm">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Selin Aydın</span>
+<span class="text-[12px] text-on-surface-variant">Bitkisel Konsantre Çay 100g (Kalan ~4 gün)</span>
+</div>
+<button class="px-2.5 py-1 rounded bg-secondary-container text-on-secondary-fixed hover:bg-secondary-fixed-dim text-label-sm font-semibold transition-colors">
+                Hatırlat
+              </button>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low text-body-sm">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Mehmet Emin</span>
+<span class="text-[12px] text-on-surface-variant">Herbal Aloe Konsantre İçecek</span>
+</div>
+<button class="px-2.5 py-1 rounded bg-secondary-container text-on-secondary-fixed hover:bg-secondary-fixed-dim text-label-sm font-semibold transition-colors">
+                Hatırlat
+              </button>
+</div>
+</div>
+<div class="pt-2 border-t border-surface-container flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">local_shipping</span>
+              Doğrudan Sipariş Entegrasyonu
+            </span>
+<a class="text-primary font-semibold hover:underline" href="#">Sipariş Oluştur →</a>
+</div>
+</div>
+<!-- Kart 3: Günlük Koç Notu & Görev Ajandası -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[22px]">checklist</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Koç Mehmet'in Günlük Ajandası</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3/5 Tamam</span>
+</div>
+<div class="flex flex-col gap-2">
+<label class="flex items-start gap-2.5 cursor-pointer">
+<input checked="" class="mt-1 rounded text-primary focus:ring-primary accent-primary" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-through">Sabah motivasyon ses kaydını WhatsApp VIP grubuna at</span>
+</label>
+<label class="flex items-start gap-2.5 cursor-pointer">
+<input checked="" class="mt-1 rounded text-primary focus:ring-primary accent-primary" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-through">Zeynep Kaya'nın 3. hafta tartı sonucunu kaydet</span>
+</label>
+<label class="flex items-start gap-2.5 cursor-pointer">
+<input checked="" class="mt-1 rounded text-primary focus:ring-primary accent-primary" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-through">Caner Demir öğle yemeği kalori makrosunu onayla</span>
+</label>
+<label class="flex items-start gap-2.5 cursor-pointer">
+<input class="mt-1 rounded text-primary focus:ring-primary accent-primary" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Ahmet Yılmaz'ın akşam shake fotoğrafına onay ve tebrik yaz</span>
+</label>
+<label class="flex items-start gap-2.5 cursor-pointer">
+<input class="mt-1 rounded text-primary focus:ring-primary accent-primary" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Burak Şen'i arayıp motivasyon desteği sağla (düşük su tüketimi)</span>
+</label>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-surface-container">
+<input class="w-full text-body-sm font-body-sm px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Yeni koçluk notu ekle..." type="text"/>
+<button class="p-1.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-colors shrink-0">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></main><footer class="w-full bg-surface-container-lowest mt-auto"><div class="w-full bg-surface-container-low py-space-md"><div class="w-full px-margin flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-primary shrink-0"><span class="material-symbols-outlined text-headline-sm">verified</span></div><div class="flex flex-col"><span class="font-label-lg text-label-lg text-on-surface font-semibold">Resmi Bağımsız Distribütör Güvencesi</span><span class="font-body-sm text-body-sm text-on-surface-variant">Tüm ürünler %100 orijinal ve doğrudan Herbalife Nutrition güvencesiyle temin edilmektedir.</span></div></div><div class="flex items-center gap-space-lg text-on-surface-variant font-label-md text-label-md"><span class="inline-flex items-center gap-space-xs"><span class="material-symbols-outlined text-label-md text-primary">lock</span>SSL Korumalı Panel</span><span class="inline-flex items-center gap-space-xs"><span class="material-symbols-outlined text-label-md text-primary">health_and_safety</span>Kişiye Özel Beslenme Takibi</span></div></div></div><div class="w-full px-margin py-space-xl flex flex-col md:flex-row items-center justify-between gap-space-lg"><div class="flex flex-col items-center md:items-start gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary">herbalurunleri.com</span><p class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-left">© 2024 Mehmet COŞ - Bağımsız Herbalife Yaşam Koçu &amp; Distribütörü. Tüm hakları saklıdır.</p></div><div class="flex flex-wrap items-center justify-center gap-space-lg text-on-surface-variant font-label-md text-label-md"><a class="hover:text-primary transition-colors" data-path="kullanim-sartlari" href="#">Kullanım Koşulları</a><a class="hover:text-primary transition-colors" data-path="kvkk-ve-gizlilik" href="#">KVKK ve Danışan Gizliliği</a><a class="hover:text-primary transition-colors" data-path="etik-ve-uyumluluk" href="#">Distribütör Etik İlkeleri</a><a class="hover:text-primary transition-colors" data-path="destek-merkezi" href="#">Koç Destek Merkezi</a></div></div></footer></body></html>
