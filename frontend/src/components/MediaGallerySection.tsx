@@ -40,7 +40,7 @@ function MediaTile({
   const isVideo = item.mediaType === "VIDEO";
 
   const inner = (
-    <article className="media-tile group relative aspect-square overflow-hidden border border-outline-variant bg-surface-container-low">
+    <article className="media-tile group relative aspect-square overflow-hidden rounded-2xl border border-outline-variant bg-surface-container-low">
       <Image
         src={galleryImageUrl(item)}
         alt={caption || "Herballife medya"}
@@ -50,12 +50,12 @@ function MediaTile({
       />
       <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-background/90 via-background/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
       {isVideo ? (
-        <span className="absolute right-3 top-3 border border-white/30 bg-black/50 px-2 py-0.5 font-meta text-[9px] uppercase tracking-widest text-white">
+        <span className="absolute right-3 top-3 rounded-full border border-white/30 bg-black/50 px-2.5 py-0.5 font-meta text-[9px] uppercase tracking-widest text-white">
           Video
         </span>
       ) : null}
       {mode === "lightbox" ? (
-        <span className="absolute left-3 top-3 border border-white/20 bg-black/40 px-2 py-0.5 font-meta text-[9px] uppercase tracking-widest text-white opacity-0 transition group-hover:opacity-100">
+        <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/40 px-2.5 py-0.5 font-meta text-[9px] uppercase tracking-widest text-white opacity-0 transition group-hover:opacity-100">
           Büyüt
         </span>
       ) : null}

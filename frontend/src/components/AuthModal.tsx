@@ -34,7 +34,7 @@ export function AuthShell({
     <div className="page-shell mx-auto max-w-xl py-16 md:py-24">
       <div className="page-enter">
         <div className="mb-2 font-meta text-xs uppercase tracking-widest text-primary">
-          Auth_Protocol / {isLogin ? "Session_Restore" : "Node_Create"}
+          {isLogin ? "Oturum açma" : "Hesap oluşturma"}
         </div>
         <h1 className="font-display text-4xl leading-none md:text-5xl">
           {title || (isLogin ? "Giriş" : "Kayıt")}

@@ -14,19 +14,19 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "flex-end",
           padding: 64,
-          background: "linear-gradient(145deg, #0e0e0e 0%, #2a2a2a 55%, #611200 100%)",
-          color: "#e5e2e1",
+          background: "linear-gradient(145deg, #0f2f22 0%, #157a4c 55%, #e6f4ed 100%)",
+          color: "#ffffff",
           fontFamily: "Georgia, serif",
         }}
       >
-        <div style={{ fontSize: 28, letterSpacing: 6, color: "#ffb4a2", textTransform: "uppercase" }}>
+        <div style={{ fontSize: 28, letterSpacing: 6, color: "#dff3e8", textTransform: "uppercase" }}>
           Bağımsız Distribütör
         </div>
         <div style={{ fontSize: 72, lineHeight: 1.05, marginTop: 16, fontWeight: 700 }}>
           Herballife
         </div>
-        <div style={{ fontSize: 28, marginTop: 20, color: "#dec0b9", maxWidth: 800 }}>
-          Engineered Precision. Artisanal Depth.
+        <div style={{ fontSize: 28, marginTop: 20, color: "#eaf3ee", maxWidth: 800 }}>
+          Doğal ürünler, kişisel koçluk.
         </div>
       </div>
     ),

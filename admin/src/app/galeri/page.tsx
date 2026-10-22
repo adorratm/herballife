@@ -86,7 +86,7 @@ function GalleryPageInner() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!form.mediaUrl.trim()) {
-      setError('Görsel URL gerekli');
+      setError('Görsel bağlantısı gerekli');
       return;
     }
     setSaving(true);

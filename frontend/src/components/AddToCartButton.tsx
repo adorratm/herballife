@@ -33,10 +33,11 @@ export function AddToCartButton({
 }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [added, setAdded] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function onClick() {
-    if (disabled) return;
+    if (disabled || loading) return;
     setLoading(true);
     setError(null);
     try {
@@ -51,20 +52,26 @@ export function AddToCartButton({
         price,
         quantity: 1,
       });
+      setAdded(true);
       emitCartToast(productName);
       onAdded?.();
+      window.setTimeout(() => setAdded(false), 1600);
       if (goToCart) router.push("/sepet");
       else router.refresh();
     } catch (err) {
       setError(
         err instanceof ApiError
           ? err.message
-          : "Sepete eklenemedi. API bağlantısını kontrol edin.",
+          : "Sepete eklenemedi. Sunucu bağlantısını kontrol edin.",
       );
     } finally {
       setLoading(false);
     }
   }
+
+  const baseClass =
+    className ||
+    "btn-cta w-full py-6 font-display text-lg tracking-widest disabled:cursor-not-allowed disabled:opacity-50";
 
   return (
     <div>
@@ -72,12 +79,12 @@ export function AddToCartButton({
         type="button"
         disabled={loading || disabled}
         onClick={onClick}
-        className={
-          className ||
-          "btn-cta w-full py-6 font-display text-lg tracking-widest disabled:cursor-not-allowed disabled:opacity-50"
-        }
+        aria-live="polite"
+        className={`add-cart-burst cursor-pointer ${baseClass}${
+          added ? " is-added" : ""
+        }`}
       >
-        {loading ? "İşleniyor…" : label}
+        {loading ? "Ekleniyor…" : added ? "Sepete eklendi ✓" : label}
       </button>
       {error ? (
         <p className="mt-3 font-meta text-[10px] uppercase text-error">{error}</p>

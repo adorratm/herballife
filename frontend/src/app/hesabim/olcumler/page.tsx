@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AccountTabs } from "@/components/AccountTabs";
 import { SuccessModal } from "@/components/SuccessModal";
+import { WellnessTrendChart } from "@/components/WellnessTrendChart";
 import { getApiBase } from "@/lib/api";
 import { getToken, isAuthenticated } from "@/lib/auth";
 
@@ -17,59 +18,6 @@ type Measurement = {
   note: string | null;
   status: string;
 };
-
-function WeightSparkline({ points }: { points: number[] }) {
-  if (points.length < 2) {
-    return (
-      <div className="flex h-40 items-center justify-center rounded-xl bg-surface-container-low text-sm text-on-surface-variant">
-        Grafik için en az 2 ölçüm gerekir
-      </div>
-    );
-  }
-  const min = Math.min(...points);
-  const max = Math.max(...points);
-  const span = Math.max(0.1, max - min);
-  const w = 320;
-  const h = 120;
-  const pad = 8;
-  const coords = points.map((v, i) => {
-    const x = pad + (i / (points.length - 1)) * (w - pad * 2);
-    const y = pad + (1 - (v - min) / span) * (h - pad * 2);
-    return `${x},${y}`;
-  });
-  const polyline = coords.join(" ");
-  return (
-    <svg
-      viewBox={`0 0 ${w} ${h}`}
-      className="h-40 w-full rounded-xl bg-surface-container-low"
-      role="img"
-      aria-label="Kilo eğrisi"
-    >
-      <polyline
-        fill="none"
-        stroke="var(--primary)"
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        points={polyline}
-      />
-      {coords.map((c, i) => {
-        const [x, y] = c.split(",").map(Number);
-        return (
-          <circle
-            key={i}
-            cx={x}
-            cy={y}
-            r="3.5"
-            fill="var(--primary-fixed)"
-            stroke="var(--primary)"
-            strokeWidth="1.5"
-          />
-        );
-      })}
-    </svg>
-  );
-}
 
 export default function MeasurementsPage() {
   const router = useRouter();
@@ -285,17 +233,32 @@ export default function MeasurementsPage() {
         ))}
       </section>
 
-      <section className="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <h2 className="font-display text-xl">Kilo eğrisi</h2>
+      <section className="rounded-2xl border border-outline-variant/25 bg-surface-container-lowest p-5 shadow-sm md:p-6">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 className="font-display text-xl">Gelişim grafiği</h2>
+            <p className="mt-0.5 text-xs text-on-surface-variant">
+              Kilo, bel ve kalça — üzerine gelerek nokta detayını görün
+            </p>
+          </div>
           {delta != null ? (
             <span className="rounded-full bg-secondary-container px-3 py-1 text-xs font-semibold text-primary">
-              {delta > 0 ? "+" : ""}
+              Kilo {delta > 0 ? "+" : ""}
               {delta} kg
             </span>
           ) : null}
         </div>
-        <WeightSparkline points={weights} />
+        <WellnessTrendChart
+          points={chronological.map((m) => ({
+            date: m.measuredAt,
+            weightKg: m.weightKg,
+            waistCm: m.waistCm,
+            hipCm: m.hipCm,
+          }))}
+          goalValue={goal}
+          goalLabel="Hedef"
+          height={280}
+        />
       </section>
 
       <div className="overflow-x-auto rounded-xl bg-surface-container-lowest shadow-sm">

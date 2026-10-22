@@ -357,12 +357,12 @@ export default function CartPage() {
               </div>
               {!loggedIn ? (
                 <div className="mt-4 space-y-2">
-                  <label className="field-label">E-posta (opsiyonel)</label>
+                  <label className="field-label">E-posta (isteğe bağlı)</label>
                   <input
                     type="email"
                     value={guestEmail}
                     onChange={(e) => setGuestEmail(e.target.value)}
-                    placeholder="ornek@email.com"
+                    placeholder="ornek@eposta.com"
                     className="field-input"
                   />
                   <button
@@ -386,9 +386,11 @@ export default function CartPage() {
               >
                 Teslimata geç
               </Link>
-              <p className="mt-3 text-center text-[11px] text-on-surface-variant">
-                Güvenli ödeme · Ücretsiz kargo fırsatı
-              </p>
+              <ul className="mt-4 space-y-1.5 text-[11px] text-on-surface-variant">
+                <li>✓ PayTR 256 bit güvenli ödeme</li>
+                <li>✓ 14 gün cayma / iade hakkı</li>
+                <li>✓ Orijinal Herbalife ürünleri</li>
+              </ul>
             </div>
           </aside>
         </div>

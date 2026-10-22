@@ -290,7 +290,7 @@ export class SearchService {
     if (posts.length) {
       groups.push({
         type: 'blog',
-        label: 'Blog',
+        label: 'Yazılar',
         items: posts.map((p) => ({
           type: 'blog',
           id: p.id,

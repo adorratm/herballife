@@ -1,42 +1,57 @@
 import { Reveal } from "@/components/Reveal";
+import { freeShippingThreshold } from "@/lib/shipping";
+import { formatMoney } from "@/lib/format";
 
-const BENEFITS = [
-  {
-    title: "Ücretsiz Kargo",
-    subtitle: "Türkiye geneli",
-    tone: "sage" as const,
-    icon: "🚚",
-  },
-  {
-    title: "Kapıda Ödeme",
-    subtitle: "Nakit veya kart",
-    tone: "blush" as const,
-    icon: "💳",
-  },
-  {
-    title: "Güvenli Ödeme",
-    subtitle: "256-bit SSL",
-    tone: "sage" as const,
-    icon: "🔒",
-  },
-  {
-    title: "14 Gün İade",
-    subtitle: "Koşulsuz güvence",
-    tone: "blush" as const,
-    icon: "↩️",
-  },
-  {
-    title: "7/24 Koç Desteği",
-    subtitle: "Birebir takip",
-    tone: "mint" as const,
-    icon: "💬",
-  },
-];
+function buildBenefits() {
+  const threshold = freeShippingThreshold();
+  const shipping =
+    threshold > 0
+      ? {
+          title: `${formatMoney(threshold)} üzeri ücretsiz kargo`,
+          subtitle: "Türkiye geneli",
+          tone: "sage" as const,
+          icon: "🚚",
+        }
+      : {
+          title: "Hızlı kargo",
+          subtitle: "1–3 iş günü sevk",
+          tone: "sage" as const,
+          icon: "🚚",
+        };
+
+  return [
+    shipping,
+    {
+      title: "PayTR güvenli ödeme",
+      subtitle: "256 bit SSL",
+      tone: "blush" as const,
+      icon: "🔒",
+    },
+    {
+      title: "14 gün iade",
+      subtitle: "Cayma hakkı",
+      tone: "sage" as const,
+      icon: "↩️",
+    },
+    {
+      title: "Orijinal ürün",
+      subtitle: "Bağımsız distribütör",
+      tone: "blush" as const,
+      icon: "✓",
+    },
+    {
+      title: "WhatsApp koç desteği",
+      subtitle: "Birebir takip",
+      tone: "mint" as const,
+      icon: "💬",
+    },
+  ];
+}
 
 const TONE_CLASS = {
-  sage: "bg-white text-primary border border-outline-variant/40",
-  blush: "bg-tertiary-fixed/40 text-tertiary border border-tertiary-fixed",
-  mint: "bg-white text-on-surface border border-outline-variant/40",
+  sage: "bg-primary-fixed text-primary border border-primary/15",
+  blush: "bg-tertiary-fixed text-tertiary border border-tertiary/20",
+  mint: "bg-flash-soft text-flash border border-flash/20",
 };
 
 type Props = {
@@ -44,12 +59,13 @@ type Props = {
   phone?: string;
 };
 
-export function BenefitsBar({ className = "", phone }: Props) {
+export function BenefitsBar({ className = "", phone: _phone }: Props) {
+  const benefits = buildBenefits();
   return (
     <div
       className={`grid grid-cols-2 gap-3 md:grid-cols-5 md:gap-4${className ? ` ${className}` : ""}`}
     >
-      {BENEFITS.map((b, i) => (
+      {benefits.map((b, i) => (
         <Reveal key={b.title} delay={i * 55} variant="scale">
           <div className="card-motion panel-motion flex items-center gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm">
             <span
@@ -58,14 +74,12 @@ export function BenefitsBar({ className = "", phone }: Props) {
             >
               {b.icon}
             </span>
-            <span className="min-w-0">
-              <span className="block truncate text-sm font-semibold text-on-surface">
+            <div className="min-w-0">
+              <p className="text-sm font-bold leading-snug text-on-surface">
                 {b.title}
-              </span>
-              <span className="block truncate text-xs text-on-surface-variant">
-                {b.title.includes("Koç") && phone ? phone : b.subtitle}
-              </span>
-            </span>
+              </p>
+              <p className="text-xs text-on-surface-variant">{b.subtitle}</p>
+            </div>
           </div>
         </Reveal>
       ))}

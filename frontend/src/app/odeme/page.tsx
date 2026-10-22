@@ -460,7 +460,7 @@ export default function CheckoutPage() {
       setError(
         err instanceof Error
           ? err.message
-          : "Ödeme başlatılamadı. API bağlantısını kontrol edin.",
+          : "Ödeme başlatılamadı. Sunucu bağlantısını kontrol edin.",
       );
     } finally {
       setSubmitting(false);

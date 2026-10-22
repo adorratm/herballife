@@ -31,21 +31,21 @@ export const CATEGORY_CHIPS: (NavItem & {
   {
     href: "/urunler/kategori/avantajli-setler",
     label: "Setler",
-    blurb: "Shaker hediyeli",
+    blurb: "Karıştırıcı hediyeli",
     image: "/images/products/2026-paket-1-shaker-hediyeli.png",
     accent: true,
   },
   {
     href: "/urunler/kategori/takviye-edici",
     label: "Takviye",
-    blurb: "Vitamin & mineral",
+    blurb: "Vitamin ve mineral",
     image:
       "/images/products/formul-2-vitamin-ve-mineral-kompleks-kadinlar-icin-60-tablet.png",
   },
   {
     href: "/urunler/kategori/sporcu-urunleri",
     label: "Sporcu",
-    blurb: "Protein & performans",
+    blurb: "Protein ve performans",
     image: "/images/products/formul-1-shake.png",
   },
   {
@@ -72,7 +72,7 @@ export const CATEGORY_CHIPS: (NavItem & {
 export const DEFAULT_HEADER_NAV: NavItem[] = [
   { href: "/urunler", label: "Ürünler" },
   { href: "/hakkimizda", label: "Hakkımızda" },
-  { href: "/blog", label: "Blog" },
+  { href: "/blog", label: "Yazılar" },
   { href: "/medya", label: "Medya" },
   { href: "/sss", label: "SSS" },
   { href: "/yorum", label: "Yorumlar" },

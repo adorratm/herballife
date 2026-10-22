@@ -6,7 +6,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     slogan: 'Daha sağlıklı, daha mutlu bir yaşam',
     tagline:
       'Bağımsız distribütör rehberliğinde orijinal Herbalife ürünleri ve kişiselleştirilmiş beslenme desteği.',
-    established: 'EST. 2024',
+    established: '2024’ten beri',
     location: 'Türkiye',
     logoUrl: '',
     distributorName: 'Emine Özberk',
@@ -15,10 +15,11 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
       'Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir. Herbalife Nutrition resmi sitesi değildir. Ürünler orijinal Herbalife ürünleridir.',
   },
   contact: {
-    address: 'Türkiye',
+    address: 'Türkiye — [Yayın öncesi gerçek adres]',
     email: 'info@ornek.com',
     phone: '+90 500 000 00 00',
-    hours: 'Pzt — Paz / 09:00 — 20:00',
+    hours:
+      'Pzt — Paz / 09:00 — 20:00 · DEMO: Admin → Site Ayarları’ndan telefon, e-posta ve WhatsApp’ı güncelleyin',
     locationLabel: 'Türkiye',
     latitude: '',
     longitude: '',
@@ -42,7 +43,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     header: [
       { href: '/urunler', label: 'Ürünler' },
       { href: '/hakkimizda', label: 'Hakkımızda' },
-      { href: '/blog', label: 'Blog' },
+      { href: '/blog', label: 'Yazılar' },
       { href: '/medya', label: 'Medya' },
       { href: '/sss', label: 'SSS' },
       { href: '/yorum', label: 'Yorumlar' },
@@ -52,7 +53,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
       { href: '/urunler', label: 'Ürünler' },
       { href: '/urunler/kategori/avantajli-setler', label: 'Avantajlı Setler' },
       { href: '/hakkimizda', label: 'Hakkımızda' },
-      { href: '/blog', label: 'Blog' },
+      { href: '/blog', label: 'Yazılar' },
       { href: '/medya', label: 'Medya' },
       { href: '/sss', label: 'SSS' },
       { href: '/iletisim', label: 'İletişim' },
@@ -231,7 +232,7 @@ export const DEFAULT_HOME_SECTIONS: Array<{
       eyebrow: 'Beslenme yaklaşımımız',
       quote:
         'Sürdürülebilir sonuçlar; doğru ürün, düzenli takip ve kişisel rehberlikle gelir.',
-      linkLabel: 'Blog notlarını oku →',
+      linkLabel: 'Yazıları oku →',
       linkHref: '/blog',
     },
     sortOrder: 3,

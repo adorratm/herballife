@@ -144,7 +144,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   const crumbs = [
     { name: "Ana sayfa", path: "/" },
-    { name: "Blog", path: "/blog" },
+    { name: "Yazılar", path: "/blog" },
     { name: post.title, path: `/blog/${post.slug}` },
   ];
 

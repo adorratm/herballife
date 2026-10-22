@@ -1,5 +1,7 @@
 # Sunum yayın rehberi (parent domain’e dokunma)
 
+Reklam / canlı satış için ayrıca **[GO_LIVE.md](./GO_LIVE.md)** kontrol listesini uygulayın.
+
 Bu stack **üç ayrı host** bekler. Ana `emrekilic.web.tr` server block’una **hiçbir şey eklemeyin / değiştirmeyin**.
 
 ## Önerilen geçici hostlar

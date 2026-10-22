@@ -79,7 +79,7 @@ export default function OkcAdminPage() {
       );
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Import başarısız');
+      setError(err instanceof Error ? err.message : 'İçe aktarma başarısız');
     } finally {
       setSaving(false);
     }
@@ -88,7 +88,7 @@ export default function OkcAdminPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold">ÖKC import</h2>
+        <h2 className="text-lg font-semibold">ÖKC içe aktarma</h2>
         <p className="text-sm text-muted">
           Beko X30TR CSV / Z özeti. Nakit ve kart kasa hareketi + iç satış fişi
           oluşur; ÖKC mali fiş için GİB e-belgesi gönderilmez.
@@ -125,7 +125,7 @@ export default function OkcAdminPage() {
       {loading ? (
         <p className="text-sm text-muted">Yükleniyor…</p>
       ) : (
-        <div className="overflow-x-auto border border-border-muted">
+        <div className="overflow-x-auto rounded-2xl border border-border-muted">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-border-muted bg-surface mono text-[10px] uppercase text-muted">
               <tr>

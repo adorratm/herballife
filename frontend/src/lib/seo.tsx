@@ -238,13 +238,13 @@ export function buildBlogIndexMetadata(
 ): Metadata {
   const page = opts.page && opts.page > 1 ? opts.page : undefined;
   const tag = opts.tag?.trim();
-  let title = "Blog";
+  let title = "Yazılar";
   let description =
     "Beslenme ipuçları, paket rehberleri ve sağlıklı yaşam yazıları.";
   let path = "/blog";
   const qs = new URLSearchParams();
   if (tag) {
-    title = `Blog · ${tag}`;
+    title = `Yazılar · ${tag}`;
     description = `“${tag}” etiketli yazılar — ${settings.brand.name}.`;
     qs.set("tag", tag);
   }
@@ -260,7 +260,7 @@ export function buildBlogIndexMetadata(
     description,
     path,
     settings,
-    keywords: ["blog", "beslenme", "Herbalife", tag || ""].filter(Boolean),
+    keywords: ["yazılar", "beslenme", "Herbalife", tag || ""].filter(Boolean),
     noIndex: Boolean(page || tag),
   });
 

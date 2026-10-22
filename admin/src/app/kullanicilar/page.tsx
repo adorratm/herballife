@@ -28,7 +28,7 @@ const ROLE_LABELS: Record<Role, string> = {
   customer: 'Müşteri',
   staff: 'Personel',
   accountant: 'Muhasebe',
-  admin: 'Admin',
+  admin: 'Yönetici',
 };
 
 const ROLE_OPTIONS: Role[] = ['customer', 'staff', 'accountant', 'admin'];
@@ -156,10 +156,12 @@ export default function UsersAdminPage() {
       });
       setAllowEmail('');
       setAllowNote('');
-      setMessage('Admin allowlist’e eklendi (çoklu admin)');
+      setMessage('Yönetici izin listesine eklendi');
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Allowlist eklenemedi');
+      setError(
+        err instanceof Error ? err.message : 'İzin listesine eklenemedi',
+      );
     }
   }
 
@@ -167,7 +169,7 @@ export default function UsersAdminPage() {
     setBusyId(id);
     try {
       await api(`/auth/admin-allowlist/${id}`, { method: 'DELETE' });
-      setMessage('Allowlist pasifleştirildi');
+      setMessage('İzin listesinden çıkarıldı');
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'İşlem başarısız');
@@ -181,10 +183,10 @@ export default function UsersAdminPage() {
       <div>
         <h2 className="text-lg font-semibold">Kullanıcılar</h2>
         <p className="mt-1 max-w-2xl text-sm text-muted">
-          Admin: kullanıcı ekleme/çıkarma, personel tanımlama, müşteri görüntüleme
-          ve rol yetkisi. Birden fazla admin Google allowlist veya rol ataması ile
-          çalışır. Personel mağaza operasyonunu yönetir; site/CMS/yetki yönetimi
-          yalnızca admin’dedir.
+          Yönetici: kullanıcı ekleme/çıkarma, personel tanımlama, müşteri
+          görüntüleme ve rol yetkisi. Birden fazla yönetici Google izin listesi
+          veya rol ataması ile çalışır. Personel mağaza operasyonunu yönetir;
+          site, içerik ve yetki yönetimi yalnızca yöneticidedir.
         </p>
       </div>
 
@@ -243,7 +245,7 @@ export default function UsersAdminPage() {
           >
             <option value="staff">Personel</option>
             <option value="accountant">Muhasebe</option>
-            <option value="admin">Admin</option>
+            <option value="admin">Yönetici</option>
           </select>
           <button
             type="submit"
@@ -258,11 +260,11 @@ export default function UsersAdminPage() {
           className="space-y-3 border border-border-muted bg-surface p-4"
         >
           <p className="mono text-[10px] uppercase text-muted">
-            Admin allowlist (Google)
+            Yönetici izin listesi (Google)
           </p>
           <p className="text-xs text-muted">
-            E-posta eklenince Google admin girişi açılır; kayıtlıysa rol admin
-            yapılır.
+            E-posta eklenince Google yönetici girişi açılır; kayıtlıysa rol
+            yönetici yapılır.
           </p>
           <input
             required
@@ -282,7 +284,7 @@ export default function UsersAdminPage() {
             type="submit"
             className="border border-accent px-4 py-2 text-sm text-accent hover:bg-accent hover:text-white"
           >
-            Allowlist’e ekle
+            İzin listesine ekle
           </button>
           <ul className="mt-2 max-h-40 space-y-2 overflow-auto text-sm">
             {allowlist.map((a) => (
@@ -315,9 +317,9 @@ export default function UsersAdminPage() {
       <div className="flex flex-wrap gap-2">
         {(
           [
-            ['ops', 'Personel / Admin'],
+            ['ops', 'Personel / Yönetici'],
             ['customer', 'Müşteriler'],
-            ['admin', 'Adminler'],
+            ['admin', 'Yöneticiler'],
             ['staff', 'Personel'],
             ['accountant', 'Muhasebe'],
             ['all', 'Tümü'],
@@ -354,7 +356,7 @@ export default function UsersAdminPage() {
       {loading ? (
         <p className="text-sm text-muted">Yükleniyor…</p>
       ) : (
-        <div className="overflow-x-auto border border-border-muted">
+        <div className="overflow-x-auto rounded-2xl border border-border-muted">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border-muted text-left text-muted">

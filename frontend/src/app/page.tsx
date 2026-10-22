@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { BenefitsBar } from "@/components/BenefitsBar";
+import { HomeStickyCta } from "@/components/HomeStickyCta";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { FlashDealsBanner } from "@/components/FlashDealsBanner";
@@ -37,42 +38,42 @@ const HOME_CATEGORY_HUB: {
     fallbackName: "Kilo Kontrolü",
     blurb: "Formül ve program ürünleri",
     icon: "⚖️",
-    hover: "hover:bg-secondary-container/25",
+    hover: "hover:bg-primary-fixed/40",
   },
   {
     slug: "icecekler",
     fallbackName: "İçecekler",
     blurb: "Aloe, çay ve lifli içecekler",
     icon: "🍵",
-    hover: "hover:bg-primary-fixed/25",
+    hover: "hover:bg-flash-soft/80",
   },
   {
     slug: "avantajli-setler",
     fallbackName: "Hediyeli Setler",
-    blurb: "Shaker hediyeli paketler",
+    blurb: "Karıştırıcı hediyeli paketler",
     icon: "🎁",
-    hover: "hover:bg-tertiary-fixed/30",
+    hover: "hover:bg-tertiary-fixed/70",
   },
   {
     slug: "takviye-edici",
     fallbackName: "Takviye Edici",
     blurb: "Vitamin ve mineral",
     icon: "💊",
-    hover: "hover:bg-secondary-container/25",
+    hover: "hover:bg-surface-container",
   },
   {
     slug: "sporcu-urunleri",
     fallbackName: "Sporcu Ürünleri",
     blurb: "Protein ve performans",
     icon: "💪",
-    hover: "hover:bg-surface-container-high",
+    hover: "hover:bg-primary-fixed/25",
   },
   {
     slug: "atistirmalik",
     fallbackName: "Atıştırmalık",
     blurb: "Protein bar ve pratik atıştırmalık",
     icon: "🥜",
-    hover: "hover:bg-tertiary-fixed/20",
+    hover: "hover:bg-tertiary-fixed/45",
   },
 ];
 
@@ -97,7 +98,7 @@ const JOURNEY = [
 const TESTIMONIALS = [
   {
     name: "Ayşe K.",
-    text: "Set önerisi netti, shaker hediyeli paketle başladım. Takip mesajları motivasyonumu yüksek tuttu.",
+    text: "Set önerisi netti, karıştırıcı hediyeli paketle başladım. Takip mesajları motivasyonumu yüksek tuttu.",
     meta: "Kilo yönetimi · 6 hafta",
   },
   {
@@ -116,12 +117,22 @@ const FALLBACK_FAQ = [
   {
     question: "Ürünler orijinal mi?",
     answer:
-      "Evet. Satılan ürünler orijinal Herbalife Nutrition ürünleridir. Bu site bağımsız bir distribütöre aittir.",
+      "Evet. Satılan ürünler orijinal Herbalife Nutrition ürünleridir. Bu site bağımsız bir distribütöre aittir; resmi Herbalife sitesi değildir.",
   },
   {
     question: "Kargo ne kadar sürer?",
     answer:
       "Ödeme onayından sonra siparişler genellikle 1–3 iş günü içinde kargoya verilir. Takip kodunu bildirimle paylaşıyoruz.",
+  },
+  {
+    question: "Nasıl ödeme yaparım?",
+    answer:
+      "Kart ile PayTR güvenli ödeme altyapısı kullanılır. Kapıda ödeme yoktur. Kupon kodunuz varsa ödeme adımında uygulayabilirsiniz.",
+  },
+  {
+    question: "İade / cayma hakkım var mı?",
+    answer:
+      "Mesafeli satışta 14 gün cayma hakkı geçerlidir. Koşullar İptal ve İade sayfasında özetlenir; sipariş numaranızla başvurabilirsiniz.",
   },
   {
     question: "Beslenme takibi nedir?",
@@ -131,7 +142,7 @@ const FALLBACK_FAQ = [
   {
     question: "Hangi paketi seçmeliyim?",
     answer:
-      "Hedefinize göre avantajlı setler sunuyoruz. WhatsApp’tan ücretsiz ürün danışmanlığı alabilirsiniz.",
+      "Hedefinize göre avantajlı setler sunuyoruz. WhatsApp’tan ürün danışmanlığı alabilirsiniz — ortalama yanıt süremiz bir saatten kısadır.",
   },
 ];
 
@@ -186,7 +197,7 @@ export default async function HomePage() {
   const promo = sectionContent(sections, "promo", {
     title: "Özel Avantaj Kampanyası",
     badge: "FIRSAT",
-    body: "Seçili setlerde hediye avantajı ve ücretsiz kargo.",
+    body: "Seçili setlerde hediye avantajı ve kargo fırsatları.",
     couponCode: "SAGLIK2026",
     endsAt: "",
   });
@@ -225,7 +236,7 @@ export default async function HomePage() {
     },
     {
       image: "/images/products/formul-1-shake.png",
-      title: "Formül 1 Shake",
+      title: "Formül 1",
       subtitle: "Günlük beslenme",
       href: "/urunler/kategori/kilo-kontrolu",
     },
@@ -237,7 +248,7 @@ export default async function HomePage() {
     },
     {
       image: "/images/products/2026-paket-3-shaker-hediyeli.png",
-      title: "Shaker hediyeli paket",
+      title: "Karıştırıcı hediyeli paket",
       subtitle: "Kampanya",
       href: "/urunler/kategori/avantajli-setler",
     },
@@ -263,6 +274,7 @@ export default async function HomePage() {
 
   return (
     <div className="pb-16">
+      <HomeStickyCta whatsappUrl={waUrl} />
       {faqLd ? <JsonLd data={faqLd} /> : null}
 
       <section className="border-b border-outline-variant bg-white">
@@ -307,6 +319,45 @@ export default async function HomePage() {
 
       <section className="page-shell pb-8 pt-8">
         <TrustMarquee />
+      </section>
+
+      <section className="page-shell pb-8">
+        <Reveal>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="font-display text-xl font-bold text-on-surface md:text-2xl">
+                Hedefine göre başla
+              </h2>
+              <p className="mt-1 text-sm text-on-surface-variant">
+                Tek tıkla doğru kategoriye git — kararsızsan WhatsApp’tan danış.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {[
+                {
+                  href: "/urunler/kategori/kilo-kontrolu",
+                  label: "Kilo yönetimi",
+                },
+                {
+                  href: "/urunler/kategori/sporcu-urunleri",
+                  label: "Enerji & spor",
+                },
+                {
+                  href: "/urunler/kategori/avantajli-setler",
+                  label: "Yeni başlayan seti",
+                },
+              ].map((chip) => (
+                <Link
+                  key={chip.href}
+                  href={chip.href}
+                  className="rounded-full border border-outline-variant bg-white px-4 py-2 text-sm font-semibold text-on-surface transition-colors hover:border-primary hover:bg-primary-fixed hover:text-primary"
+                >
+                  {chip.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       <section className="page-shell pb-6">
@@ -387,7 +438,7 @@ export default async function HomePage() {
               En çok tercih edilen hediyeli paketler
             </h2>
             <p className="mt-1 text-sm text-on-surface-variant">
-              Tüm setlerde orijinal shaker hediyesi dahildir
+              Tüm setlerde orijinal karıştırıcı hediyesi dahildir
             </p>
           </div>
           <Link
@@ -429,7 +480,7 @@ export default async function HomePage() {
         />
         {!featured.items.length && !gifted.items.length ? (
           <p className="mt-4 rounded-xl bg-surface-container-low p-8 text-center text-sm text-on-surface-variant">
-            Ürünler yakında eklenecek. Admin panelinden ürün ekleyebilirsiniz.
+            Ürünler yakında eklenecek. Yönetim panelinden ürün ekleyebilirsiniz.
           </p>
         ) : null}
       </section>
@@ -539,7 +590,7 @@ export default async function HomePage() {
           <div className="grid grid-cols-2 gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-low px-6 py-8 md:grid-cols-4 md:gap-6 md:px-10">
             {[
               { value: 1200, suffix: "+", label: "Mutlu müşteri" },
-              { value: 48, suffix: "s", label: "Ortalama kargo" },
+              { value: 48, suffix: " sa", label: "Ortalama kargo" },
               { value: 100, suffix: "%", label: "Orijinal ürün" },
               { value: 7, suffix: "/24", label: "Koç desteği" },
             ].map((stat) => (
@@ -563,14 +614,14 @@ export default async function HomePage() {
               Misafirlerimiz ne diyor?
             </h2>
             <p className="text-sm text-on-surface-variant">
-              Gerçek deneyimler, sürdürülebilir sonuçlar
+              Örnek deneyimler — Google ve ürün yorumlarında daha fazlası
             </p>
           </div>
           <Link
             href="/yorum"
             className="text-sm font-semibold text-primary hover:underline"
           >
-            Siz de yazın →
+            Google’da değerlendir →
           </Link>
         </div>
         <div className="grid gap-4 md:grid-cols-3">

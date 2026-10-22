@@ -18,7 +18,6 @@ import {
   InitializePaymentDto,
   PaymentCallbackDto,
   RetryPaymentDto,
-  RevenuecatConfirmDto,
 } from '@modules/payments/dto/payments.dto';
 import { Public } from '@common/decorators/public.decorator';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
@@ -122,42 +121,6 @@ export class PaymentsController {
   ) {
     await this.paytrService.handleNotification(body || {});
     return res.status(200).send('OK');
-  }
-
-  @Public()
-  @Post('revenuecat/confirm')
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary:
-      'Legacy: RevenueCat satın alma doğrula (mobil checkout artık PayTR)',
-  })
-  confirmRevenuecat(@Body() dto: RevenuecatConfirmDto) {
-    return this.paymentsService.confirmRevenuecatPurchase(dto);
-  }
-
-  @Public()
-  @Get('revenuecat/status')
-  @ApiOperation({ summary: 'Legacy: RevenueCat istemci durumu' })
-  revenuecatStatus() {
-    return this.paymentsService.revenuecatClientStatus();
-  }
-
-  @Public()
-  @Post('revenuecat/abandon')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Legacy: RevenueCat pending sipariş iptali' })
-  abandonRevenuecat(@Body() dto: RevenuecatConfirmDto) {
-    return this.paymentsService.abandonRevenuecatOrder(dto.orderId);
-  }
-
-  @Public()
-  @Post('revenuecat/webhook')
-  @ApiOperation({ summary: 'Legacy: RevenueCat webhook' })
-  async revenuecatWebhook(
-    @Body() body: Record<string, unknown>,
-    @Headers('authorization') authHeader?: string,
-  ) {
-    return this.paymentsService.handleRevenuecatWebhook(body, authHeader);
   }
 
   @Public()

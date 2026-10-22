@@ -7,7 +7,7 @@ export function PageBreadcrumb({ items }: { items: BreadcrumbItem[] }) {
 
   return (
     <nav
-      aria-label="Breadcrumb"
+      aria-label="Sayfa yolu"
       className="border-b border-outline-variant bg-white"
     >
       <ol className="page-shell flex flex-wrap items-center gap-x-2 gap-y-1 py-3 text-sm text-on-surface-variant">

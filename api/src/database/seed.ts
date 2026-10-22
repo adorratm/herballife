@@ -12,6 +12,7 @@ import { Product } from '@entities/product.entity';
 import { ProductVariant } from '@entities/product-variant.entity';
 import { LegalDocument } from '@entities/legal-document.entity';
 import { BlogPost } from '@entities/blog-post.entity';
+import { ProductReview } from '@entities/product-review.entity';
 import { Coupon, CouponType } from '@entities/coupon.entity';
 import { ShippingProviderConfig } from '@entities/shipping-provider-config.entity';
 import { ShippingProviderCode } from '@entities/shipment.entity';
@@ -672,6 +673,70 @@ async function seed() {
       relatedProductSlugs: ['2026-paket-1-shaker-hediyeli'],
       relatedCategorySlugs: ['avantajli-setler'],
     },
+    {
+      slug: 'sabah-rutininde-protein-shake',
+      title: 'Sabah Rutininde Protein Shake',
+      excerpt:
+        'Yoğun günlerde pratik öğün: 5 dakikada hazır, tok tutan başlangıç.',
+      content: `<p>Sabah acele edenler için Formül 1 shake, kahvaltıyı hızlandırır. Shaker’ı gece önceden hazır tutmak, alışkanlığı kolaylaştırır.</p>
+<p>Yanına meyve veya az yağlı süt ekleyerek doygunluğu artırabilirsiniz. Programınızı koçunuzla kişiselleştirin.</p>`,
+      coverImageUrl: apiStockImage('product-1'),
+      authorName: 'Emine Özberk',
+      tags: ['rutin', 'Formül 1', 'kahvaltı'],
+      seoTitle: 'Sabah Rutininde Protein Shake',
+      seoDescription:
+        'Sabah protein shake rutini: hızlı hazırlık ve sürdürülebilir alışkanlık ipuçları.',
+      relatedProductSlugs: ['formul-1-shake'],
+      relatedCategorySlugs: ['kilo-kontrolu'],
+    },
+    {
+      slug: 'kargo-ve-teslimat-sureci',
+      title: 'Sipariş Sonrası Kargo Süreci',
+      excerpt:
+        'Ödeme onayı, paketleme ve takip kodu — adım adım ne beklemelisiniz?',
+      content: `<p>Ödeme onayından sonra siparişler genelde 1–3 iş günü içinde kargoya verilir. Takip kodunu bildirim ve hesabınızdan görebilirsiniz.</p>
+<p>Mağazadan teslim seçeneği varsa hazır olduğunda sizi bilgilendiririz. Sorularınız için WhatsApp hattımız açık.</p>`,
+      coverImageUrl: apiStockImage('workshop'),
+      authorName: 'Emine Özberk',
+      tags: ['kargo', 'sipariş'],
+      seoTitle: 'Sipariş ve Kargo Süreci',
+      seoDescription:
+        'Herbal Ürünleri sipariş sonrası kargo ve takip süreci hakkında bilgilendirme.',
+      relatedProductSlugs: [],
+      relatedCategorySlugs: ['avantajli-setler'],
+    },
+    {
+      slug: 'iade-ve-cayma-hakki-ozeti',
+      title: 'İade ve Cayma Hakkı Özeti',
+      excerpt:
+        'Mesafeli satışta 14 gün — nasıl başvurulur, nelere dikkat edilir?',
+      content: `<p>Tüketiciler mesafeli satışta cayma hakkını kullanabilir. Ürünlerin açılmamış / hijyen şartlarına uygun olması gerekir; ayrıntılar İptal ve İade sayfasındadır.</p>
+<p>Başvuru için sipariş numaranız ve iletişim bilgileriniz yeterlidir. Koçluk desteği iade sürecinden bağımsızdır.</p>`,
+      coverImageUrl: apiStockImage('ethos'),
+      authorName: 'Emine Özberk',
+      tags: ['iade', 'yasal'],
+      seoTitle: 'İade ve Cayma Hakkı',
+      seoDescription:
+        '14 gün cayma hakkı ve iade başvurusu hakkında kısa özet.',
+      relatedProductSlugs: [],
+      relatedCategorySlugs: [],
+    },
+    {
+      slug: 'yeni-baslayanlar-icin-ilk-hafta',
+      title: 'Yeni Başlayanlar İçin İlk Hafta',
+      excerpt:
+        'Set aldınız — ilk 7 günde su, öğün ve takip nasıl kurulur?',
+      content: `<p>İlk hafta hedefi “mükemmel diyet” değil, düzen kurmaktır. Her gün Formül 1 öğünü, su kaydı ve akşam kısa yürüyüş iyi bir başlangıçtır.</p>
+<p>Hesabım → Beslenme Takibi’nden öğün fotoğrafı yükleyin; koçunuz onaylayıp yönlendirebilir.</p>`,
+      coverImageUrl: apiStockImage('hero'),
+      authorName: 'Emine Özberk',
+      tags: ['başlangıç', 'takip', 'setler'],
+      seoTitle: 'Yeni Başlayanlar İçin İlk Hafta',
+      seoDescription:
+        'Herbalife setiyle ilk hafta rutini: su, öğün ve koç takibi.',
+      relatedProductSlugs: ['2026-paket-1-shaker-hediyeli'],
+      relatedCategorySlugs: ['avantajli-setler'],
+    },
   ];
 
   const keepBlogSlugs = new Set(blogPosts.map((p) => p.slug));
@@ -812,7 +877,7 @@ async function seed() {
       const desiredHeader = [
         { href: '/urunler', label: 'Ürünler' },
         { href: '/hakkimizda', label: 'Hakkımızda' },
-        { href: '/blog', label: 'Blog' },
+        { href: '/blog', label: 'Yazılar' },
         { href: '/medya', label: 'Medya' },
         { href: '/sss', label: 'SSS' },
         { href: '/yorum', label: 'Yorumlar' },
@@ -826,7 +891,7 @@ async function seed() {
       }
       nav.footerNav =
         ensureLinks(nav.footerNav ?? [], [
-          { href: '/blog', label: 'Blog' },
+          { href: '/blog', label: 'Yazılar' },
           { href: '/medya', label: 'Medya' },
           { href: '/sss', label: 'SSS' },
           { href: '/odeme-bildirimi', label: 'Ödeme Bildirimi' },
@@ -845,6 +910,10 @@ async function seed() {
           }
           if (link.href === '/siparis-sorgula' && link.label === 'Sipariş') {
             link.label = 'Sipariş Sorgula';
+            changed = true;
+          }
+          if (link.href === '/blog' && link.label === 'Blog') {
+            link.label = 'Yazılar';
             changed = true;
           }
         }
@@ -1011,6 +1080,139 @@ async function seed() {
     );
     console.log('Demo customer:', demoEmail, '(şifre: Demo1234!)');
   }
+
+  // Demo ürün yorumları (öne çıkan ürünler)
+  const reviewAuthors: {
+    email: string;
+    firstName: string;
+    lastName: string;
+  }[] = [
+    { email: 'yorumcu1@herbalurunleri.local', firstName: 'Selin', lastName: 'A.' },
+    { email: 'yorumcu2@herbalurunleri.local', firstName: 'Can', lastName: 'D.' },
+    { email: 'yorumcu3@herbalurunleri.local', firstName: 'Zeynep', lastName: 'K.' },
+    { email: 'yorumcu4@herbalurunleri.local', firstName: 'Burak', lastName: 'T.' },
+  ];
+  const reviewUsers: User[] = [];
+  for (const a of reviewAuthors) {
+    let u = await em.findOne(User, { where: { email: a.email } });
+    if (!u) {
+      u = await em.save(
+        em.create(User, {
+          email: a.email,
+          passwordHash: await bcrypt.hash('Demo1234!', 12),
+          firstName: a.firstName,
+          lastName: a.lastName,
+          provider: AuthProvider.LOCAL,
+          role: UserRole.CUSTOMER,
+          emailVerified: true,
+          isActive: true,
+        }),
+      );
+    }
+    reviewUsers.push(u);
+  }
+
+  const reviewSeeds: {
+    productSlug: string;
+    reviews: { userIdx: number; rating: number; title: string; body: string }[];
+  }[] = [
+    {
+      productSlug: '2026-paket-1-shaker-hediyeli',
+      reviews: [
+        {
+          userIdx: 0,
+          rating: 5,
+          title: 'Başlangıç için ideal',
+          body: 'Shaker hediyeli setle başladım, takip mesajları motivasyonumu yüksek tuttu. Kargo hızlıydı.',
+        },
+        {
+          userIdx: 1,
+          rating: 5,
+          title: 'Net paket önerisi',
+          body: 'WhatsApp’tan danışınca hedefime göre set önerdiler. Ürünler orijinal, paketleme özenli.',
+        },
+        {
+          userIdx: 2,
+          rating: 4,
+          title: 'Tat ve doygunluk',
+          body: 'Formül 1’i her sabah kullanıyorum. İlk hafta alışmak biraz zaman aldı ama rutin oturdu.',
+        },
+      ],
+    },
+    {
+      productSlug: 'formul-1-shake',
+      reviews: [
+        {
+          userIdx: 1,
+          rating: 5,
+          title: 'Sabah rutini',
+          body: 'İşe gitmeden önce 5 dakikada hazırlanıyor. Sütle daha doyurucu oluyor.',
+        },
+        {
+          userIdx: 3,
+          rating: 4,
+          title: 'Pratik öğün',
+          body: 'Öğle yerine kullandığım günler daha tok hissediyorum. Koç desteği fark yaratıyor.',
+        },
+      ],
+    },
+    {
+      productSlug: '2026-paket-2-shaker-hediyeli',
+      reviews: [
+        {
+          userIdx: 2,
+          rating: 5,
+          title: 'Hediyeli set memnuniyeti',
+          body: 'Karıştırıcı hediyesi işime yaradı. Site üzerinden sipariş ve takip kolay.',
+        },
+        {
+          userIdx: 0,
+          rating: 5,
+          title: 'Tekrar sipariş',
+          body: 'İkinci setimi aldım. Fiyat/performans ve kişisel destek için tercih ediyorum.',
+        },
+      ],
+    },
+  ];
+
+  for (const block of reviewSeeds) {
+    const product = await em.findOne(Product, {
+      where: { slug: block.productSlug },
+    });
+    if (!product) continue;
+    for (const r of block.reviews) {
+      const user = reviewUsers[r.userIdx];
+      if (!user) continue;
+      const existing = await em.findOne(ProductReview, {
+        where: { productId: product.id, userId: user.id },
+      });
+      if (existing) continue;
+      await em.save(
+        em.create(ProductReview, {
+          productId: product.id,
+          userId: user.id,
+          rating: r.rating,
+          title: r.title,
+          body: r.body,
+          authorName: `${user.firstName} ${user.lastName}`.trim(),
+          isApproved: true,
+          isVerifiedPurchase: true,
+        }),
+      );
+    }
+    const raw = await em
+      .createQueryBuilder(ProductReview, 'r')
+      .select('AVG(r.rating)', 'avg')
+      .addSelect('COUNT(*)', 'count')
+      .where('r.product_id = :pid', { pid: product.id })
+      .andWhere('r.is_approved = true')
+      .getRawOne<{ avg: string; count: string }>();
+    const count = Number(raw?.count || 0);
+    product.ratingAvg = count ? Number(raw?.avg || 0).toFixed(2) : '0.00';
+    product.ratingCount = count;
+    await em.save(product);
+  }
+  console.log('Demo product reviews seeded');
 
   const paket = await em.findOne(Product, {
     where: { slug: '2026-paket-1-shaker-hediyeli' },

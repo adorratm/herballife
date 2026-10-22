@@ -421,15 +421,15 @@ export default function SiteSettingsPage() {
         </legend>
         <p className="text-xs text-muted">
           Dolu URL&apos;ler schema.org sameAs ve footer&apos;da görünür. Maps
-          profil linki (işletme hazır olunca) yerel SEO için önemlidir. Google
+          profil bağlantısı (işletme hazır olunca) yerel arama için önemlidir. Google
           yorum URL&apos;si /yorum sayfası ve QR için kullanılır.
         </p>
         {(
           [
-            ['instagram', 'Instagram URL'],
-            ['facebook', 'Facebook URL'],
+            ['instagram', 'Instagram bağlantısı'],
+            ['facebook', 'Facebook bağlantısı'],
             ['googleMaps', 'Google Maps / GBP URL'],
-            ['googleReviewUrl', 'Google yorum URL (g.page / search)'],
+            ['googleReviewUrl', 'Google yorum bağlantısı'],
           ] as const
         ).map(([key, label]) => (
           <label key={key} className="block text-sm">
@@ -491,7 +491,9 @@ export default function SiteSettingsPage() {
       </fieldset>
 
       <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="mono px-2 text-xs uppercase text-muted">Footer</legend>
+        <legend className="mono px-2 text-xs uppercase text-muted">
+          Alt bilgi
+        </legend>
         <label className="block text-sm">
           <span className="mono text-[10px] uppercase text-muted">Açıklama</span>
           <textarea
@@ -527,12 +529,12 @@ export default function SiteSettingsPage() {
           onChange={(header) => setNavigation((n) => ({ ...n, header }))}
         />
         <LinkListEditor
-          label="Footer navigasyon"
+          label="Alt bilgi menüsü"
           links={navigation.footerNav}
           onChange={(footerNav) => setNavigation((n) => ({ ...n, footerNav }))}
         />
         <LinkListEditor
-          label="Footer yasal linkler"
+          label="Alt bilgi yasal bağlantılar"
           links={navigation.footerLegal}
           onChange={(footerLegal) =>
             setNavigation((n) => ({ ...n, footerLegal }))

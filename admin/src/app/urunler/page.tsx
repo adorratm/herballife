@@ -259,7 +259,7 @@ function ProductsPageInner() {
         >;
       } catch {
         setError(
-          'Hepsiburada attributes geçerli bir JSON object olmalı (örn. {"00001STC":"250 gr"})',
+          'Hepsiburada özellik alanları geçerli bir JSON nesnesi olmalı (örn. {"00001STC":"250 gr"})',
         );
         setSaving(false);
         return;
@@ -382,7 +382,7 @@ function ProductsPageInner() {
                 void load();
               }
             }}
-            placeholder="Ad, slug, batch, köken…"
+            placeholder="Ad, kısa ad, parti, köken…"
             className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
           />
         </label>
@@ -447,7 +447,9 @@ function ProductsPageInner() {
             />
           </label>
           <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">Slug</span>
+            <span className="mono text-[10px] uppercase text-muted">
+              Kısa ad (URL)
+            </span>
             <input
               required
               value={form.slug}
@@ -487,7 +489,7 @@ function ProductsPageInner() {
           </label>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
-              SEO başlık
+              Arama başlığı
             </span>
             <input
               value={form.seoTitle}
@@ -501,7 +503,7 @@ function ProductsPageInner() {
           </label>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
-              SEO açıklama
+              Arama açıklaması
             </span>
             <input
               value={form.seoDescription}
@@ -597,7 +599,7 @@ function ProductsPageInner() {
           </label>
           <label className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
-              Hepsiburada leaf kategori ID
+              Hepsiburada alt kategori kimliği
             </span>
             <input
               value={form.hepsiburadaCategoryId}
@@ -607,17 +609,17 @@ function ProductsPageInner() {
                   hepsiburadaCategoryId: e.target.value,
                 }))
               }
-              placeholder="Örn. 18021982 — HB developer portal leaf kategori"
+              placeholder="Örn. 18021982 — HB geliştirici portalı alt kategori"
               className="mt-1 w-full border border-border-muted bg-background px-3 py-2 mono text-sm"
             />
             <span className="mt-1 block text-[11px] text-muted">
               Opsiyonel. Boş bırakılırsa Hepsiburada’ya gönderilmez; ID
-              girildiğinde pazaryeri push bu kategoriyi kullanır.
+              girildiğinde pazaryeri gönderimi bu kategoriyi kullanır.
             </span>
           </label>
           <label className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
-              Hepsiburada attributes (JSON)
+              Hepsiburada özellikler (JSON)
             </span>
             <textarea
               value={form.hepsiburadaAttributesJson}
@@ -730,7 +732,7 @@ function ProductsPageInner() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, brewMethod: e.target.value }))
               }
-              placeholder="Shake, çay, karışım…"
+              placeholder="İçecek, çay, karışım…"
               className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
             />
           </label>
@@ -797,7 +799,7 @@ function ProductsPageInner() {
           <div className="md:col-span-2 space-y-3 border border-border-muted p-3">
             <div className="flex items-center justify-between gap-2">
               <span className="mono text-[10px] uppercase text-muted">
-                Varyantlar (paket / SKU)
+                Varyantlar (paket / stok kodu)
               </span>
               <button
                 type="button"
@@ -813,7 +815,7 @@ function ProductsPageInner() {
               </button>
             </div>
             <p className="text-[11px] text-muted">
-              Her satır ayrı paket boyutu / SKU’dur (ör. 550g, 2’li set).
+              Her satır ayrı paket boyutu / stok kodudur (ör. 550g, 2’li set).
             </p>
             {form.variants.map((v, i) => (
               <div
@@ -821,7 +823,7 @@ function ProductsPageInner() {
                 className="grid gap-2 border border-border-muted/60 p-2 md:grid-cols-3 lg:grid-cols-6"
               >
                 <input
-                  placeholder="SKU (boş bırakılırsa otomatik)"
+                  placeholder="Stok kodu (boş bırakılırsa otomatik)"
                   value={v.sku}
                   onChange={(e) =>
                     setForm((f) => {

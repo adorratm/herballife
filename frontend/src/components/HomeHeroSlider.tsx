@@ -40,11 +40,11 @@ export function HomeHeroSlider({ slides, intervalMs = 5200 }: Props) {
 
   return (
     <div
-      className="relative overflow-hidden border border-outline-variant bg-surface-container-low shadow-md"
+      className="relative overflow-hidden rounded-2xl border border-outline-variant bg-surface-container-low shadow-md"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="relative aspect-[16/10] w-full bg-[linear-gradient(145deg,#eef3f0,#fff)] md:aspect-[16/11]">
+      <div className="relative aspect-16/10 w-full bg-[linear-gradient(145deg,#eef3f0,#fff)] md:aspect-16/11">
         {slides.map((s, i) => (
           <div
             key={`${s.image}-${i}`}
@@ -70,7 +70,7 @@ export function HomeHeroSlider({ slides, intervalMs = 5200 }: Props) {
               type="button"
               aria-label="Önceki"
               onClick={() => go(index - 1)}
-              className="absolute left-2 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center border border-outline-variant bg-white text-lg font-bold text-on-surface shadow-sm hover:bg-primary hover:text-on-primary"
+              className="absolute left-2 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-outline-variant bg-white text-lg font-bold text-on-surface shadow-sm transition-colors hover:bg-primary hover:text-on-primary"
             >
               ‹
             </button>
@@ -78,7 +78,7 @@ export function HomeHeroSlider({ slides, intervalMs = 5200 }: Props) {
               type="button"
               aria-label="Sonraki"
               onClick={() => go(index + 1)}
-              className="absolute right-2 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center border border-outline-variant bg-white text-lg font-bold text-on-surface shadow-sm hover:bg-primary hover:text-on-primary"
+              className="absolute right-2 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-outline-variant bg-white text-lg font-bold text-on-surface shadow-sm transition-colors hover:bg-primary hover:text-on-primary"
             >
               ›
             </button>
@@ -116,7 +116,7 @@ export function HomeHeroSlider({ slides, intervalMs = 5200 }: Props) {
           ) : null}
           <Link
             href={slide.href}
-            className="inline-flex cursor-pointer bg-primary px-3.5 py-2 text-xs font-bold text-on-primary hover:bg-primary-container"
+            className="inline-flex cursor-pointer bg-primary px-3.5 py-2 text-xs font-bold text-on-primary hover:bg-primary-container rounded-full"
           >
             İncele →
           </Link>

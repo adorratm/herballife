@@ -23,8 +23,6 @@ export type DashboardDayPoint = {
   revenue: number;
   /** Manuel kasa girişi (nakit/POS kayıt) */
   cashRevenue: number;
-  /** App Store / Google Play (RevenueCat) */
-  revenuecatRevenue: number;
 };
 
 export type DashboardStats = {
@@ -33,8 +31,6 @@ export type DashboardStats = {
   revenueToday: number;
   /** Bugünkü manuel kasa girişi toplamı */
   cashRevenueToday: number;
-  /** Bugünkü RevenueCat (mobil mağaza) cirosu */
-  revenuecatRevenueToday: number;
   /** Mağaza sipariş + manuel kasa */
   totalRevenueToday: number;
   pendingOrders: number;
@@ -72,12 +68,10 @@ export class AdminService {
       ordersToday,
       lowStockRows,
       revenueRow,
-      revenuecatTodayRow,
       cashTodayRow,
       pendingOrders,
       accounts,
       dailyRows,
-      revenuecatDailyRows,
       cashDailyRows,
       statusRows,
       topRows,
@@ -90,15 +84,6 @@ export class AdminService {
         .createQueryBuilder(Order, 'o')
         .select('COALESCE(SUM(o.total), 0)', 'sum')
         .where('o.created_at >= :start', { start })
-        .andWhere("o.status NOT IN ('cancelled', 'pending_payment')")
-        .getRawOne<{ sum: string }>(),
-      this.em
-        .createQueryBuilder(Order, 'o')
-        .innerJoin('o.payment', 'p')
-        .select('COALESCE(SUM(o.total), 0)', 'sum')
-        .where('o.created_at >= :start', { start })
-        .andWhere("p.provider = 'revenuecat'")
-        .andWhere("p.status = 'success'")
         .andWhere("o.status NOT IN ('cancelled', 'pending_payment')")
         .getRawOne<{ sum: string }>(),
       this.em
@@ -121,21 +106,6 @@ export class AdminService {
                COALESCE(SUM(CASE WHEN status::text NOT IN ('cancelled', 'pending_payment') THEN total ELSE 0 END), 0) AS revenue
         FROM orders
         WHERE created_at >= $1
-        GROUP BY 1
-        ORDER BY 1
-        `,
-        [start14],
-      ),
-      this.em.query<{ day: string; revenuecat: string }[]>(
-        `
-        SELECT to_char(date_trunc('day', o.created_at AT TIME ZONE 'Europe/Istanbul'), 'YYYY-MM-DD') AS day,
-               COALESCE(SUM(o.total), 0) AS revenuecat
-        FROM orders o
-        INNER JOIN payments p ON p.order_id = o.id
-        WHERE p.provider = 'revenuecat'
-          AND p.status = 'success'
-          AND o.status::text NOT IN ('cancelled', 'pending_payment')
-          AND o.created_at >= $1
         GROUP BY 1
         ORDER BY 1
         `,
@@ -179,7 +149,6 @@ export class AdminService {
         orders: number;
         revenue: number;
         cashRevenue: number;
-        revenuecatRevenue: number;
       }
     >(
       dailyRows.map((r) => [
@@ -188,33 +157,20 @@ export class AdminService {
           orders: Number(r.orders),
           revenue: Number(r.revenue),
           cashRevenue: 0,
-          revenuecatRevenue: 0,
         },
       ]),
     );
-    for (const row of revenuecatDailyRows) {
-      const prev = dailyMap.get(row.day) || {
-        orders: 0,
-        revenue: 0,
-        cashRevenue: 0,
-        revenuecatRevenue: 0,
-      };
-      prev.revenuecatRevenue = Number(row.revenuecat) || 0;
-      dailyMap.set(row.day, prev);
-    }
     for (const row of cashDailyRows) {
       const prev = dailyMap.get(row.day) || {
         orders: 0,
         revenue: 0,
         cashRevenue: 0,
-        revenuecatRevenue: 0,
       };
       prev.cashRevenue = Number(row.cash) || 0;
       dailyMap.set(row.day, prev);
     }
 
     const revenueToday = Number(revenueRow?.sum || 0);
-    const revenuecatRevenueToday = Number(revenuecatTodayRow?.sum || 0);
     const cashRevenueToday = Number(cashTodayRow?.sum || 0);
 
     return {
@@ -222,7 +178,6 @@ export class AdminService {
       lowStockCount: lowStockRows.length,
       revenueToday,
       cashRevenueToday,
-      revenuecatRevenueToday,
       totalRevenueToday: revenueToday + cashRevenueToday,
       pendingOrders,
       marketplaceSync: accounts.map((a) => ({
@@ -270,7 +225,6 @@ function fillDays(
       orders: number;
       revenue: number;
       cashRevenue: number;
-      revenuecatRevenue: number;
     }
   >,
 ): DashboardDayPoint[] {
@@ -283,7 +237,6 @@ function fillDays(
       orders: row?.orders ?? 0,
       revenue: row?.revenue ?? 0,
       cashRevenue: row?.cashRevenue ?? 0,
-      revenuecatRevenue: row?.revenuecatRevenue ?? 0,
     });
   }
   return out;

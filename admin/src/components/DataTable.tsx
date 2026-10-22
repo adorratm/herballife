@@ -25,22 +25,22 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   if (!rows.length) {
     return (
-      <div className="animate-fade-up rounded-xl border border-border-muted bg-surface px-4 py-12 text-center shadow-sm">
+      <div className="admin-table-wrap animate-fade-up rounded-2xl border border-border bg-surface px-4 py-12 text-center shadow-sm">
         <p className="text-sm font-medium text-muted">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="animate-fade-up overflow-hidden rounded-xl border border-border-muted bg-surface shadow-sm">
+    <div className="admin-table-wrap animate-fade-up overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-180 border-collapse text-left text-sm">
+        <table className="admin-table w-full min-w-180 text-left text-sm">
           <thead>
-            <tr className="border-b border-border-muted bg-surface-high/80">
+            <tr>
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className={`px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-muted ${col.className || ''}`}
+                  className={`px-4 py-3 ${col.className || ''}`}
                 >
                   {col.header}
                 </th>
@@ -72,10 +72,10 @@ export function DataTable<T>({
                   }
                   aria-selected={selected || undefined}
                   className={[
-                    'row-motion border-b border-border-muted last:border-b-0',
+                    'row-motion',
                     selected
                       ? 'bg-accent/10 ring-1 ring-inset ring-accent/40'
-                      : 'bg-surface hover:bg-surface-high/70',
+                      : '',
                     clickable ? 'cursor-pointer' : '',
                   ]
                     .filter(Boolean)

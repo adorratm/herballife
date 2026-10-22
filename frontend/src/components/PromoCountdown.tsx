@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 
 type Parts = { days: number; hours: number; mins: number; secs: number };
 
-function partsUntil(end: Date): Parts {
-  const diff = Math.max(0, end.getTime() - Date.now());
+function partsUntil(end: Date, nowMs: number): Parts {
+  const diff = Math.max(0, end.getTime() - nowMs);
   const days = Math.floor(diff / 86400000);
   const hours = Math.floor((diff % 86400000) / 3600000);
   const mins = Math.floor((diff % 3600000) / 60000);
@@ -15,6 +15,17 @@ function partsUntil(end: Date): Parts {
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
+}
+
+function resolveEnd(endsAt?: string | null): Date {
+  if (endsAt?.trim()) {
+    const d = new Date(endsAt);
+    if (!Number.isNaN(d.getTime())) return d;
+  }
+  const d = new Date();
+  d.setMonth(d.getMonth() + 1, 0);
+  d.setHours(23, 59, 59, 999);
+  return d;
 }
 
 type Props = {
@@ -33,34 +44,32 @@ export function PromoCountdown({
   body = "Seçili setlerde hediye avantajı ve ücretsiz kargo.",
   couponCode = "SAGLIK2026",
 }: Props) {
-  const end = useMemo(() => {
-    if (endsAt?.trim()) {
-      const d = new Date(endsAt);
-      if (!Number.isNaN(d.getTime())) return d;
-    }
-    const d = new Date();
-    d.setMonth(d.getMonth() + 1, 0);
-    d.setHours(23, 59, 59, 999);
-    return d;
-  }, [endsAt]);
-
-  const [parts, setParts] = useState<Parts>(() => partsUntil(end));
+  const end = useMemo(() => resolveEnd(endsAt), [endsAt]);
+  /** SSR’de sabit placeholder — Date.now() hydration mismatch önler */
+  const [parts, setParts] = useState<Parts | null>(null);
 
   useEffect(() => {
-    setParts(partsUntil(end));
-    const id = window.setInterval(() => setParts(partsUntil(end)), 1000);
+    setParts(partsUntil(end, Date.now()));
+    const id = window.setInterval(
+      () => setParts(partsUntil(end, Date.now())),
+      1000,
+    );
     return () => window.clearInterval(id);
   }, [end]);
 
   const cells: { label: string; value: string; accent?: boolean }[] = [
-    { label: "Gün", value: pad(parts.days) },
-    { label: "Saat", value: pad(parts.hours) },
-    { label: "Dakika", value: pad(parts.mins) },
-    { label: "Saniye", value: pad(parts.secs), accent: true },
+    { label: "Gün", value: parts ? pad(parts.days) : "--" },
+    { label: "Saat", value: parts ? pad(parts.hours) : "--" },
+    { label: "Dakika", value: parts ? pad(parts.mins) : "--" },
+    {
+      label: "Saniye",
+      value: parts ? pad(parts.secs) : "--",
+      accent: true,
+    },
   ];
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-flash bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-flash/30 bg-white shadow-sm">
       <div className="flex flex-col gap-5 p-5 md:flex-row md:items-center md:justify-between md:p-6">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -74,7 +83,7 @@ export function PromoCountdown({
           <p className="mt-2 text-sm font-medium text-on-surface-variant">{body}</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2" aria-live="polite">
           {cells.map((c) => (
             <div
               key={c.label}
@@ -113,34 +122,25 @@ export function PromoCountdown({
 
 /** Üst şerit için kompakt günün fırsatı sayacı */
 export function DealStripCountdown({ endsAt }: { endsAt?: string | null }) {
-  const end = useMemo(() => {
-    if (endsAt?.trim()) {
-      const d = new Date(endsAt);
-      if (!Number.isNaN(d.getTime())) return d;
-    }
-    // CMS promo.endsAt yoksa ay sonu kampanya (seed ile uyumlu)
-    const d = new Date();
-    d.setMonth(d.getMonth() + 1, 0);
-    d.setHours(23, 59, 59, 999);
-    return d;
-  }, [endsAt]);
-
-  const [parts, setParts] = useState<Parts>(() => partsUntil(end));
+  const end = useMemo(() => resolveEnd(endsAt), [endsAt]);
+  const [parts, setParts] = useState<Parts | null>(null);
 
   useEffect(() => {
-    setParts(partsUntil(end));
-    const id = window.setInterval(() => setParts(partsUntil(end)), 1000);
+    setParts(partsUntil(end, Date.now()));
+    const id = window.setInterval(
+      () => setParts(partsUntil(end, Date.now())),
+      1000,
+    );
     return () => window.clearInterval(id);
   }, [end]);
 
   return (
-    <span
-      className="inline-flex items-center gap-2 rounded-full bg-flash px-3 py-1 text-xs font-bold text-white"
-      suppressHydrationWarning
-    >
-      <span>Flash</span>
-      <strong className="tabular-nums tracking-wide" suppressHydrationWarning>
-        {pad(parts.hours)}:{pad(parts.mins)}:{pad(parts.secs)}
+    <span className="inline-flex items-center gap-2 rounded-full bg-flash px-3 py-1 text-xs font-bold text-white">
+      <span>Fırsat</span>
+      <strong className="tabular-nums tracking-wide">
+        {parts
+          ? `${pad(parts.hours)}:${pad(parts.mins)}:${pad(parts.secs)}`
+          : "--:--:--"}
       </strong>
     </span>
   );

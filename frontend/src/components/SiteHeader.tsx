@@ -24,6 +24,8 @@ import {
   ensureWishlistIds,
   subscribeWishlist,
 } from "@/lib/wishlist";
+import { freeShippingThreshold } from "@/lib/shipping";
+import { formatMoney } from "@/lib/format";
 
 type Props = {
   settings?: SiteSettings;
@@ -174,7 +176,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                           key={`m-cat-${chip.href}`}
                           href={chip.href}
                           onClick={() => setOpen(false)}
-                          className={`group overflow-hidden border ${
+                          className={`group overflow-hidden rounded-xl border ${
                             active
                               ? "border-primary ring-1 ring-primary"
                               : chip.accent
@@ -182,7 +184,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                                 : "border-outline-variant"
                           }`}
                         >
-                          <div className="relative aspect-[5/3] bg-surface-container-low">
+                          <div className="relative aspect-5/3 bg-surface-container-low">
                             <Image
                               src={chip.image}
                               alt=""
@@ -191,7 +193,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                               sizes="40vw"
                             />
                             {chip.accent ? (
-                              <span className="absolute left-0 top-0 bg-flash px-2 py-0.5 text-[10px] font-bold text-white">
+                              <span className="absolute left-2 top-2 rounded-full bg-flash px-2 py-0.5 text-[10px] font-bold text-white">
                                 Fırsat
                               </span>
                             ) : null}
@@ -305,7 +307,9 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
         <div className="hidden bg-primary text-on-primary lg:block">
           <div className="page-shell flex items-center justify-between gap-4 py-2 text-[13px]">
             <p className="font-semibold text-on-primary">
-              Ücretsiz kargo · Güvenli ödeme
+              {freeShippingThreshold() > 0
+                ? `${formatMoney(freeShippingThreshold())} üzeri ücretsiz kargo · PayTR güvenli ödeme`
+                : "Hızlı kargo · PayTR güvenli ödeme"}
             </p>
             <div className="flex items-center gap-4">
               <DealStripCountdown />
@@ -337,7 +341,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
         <div className="page-shell grid grid-cols-[1fr_auto] items-center gap-2 py-2.5 sm:py-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-2 xl:gap-3 xl:py-3.5">
           <Link
             href="/"
-            className="flex min-w-0 items-center gap-2.5 justify-self-start lg:max-w-[11rem] xl:max-w-[15rem] 2xl:max-w-none"
+            className="flex min-w-0 items-center gap-2.5 justify-self-start lg:max-w-44 xl:max-w-60 2xl:max-w-none"
           >
             {brand.logoUrl ? (
               <Image
@@ -392,8 +396,8 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
 
               {catOpen ? (
                 <div className="absolute left-0 top-full z-50 max-w-[calc(100vw-1.25rem)] w-[min(34rem,calc(100vw-1.5rem))] pt-2 xl:w-[min(46rem,calc(100vw-2rem))] 2xl:w-[min(56rem,calc(100vw-3rem))]">
-                  <div className="border border-outline-variant bg-white shadow-xl">
-                    <div className="flex items-center justify-between gap-2 border-b border-outline-variant bg-[#f7f8f6] px-3 py-2.5 xl:gap-3 xl:px-5 xl:py-3.5">
+                  <div className="overflow-hidden rounded-2xl border border-outline-variant bg-white shadow-xl">
+                    <div className="flex items-center justify-between gap-2 border-b border-outline-variant bg-surface-container-low px-3 py-2.5 xl:gap-3 xl:px-5 xl:py-3.5">
                       <div className="min-w-0">
                         <p className="hidden text-[10px] font-bold uppercase tracking-wide text-primary xl:block">
                           Katalog
@@ -404,7 +408,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                       </div>
                       <Link
                         href="/urunler"
-                        className="shrink-0 cursor-pointer border border-primary bg-primary px-2.5 py-1.5 text-[11px] font-bold text-on-primary hover:bg-primary-container xl:px-3.5 xl:py-2 xl:text-sm"
+                        className="shrink-0 cursor-pointer rounded-full border border-primary bg-primary px-2.5 py-1.5 text-[11px] font-bold text-on-primary transition-colors hover:bg-primary-container xl:px-3.5 xl:py-2 xl:text-sm"
                       >
                         Tüm ürünler →
                       </Link>
@@ -416,7 +420,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                           <Link
                             key={`mega-${chip.href}`}
                             href={chip.href}
-                            className={`group flex cursor-pointer flex-col overflow-hidden border bg-white transition-colors hover:border-primary ${
+                            className={`group flex cursor-pointer flex-col overflow-hidden rounded-xl border bg-white transition-colors hover:border-primary ${
                               active
                                 ? "border-primary"
                                 : chip.accent
@@ -424,7 +428,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                                   : "border-outline-variant"
                             }`}
                           >
-                            <div className="relative aspect-[5/4] bg-[linear-gradient(145deg,#eef3f0,#fff)] xl:aspect-[4/3]">
+                            <div className="relative aspect-5/4 bg-[linear-gradient(145deg,#eef3f0,#fff)] xl:aspect-4/3">
                               <Image
                                 src={chip.image}
                                 alt={chip.label}
@@ -433,7 +437,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                                 sizes="(max-width: 1280px) 120px, 200px"
                               />
                               {chip.accent ? (
-                                <span className="absolute left-0 top-0 bg-flash px-1.5 py-0.5 text-[8px] font-bold uppercase text-white xl:px-2 xl:text-[10px]">
+                                <span className="absolute left-2 top-2 rounded-full bg-flash px-1.5 py-0.5 text-[8px] font-bold uppercase text-white xl:px-2 xl:text-[10px]">
                                   Hediyeli
                                 </span>
                               ) : null}
@@ -492,11 +496,8 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
           </nav>
 
           <div className="flex shrink-0 items-center justify-self-end gap-0.5 sm:gap-1">
-            <div className="hidden w-40 2xl:block 2xl:w-52">
-              <SiteSearch variant="bar" />
-            </div>
-            <div className="2xl:hidden">
-              <SiteSearch variant="icon" />
+            <div className="w-auto 2xl:w-52">
+              <SiteSearch />
             </div>
 
             {authed ? (
@@ -535,7 +536,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
 
             <Link
               href={accountHref}
-              className="hidden h-9 items-center border border-outline-variant px-2 text-xs font-medium text-on-surface hover:border-primary hover:text-primary lg:inline-flex xl:h-10 xl:px-3.5 xl:text-sm"
+              className="hidden h-9 items-center rounded-full border border-outline-variant px-3 text-xs font-medium text-on-surface transition-colors hover:border-primary hover:text-primary lg:inline-flex xl:h-10 xl:px-3.5 xl:text-sm"
             >
               {authed ? "Hesabım" : "Giriş"}
             </Link>

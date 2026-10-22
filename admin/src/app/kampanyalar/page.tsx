@@ -150,7 +150,7 @@ export default function CampaignsPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="mono text-[10px] uppercase text-muted">Pazarlama</p>
-          <h2 className="text-xl font-semibold">Flash kampanyalar</h2>
+          <h2 className="text-xl font-semibold">Anlık kampanyalar</h2>
           <p className="mt-1 text-sm text-muted">
             Ürün ID listesi boşsa tüm ürünlere uygulanır. Sepete eklerken fiyat
             otomatik düşer.
@@ -194,7 +194,7 @@ export default function CampaignsPage() {
               />
             </label>
             <label className="text-sm">
-              Slug (opsiyonel)
+              Kısa ad (opsiyonel)
               <input
                 value={form.slug}
                 onChange={(e) =>

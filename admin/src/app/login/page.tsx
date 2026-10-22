@@ -5,7 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import { adminGoogleLoginUrl } from '@/lib/api';
 
 const ERROR_HINTS: Record<string, string> = {
-  allowlist: 'Bu e-posta admin allowlist’te değil. Yetkili bir hesap kullanın.',
+  allowlist:
+    'Bu e-posta yönetici izin listesinde değil. Yetkili bir hesap kullanın.',
   denied: 'Google ile giriş iptal edildi veya reddedildi.',
 };
 
@@ -43,7 +44,7 @@ function LoginInner() {
           </div>
         </div>
         <p className="mt-5 text-sm leading-relaxed text-muted">
-          Panele yalnızca Google OAuth ile giriş yapılabilir. Allowlist dışı
+          Panele yalnızca Google ile giriş yapılabilir. İzin listesi dışındaki
           hesaplar reddedilir.
         </p>
         {error ? (

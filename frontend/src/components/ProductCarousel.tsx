@@ -86,7 +86,7 @@ export function ProductCarousel({
           type="button"
           aria-label="Önceki ürünler"
           onClick={() => scrollByDir(-1)}
-          className="absolute -left-1 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center border border-outline-variant bg-white text-xl font-bold text-on-surface shadow-md hover:bg-primary hover:text-on-primary md:flex"
+          className="absolute -left-1 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-outline-variant bg-white text-xl font-bold text-on-surface shadow-md transition-colors hover:bg-primary hover:text-on-primary md:flex"
         >
           ‹
         </button>
@@ -96,7 +96,7 @@ export function ProductCarousel({
           type="button"
           aria-label="Sonraki ürünler"
           onClick={() => scrollByDir(1)}
-          className="absolute -right-1 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center border border-outline-variant bg-white text-xl font-bold text-on-surface shadow-md hover:bg-primary hover:text-on-primary md:flex"
+          className="absolute -right-1 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-outline-variant bg-white text-xl font-bold text-on-surface shadow-md transition-colors hover:bg-primary hover:text-on-primary md:flex"
         >
           ›
         </button>
@@ -104,7 +104,7 @@ export function ProductCarousel({
 
       <div
         ref={scrollerRef}
-        className="flex gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-1 [-ms-overflow-style:none] [scrollbar-width:none] snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
+        className="flex gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-1 [-ms-overflow-style:none] scrollbar-none snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
       >
         {products.map((product) => (
           <div

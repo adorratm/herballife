@@ -5,6 +5,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AccountTabs } from "@/components/AccountTabs";
 import { Reveal } from "@/components/Reveal";
+import {
+  WellnessRingProgress,
+  WellnessTrendChart,
+} from "@/components/WellnessTrendChart";
 import { getApiBase } from "@/lib/api";
 import { getToken, isAuthenticated } from "@/lib/auth";
 
@@ -173,14 +177,13 @@ export default function ProgressReportPage() {
           </div>
 
           <section className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-xl bg-surface-container-low p-4">
-              <p className="text-xs text-on-surface-variant">Bugünkü su</p>
-              <p className="mt-1 font-display text-2xl text-primary">
-                {water?.totalMl ?? 0} ml
-              </p>
-              <p className="text-xs text-on-surface-variant">
-                Hedef {water?.goalMl ?? 2500} ml
-              </p>
+            <div className="rounded-xl bg-surface-container-low p-4 sm:col-span-1">
+              <WellnessRingProgress
+                value={water?.totalMl ?? 0}
+                goal={water?.goalMl ?? 2500}
+                label="Bugünkü su"
+                size={100}
+              />
             </div>
             <div className="rounded-xl bg-surface-container-low p-4">
               <p className="text-xs text-on-surface-variant">Öğün kayıtları</p>
@@ -190,6 +193,35 @@ export default function ProgressReportPage() {
               <p className="text-xs text-on-surface-variant">
                 Onay bekleyen:{" "}
                 {meals.filter((m) => m.status === "pending").length}
+              </p>
+              <div className="mt-4 flex h-2 overflow-hidden rounded-full bg-surface-container">
+                <div
+                  className="h-full bg-primary"
+                  style={{
+                    width: `${
+                      meals.length
+                        ? (meals.filter((m) => m.status === "approved").length /
+                            meals.length) *
+                          100
+                        : 0
+                    }%`,
+                  }}
+                />
+                <div
+                  className="h-full bg-flash/70"
+                  style={{
+                    width: `${
+                      meals.length
+                        ? (meals.filter((m) => m.status === "pending").length /
+                            meals.length) *
+                          100
+                        : 0
+                    }%`,
+                  }}
+                />
+              </div>
+              <p className="mt-1 text-[10px] text-on-surface-variant">
+                Yeşil: onaylı · Turuncu: bekleyen
               </p>
             </div>
             <div className="rounded-xl bg-surface-container-low p-4">
@@ -202,6 +234,27 @@ export default function ProgressReportPage() {
               <p className="text-xs text-on-surface-variant">
                 Son: {latest?.weightKg ?? "—"} kg
               </p>
+            </div>
+          </section>
+
+          <section className="print:break-inside-avoid">
+            <h2 className="font-display text-xl">Ölçüm grafiği</h2>
+            <p className="mt-1 text-xs text-on-surface-variant">
+              Kronolojik kilo / bel / kalça trendi
+            </p>
+            <div className="mt-4">
+              <WellnessTrendChart
+                points={[...measurements]
+                  .slice()
+                  .reverse()
+                  .map((m) => ({
+                    date: m.measuredAt,
+                    weightKg: m.weightKg,
+                    waistCm: m.waistCm,
+                    hipCm: m.hipCm,
+                  }))}
+                height={260}
+              />
             </div>
           </section>
 

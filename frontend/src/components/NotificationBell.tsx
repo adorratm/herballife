@@ -101,14 +101,14 @@ export function NotificationBell({
       >
         <BellIcon />
         {unread > 0 ? (
-          <span className="absolute -right-1.5 -top-1.5 min-w-4 bg-cta px-1 text-center text-[9px] text-on-cta">
+          <span className="absolute -right-1.5 -top-1.5 min-w-4 rounded-full bg-cta px-1 text-center text-[9px] text-on-cta">
             {unread > 9 ? "9+" : unread}
           </span>
         ) : null}
       </button>
       {open ? (
-        <div className="absolute right-0 z-70 mt-3 w-[min(100vw-2rem,20rem)] border border-outline-variant/40 bg-surface-container-lowest p-3 shadow-2xl">
-          <div className="mb-2 flex items-center justify-between">
+        <div className="absolute right-0 z-70 mt-3 w-[min(100vw-2rem,20rem)] overflow-hidden rounded-2xl border border-outline-variant/40 bg-white p-3 shadow-2xl">
+          <div className="mb-2 flex items-center justify-between px-1">
             <p className="font-meta text-[10px] uppercase tracking-widest text-secondary">
               Bildirimler
             </p>
@@ -116,7 +116,7 @@ export function NotificationBell({
               <button
                 type="button"
                 onClick={() => void readAll()}
-                className="font-meta text-[10px] uppercase text-primary"
+                className="rounded-full px-2 py-0.5 font-meta text-[10px] uppercase text-primary hover:bg-primary-fixed"
               >
                 Tümünü oku
               </button>
@@ -127,18 +127,24 @@ export function NotificationBell({
               Bildirim yok
             </p>
           ) : (
-            <ul className="max-h-80 space-y-1 overflow-auto">
+            <ul className="max-h-80 space-y-1.5 overflow-auto">
               {items.map((item) => (
                 <li key={item.id}>
                   <button
                     type="button"
                     onClick={() => void openItem(item)}
-                    className={`block w-full px-2 py-2 text-left hover:bg-surface-container ${
-                      item.readAt ? "opacity-60" : ""
+                    className={`block w-full rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-surface-container-low ${
+                      item.readAt
+                        ? "opacity-60"
+                        : "bg-primary-fixed/50 ring-1 ring-inset ring-primary/15"
                     }`}
                   >
-                    <p className="text-sm text-on-surface">{item.title}</p>
-                    <p className="font-meta text-[11px] text-secondary">{item.body}</p>
+                    <p className="text-sm font-semibold text-on-surface">
+                      {item.title}
+                    </p>
+                    <p className="mt-0.5 font-meta text-[11px] text-secondary">
+                      {item.body}
+                    </p>
                   </button>
                 </li>
               ))}
@@ -147,7 +153,7 @@ export function NotificationBell({
           <Link
             href={listHref}
             onClick={() => setOpen(false)}
-            className="mt-2 block border-t border-outline-variant/30 pt-2 text-center font-meta text-[10px] uppercase tracking-widest text-primary"
+            className="mt-2 block rounded-xl border-t border-outline-variant/30 pt-2.5 text-center font-meta text-[10px] uppercase tracking-widest text-primary hover:bg-surface-container-low"
           >
             Tümü ve ayarlar
           </Link>

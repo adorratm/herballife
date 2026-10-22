@@ -1133,7 +1133,7 @@ export default function ContentPage() {
                   className={inputClassName()}
                 />
               </Field>
-              <Field label="SEO açıklaması">
+              <Field label="Arama açıklaması">
                 <textarea
                   rows={3}
                   value={form.data.seoDescription}
@@ -1281,7 +1281,7 @@ export default function ContentPage() {
                     className={inputClassName()}
                   />
                 </Field>
-                <Field label="Link URL">
+                <Field label="Bağlantı adresi">
                   <input
                     value={form.data.linkHref}
                     onChange={(e) =>

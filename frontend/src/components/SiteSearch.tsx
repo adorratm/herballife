@@ -28,11 +28,11 @@ function shortcutLabel() {
 
 type Props = {
   className?: string;
-  /** Desktop: geniş arama çubuğu · Mobil: ikon */
-  variant?: "bar" | "icon";
+  /** Desktop: geniş arama çubuğu · Mobil: ikon · both: responsive tek örnek */
+  variant?: "bar" | "icon" | "both";
 };
 
-export function SiteSearch({ className = "", variant = "icon" }: Props) {
+export function SiteSearch({ className = "", variant = "both" }: Props) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -152,23 +152,30 @@ export function SiteSearch({ className = "", variant = "icon" }: Props) {
   const hasHits = flatHits.length > 0;
   let hitIndex = -1;
 
+  const showBar = variant === "bar" || variant === "both";
+  const showIcon = variant === "icon" || variant === "both";
+
   const palette =
     open && mounted
       ? createPortal(
-          <div className="search-palette fixed inset-0 z-100 flex items-start justify-center px-3 pt-[10vh] sm:px-4">
+          <div
+            className="fixed inset-0 z-200 flex items-start justify-center px-3 pt-[min(12vh,5.5rem)] sm:px-4"
+            role="presentation"
+          >
             <button
               type="button"
               aria-label="Kapat"
-              className="absolute inset-0 bg-deep-carbon/85 backdrop-blur-[3px]"
+              className="absolute inset-0 bg-[#121411]/55 backdrop-blur-[2px]"
               onClick={close}
             />
             <div
               role="dialog"
               aria-modal="true"
               aria-label="Site arama"
-              className="search-palette-panel relative flex w-full max-w-xl flex-col overflow-hidden border border-outline-variant/40 bg-surface-container-high shadow-2xl"
+              className="relative z-10 flex w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-outline-variant/50 bg-white shadow-[0_24px_64px_-16px_rgba(18,20,17,0.35)]"
+              onMouseDown={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center border-b border-outline-variant/30">
+              <div className="flex items-center border-b border-outline-variant/30 bg-white">
                 <span className="pl-4 text-primary">
                   <SearchIcon />
                 </span>
@@ -177,31 +184,36 @@ export function SiteSearch({ className = "", variant = "icon" }: Props) {
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   onKeyDown={onInputKeyDown}
-                  placeholder="Ürün, blog, sayfa…"
-                  className="w-full bg-transparent px-3 py-4 font-meta text-sm uppercase tracking-wide text-on-surface outline-none placeholder:text-secondary"
+                  placeholder="Ürün, yazı, sayfa…"
+                  className="w-full bg-transparent px-3 py-4 text-sm text-on-surface outline-none placeholder:text-on-surface-variant"
                   autoComplete="off"
                   spellCheck={false}
                 />
-                <kbd className="mr-3 shrink-0 border border-outline-variant/40 px-1.5 py-0.5 font-meta text-[10px] text-secondary">
-                  Esc
-                </kbd>
+                <button
+                  type="button"
+                  onClick={close}
+                  className="mr-3 shrink-0 rounded-md border border-outline-variant/40 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-on-surface-variant transition-colors hover:border-primary hover:text-primary"
+                  aria-label="Aramayı kapat"
+                >
+                  Kapat
+                </button>
               </div>
 
               <div
                 ref={listRef}
-                className="max-h-[min(55vh,22rem)] overflow-auto"
+                className="max-h-[min(55vh,22rem)] overflow-auto overscroll-contain bg-white"
               >
                 {q.trim().length < 2 ? (
                   <div className="space-y-3 px-4 py-6">
-                    <p className="font-meta text-[10px] uppercase tracking-widest text-secondary">
-                      En az 2 karakter · ok tuşları + Enter
+                    <p className="text-xs text-on-surface-variant">
+                      En az 2 karakter · yön tuşları ve Enter
                     </p>
                     <div className="flex flex-wrap gap-2">
                       <QuickChip
                         label="Ürünler"
                         onClick={() => go("/urunler")}
                       />
-                      <QuickChip label="Blog" onClick={() => go("/blog")} />
+                      <QuickChip label="Yazılar" onClick={() => go("/blog")} />
                       <QuickChip
                         label="Sipariş sorgula"
                         onClick={() => go("/siparis-sorgula")}
@@ -209,18 +221,16 @@ export function SiteSearch({ className = "", variant = "icon" }: Props) {
                     </div>
                   </div>
                 ) : loading ? (
-                  <p className="px-4 py-6 font-meta text-[10px] uppercase tracking-widest text-secondary">
+                  <p className="px-4 py-6 text-xs text-on-surface-variant">
                     Aranıyor…
                   </p>
                 ) : !hasHits ? (
                   <div className="space-y-3 px-4 py-6">
-                    <p className="font-meta text-[10px] uppercase tracking-widest text-secondary">
-                      Sonuç yok
-                    </p>
+                    <p className="text-xs text-on-surface-variant">Sonuç yok</p>
                     <button
                       type="button"
                       onClick={goCatalog}
-                      className="font-meta text-xs uppercase tracking-widest text-primary hover:underline"
+                      className="text-sm font-semibold text-primary hover:underline"
                     >
                       Katalogda “{q.trim()}” ara →
                     </button>
@@ -234,14 +244,14 @@ export function SiteSearch({ className = "", variant = "icon" }: Props) {
                         className="border-b border-outline-variant/20 last:border-0"
                       >
                         <div className="flex items-center justify-between gap-2 px-4 py-2">
-                          <p className="font-meta text-[10px] uppercase tracking-widest text-primary/70">
+                          <p className="text-[11px] font-bold uppercase tracking-wide text-primary">
                             {group.label}
                           </p>
                           {seeAll ? (
                             <button
                               type="button"
                               onClick={() => go(seeAll(q.trim()))}
-                              className="font-meta text-[10px] uppercase tracking-widest text-secondary hover:text-primary"
+                              className="text-[11px] font-semibold text-on-surface-variant hover:text-primary"
                             >
                               Tümünü gör
                             </button>
@@ -264,15 +274,15 @@ export function SiteSearch({ className = "", variant = "icon" }: Props) {
                                   onMouseEnter={() => setActive(idx)}
                                   className={`block px-4 py-2.5 transition-colors ${
                                     isActive
-                                      ? "bg-surface-container-highest text-on-surface"
-                                      : "hover:bg-surface-container"
+                                      ? "bg-primary-fixed text-on-surface"
+                                      : "hover:bg-surface-container-low"
                                   }`}
                                 >
-                                  <div className="font-meta text-xs uppercase tracking-wide">
+                                  <div className="text-sm font-semibold">
                                     {hit.title}
                                   </div>
                                   {hit.subtitle ? (
-                                    <div className="mt-0.5 font-meta text-[10px] uppercase text-secondary">
+                                    <div className="mt-0.5 text-xs text-on-surface-variant">
                                       {hit.subtitle}
                                     </div>
                                   ) : null}
@@ -288,9 +298,9 @@ export function SiteSearch({ className = "", variant = "icon" }: Props) {
               </div>
 
               {q.trim().length >= 2 ? (
-                <div className="flex flex-wrap gap-2 border-t border-outline-variant/30 px-3 py-2.5">
+                <div className="flex flex-wrap gap-2 border-t border-outline-variant/30 bg-surface-container-low/80 px-3 py-2.5">
                   <QuickChip label="Kataloğa git" onClick={goCatalog} />
-                  <QuickChip label="Blog" onClick={() => go("/blog")} />
+                  <QuickChip label="Yazılar" onClick={() => go("/blog")} />
                 </div>
               ) : null}
             </div>
@@ -299,13 +309,15 @@ export function SiteSearch({ className = "", variant = "icon" }: Props) {
         )
       : null;
 
-  if (variant === "bar") {
-    return (
-      <>
+  return (
+    <>
+      {showBar ? (
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className={`flex h-10 w-full items-center gap-2 rounded-md border border-outline-variant/40 bg-surface-container-low px-3 text-left transition-colors hover:border-outline hover:bg-white ${className}`}
+          className={`${
+            variant === "both" ? "hidden h-10 w-full 2xl:flex" : "flex h-10 w-full"
+          } items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-low px-3 text-left transition-colors hover:border-primary/35 hover:bg-white ${className}`}
           aria-label="Ürün ara"
         >
           <span className="shrink-0 text-on-surface-variant">
@@ -314,25 +326,27 @@ export function SiteSearch({ className = "", variant = "icon" }: Props) {
           <span className="min-w-0 flex-1 truncate text-sm text-on-surface-variant">
             Ara…
           </span>
-          <kbd className="hidden shrink-0 rounded border border-outline-variant/40 px-1.5 py-0.5 text-[10px] text-on-surface-variant 2xl:inline">
+          <kbd className="hidden shrink-0 rounded-md border border-outline-variant/40 px-1.5 py-0.5 text-[10px] text-on-surface-variant 2xl:inline">
             {hint}
           </kbd>
         </button>
-        {palette}
-      </>
-    );
-  }
+      ) : null}
 
-  return (
-    <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className={`flex h-10 w-10 items-center justify-center rounded-md text-on-surface transition-colors hover:bg-surface-container-low ${className}`}
-        aria-label="Ara"
-      >
-        <SearchIcon />
-      </button>
+      {showIcon ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className={`${
+            variant === "both" ? "flex 2xl:hidden" : "flex"
+          } h-10 w-10 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-container-low ${
+            variant === "both" ? "" : className
+          }`}
+          aria-label="Ara"
+        >
+          <SearchIcon />
+        </button>
+      ) : null}
+
       {palette}
     </>
   );
@@ -349,7 +363,7 @@ function QuickChip({
     <button
       type="button"
       onClick={onClick}
-      className="border border-outline-variant/40 px-2.5 py-1 font-meta text-[10px] uppercase tracking-widest text-secondary hover:border-primary hover:text-primary"
+      className="rounded-full border border-outline-variant/40 bg-white px-3 py-1 text-[11px] font-semibold text-on-surface-variant transition-colors hover:border-primary hover:text-primary"
     >
       {label}
     </button>

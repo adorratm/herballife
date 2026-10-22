@@ -176,7 +176,9 @@ function CategoriesPageInner() {
             />
           </label>
           <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">Slug</span>
+            <span className="mono text-[10px] uppercase text-muted">
+              Kısa ad (URL)
+            </span>
             <input
               required
               value={form.slug}
@@ -202,7 +204,7 @@ function CategoriesPageInner() {
           </label>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
-              SEO başlık
+              Arama başlığı
             </span>
             <input
               value={form.seoTitle}
@@ -215,7 +217,7 @@ function CategoriesPageInner() {
           </label>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
-              SEO açıklama
+              Arama açıklaması
             </span>
             <textarea
               value={form.seoDescription}
@@ -282,7 +284,7 @@ function CategoriesPageInner() {
         }}
         columns={[
           { key: 'name', header: 'Kategori', render: (r) => r.name },
-          { key: 'slug', header: 'Slug', render: (r) => r.slug },
+          { key: 'slug', header: 'Kısa ad', render: (r) => r.slug },
           {
             key: 'active',
             header: 'Durum',

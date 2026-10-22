@@ -213,7 +213,7 @@ export default function MarketplacePage() {
     });
     setShowForm(true);
     setMessage(
-      'Düzenlemede credentials maskeli gelir — yeni değerleri JSON olarak yeniden girin veya mevcut anahtarları silmek için boş bırakın.',
+      'Düzenlemede kimlik bilgileri maskeli gelir — yeni değerleri JSON olarak yeniden girin veya mevcut anahtarları silmek için boş bırakın.',
     );
   }
 
@@ -225,7 +225,7 @@ export default function MarketplacePage() {
     try {
       credentials = JSON.parse(form.credentialsJson) as Record<string, string>;
     } catch {
-      setError('Credentials JSON geçersiz');
+      setError('Kimlik bilgileri JSON geçersiz');
       return;
     }
     try {
@@ -291,8 +291,8 @@ export default function MarketplacePage() {
         result.stock?.mock || result.orders?.mock || result.stock?.stub;
       setMessage(
         [
-          dryRun ? 'Dry-run' : 'Sync',
-          mock ? '· stub/mock' : null,
+          dryRun ? 'Deneme' : 'Senkron',
+          mock ? '· simülasyon' : null,
           result.stock ? `stok:${result.stock.synced ?? 0}` : null,
           result.orders
             ? `sipariş:+${result.orders.inserted ?? 0}/${result.orders.orders?.length ?? 0} iç:${result.orders.imported ?? 0}`
@@ -346,16 +346,16 @@ export default function MarketplacePage() {
       });
       if (result.enqueued) {
         setMessage(
-          `Tüm hesaplar kuyruğa alındı (job ${result.jobId || '—'}). Bull Board’dan izleyebilirsin.`,
+          `Tüm hesaplar kuyruğa alındı (iş ${result.jobId || '—'}). Kuyruk panelinden izleyebilirsiniz.`,
         );
       } else {
         setMessage(
-          `Toplu sync: ${result.ok ?? 0} ok / ${result.failed ?? 0} hata (taranan ${result.scanned ?? 0})`,
+          `Toplu senkron: ${result.ok ?? 0} başarılı / ${result.failed ?? 0} hata (taranan ${result.scanned ?? 0})`,
         );
       }
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Toplu sync başarısız');
+      setError(err instanceof Error ? err.message : 'Toplu senkron başarısız');
     } finally {
       setSyncAllBusy(false);
     }
@@ -403,13 +403,13 @@ export default function MarketplacePage() {
           result.pushed?.skipped
             ? 'Atlandı'
             : pushDryRun
-              ? 'Dry-run push'
+              ? 'Deneme gönderimi'
               : 'Ürün gönderildi',
           vr?.variantCount
             ? `· ${vr.okCount ?? 0}/${vr.variantCount} varyant` +
               (vr.failCount ? ` (${vr.failCount} hata)` : '')
             : null,
-          result.pushed?.mock || result.pushed?.stub ? '· stub' : null,
+          result.pushed?.mock || result.pushed?.stub ? '· simülasyon' : null,
           result.pushed?.message || null,
         ]
           .filter(Boolean)
@@ -417,7 +417,7 @@ export default function MarketplacePage() {
       );
       if (detailId === pushAccountId) await loadDetail(pushAccountId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Push başarısız');
+      setError(err instanceof Error ? err.message : 'Gönderim başarısız');
     } finally {
       setPushing(false);
     }
@@ -429,7 +429,7 @@ export default function MarketplacePage() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted">
-          Trendyol · Trendyol Go Market · Hepsiburada · N11 — gerçek HTTP (credentials yoksa mock)
+          Trendyol · Trendyol Go Market · Hepsiburada · N11 — gerçek bağlantı (kimlik yoksa simülasyon)
         </p>
         <button
           type="button"
@@ -453,24 +453,32 @@ export default function MarketplacePage() {
 
       {lastSync ? (
         <div className="border border-border-muted bg-surface p-4 text-sm">
-          <p className="mono text-[10px] uppercase text-muted">Son sync sonucu</p>
+          <p className="mono text-[10px] uppercase text-muted">
+            Son senkron sonucu
+          </p>
           <div className="mt-2 flex flex-wrap gap-2">
             {lastSync.dryRun ? (
               <span className="border border-border-muted px-2 py-0.5 text-xs text-muted">
-                dry-run
+                deneme
               </span>
             ) : null}
             {lastSync.stock?.mock || lastSync.orders?.mock ? (
               <span className="border border-accent/50 px-2 py-0.5 text-xs text-accent">
-                mock
+                simülasyon
               </span>
             ) : null}
             {lastSync.stock?.stub || lastSync.orders?.stub || lastSync.stub ? (
               <span className="border border-accent/50 px-2 py-0.5 text-xs text-accent">
-                stub
+                simülasyon
               </span>
             ) : null}
-            <span className="mono text-xs">{lastSync.status || 'ok'}</span>
+            <span className="mono text-xs">
+              {lastSync.status === 'error'
+                ? 'hata'
+                : lastSync.status === 'success'
+                  ? 'başarılı'
+                  : lastSync.status || 'tamam'}
+            </span>
           </div>
           {lastSync.stock?.message ? (
             <p className="mt-2 text-xs text-muted">{lastSync.stock.message}</p>
@@ -491,7 +499,7 @@ export default function MarketplacePage() {
         >
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
-              Platform
+              Pazaryeri
             </span>
             <select
               value={form.platform}
@@ -528,7 +536,7 @@ export default function MarketplacePage() {
           </label>
           <label className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
-              Credentials JSON
+              Kimlik bilgileri (JSON)
             </span>
             <textarea
               rows={6}
@@ -544,7 +552,7 @@ export default function MarketplacePage() {
             checked={form.isEnabled}
             onChange={(isEnabled) => setForm((f) => ({ ...f, isEnabled }))}
             label="Aktif"
-            description="Senkron ve push için hesap açık olmalı"
+            description="Senkron ve gönderim için hesap açık olmalı"
           />
           <div className="md:col-span-2 flex gap-2">
             <button
@@ -569,7 +577,9 @@ export default function MarketplacePage() {
 
       <div className="flex flex-wrap items-end gap-4 border border-border-muted bg-surface p-4">
         <label className="block text-sm">
-          <span className="mono text-[10px] uppercase text-muted">Sync mode</span>
+          <span className="mono text-[10px] uppercase text-muted">
+            Senkron kipi
+          </span>
           <select
             value={syncMode}
             onChange={(e) => setSyncMode(e.target.value as SyncMode)}
@@ -583,14 +593,14 @@ export default function MarketplacePage() {
         <Checkbox
           checked={dryRun}
           onChange={setDryRun}
-          label="Dry-run"
-          description="DB’ye yazmadan dene"
+          label="Deneme (yazmadan)"
+          description="Veritabanına yazmadan dene"
         />
         <Checkbox
           checked={enqueueAll}
           onChange={setEnqueueAll}
           label="Kuyruğa al"
-          description="Toplu sync BullMQ’ya gider"
+          description="Toplu senkron kuyruğa gider"
         />
         <button
           type="button"
@@ -598,11 +608,11 @@ export default function MarketplacePage() {
           onClick={() => void syncAllAccounts()}
           className="border border-accent px-4 py-2 text-sm text-accent hover:bg-accent hover:text-white disabled:opacity-50"
         >
-          {syncAllBusy ? 'Sync…' : 'Tüm aktif hesapları sync'}
+          {syncAllBusy ? 'Senkron…' : 'Tüm aktif hesapları senkronla'}
         </button>
         <p className="w-full text-xs text-muted">
-          Otomatik sync varsayılan her 60 dk (MARKETPLACE_SYNC_INTERVAL_MINUTES).
-          Kuyruk: Bull Board → marketplace-sync
+          Otomatik senkron varsayılan her 60 dk. Kuyruk paneli → pazaryeri
+          senkronu.
         </p>
       </div>
 
@@ -645,7 +655,7 @@ export default function MarketplacePage() {
           <Checkbox
             checked={pushDryRun}
             onChange={setPushDryRun}
-            label="Dry-run push"
+            label="Deneme gönderimi"
           />
           <button
             type="submit"
@@ -655,7 +665,7 @@ export default function MarketplacePage() {
             {pushing ? 'Gönderiliyor…' : 'Ürünü pazara gönder'}
           </button>
           <p className="text-[11px] text-muted">
-            Hepsiburada’da aktif gramaj varyantlarının her SKU’su ayrı
+            Hepsiburada’da aktif gramaj varyantlarının her stok kodu ayrı
             gönderilir.
           </p>
         </div>
@@ -668,12 +678,12 @@ export default function MarketplacePage() {
           Hesap yok
         </div>
       ) : (
-        <div className="overflow-x-auto border border-border-muted">
+        <div className="overflow-x-auto rounded-2xl border border-border-muted">
           <table className="w-full min-w-180 text-left text-sm">
             <thead className="bg-surface-high">
               <tr>
                 <th className="mono px-3 py-2 text-[10px] uppercase text-muted">
-                  Platform
+                  Pazaryeri
                 </th>
                 <th className="mono px-3 py-2 text-[10px] uppercase text-muted">
                   Mağaza
@@ -682,7 +692,7 @@ export default function MarketplacePage() {
                   Durum
                 </th>
                 <th className="mono px-3 py-2 text-[10px] uppercase text-muted">
-                  Son sync
+                  Son senkron
                 </th>
                 <th className="mono px-3 py-2 text-[10px] uppercase text-muted">
                   İşlem
@@ -725,7 +735,7 @@ export default function MarketplacePage() {
                         row.isEnabled ? 'text-success' : 'text-muted'
                       }`}
                     >
-                      {row.isEnabled ? 'enabled' : 'disabled'}
+                      {row.isEnabled ? 'aktif' : 'pasif'}
                     </button>
                   </td>
                   <td className="px-3 py-2 mono text-xs">
@@ -738,7 +748,13 @@ export default function MarketplacePage() {
                             : 'text-muted'
                       }
                     >
-                      {row.lastSyncStatus || '—'}
+                      {row.lastSyncStatus === 'error'
+                        ? 'hata'
+                        : row.lastSyncStatus === 'success'
+                          ? 'başarılı'
+                          : row.lastSyncStatus === 'idle'
+                            ? 'beklemede'
+                            : row.lastSyncStatus || '—'}
                     </span>
                     <br />
                     <span className="text-muted">
@@ -756,7 +772,7 @@ export default function MarketplacePage() {
                         className="border border-accent px-3 py-1 text-xs text-accent hover:bg-accent hover:text-white disabled:opacity-50"
                         title={!row.isEnabled ? 'Hesabı aktifleştirin' : undefined}
                       >
-                        {syncingId === row.id ? 'Sync…' : 'Sync'}
+                        {syncingId === row.id ? 'Senkron…' : 'Senkronla'}
                       </button>
                       <button
                         type="button"
@@ -825,10 +841,10 @@ export default function MarketplacePage() {
             <div className="grid gap-4 lg:grid-cols-2">
               <div>
                 <p className="mono mb-2 text-[10px] uppercase text-muted">
-                  Listingler ({listings.length})
+                  İlanlar ({listings.length})
                 </p>
                 {listings.length === 0 ? (
-                  <p className="text-xs text-muted">Listing yok</p>
+                  <p className="text-xs text-muted">İlan yok</p>
                 ) : (
                   <ul className="divide-y divide-border-muted border border-border-muted text-xs">
                     {listings.map((l) => (

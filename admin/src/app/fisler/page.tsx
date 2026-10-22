@@ -210,7 +210,7 @@ export default function ReceiptsAdminPage() {
           {loading ? (
             <p className="text-sm text-muted">Yükleniyor…</p>
           ) : (
-            <div className="overflow-x-auto border border-border-muted">
+            <div className="overflow-x-auto rounded-2xl border border-border-muted">
               <table className="w-full text-left text-sm">
                 <thead className="border-b border-border-muted bg-surface mono text-[10px] uppercase text-muted">
                   <tr>

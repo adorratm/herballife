@@ -44,7 +44,7 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex items-start gap-3">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-bold text-on-primary">
-                  OK
+                  Onaylı
                 </span>
                 <div>
                   <p className="text-sm font-bold text-on-surface">

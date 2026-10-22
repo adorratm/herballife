@@ -141,7 +141,7 @@ function MediaPageInner() {
                     onClick={() => navigator.clipboard.writeText(item.url)}
                     className="text-xs text-accent hover:underline"
                   >
-                    URL kopyala
+                    Bağlantıyı kopyala
                   </button>
                   <button
                     type="button"

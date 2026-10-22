@@ -111,12 +111,12 @@ export function WhatsAppChat({
           role="dialog"
           aria-modal="false"
           aria-label="WhatsApp sohbet"
-          className="pointer-events-auto banner-enter flex max-h-[min(52dvh,22rem)] w-[min(100vw-2rem,22rem)] flex-col overflow-hidden border border-outline-variant/40 bg-surface-container-lowest shadow-[0_12px_40px_rgba(0,0,0,0.45)] sm:max-h-[min(70vh,28rem)]"
+          className="pointer-events-auto banner-enter flex max-h-[min(52dvh,22rem)] w-[min(100vw-2rem,22rem)] flex-col overflow-hidden rounded-2xl border border-outline-variant/40 bg-surface-container-lowest shadow-[0_12px_40px_rgba(0,0,0,0.45)] sm:max-h-[min(70vh,28rem)]"
         >
           <div className="flex shrink-0 items-start justify-between gap-3 border-b border-outline-variant/25 bg-surface-container-low px-4 py-2.5 sm:py-3">
             <div>
               <p className="font-meta text-[10px] uppercase tracking-widest text-primary">
-                [ Channel: WhatsApp ]
+                WhatsApp kanalı
               </p>
               <p className="mt-1 font-display text-lg leading-none tracking-tight text-on-surface sm:text-xl">
                 Canlı destek
@@ -148,7 +148,7 @@ export function WhatsAppChat({
                   <button
                     type="button"
                     onClick={() => sendPreset(preset)}
-                    className="w-full border border-outline-variant/35 bg-surface px-3 py-2 text-left font-meta text-[10px] uppercase tracking-widest text-on-surface transition-colors hover:border-primary hover:text-primary sm:py-2.5 sm:text-[11px]"
+                    className="w-full rounded-xl border border-outline-variant/35 bg-surface px-3 py-2 text-left font-meta text-[10px] uppercase tracking-widest text-on-surface transition-colors hover:border-primary hover:text-primary sm:py-2.5 sm:text-[11px]"
                   >
                     {preset.label}
                   </button>
@@ -185,7 +185,7 @@ export function WhatsAppChat({
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
-        className="pointer-events-auto flex items-center gap-3 border border-[#25D366]/40 bg-[#25D366] px-4 py-3 font-meta text-[11px] uppercase tracking-widest text-white shadow-[0_8px_24px_rgba(37,211,102,0.35)] transition-colors hover:bg-[#1ebe57]"
+        className="pointer-events-auto flex items-center gap-3 rounded-full border border-[#25D366]/40 bg-[#25D366] px-4 py-3 font-meta text-[11px] uppercase tracking-widest text-white shadow-[0_8px_24px_rgba(37,211,102,0.35)] transition-colors hover:bg-[#1ebe57]"
       >
         <svg
           viewBox="0 0 24 24"

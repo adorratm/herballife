@@ -76,7 +76,7 @@ export default function AdminNotificationsPage() {
         <h1 className="mt-1 text-2xl font-semibold">Bildirimler</h1>
       </div>
       {error ? (
-        <p className="border border-danger/40 bg-surface px-3 py-2 text-sm text-danger">
+        <p className="rounded-xl border border-danger/40 bg-surface px-3 py-2 text-sm text-danger">
           {error}
         </p>
       ) : null}
@@ -87,7 +87,7 @@ export default function AdminNotificationsPage() {
           {TOGGLES.map((row) => (
             <label
               key={row.key}
-              className="flex items-center justify-between gap-4 border border-border-muted bg-surface px-3 py-2 text-sm"
+              className="flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-border-muted bg-surface px-3.5 py-2.5 text-sm shadow-sm"
             >
               <span>{row.label}</span>
               <input
@@ -105,7 +105,7 @@ export default function AdminNotificationsPage() {
           <h2 className="text-sm font-semibold">Gelen kutusu</h2>
           <button
             type="button"
-            className="text-xs text-accent"
+            className="rounded-full px-3 py-1 text-xs text-accent hover:bg-accent/10"
             onClick={() =>
               void api('/notifications/inbox/read-all', { method: 'PATCH' }).then(
                 () => load(),
@@ -116,20 +116,24 @@ export default function AdminNotificationsPage() {
           </button>
         </div>
         {!items.length ? (
-          <p className="text-sm text-muted">Bildirim yok</p>
+          <p className="rounded-2xl border border-border-muted bg-surface px-4 py-8 text-sm text-muted">
+            Bildirim yok
+          </p>
         ) : (
-          <ul className="divide-y divide-border-muted border border-border-muted">
+          <ul className="space-y-2">
             {items.map((item) => (
               <li key={item.id}>
                 <button
                   type="button"
                   onClick={() => void openItem(item)}
-                  className={`block w-full px-4 py-3 text-left hover:bg-surface ${
-                    item.readAt ? 'opacity-60' : ''
+                  className={`block w-full rounded-2xl border border-border-muted bg-surface px-4 py-3.5 text-left shadow-sm transition-colors hover:border-accent/40 hover:bg-surface-high ${
+                    item.readAt
+                      ? 'opacity-60'
+                      : 'ring-1 ring-inset ring-accent/20'
                   }`}
                 >
-                  <p className="text-sm">{item.title}</p>
-                  <p className="text-xs text-muted">{item.body}</p>
+                  <p className="text-sm font-medium">{item.title}</p>
+                  <p className="mt-0.5 text-xs text-muted">{item.body}</p>
                 </button>
               </li>
             ))}

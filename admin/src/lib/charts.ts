@@ -1,16 +1,15 @@
 import type { EChartsOption } from 'echarts';
 
 export const CHART = {
-  accent: '#cc5b3e',
-  accentSoft: '#ffb4a2',
-  success: '#6b9f7a',
-  warning: '#c9a227',
+  accent: '#1a6b45',
+  accentSoft: '#6b9f7a',
+  success: '#2d7052',
+  warning: '#6d7a3f',
   danger: '#c45c5c',
-  muted: '#a58b84',
-  text: '#e5e2e1',
-  border: '#57423d',
-  surface: '#1c1b1b',
-  revenuecat: '#5b8def',
+  muted: '#6b6a65',
+  text: '#171715',
+  border: '#d4d2cb',
+  surface: '#ffffff',
 };
 
 export type DashboardSeriesPoint = {
@@ -18,23 +17,22 @@ export type DashboardSeriesPoint = {
   orders: number;
   revenue: number;
   cashRevenue?: number;
-  revenuecatRevenue?: number;
 };
 
 const STATUS_COLOR: Record<string, string> = {
   pending_payment: CHART.warning,
   paid: CHART.accent,
   processing: CHART.accentSoft,
-  shipped: '#8d6e63',
+  shipped: '#508a6a',
   delivered: CHART.success,
   cancelled: CHART.danger,
-  refunded: '#7a4a4a',
+  refunded: '#8a6a6a',
 };
 
 const axis = {
   axisLine: { lineStyle: { color: CHART.border } },
   axisLabel: { color: CHART.muted, fontSize: 11 },
-  splitLine: { lineStyle: { color: '#2a2a2a' } },
+  splitLine: { lineStyle: { color: '#eceae4' } },
 };
 
 export function baseOption(): EChartsOption {
@@ -69,7 +67,7 @@ export function revenueSeriesOption(series: DashboardSeriesPoint[]): EChartsOpti
       textStyle: { color: CHART.text },
     },
     legend: {
-      data: ['Toplam ciro', 'PayTR (web)', 'RevenueCat', 'Kasa', 'Sipariş'],
+      data: ['Toplam ciro', 'Site', 'Kasa', 'Sipariş'],
       textStyle: { color: CHART.muted },
     },
     xAxis: { type: 'category', data: labels, ...axis },
@@ -78,7 +76,7 @@ export function revenueSeriesOption(series: DashboardSeriesPoint[]): EChartsOpti
         type: 'value',
         name: '₺',
         ...axis,
-        splitLine: { lineStyle: { color: '#2a2a2a' } },
+        splitLine: { lineStyle: { color: '#eceae4' } },
       },
       {
         type: 'value',
@@ -95,28 +93,16 @@ export function revenueSeriesOption(series: DashboardSeriesPoint[]): EChartsOpti
         symbol: 'circle',
         symbolSize: 6,
         itemStyle: { color: CHART.accent },
-        areaStyle: { color: 'rgba(204,91,62,0.18)' },
+        areaStyle: { color: 'rgba(26,107,69,0.14)' },
         data: series.map((s) =>
           Math.round(s.revenue + (s.cashRevenue || 0)),
         ),
       },
       {
-        name: 'PayTR (web)',
+        name: 'Site',
         type: 'bar',
-        stack: 'online',
         itemStyle: { color: CHART.accentSoft },
-        data: series.map((s) =>
-          Math.round(
-            Math.max(0, s.revenue - (s.revenuecatRevenue || 0)),
-          ),
-        ),
-      },
-      {
-        name: 'RevenueCat',
-        type: 'bar',
-        stack: 'online',
-        itemStyle: { color: CHART.revenuecat },
-        data: series.map((s) => Math.round(s.revenuecatRevenue || 0)),
+        data: series.map((s) => Math.round(s.revenue)),
       },
       {
         name: 'Kasa',
@@ -130,39 +116,6 @@ export function revenueSeriesOption(series: DashboardSeriesPoint[]): EChartsOpti
         yAxisIndex: 1,
         itemStyle: { color: CHART.muted },
         data: series.map((s) => s.orders),
-      },
-    ],
-  };
-}
-
-export function revenuecatSeriesOption(series: DashboardSeriesPoint[]): EChartsOption {
-  const labels = series.map((s) => {
-    const [, m, d] = s.date.split('-');
-    return `${d}.${m}`;
-  });
-  const hasData = series.some((s) => (s.revenuecatRevenue || 0) > 0);
-  return {
-    ...baseOption(),
-    legend: {
-      data: ['RevenueCat ciro'],
-      textStyle: { color: CHART.muted },
-    },
-    xAxis: { type: 'category', data: labels, ...axis },
-    yAxis: { type: 'value', name: '₺', ...axis },
-    series: [
-      {
-        name: 'RevenueCat ciro',
-        type: 'bar',
-        itemStyle: { color: CHART.revenuecat },
-        data: series.map((s) => Math.round(s.revenuecatRevenue || 0)),
-        markLine: hasData
-          ? undefined
-          : {
-              silent: true,
-              symbol: 'none',
-              lineStyle: { color: CHART.border, type: 'dashed' },
-              data: [{ yAxis: 0 }],
-            },
       },
     ],
   };
@@ -185,7 +138,7 @@ export function statusPieOption(
       {
         type: 'pie',
         radius: ['48%', '72%'],
-        itemStyle: { borderColor: '#131313', borderWidth: 2 },
+        itemStyle: { borderColor: '#ffffff', borderWidth: 2 },
         label: { color: CHART.muted, fontSize: 11 },
         data: rows
           .filter((r) => r.count > 0)
@@ -250,7 +203,7 @@ export function mixPieOption(
       {
         type: 'pie',
         radius: ['42%', '70%'],
-        itemStyle: { borderColor: '#131313', borderWidth: 2 },
+        itemStyle: { borderColor: '#ffffff', borderWidth: 2 },
         label: { color: CHART.muted, fontSize: 11 },
         data: rows.map((r, i) => ({
           name: r.name,

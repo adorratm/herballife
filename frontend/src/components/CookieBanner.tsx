@@ -98,7 +98,7 @@ export function CookieBanner() {
                   onChange={(e) => setAnalytics(e.target.checked)}
                   className="accent-primary"
                 />
-                Analitik (GA4 / GTM)
+                Analitik (Google Analitik)
               </label>
               <label className="flex items-center gap-2">
                 <input
@@ -107,7 +107,7 @@ export function CookieBanner() {
                   onChange={(e) => setMarketing(e.target.checked)}
                   className="accent-primary"
                 />
-                Pazarlama (Google Ads / Meta Pixel)
+                Pazarlama (Google Ads / Meta)
               </label>
             </div>
             <div className="flex flex-wrap gap-3">

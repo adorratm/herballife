@@ -82,7 +82,7 @@ export function ContactPageClient({
       <section className="page-shell grid grid-cols-1 gap-8 py-10 md:grid-cols-12 md:gap-10 md:py-12">
         <div className="flex flex-col gap-5 md:col-span-5">
           <Reveal variant="left">
-            <div className="border border-outline-variant bg-white p-6 shadow-sm md:p-8">
+            <div className="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm md:p-8">
               <p className="text-xs font-bold uppercase tracking-wide text-primary">
                 {brandName}
               </p>
@@ -145,7 +145,7 @@ export function ContactPageClient({
 
           {contact.hours ? (
             <Reveal variant="left" delay={80}>
-              <div className="border border-outline-variant bg-[#f7f8f6] p-6 md:p-8">
+              <div className="rounded-2xl border border-outline-variant bg-surface-container-low p-6 md:p-8">
                 <p className="text-xs font-bold uppercase tracking-wide text-primary">
                   Çalışma saatleri
                 </p>
@@ -161,7 +161,7 @@ export function ContactPageClient({
               href={waHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex cursor-pointer items-center justify-center bg-[#25D366] px-5 py-3.5 text-sm font-bold text-white hover:bg-[#1ebe57]"
+              className="inline-flex cursor-pointer items-center justify-center rounded-full bg-[#25D366] px-5 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#1ebe57]"
             >
               WhatsApp ile yaz
             </a>
@@ -171,7 +171,7 @@ export function ContactPageClient({
         <Reveal className="md:col-span-7" variant="right" delay={60}>
           <form
             onSubmit={onSubmit}
-            className="border border-outline-variant bg-white p-6 shadow-sm md:p-8"
+            className="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm md:p-8"
           >
             <p className="text-xs font-bold uppercase tracking-wide text-primary">
               Mesaj gönder

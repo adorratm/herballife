@@ -17,7 +17,7 @@ export default function BlogPostError({
   return (
     <div className="page-shell py-24 text-center">
       <p className="font-meta text-xs uppercase tracking-widest text-primary">
-        Blog
+        Yazı
       </p>
       <h1 className="mt-4 font-display text-4xl md:text-5xl">
         Yazı yüklenemedi

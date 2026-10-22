@@ -65,7 +65,7 @@ export function MediaUpload({
           <input
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            placeholder="veya URL yapıştır"
+            placeholder="veya bağlantı yapıştır"
             className="w-full border border-border-muted bg-background px-3 py-2 text-sm"
           />
         </div>

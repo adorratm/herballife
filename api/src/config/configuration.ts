@@ -107,24 +107,19 @@ export default () => ({
     maxInstallment: process.env.PAYTR_MAX_INSTALLMENT || '0',
     /** Yerel geliştirmede dış IP yoksa kullanılır */
     fallbackIp: process.env.PAYTR_FALLBACK_IP || '1.1.1.1',
+    /**
+     * PayTR anahtarı yokken mock ödeme açılsın mı?
+     * production’da yalnızca PAYTR_ALLOW_MOCK=true ile açılır.
+     */
+    allowMock:
+      process.env.NODE_ENV === 'production'
+        ? process.env.PAYTR_ALLOW_MOCK === 'true'
+        : process.env.PAYTR_ALLOW_MOCK !== 'false',
   },
   iyzico: {
     apiKey: process.env.IYZICO_API_KEY || '',
     secretKey: process.env.IYZICO_SECRET_KEY || '',
     baseUrl: process.env.IYZICO_BASE_URL || 'https://sandbox-api.iyzipay.com',
-  },
-  revenuecat: {
-    /** RevenueCat REST API secret key (Project settings → API keys) */
-    secretApiKey: process.env.REVENUECAT_SECRET_API_KEY || '',
-    /** Webhook Authorization bearer (RevenueCat dashboard) */
-    webhookAuthKey: process.env.REVENUECAT_WEBHOOK_AUTH_KEY || '',
-    /** Kargo ücreti için App Store / Play consumable product id */
-    shippingProductId: process.env.REVENUECAT_SHIPPING_PRODUCT_ID || '',
-    /**
-     * Sipariş tutarı → tek ürün fallback (virgülle): 250:herballife_checkout_250,500:herballife_checkout_500
-     * Varyant SKU satın alımı mümkün değilse kullanılır.
-     */
-    productMap: process.env.REVENUECAT_PRODUCT_MAP || '',
   },
   aws: {
     region: process.env.AWS_REGION || 'eu-central-1',

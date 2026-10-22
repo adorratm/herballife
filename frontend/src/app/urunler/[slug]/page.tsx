@@ -1,9 +1,9 @@
-import { AppImage as Image } from "@/components/AppImage";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageBreadcrumb } from "@/components/PageBreadcrumb";
 import { ProductBuyBox } from "@/components/ProductBuyBox";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductGallery } from "@/components/ProductGallery";
 import { ProductReviews } from "@/components/ProductReviews";
 import { ProductViewTracker } from "@/components/ProductViewTracker";
 import { Reveal } from "@/components/Reveal";
@@ -23,7 +23,6 @@ import {
   productJsonLd,
 } from "@/lib/seo";
 import { resolveWhatsAppPhone } from "@/lib/whatsapp";
-import type { Product } from "@/lib/types";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -140,76 +139,61 @@ export default async function ProductDetailPage({ params }: Props) {
       <JsonLd data={breadcrumbJsonLd(crumbs)} />
       <PageBreadcrumb items={crumbs} />
 
-      <section className="grid grid-cols-1 border-b border-outline-variant/20 lg:grid-cols-12">
+      <section className="grid grid-cols-1 border-b border-outline-variant/25 bg-white lg:grid-cols-12">
         <Reveal
-          className="relative min-h-130 overflow-hidden border-r border-outline-variant/20 bg-surface lg:col-span-7 lg:min-h-217.5"
+          className="relative border-b border-outline-variant/25 lg:col-span-7 lg:border-b-0 lg:border-r"
           variant="fade"
         >
-          {product.batchId ? (
-            <div className="absolute left-8 top-8 z-10">
-              <span className="border border-primary bg-surface/80 px-3 py-1 font-meta text-xs text-primary">
-                LOT: {product.batchId}
-              </span>
-            </div>
-          ) : null}
-          <Image
-            src={images[0]}
+          <ProductGallery
+            images={images}
             alt={product.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 1024px) 100vw, 58vw"
-            priority
+            badge={product.batchId ? `Parti ${product.batchId}` : product.badge}
           />
-          <div className="absolute bottom-0 left-0 w-full bg-linear-to-t from-black/80 to-transparent p-8">
-            <h1 className="font-display text-5xl leading-none tracking-tighter md:text-7xl">
-              {product.name}
-            </h1>
-          </div>
         </Reveal>
 
         <Reveal
-          className="flex flex-col justify-between bg-surface p-8 lg:col-span-5 lg:p-12"
+          className="flex flex-col justify-between bg-white p-6 md:p-8 lg:col-span-5 lg:p-10 xl:p-12"
           variant="right"
           delay={100}
         >
           <div>
-            <div className="mb-10 flex items-start justify-between gap-6">
-              <div>
-                <div className="mb-2 text-sm font-semibold tracking-wide text-primary">
-                  {category?.name || kindLabel || "Ürün"}
-                </div>
-                <p className="text-xs text-on-surface-variant">Paket · stok</p>
-                {(product.ratingCount ?? 0) > 0 ? (
-                  <p className="mt-2 font-meta text-xs uppercase tracking-widest text-primary">
-                    {Number(product.ratingAvg || 0).toFixed(1)} / 5 ·{" "}
-                    {product.ratingCount} yorum
-                  </p>
-                ) : null}
-              </div>
-            </div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+              {category?.name || kindLabel || "Ürün"}
+            </p>
+            <h1 className="mt-3 font-display text-3xl font-extrabold leading-tight tracking-tight text-on-surface md:text-4xl xl:text-[2.75rem]">
+              {product.name}
+            </h1>
+            {(product.ratingCount ?? 0) > 0 ? (
+              <p className="mt-3 text-sm text-on-surface-variant">
+                <span className="font-semibold text-primary">
+                  {Number(product.ratingAvg || 0).toFixed(1)}
+                </span>
+                <span className="text-amber-500"> ★</span>
+                <span className="mx-1.5 text-outline-variant">·</span>
+                {product.ratingCount} değerlendirme
+              </p>
+            ) : null}
 
             {specs.length > 0 ? (
-              <div className="mb-10 industrial-border relative p-6">
-                <div className="absolute -top-3 left-4 bg-surface px-2 text-[10px] font-semibold uppercase text-on-surface-variant">
-                  Ürün özeti
-                </div>
-                <div className="grid grid-cols-2 gap-y-6">
-                  {specs.map(([label, value]) => (
-                    <div key={label as string}>
-                      <p className="text-[10px] font-semibold uppercase text-on-surface-variant">
-                        {label}
-                      </p>
-                      <p className="text-lg font-semibold text-on-surface">
-                        {value as string}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+              <div className="mt-8 grid grid-cols-2 gap-3">
+                {specs.map(([label, value]) => (
+                  <div
+                    key={label as string}
+                    className="rounded-xl bg-surface-container-low px-4 py-3"
+                  >
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
+                      {label}
+                    </p>
+                    <p className="mt-1 text-sm font-semibold leading-snug text-on-surface">
+                      {value as string}
+                    </p>
+                  </div>
+                ))}
               </div>
             ) : null}
           </div>
 
-          <div>
+          <div className="mt-8 border-t border-outline-variant/25 pt-8">
             <ProductBuyBox
               product={product}
               whatsappEnabled={settings.whatsapp.enabled}
@@ -273,7 +257,7 @@ export default async function ProductDetailPage({ params }: Props) {
               {category ? (
                 <Link
                   href={categoryCatalogPath(category.slug)}
-                  className="inline-flex border border-primary px-4 py-2 font-meta text-xs uppercase tracking-widest text-primary hover:bg-primary hover:text-background"
+                  className="rounded-full inline-flex border border-primary px-4 py-2 font-meta text-xs uppercase tracking-widest text-primary hover:bg-primary hover:text-background"
                 >
                   {category.name} kategorisi →
                 </Link>
@@ -287,10 +271,12 @@ export default async function ProductDetailPage({ params }: Props) {
         <section className="cv-auto page-shell border-b border-outline-variant/20 py-section">
           <Reveal className="mb-10">
             <p className="font-meta text-[10px] uppercase tracking-widest text-primary">
-              Aynı kategori
+              Birlikte alınanlar
             </p>
             <h2 className="mt-2 font-display text-3xl md:text-4xl">
-              {category ? `${category.name} içinde` : "İlgili ürünler"}
+              {category
+                ? `${category.name} ile tamamla`
+                : "Sık birlikte alınanlar"}
             </h2>
           </Reveal>
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">

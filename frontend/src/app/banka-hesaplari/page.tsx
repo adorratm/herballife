@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata({
     title: "Banka Hesapları",
     description:
-      "Havale / EFT için banka hesap bilgileri. Transfer sonrası ödeme bildirimi gönderin.",
+      "Havale / EFT için banka hesap bilgileri. Havale sonrası ödeme bildirimi gönderin.",
     path: "/banka-hesaplari",
     settings,
     keywords: ["banka", "IBAN", "havale", "EFT", "ödeme"],
@@ -33,7 +33,7 @@ const ACCOUNTS = [
     bank: "Garanti BBVA",
     holder: "Emine Özberk",
     iban: "TR11 1111 1111 1111 1111 1111 11",
-    branch: "Online",
+    branch: "İnternet şubesi",
     note: "TL vadesiz",
   },
 ];
@@ -47,7 +47,7 @@ const STEPS = [
   {
     n: "2",
     title: "Açıklama yazın",
-    body: "Transfer açıklamasına sipariş numaranızı ekleyin.",
+    body: "Havale açıklamasına sipariş numaranızı ekleyin.",
   },
   {
     n: "3",
@@ -78,7 +78,7 @@ export default async function BankAccountsPage() {
             Banka hesapları
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-on-surface-variant">
-            Transfer yaptıktan sonra{" "}
+            Havale yaptıktan sonra{" "}
             <Link
               href="/odeme-bildirimi"
               className="font-semibold text-primary underline"

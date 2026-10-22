@@ -231,7 +231,9 @@ function LegalPageInner() {
         >
           <div className="grid gap-3 md:grid-cols-3">
             <label className="block text-sm">
-              <span className="mono text-[10px] uppercase text-muted">Slug</span>
+              <span className="mono text-[10px] uppercase text-muted">
+                Kısa ad (URL)
+              </span>
               <input
                 required
                 value={form.slug}
@@ -315,7 +317,7 @@ function LegalPageInner() {
         columns={[
           {
             key: 'slug',
-            header: 'Slug',
+            header: 'Kısa ad',
             render: (r) => <span className="mono text-xs">{r.slug}</span>,
           },
           { key: 'title', header: 'Başlık', render: (r) => r.title },
@@ -327,7 +329,7 @@ function LegalPageInner() {
           {
             key: 'pub',
             header: 'Yayın',
-            render: (r) => (r.isPublished ? 'published' : 'draft'),
+            render: (r) => (r.isPublished ? 'Yayında' : 'Taslak'),
           },
           {
             key: 'actions',

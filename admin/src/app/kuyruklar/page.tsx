@@ -21,10 +21,10 @@ export default function QueuesPage() {
     <div className="space-y-4">
       <Reveal>
         <div>
-          <h2 className="text-lg font-semibold">Kuyruklar (Bull Board)</h2>
+          <h2 className="text-lg font-semibold">Kuyruklar</h2>
           <p className="text-sm text-muted">
-            Bildirim ve kargo poll job&apos;larını izleyin. Erişim admin JWT ile
-            korunur; linki yeni sekmede açın.
+            Bildirim ve kargo kuyruk işlerini izleyin. Erişim yönetici oturumu
+            ile korunur; bağlantıyı yeni sekmede açın.
           </p>
         </div>
       </Reveal>
@@ -35,7 +35,7 @@ export default function QueuesPage() {
           rel="noreferrer"
           className="btn-motion inline-block bg-accent px-4 py-2 text-sm text-white hover:bg-accent-hover"
         >
-          Bull Board&apos;u aç
+          Kuyruk panelini aç
         </a>
       </Reveal>
       <Reveal delay={140} variant="fade">

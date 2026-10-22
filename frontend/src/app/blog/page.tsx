@@ -53,14 +53,14 @@ export default async function BlogIndexPage({ searchParams }: Props) {
       <PageBreadcrumb
         items={[
           { name: "Ana sayfa", path: "/" },
-          { name: "Blog", path: "/blog" },
+          { name: "Yazılar", path: "/blog" },
         ]}
       />
 
       <div className="page-shell py-8 md:py-10">
         <header className="mb-8 max-w-2xl">
           <p className="page-kicker">İçerik</p>
-          <h1 className="page-title">Blog</h1>
+          <h1 className="page-title">Yazılar</h1>
           <p className="page-lead">
             Beslenme, paketler ve sağlıklı yaşam notları
             {tag ? ` · #${tag}` : ""}
@@ -85,7 +85,7 @@ export default async function BlogIndexPage({ searchParams }: Props) {
                 >
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="relative block aspect-[16/10] overflow-hidden bg-surface-container-low"
+                    className="relative block aspect-16/10 overflow-hidden bg-surface-container-low"
                   >
                     <Image
                       src={cover}

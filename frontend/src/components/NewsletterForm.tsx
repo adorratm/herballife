@@ -30,7 +30,7 @@ export function NewsletterForm() {
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="USER@TERMINAL.COM"
+        placeholder="ornek@eposta.com"
         className="field-input grow text-primary"
       />
       <button type="submit" disabled={loading} className="btn-cta px-8 py-4 text-xs font-bold">

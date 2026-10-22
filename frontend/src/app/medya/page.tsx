@@ -22,7 +22,7 @@ type MediaHeader = {
 
 const FALLBACK_HEADER: MediaHeader = {
   eyebrow: "Medya",
-  title: "Yaşam & Instagram",
+  title: "Yaşam ve Instagram",
   subtitle:
     "Ürünler, paketler ve sağlıklı yaşam anlarından kareler. Instagram paylaşımlarımız ve seçilmiş görseller.",
   instagramLabel: "Instagram",
@@ -88,12 +88,12 @@ export default async function MediaPage() {
       <div className="page-shell space-y-14 py-10 md:space-y-16 md:py-12">
         {empty ? (
           <Reveal>
-            <div className="border border-outline-variant bg-[#f7f8f6] p-8 text-center md:p-12">
+            <div className="rounded-2xl border border-outline-variant bg-surface-container-low p-8 text-center md:p-12">
               <div className="mx-auto grid max-w-2xl grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
                 {Array.from({ length: 8 }).map((_, i) => (
                   <div
                     key={i}
-                    className="aspect-square animate-pulse bg-surface-container"
+                    className="aspect-square animate-pulse rounded-xl bg-surface-container"
                     style={{ animationDelay: `${i * 80}ms` }}
                   />
                 ))}
@@ -116,7 +116,7 @@ export default async function MediaPage() {
               Son 24 saatteki aktif hikayeler — tıklayınca büyük görünüm.
             </p>
           </Reveal>
-          <div className="border border-outline-variant bg-[#f7f8f6] p-4 md:p-5">
+          <div className="rounded-2xl border border-outline-variant bg-surface-container-low p-4 md:p-5">
             <MediaStoriesStrip
               stories={gallery.stories}
               profileUrl={instagramUrl}

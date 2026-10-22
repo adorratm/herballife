@@ -43,6 +43,11 @@ export class PaytrService {
     );
   }
 
+  /** Geliştirme mock’u; production’da varsayılan kapalı */
+  isMockAllowed(): boolean {
+    return this.config.get<boolean>('paytr.allowMock') === true;
+  }
+
   async retryCheckout(
     dto: RetryPaymentDto,
     user?: User | null,
@@ -118,6 +123,11 @@ export class PaytrService {
     const merchantFailUrl = `${frontend}/odeme/basarisiz?${qs}`;
 
     if (!this.isConfigured()) {
+      if (!this.isMockAllowed()) {
+        throw new ServiceUnavailableException(
+          'PayTR yapılandırılmamış. Canlıda PAYTR_MERCHANT_* anahtarlarını girin.',
+        );
+      }
       const mockToken = `mock-paytr-${randomUUID()}`;
       order.payment.provider = 'paytr';
       order.payment.status = PaymentStatus.PENDING;
@@ -293,6 +303,11 @@ export class PaytrService {
   }
 
   async handleMockComplete(merchantOid: string, status: string) {
+    if (!this.isMockAllowed()) {
+      throw new ForbiddenException(
+        'Mock ödeme production’da kapalı. PAYTR_ALLOW_MOCK=true yalnızca bilinçli demo için.',
+      );
+    }
     const payment = await this.em.findOne(Payment, {
       where: { conversationId: merchantOid },
       relations: { order: true },

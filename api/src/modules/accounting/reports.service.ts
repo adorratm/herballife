@@ -49,11 +49,11 @@ export class ReportsService {
       .andWhere('o.created_at < :to', { to: `${to}T23:59:59.999Z` })
       .getMany();
 
-    const webRevenuecat = web.filter(
-      (o) => o.payment?.provider === 'revenuecat',
-    );
     const webPaytr = web.filter(
-      (o) => !o.payment?.provider || o.payment.provider !== 'revenuecat',
+      (o) =>
+        !o.payment?.provider ||
+        o.payment.provider === 'paytr' ||
+        o.payment.provider === 'iyzico',
     );
 
     /** Manuel kasa girişi (ÖKC/PayTR eşlemesi çift sayılmasın). */
@@ -75,10 +75,6 @@ export class ReportsService {
     const okcCard = okc.reduce((s, i) => s + parseMoney(i.cardAmount), 0);
     const webTotal = web.reduce((s, i) => s + parseMoney(i.total), 0);
     const webPaytrTotal = webPaytr.reduce((s, i) => s + parseMoney(i.total), 0);
-    const webRevenuecatTotal = webRevenuecat.reduce(
-      (s, i) => s + parseMoney(i.total),
-      0,
-    );
     const cashTotal = cashRegister.reduce(
       (s, i) => s + parseMoney(i.amount),
       0,
@@ -89,10 +85,6 @@ export class ReportsService {
       to,
       web: { count: web.length, total: money(webTotal) },
       webPaytr: { count: webPaytr.length, total: money(webPaytrTotal) },
-      webRevenuecat: {
-        count: webRevenuecat.length,
-        total: money(webRevenuecatTotal),
-      },
       invoices: {
         count: invoices.length,
         total: money(invoiceTotal),

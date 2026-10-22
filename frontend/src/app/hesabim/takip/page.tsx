@@ -1,10 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AccountTabs } from "@/components/AccountTabs";
 import { SuccessModal } from "@/components/SuccessModal";
+import {
+  WellnessRingProgress,
+  WellnessTrendChart,
+} from "@/components/WellnessTrendChart";
 import { getApiBase } from "@/lib/api";
 import { getToken, isAuthenticated } from "@/lib/auth";
 
@@ -184,6 +188,24 @@ export default function WellnessTrackPage() {
     }
   }
 
+  const progress = water
+    ? Math.min(100, Math.round((water.totalMl / water.goalMl) * 100))
+    : 0;
+
+  const chartPoints = useMemo(
+    () =>
+      [...measurements]
+        .slice()
+        .reverse()
+        .map((m) => ({
+          date: m.measuredAt,
+          weightKg: m.weightKg,
+          waistCm: m.waistCm,
+          hipCm: m.hipCm,
+        })),
+    [measurements],
+  );
+
   if (loading) {
     return (
       <div className="page-shell py-12 text-sm text-on-surface-variant">
@@ -191,10 +213,6 @@ export default function WellnessTrackPage() {
       </div>
     );
   }
-
-  const progress = water
-    ? Math.min(100, Math.round((water.totalMl / water.goalMl) * 100))
-    : 0;
 
   return (
     <div className="page-shell space-y-8 py-10">
@@ -330,7 +348,7 @@ export default function WellnessTrackPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-            Wellness
+            Sağlık takibi
           </p>
           <h1 className="font-display text-3xl text-on-surface">
             Günlük su ve öğün takibi
@@ -431,13 +449,13 @@ export default function WellnessTrackPage() {
       </section>
 
       <section className="rounded-xl bg-surface-container-lowest p-6 shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h2 className="font-display text-xl">Su takibi</h2>
-            <p className="text-sm text-on-surface-variant">
-              Bugün {water?.totalMl ?? 0} / {water?.goalMl ?? 2500} ml
-            </p>
-          </div>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <WellnessRingProgress
+            value={water?.totalMl ?? 0}
+            goal={water?.goalMl ?? 2500}
+            label="Su takibi"
+            size={108}
+          />
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -488,11 +506,11 @@ export default function WellnessTrackPage() {
       <section className="rounded-xl bg-surface-container-lowest p-6 shadow-sm">
         <h2 className="font-display text-xl">Günün öğün rutini</h2>
         <p className="mt-1 text-sm text-on-surface-variant">
-          Slot’a tıklayarak hızlı öğün kaydı açın
+          Kutucuğa tıklayarak hızlı öğün kaydı açın
         </p>
         <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            { id: "kahvalti", label: "Kahvaltı / Shake" },
+            { id: "kahvalti", label: "Kahvaltı / Formül 1" },
             { id: "ara", label: "Ara öğün" },
             { id: "ogle", label: "Öğle" },
             { id: "ara2", label: "İkindi" },
@@ -558,7 +576,7 @@ export default function WellnessTrackPage() {
             />
           </label>
           <label className="mt-3 block text-sm">
-            <span className="field-label">Fotoğraf (opsiyonel)</span>
+            <span className="field-label">Fotoğraf (isteğe bağlı)</span>
             <input
               type="file"
               accept="image/*"
@@ -639,9 +657,23 @@ export default function WellnessTrackPage() {
           </ul>
         </div>
         <div className="rounded-xl bg-surface-container-lowest p-6 shadow-sm">
-          <h2 className="font-display text-lg">Son ölçümler</h2>
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="font-display text-lg">Ölçüm trendi</h2>
+            <Link
+              href="/hesabim/olcumler"
+              className="text-xs font-semibold text-primary hover:underline"
+            >
+              Tümü →
+            </Link>
+          </div>
+          <div className="mt-3">
+            <WellnessTrendChart
+              points={chartPoints}
+              height={240}
+            />
+          </div>
           <ul className="mt-4 space-y-3">
-            {measurements.map((m) => (
+            {measurements.slice(0, 4).map((m) => (
               <li
                 key={m.id}
                 className="rounded-lg border border-[#ebece8] px-3 py-2 text-sm"
@@ -654,6 +686,7 @@ export default function WellnessTrackPage() {
                 </div>
                 <p className="text-on-surface-variant">
                   {m.weightKg != null ? `${m.weightKg} kg` : "—"}
+                  {m.waistCm != null ? ` · bel ${m.waistCm}` : ""}
                 </p>
               </li>
             ))}

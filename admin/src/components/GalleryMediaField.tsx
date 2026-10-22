@@ -188,7 +188,7 @@ export function GalleryMediaField({
         onBlur={() => {
           if (manualUrl.trim()) addManual();
         }}
-        placeholder="veya URL yapıştır (Enter)"
+        placeholder="veya bağlantı yapıştır (Enter)"
         className="w-full border border-border-muted bg-background px-3 py-2 text-sm"
       />
 

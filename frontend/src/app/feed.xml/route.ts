@@ -23,7 +23,7 @@ export async function GET() {
     getBlogPosts({ page: 1, limit: 50, sort: "publishedAt", order: "desc" }),
   ]);
 
-  const channelTitle = escapeXml(`${settings.brand.name} Blog`);
+  const channelTitle = escapeXml(`${settings.brand.name} Yazılar`);
   const channelDesc = escapeXml(
     settings.seo.description || "Beslenme, paketler ve sağlıklı yaşam notları",
   );

@@ -24,7 +24,7 @@ const LEGAL_META: Record<
   "mesafeli-satis": {
     title: "Mesafeli Satış Sözleşmesi",
     description:
-      "Online siparişler için mesafeli satış sözleşmesi metni.",
+      "Çevrimiçi siparişler için mesafeli satış sözleşmesi metni.",
   },
   "on-bilgilendirme": {
     title: "Ön Bilgilendirme Formu",

@@ -168,7 +168,7 @@ function BlogAdminPageInner() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-muted">Blog yazıları — SEO alanlarıyla</p>
+        <p className="text-sm text-muted">Yazılar — arama alanlarıyla</p>
         <button
           type="button"
           onClick={startCreate}
@@ -229,7 +229,9 @@ function BlogAdminPageInner() {
             />
           </label>
           <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">Slug</span>
+            <span className="mono text-[10px] uppercase text-muted">
+              Kısa ad (URL)
+            </span>
             <input
               required
               value={form.slug}
@@ -336,7 +338,7 @@ function BlogAdminPageInner() {
           </label>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
-              SEO başlık
+              Arama başlığı
             </span>
             <input
               value={form.seoTitle}
@@ -348,7 +350,7 @@ function BlogAdminPageInner() {
           </label>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
-              SEO açıklama
+              Arama açıklaması
             </span>
             <input
               value={form.seoDescription}
@@ -399,14 +401,14 @@ function BlogAdminPageInner() {
         columns={[
           {
             key: 'slug',
-            header: 'Slug',
+            header: 'Kısa ad',
             render: (r) => <span className="mono text-xs">{r.slug}</span>,
           },
           { key: 'title', header: 'Başlık', render: (r) => r.title },
           {
             key: 'pub',
             header: 'Durum',
-            render: (r) => (r.isPublished ? 'published' : 'draft'),
+            render: (r) => (r.isPublished ? 'Yayında' : 'Taslak'),
           },
           {
             key: 'actions',

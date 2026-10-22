@@ -68,7 +68,9 @@ export function ProductCard({
             compact
               ? "left-1.5 top-1.5 px-1.5 py-0.5 text-[8px]"
               : "left-2.5 top-2.5 px-2 py-0.5 text-[10px]"
-          } ${discount || !isGifted ? "bg-flash" : "bg-tertiary"}`}
+          } ${discount || !isGifted ? "bg-flash" : "bg-tertiary"} ${
+            discount ? "badge-live" : ""
+          }`}
         >
           {primaryBadge}
         </span>
@@ -78,15 +80,19 @@ export function ProductCard({
       </div>
       <Link href={`/urunler/${product.slug}`} className="flex flex-1 flex-col">
         <div
-          className={`relative overflow-hidden rounded-md bg-surface-container-low ${
-            compact ? "mb-1.5 aspect-[4/3]" : "mb-2 aspect-square"
+          className={`card-media-shine relative overflow-hidden rounded-lg ${
+            compact ? "mb-1.5 aspect-4/3" : "mb-2 aspect-square"
           }`}
+          style={{
+            background:
+              "radial-gradient(ellipse 70% 55% at 50% 40%, color-mix(in srgb, var(--primary-fixed) 90%, white), var(--surface-container-low))",
+          }}
         >
           <Image
             src={img}
             alt={product.name}
             fill
-            className="object-contain p-1.5 transition-transform duration-300 group-hover:scale-[1.03]"
+            className="object-contain p-2.5 drop-shadow-[0_10px_18px_rgba(18,40,28,0.12)] transition-transform duration-500 ease-out group-hover:scale-[1.06]"
             sizes={compact ? "(max-width: 768px) 33vw, 15vw" : "(max-width: 768px) 45vw, 18vw"}
           />
         </div>
@@ -121,7 +127,9 @@ export function ProductCard({
               </span>
             ) : null}
             <span
-              className={`font-bold text-primary ${compact ? "text-xs" : "text-sm"}`}
+              className={`font-bold text-primary ${
+                discount ? "price-live" : ""
+              } ${compact ? "text-xs" : "text-sm"}`}
             >
               {formatMoney(price, product.currency)}
             </span>
@@ -129,15 +137,19 @@ export function ProductCard({
         </div>
       </Link>
       {!hideCart ? (
-        <div className={compact ? "mt-1.5" : "mt-2"}>
+        <div
+          className={`opacity-95 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:opacity-100 ${
+            compact ? "mt-1.5" : "mt-2"
+          }`}
+        >
           <AddToCartButton
             productId={product.id}
             variantId={variant?.id}
             productName={product.name}
             price={Number(price)}
-            label="Sepete"
+            label="Sepete ekle"
             goToCart={false}
-            className={`btn-cta pressable w-full text-xs ${compact ? "py-1.5" : "py-2"}`}
+            className={`btn-cta pressable w-full cursor-pointer text-xs ${compact ? "py-1.5" : "py-2"}`}
           />
         </div>
       ) : null}

@@ -126,7 +126,7 @@ export default function CashAdminPage() {
         <div>
           <h2 className="text-lg font-semibold">Kasa / banka</h2>
           <p className="text-sm text-muted">
-            Nakit satış ve gider girişleri. Dashboard cirosuna manuel girişler
+            Nakit satış ve gider girişleri. Özet panel cirosuna manuel girişler
             dahil edilir.
           </p>
         </div>
@@ -254,7 +254,7 @@ export default function CashAdminPage() {
         </button>
       </form>
 
-      <div className="overflow-x-auto border border-border-muted">
+      <div className="overflow-x-auto rounded-2xl border border-border-muted">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border-muted bg-surface mono text-[10px] uppercase text-muted">
             <tr>

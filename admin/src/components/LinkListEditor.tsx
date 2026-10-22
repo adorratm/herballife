@@ -69,7 +69,9 @@ export function LinkListEditor({ label, links, onChange }: Props) {
               />
             </label>
             <label className="block text-sm">
-              <span className="mono text-[10px] uppercase text-muted">URL</span>
+              <span className="mono text-[10px] uppercase text-muted">
+                Bağlantı
+              </span>
               <input
                 value={link.href}
                 onChange={(e) => update(index, 'href', e.target.value)}
@@ -110,7 +112,7 @@ export function LinkListEditor({ label, links, onChange }: Props) {
 
       <ConfirmDialog
         open={pendingIndex !== null}
-        title="Linki kaldır?"
+        title="Bağlantıyı kaldır?"
         description={
           pendingLabel
             ? `"${pendingLabel}" menüden silinecek.`

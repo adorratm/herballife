@@ -8,12 +8,12 @@ import { buildWhatsAppUrl, DEFAULT_WHATSAPP_PHONE } from "@/lib/whatsapp";
 const STEPS = [
   {
     n: "1",
-    title: "Transfer",
+    title: "Havale",
     body: "Banka hesaplarından birine tutarı gönderin.",
   },
   {
     n: "2",
-    title: "Form",
+    title: "Bildirim formu",
     body: "Sipariş no, tutar ve gönderen bilgisini yazın.",
   },
   {
@@ -67,7 +67,7 @@ export default function PaymentNotifyPage() {
             Ödeme bildirimi
           </h1>
           <p className="mt-4 text-base leading-relaxed text-on-surface-variant">
-            Transfer yaptıktan sonra formu doldurun. Bilgiler WhatsApp ile
+            Havale yaptıktan sonra formu doldurun. Bilgiler WhatsApp ile
             distribütöre iletilir. Hesap bilgileri için{" "}
             <Link
               href="/banka-hesaplari"
@@ -133,7 +133,7 @@ export default function PaymentNotifyPage() {
               />
             </label>
             <label className="block text-sm">
-              <span className="field-label">Not (opsiyonel)</span>
+              <span className="field-label">Not (isteğe bağlı)</span>
               <textarea
                 className="field-input"
                 rows={3}

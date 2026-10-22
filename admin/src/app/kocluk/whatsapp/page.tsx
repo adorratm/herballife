@@ -79,7 +79,7 @@ export default function CoachWhatsappPage() {
         </Link>
         <h2 className="mt-2 text-xl font-semibold">Toplu WhatsApp mesajı</h2>
         <p className="text-sm text-muted">
-          Wellness kaydı olan danışanlara motivasyon mesajı. Demo ortamında
+          Sağlık takibi kaydı olan danışanlara motivasyon mesajı. Demo ortamında
           gerçek API çağrısı yapılmaz; numarası olanlar “gönderildi” sayılır.
         </p>
       </div>
@@ -165,7 +165,7 @@ export default function CoachWhatsappPage() {
             {result.recipients.map((r) => (
               <li key={r.phone + r.name}>
                 {r.name} · {r.phone || 'telefon yok'} ·{' '}
-                {r.ok ? 'OK' : 'atlandı'}
+                {r.ok ? 'Tamam' : 'atlandı'}
               </li>
             ))}
           </ul>

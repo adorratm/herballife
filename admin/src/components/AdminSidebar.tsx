@@ -21,7 +21,7 @@ type NavGroup = {
 export const ADMIN_NAV_GROUPS: NavGroup[] = [
   {
     title: 'Genel',
-    items: [{ href: '/', label: 'Dashboard' }],
+    items: [{ href: '/', label: 'Özet panel' }],
   },
   {
     title: 'Mağaza',
@@ -59,7 +59,7 @@ export const ADMIN_NAV_GROUPS: NavGroup[] = [
   {
     title: 'İçerik',
     items: [
-      { href: '/blog', label: 'Blog', adminOnly: true },
+      { href: '/blog', label: 'Yazılar', adminOnly: true },
       { href: '/icerik', label: 'İçerik', adminOnly: true },
       { href: '/medya', label: 'Medya', adminOnly: true },
       { href: '/galeri', label: 'Site Galerisi', adminOnly: true },
@@ -226,7 +226,7 @@ function BrandBlock() {
           <p className="truncate font-display text-base font-bold text-foreground">
             Herbal Ürünleri
           </p>
-          <p className="text-xs font-medium text-accent">Admin · Emine Özberk</p>
+          <p className="text-xs font-medium text-accent">Yönetici · Emine Özberk</p>
         </div>
       </div>
     </div>

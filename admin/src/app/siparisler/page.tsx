@@ -142,7 +142,7 @@ function OrdersPageInner() {
               : 'border-border-muted text-muted hover:border-accent'
           }`}
         >
-          Web
+          Site
         </button>
       </div>
 

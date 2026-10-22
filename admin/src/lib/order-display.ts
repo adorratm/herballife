@@ -43,7 +43,7 @@ export function resolveOrderSource(order: {
   if (/pazaryeri|marketplace/i.test(notes))
     return { kind: 'marketplace', label: 'Pazaryeri' };
 
-  return { kind: 'web', label: 'Web' };
+  return { kind: 'web', label: 'Site' };
 }
 
 export function formatAddress(addr?: Record<string, string> | null): string[] {

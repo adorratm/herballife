@@ -9,7 +9,6 @@ import { Reveal, Stagger } from '@/components/Reveal';
 import { asArray, asPaged, formatMoney } from '@/lib/utils';
 import {
   revenueSeriesOption,
-  revenuecatSeriesOption,
   statusPieOption,
   topProductsOption,
 } from '@/lib/charts';
@@ -191,6 +190,7 @@ export default function DashboardPage() {
           label="Bugünkü siparişler"
           value={loading ? '…' : ordersToday}
           tone="accent"
+          hint="Ödemesi yapılmış veya işlenen siparişler"
         />
         <StatsCard
           label="Bugünkü ciro"
@@ -200,7 +200,7 @@ export default function DashboardPage() {
         <StatsCard
           label="Hazırlanan sipariş"
           value={loading ? '…' : pendingOrders}
-          hint="processing"
+          hint="Hazırlanıyor"
         />
         <StatsCard
           label="Düşük stok"
@@ -220,14 +220,6 @@ export default function DashboardPage() {
                 Son 14 gün · ciro ve sipariş
               </h3>
               <EChart option={revenueSeriesOption(series)} height={300} />
-            </Reveal>
-          ) : null}
-          {series?.length ? (
-            <Reveal delay={90} variant="up" className="rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
-              <h3 className="text-[11px] font-bold uppercase tracking-wide text-muted">
-                RevenueCat · mobil mağaza
-              </h3>
-              <EChart option={revenuecatSeriesOption(series)} height={300} />
             </Reveal>
           ) : null}
           {byStatus?.length ? (
@@ -274,12 +266,12 @@ export default function DashboardPage() {
               )}
             </div>
           ) : (
-            <div className="overflow-hidden rounded-xl border border-border-muted bg-surface shadow-sm">
+            <div className="admin-table-wrap overflow-hidden rounded-2xl border border-border-muted bg-surface shadow-sm">
               <table className="w-full text-left text-sm">
                 <thead className="bg-surface-high/80">
                   <tr>
                     <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-muted">
-                      Platform
+                      Pazaryeri
                     </th>
                     <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-muted">
                       Mağaza
@@ -288,7 +280,7 @@ export default function DashboardPage() {
                       Durum
                     </th>
                     <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-muted">
-                      Son sync
+                      Son senkron
                     </th>
                   </tr>
                 </thead>
@@ -309,7 +301,15 @@ export default function DashboardPage() {
                               : 'text-muted'
                         }`}
                       >
-                        {row.status}
+                        {row.status === 'error'
+                          ? 'hata'
+                          : row.status === 'success'
+                            ? 'başarılı'
+                            : row.status === 'idle'
+                              ? 'beklemede'
+                              : row.status === 'disabled'
+                                ? 'pasif'
+                                : row.status}
                       </td>
                       <td className="px-4 py-3.5 text-xs text-muted">
                         {row.at}

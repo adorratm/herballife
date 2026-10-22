@@ -133,7 +133,7 @@ export default function CoachPage() {
         </div>
         <Link
           href="/kocluk/whatsapp"
-          className="rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white"
+          className="rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white!"
         >
           Toplu WhatsApp
         </Link>

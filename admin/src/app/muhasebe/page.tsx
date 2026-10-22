@@ -10,7 +10,6 @@ type Turnover = {
   to: string;
   web: { count: number; total: string };
   webPaytr?: { count: number; total: string };
-  webRevenuecat?: { count: number; total: string };
   invoices: { count: number; total: string; vat: string };
   okc: { count: number; total: string; vat: string; cash: string; card: string };
   cashRegister?: { count: number; total: string };
@@ -43,7 +42,7 @@ export default function AccountingReportsPage() {
       <div>
         <h2 className="text-lg font-semibold">Muhasebe cirosu</h2>
         <p className="text-sm text-muted">
-          Web sipariş, fatura, ÖKC ve manuel kasa girişlerinin birleşik özeti
+          Site siparişi, fatura, ÖKC ve manuel kasa girişlerinin birleşik özeti
           (son ~30 gün).
         </p>
       </div>
@@ -59,16 +58,11 @@ export default function AccountingReportsPage() {
           <p className="mono text-[10px] uppercase text-muted">
             {turnover.from} → {turnover.to}
           </p>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             <Card
-              label="PayTR (web)"
+              label="PayTR (site)"
               value={turnover.webPaytr?.total ?? turnover.web.total}
               meta={`${turnover.webPaytr?.count ?? turnover.web.count} sipariş`}
-            />
-            <Card
-              label="RevenueCat"
-              value={turnover.webRevenuecat?.total || '0.00'}
-              meta={`${turnover.webRevenuecat?.count || 0} mobil`}
             />
             <Card
               label="Fatura"
@@ -93,14 +87,10 @@ export default function AccountingReportsPage() {
               option={mixPieOption(
                 [
                   {
-                    name: 'PayTR (web)',
+                    name: 'PayTR (site)',
                     value:
                       Number(turnover.webPaytr?.total ?? turnover.web.total) ||
                       0,
-                  },
-                  {
-                    name: 'RevenueCat',
-                    value: Number(turnover.webRevenuecat?.total) || 0,
                   },
                   {
                     name: 'Fatura',
@@ -114,7 +104,6 @@ export default function AccountingReportsPage() {
                 ],
                 [
                   CHART.accentSoft,
-                  CHART.revenuecat,
                   CHART.accent,
                   CHART.success,
                   CHART.warning,

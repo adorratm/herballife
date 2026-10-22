@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  /* Beyaz zemin, net kontrast; yeşil/terracotta sadece vurgu */
+  /* Soft yeşil palet — derin orman, sage ve mint katmanları */
   --background: #ffffff;
   --surface: #ffffff;
   --surface-dim: #ecece8;
   --surface-bright: #ffffff;
   --surface-container-lowest: #ffffff;
-  --surface-container-low: #f3f4f1;
-  --surface-container: #eceeea;
-  --surface-container-high: #e2e5e0;
-  --surface-container-highest: #d5d9d3;
+  --surface-container-low: #f4f7f5;
+  --surface-container: #eef3f0;
+  --surface-container-high: #e2ebe6;
+  --surface-container-highest: #d4dfd8;
   --on-surface: #121411;
   --on-surface-variant: #3d423c;
   --on-background: #121411;
@@ -20,21 +20,21 @@
   --on-primary: #ffffff;
   --primary-container: #1c8f5a;
   --on-primary-container: #eef8f2;
-  --primary-fixed: #dff3e8;
+  --primary-fixed: #e6f4ed;
   --cta: #157a4c;
   --on-cta: #ffffff;
   --secondary: #3d423c;
   --secondary-container: #f3f4f1;
   --on-secondary: #ffffff;
-  --tertiary: #c2410c;
-  --tertiary-container: #ea580c;
-  --tertiary-fixed: #ffedd5;
+  --tertiary: #3f7358;
+  --tertiary-container: #508a6a;
+  --tertiary-fixed: #eaf3ee;
   --on-tertiary: #ffffff;
   --error: #ba1a1a;
   --accent: #157a4c;
   --deep-carbon: #121411;
-  --flash: #c2410c;
-  --flash-soft: #fff7ed;
+  --flash: #2d7052;
+  --flash-soft: #eef7f2;
 
   --font-display: "Plus Jakarta Sans", sans-serif;
   --font-inter: "Inter", sans-serif;
@@ -252,21 +252,70 @@ body {
   animation: slide-up-banner 0.45s var(--motion-ease) both;
 }
 
+button,
+a,
+[role="button"],
+summary,
+label[for],
+input[type="checkbox"],
+input[type="radio"],
+input[type="file"],
+select {
+  cursor: pointer;
+}
+button:disabled,
+a[aria-disabled="true"],
+input:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
 .btn-cta {
+  position: relative;
+  overflow: hidden;
   background: var(--primary);
   color: var(--on-primary);
   font-family: var(--font-inter), sans-serif;
   font-weight: 600;
   font-size: 0.875rem;
   border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px -4px color-mix(in srgb, var(--primary) 45%, transparent);
   transition:
     background var(--motion-fast) ease,
     transform var(--motion-fast) ease,
     box-shadow var(--motion-fast) ease;
+  animation: cta-breathe 2.8s var(--motion-ease) infinite;
+}
+.btn-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 60%
+  );
+  transform: translateX(-120%);
+  pointer-events: none;
 }
 .btn-cta:hover {
   background: var(--primary-container);
-  transform: translate3d(0, -1px, 0);
+  transform: translate3d(0, -2px, 0) scale(1.02);
+  box-shadow: 0 10px 28px -6px color-mix(in srgb, var(--primary) 55%, transparent);
+  animation: none;
+}
+.btn-cta:hover::after {
+  animation: cta-shine 0.7s var(--motion-ease) both;
+}
+.btn-cta:active {
+  transform: translate3d(0, 0, 0) scale(0.98);
+}
+.btn-cta:disabled {
+  animation: none;
+  box-shadow: none;
+  cursor: not-allowed;
 }
 .btn-ghost {
   border: 1px solid var(--primary);
@@ -275,10 +324,16 @@ body {
   font-family: var(--font-inter), sans-serif;
   font-weight: 600;
   border-radius: 9999px;
-  transition: background var(--motion-fast) ease;
+  cursor: pointer;
+  transition:
+    background var(--motion-fast) ease,
+    transform var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease;
 }
 .btn-ghost:hover {
   background: color-mix(in srgb, var(--primary) 8%, transparent);
+  transform: translate3d(0, -1px, 0);
+  box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--primary) 35%, transparent);
 }
 
 .media-lift {
@@ -303,11 +358,11 @@ body {
   border-color: color-mix(in srgb, var(--primary) 35%, var(--outline-variant));
 }
 
-/* Carousel içinde hover lift taşmasın / çizgi çıkmasın */
+/* Carousel: hafif etkileşim, layout bozulmasın */
 .product-carousel .card-motion:hover {
-  transform: none;
-  box-shadow: var(--shadow-card);
-  border-color: color-mix(in srgb, var(--primary) 40%, var(--outline-variant));
+  transform: translate3d(0, -2px, 0);
+  box-shadow: var(--shadow-hover);
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--outline-variant));
 }
 
 .panel-motion {
@@ -637,6 +692,169 @@ body {
   font-size: 0.6875rem;
   font-weight: 700;
   padding: 0.2rem 0.6rem;
+  animation: badge-pulse 2.4s var(--motion-ease) infinite;
+}
+
+.badge-live {
+  animation: badge-pulse 2.4s var(--motion-ease) infinite;
+}
+
+@keyframes cta-breathe {
+  0%,
+  100% {
+    box-shadow: 0 4px 14px -4px color-mix(in srgb, var(--primary) 40%, transparent);
+  }
+  50% {
+    box-shadow: 0 8px 22px -4px color-mix(in srgb, var(--primary) 58%, transparent);
+  }
+}
+
+@keyframes cta-shine {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes badge-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--flash) 35%, transparent);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--flash) 0%, transparent);
+  }
+}
+
+@keyframes price-nudge {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40% {
+    transform: translate3d(0, -2px, 0) scale(1.03);
+  }
+}
+
+.price-live {
+  display: inline-block;
+  animation: price-nudge 3.2s var(--motion-ease) infinite;
+  transform-origin: left center;
+}
+
+.card-media-shine {
+  position: relative;
+  overflow: hidden;
+}
+.card-media-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.35) 48%,
+    transparent 62%
+  );
+  transform: translateX(-130%);
+  pointer-events: none;
+}
+.group:hover .card-media-shine::after {
+  animation: cta-shine 0.85s var(--motion-ease) both;
+}
+
+.product-stage {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      ellipse 70% 60% at 50% 42%,
+      color-mix(in srgb, var(--primary-fixed) 88%, white) 0%,
+      transparent 68%
+    ),
+    linear-gradient(
+      165deg,
+      #f7faf8 0%,
+      var(--surface-container-low) 48%,
+      #e8f0eb 100%
+    );
+}
+.product-stage-glow {
+  position: absolute;
+  inset: 12% 18% auto;
+  height: 55%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--primary) 14%, transparent),
+    transparent 70%
+  );
+  filter: blur(28px);
+  pointer-events: none;
+  z-index: 0;
+  animation: float-soft 7s ease-in-out infinite;
+}
+.product-stage-ring {
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  width: min(88%, 32rem);
+  height: 16%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--on-surface) 7%, transparent),
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+.product-stage-figure {
+  animation: product-float 5.5s ease-in-out infinite;
+}
+@keyframes product-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-stage-glow,
+  .product-stage-figure {
+    animation: none;
+  }
+}
+
+.cart-success-pop {
+  animation: cart-pop 0.55s var(--motion-ease) both;
+}
+
+@keyframes cart-pop {
+  0% {
+    transform: scale(0.92);
+  }
+  45% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.add-cart-burst {
+  position: relative;
+}
+.add-cart-burst.is-added {
+  animation: cart-pop 0.5s var(--motion-ease) both;
+  background: var(--primary-container) !important;
 }
 
 .chip-category {
@@ -665,8 +883,18 @@ body {
   .float-soft,
   .shimmer-accent,
   .marquee-track,
-  .ambient-blob {
+  .ambient-blob,
+  .btn-cta,
+  .badge-discount,
+  .badge-live,
+  .price-live,
+  .cart-success-pop,
+  .add-cart-burst.is-added {
     animation: none !important;
+  }
+  .btn-cta::after,
+  .card-media-shine::after {
+    display: none !important;
   }
   .reveal,
   .reveal.is-visible {

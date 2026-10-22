@@ -94,7 +94,7 @@ export default function AccountNotificationsPage() {
           {CUSTOMER_TOGGLES.map((row) => (
             <label
               key={row.key}
-              className="flex cursor-pointer items-center justify-between gap-4 border border-outline-variant/30 px-4 py-3"
+              className="flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-outline-variant/30 bg-white px-4 py-3 shadow-sm"
             >
               <span className="font-meta text-xs uppercase">{row.label}</span>
               <input
@@ -116,27 +116,29 @@ export default function AccountNotificationsPage() {
               const token = getToken();
               if (token) void markInboxAllRead(token).then(() => load());
             }}
-            className="font-meta text-[11px] uppercase text-primary"
+            className="rounded-full px-3 py-1.5 font-meta text-[11px] uppercase text-primary hover:bg-primary-fixed"
           >
             Tümünü okundu işaretle
           </button>
         </div>
         {!items.length ? (
-          <p className="font-meta text-xs uppercase text-secondary">
+          <p className="rounded-2xl border border-outline-variant/25 bg-white px-5 py-10 font-meta text-xs uppercase text-secondary">
             Bildirim yok
           </p>
         ) : (
-          <ul className="divide-y divide-outline-variant/20 border border-outline-variant/20">
+          <ul className="space-y-2.5">
             {items.map((item) => (
               <li key={item.id}>
                 <button
                   type="button"
                   onClick={() => void openItem(item)}
-                  className={`block w-full px-5 py-4 text-left hover:bg-surface-container-low ${
-                    item.readAt ? "opacity-60" : ""
+                  className={`block w-full rounded-2xl border border-outline-variant/25 bg-white px-5 py-4 text-left shadow-sm transition-colors hover:border-primary/35 hover:bg-surface-container-low ${
+                    item.readAt
+                      ? "opacity-60"
+                      : "ring-1 ring-inset ring-primary/15"
                   }`}
                 >
-                  <p className="text-sm">{item.title}</p>
+                  <p className="text-sm font-semibold">{item.title}</p>
                   <p className="mt-1 font-meta text-[11px] text-secondary">
                     {item.body}
                   </p>

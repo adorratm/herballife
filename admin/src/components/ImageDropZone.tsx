@@ -101,7 +101,7 @@ export function ImageDropZone({
         ) : (
           <>
             <span className="mono text-[10px] uppercase tracking-widest text-muted">
-              Drop_Zone
+              Dosya yükle
             </span>
             <span className="text-sm text-foreground">{hint}</span>
             <span className="text-xs text-muted">

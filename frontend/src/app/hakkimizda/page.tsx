@@ -62,7 +62,7 @@ const FALLBACK_ETHOS: AboutEthos = {
   eyebrow: "Beslenme yaklaşımımız",
   quote:
     "Sürdürülebilir sonuçlar; doğru ürün, düzenli takip ve kişisel rehberlikle gelir.",
-  linkLabel: "Blog notlarını oku →",
+  linkLabel: "Yazıları oku →",
   linkHref: "/blog",
 };
 
@@ -133,7 +133,7 @@ export default async function AboutPage() {
               </p>
             ) : null}
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-surface-container-low">
+          <div className="relative aspect-4/3 overflow-hidden rounded-2xl bg-surface-container-low">
             <Image
               src="/images/products/2026-paket-1-shaker-hediyeli.png"
               alt={brand.name}
@@ -247,7 +247,7 @@ export default async function AboutPage() {
               icon: "♡",
             },
             {
-              title: "Wellness takip",
+              title: "Sağlık takibi",
               body: "Su, öğün ve ölçüm kayıtlarınız hesabınızda; koç onayıyla ilerlersiniz.",
               icon: "◎",
             },

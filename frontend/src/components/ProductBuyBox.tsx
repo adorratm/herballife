@@ -21,7 +21,7 @@ type Props = {
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-const DEFAULT_SHAKERS = ["Yeşil Neon", "Pembe", "Siyah", "Beyaz"];
+const DEFAULT_SHAKERS = ["Parlak yeşil", "Pembe", "Siyah", "Beyaz"];
 
 export function ProductBuyBox({
   product,
@@ -104,10 +104,10 @@ export function ProductBuyBox({
                   key={v.id}
                   type="button"
                   onClick={() => setVariantId(v.id)}
-                  className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${
+                  className={`cursor-pointer rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-all hover:-translate-y-0.5 ${
                     active
-                      ? "border-primary bg-primary text-on-primary"
-                      : "border-outline-variant/40 hover:border-primary"
+                      ? "border-primary bg-primary text-on-primary shadow-md"
+                      : "border-outline-variant/40 hover:border-primary hover:shadow-sm"
                   }`}
                 >
                   {v.weightLabel}
@@ -130,9 +130,9 @@ export function ProductBuyBox({
                 key={a}
                 type="button"
                 onClick={() => setAroma(a)}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                className={`cursor-pointer rounded-full px-3 py-1.5 text-xs font-semibold transition-all hover:-translate-y-0.5 ${
                   aroma === a
-                    ? "bg-secondary-container text-on-secondary-container"
+                    ? "bg-secondary-container text-on-secondary-container shadow-sm"
                     : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high"
                 }`}
               >
@@ -146,7 +146,7 @@ export function ProductBuyBox({
       {showShaker ? (
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
-            Shaker rengi
+            Karıştırıcı rengi
           </p>
           <div className="flex flex-wrap gap-2">
             {DEFAULT_SHAKERS.map((s) => (
@@ -154,9 +154,9 @@ export function ProductBuyBox({
                 key={s}
                 type="button"
                 onClick={() => setShaker(s)}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                className={`cursor-pointer rounded-full px-3 py-1.5 text-xs font-semibold transition-all hover:-translate-y-0.5 ${
                   shaker === s
-                    ? "bg-primary-fixed text-primary"
+                    ? "bg-primary-fixed text-primary shadow-sm"
                     : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high"
                 }`}
               >
@@ -173,7 +173,11 @@ export function ProductBuyBox({
             Fiyat
           </p>
           <div className="flex flex-wrap items-baseline gap-3">
-            <p className="font-display text-3xl text-primary">
+            <p
+              className={`font-display text-3xl text-primary ${
+                hasDeal ? "price-live" : ""
+              }`}
+            >
               {formatMoney(displayPrice, product.currency)}
             </p>
             {hasDeal ? (
@@ -183,8 +187,11 @@ export function ProductBuyBox({
             ) : null}
           </div>
           {hasDeal ? (
-            <p className="mt-1 text-xs font-semibold text-tertiary">
-              ↓ Son 30 günün en düşük fiyatı
+            <p className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold text-flash">
+              <span className="badge-discount px-2! py-0.5! text-[10px]!">
+                Fırsat
+              </span>
+              İndirimli fiyat
             </p>
           ) : null}
           <p className="mt-1 text-xs text-on-surface-variant">
@@ -192,6 +199,11 @@ export function ProductBuyBox({
             {aroma ? ` · ${aroma}` : ""}
             {showShaker ? ` · ${shaker}` : ""}
           </p>
+          {!outOfStock && stock > 0 && stock <= 8 ? (
+            <p className="mt-1.5 text-xs font-semibold text-flash">
+              Son {stock} adet — stok sınırlı
+            </p>
+          ) : null}
         </div>
       </div>
 
@@ -205,10 +217,32 @@ export function ProductBuyBox({
             price={Number(displayPrice)}
             label={outOfStock ? "Stokta yok" : "Sepete Ekle"}
             goToCart={false}
+            className="btn-cta pressable w-full cursor-pointer py-4 text-base font-bold tracking-wide disabled:cursor-not-allowed disabled:opacity-50"
           />
         </div>
         <FavoriteButton productId={product.id} size="lg" />
       </div>
+
+      <ul className="grid grid-cols-1 gap-2 rounded-xl bg-surface-container-low px-3.5 py-3 text-xs text-on-surface-variant sm:grid-cols-3">
+        <li className="flex items-center gap-1.5">
+          <span className="font-bold text-primary" aria-hidden>
+            ✓
+          </span>
+          14 gün cayma hakkı
+        </li>
+        <li className="flex items-center gap-1.5">
+          <span className="font-bold text-primary" aria-hidden>
+            ✓
+          </span>
+          PayTR güvenli ödeme
+        </li>
+        <li className="flex items-center gap-1.5">
+          <span className="font-bold text-primary" aria-hidden>
+            ✓
+          </span>
+          Orijinal ürün
+        </li>
+      </ul>
 
       {whatsappEnabled ? (
         <a
@@ -223,7 +257,7 @@ export function ProductBuyBox({
           rel="noopener noreferrer"
           className="btn-ghost flex w-full items-center justify-center px-4 py-3 text-xs"
         >
-          WhatsApp ile danış
+          WhatsApp ile danış — ortalama yanıt 1 saatten kısa
         </a>
       ) : null}
     </div>

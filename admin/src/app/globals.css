@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f3f2ee;
+  --background: #ecebe6;
   --foreground: #171715;
   --surface: #ffffff;
-  --surface-high: #f7f6f2;
-  --surface-highest: #eceae4;
-  --border: #d4d2cb;
-  --border-muted: #e8e6e0;
-  --muted: #6b6a65;
+  --surface-high: #f4f3ef;
+  --surface-highest: #e4e2db;
+  --border: #c9c6bd;
+  --border-muted: #d8d5cc;
+  --muted: #5c5b56;
   --accent: #1a6b45;
   --accent-hover: #228554;
   --accent-text: #ffffff;
   --success: #1a6b45;
-  --warning: #c2410c;
+  --warning: #6d7a3f;
   --danger: #ba1a1a;
   --radius: 0.75rem;
-  --shadow-sm: 0 1px 2px rgba(23, 23, 21, 0.04);
-  --shadow-md: 0 8px 24px -8px rgba(23, 23, 21, 0.1);
+  --shadow-sm: 0 1px 3px rgba(23, 23, 21, 0.06), 0 4px 12px -4px rgba(23, 23, 21, 0.06);
+  --shadow-md: 0 8px 24px -8px rgba(23, 23, 21, 0.12);
   --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-fast: 160ms;
   --motion-base: 420ms;
@@ -97,6 +97,15 @@ a {
   text-decoration: none;
 }
 
+/* Dolu yeşil aksiyonlar — yazı her zaman beyaz (inherit ezmesin) */
+a.bg-accent,
+button.bg-accent,
+a[class*="bg-accent"],
+button[class*="bg-accent"],
+.admin-btn-primary {
+  color: #ffffff !important;
+}
+
 /* Aktif sidebar menü — yazı her zaman beyaz */
 .admin-nav-active,
 .admin-nav-active:hover,
@@ -120,7 +129,7 @@ a.admin-nav-active {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #b8b6ae #f3f2ee;
+  scrollbar-color: #b8b6ae #ecebe6;
 }
 
 ::-webkit-scrollbar {
@@ -160,18 +169,121 @@ main [class*="border-border"][class*="bg-surface"] {
   box-shadow: var(--shadow-sm);
 }
 
+/* Tablolar — koyu başlık, açık gövde, belirgin hover */
+main .overflow-x-auto:has(table),
+main div.overflow-hidden:has(table),
+main .admin-table-wrap {
+  background: #ffffff;
+  border-color: #c5d4cb !important;
+  border-radius: 1rem !important;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Kaydırılabilir tablolar: köşeleri kırp, yatay scroll kalsın */
+main .overflow-x-auto:has(table) {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+main div.overflow-hidden:has(table),
+main .admin-table-wrap {
+  overflow: hidden;
+}
+
+main table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #ffffff;
+  color: var(--foreground);
+}
+
+main thead,
+main thead tr {
+  background: #1f4f38 !important;
+}
+
+main thead th {
+  padding: 0.8rem 1rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #e8f5ee !important;
+  border-bottom: none;
+  white-space: nowrap;
+}
+
+main thead th:first-child {
+  border-top-left-radius: 1rem;
+}
+
+main thead th:last-child {
+  border-top-right-radius: 1rem;
+}
+
+main tbody tr:not([aria-selected='true']):not([class*='bg-accent']) {
+  background: #ffffff !important;
+  transition: background-color var(--motion-fast) ease;
+}
+
+main tbody tr:nth-child(even):not([aria-selected='true']):not([class*='bg-accent']) {
+  background: #f0f6f2 !important;
+}
+
+main tbody tr:hover:not([aria-selected='true']):not([class*='bg-accent']) {
+  background: #d8eee3 !important;
+}
+
+main tbody tr:hover:not([aria-selected='true']):not([class*='bg-accent']) td {
+  color: #143528;
+}
+
+main tbody td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #e2ebe6;
+  color: var(--foreground);
+  vertical-align: middle;
+}
+
+main tbody tr:last-child td {
+  border-bottom: none;
+}
+
+main tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 1rem;
+}
+
+main tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 1rem;
+}
+
 main h1,
 main h2 {
   font-family: var(--font-display), var(--font-inter), system-ui, sans-serif;
   letter-spacing: -0.02em;
 }
 
-main a.bg-accent,
-main button.bg-accent,
-main [class*="bg-accent"][class*="text-white"],
-main a[class*="bg-accent"],
-main button[class*="bg-accent"] {
-  border-radius: 9999px;
+/* Kenarlıklı / düz butonlar — kare köşe kalmasın (zaten rounded-* olanlara dokunma) */
+button:not([class*="rounded"]),
+a.btn-motion:not([class*="rounded"]),
+a[class*="border"][class*="px-"]:not([class*="rounded"]),
+a[class*="border"][class*="py-"]:not([class*="rounded"]),
+label[class*="border"][class*="px-"]:not([class*="rounded"]),
+span[class*="border"][class*="px-"]:not([class*="rounded"]),
+[role="button"]:not([class*="rounded"]) {
+  border-radius: 0.625rem;
+}
+
+/* Birincil / dolu aksiyonlar — hap form */
+a.bg-accent:not([class*="rounded"]),
+button.bg-accent:not([class*="rounded"]),
+[class*="bg-accent"][class*="text-white"]:not([class*="rounded"]),
+a[class*="bg-accent"]:not([class*="rounded"]),
+button[class*="bg-accent"]:not([class*="rounded"]),
+.admin-btn,
+.admin-btn-primary {
+  border-radius: 9999px !important;
 }
 
 main input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="hidden"]),

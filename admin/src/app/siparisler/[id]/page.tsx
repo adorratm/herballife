@@ -617,19 +617,21 @@ export default function OrderDetailPage() {
         <h3 className="mb-2 mono text-xs uppercase tracking-widest text-muted">
           Bildirimler
         </h3>
-        <div className="border border-border-muted bg-surface">
+        <div className="overflow-hidden rounded-2xl border border-border-muted bg-surface shadow-sm">
           {notifications.length === 0 ? (
             <p className="px-4 py-6 text-sm text-muted">Bildirim yok</p>
           ) : (
             <ul className="divide-y divide-border-muted">
               {notifications.map((n) => (
-                <li key={n.id} className="px-4 py-3 text-sm">
+                <li key={n.id} className="px-4 py-3.5 text-sm">
                   <div className="flex flex-wrap gap-2">
-                    <span className="mono text-xs uppercase text-accent">
+                    <span className="rounded-full bg-accent/10 px-2 py-0.5 mono text-xs uppercase text-accent">
                       {n.channel}
                     </span>
                     <span className="mono text-xs text-muted">{n.template}</span>
-                    <span className="mono text-xs">{n.status}</span>
+                    <span className="rounded-full bg-surface-high px-2 py-0.5 mono text-xs">
+                      {n.status}
+                    </span>
                   </div>
                   <p className="mt-1 text-xs text-muted">{n.recipient}</p>
                   {n.errorMessage ? (

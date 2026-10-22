@@ -187,14 +187,14 @@ export default function ReturnsPage() {
 
               <p className="text-sm">{r.reason}</p>
               {r.adminNote ? (
-                <p className="text-xs text-muted">Admin notu: {r.adminNote}</p>
+                <p className="text-xs text-muted">Yönetici notu: {r.adminNote}</p>
               ) : null}
 
               {r.status === 'requested' ? (
                 <div className="space-y-2 border-t border-border-muted pt-3">
                   <input
                     type="text"
-                    placeholder="Admin notu (opsiyonel)"
+                    placeholder="Yönetici notu (opsiyonel)"
                     value={notes[r.id] || ''}
                     onChange={(e) =>
                       setNotes((prev) => ({ ...prev, [r.id]: e.target.value }))

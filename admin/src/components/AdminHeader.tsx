@@ -6,10 +6,10 @@ import { NotificationBell } from '@/components/NotificationBell';
 import { clearToken } from '@/lib/auth';
 
 const TITLES: Record<string, string> = {
-  '/': 'Dashboard',
+  '/': 'Özet panel',
   '/urunler': 'Ürünler',
   '/kategoriler': 'Kategoriler',
-  '/blog': 'Blog',
+  '/blog': 'Yazılar',
   '/icerik': 'İçerik',
   '/site-ayarlari': 'Site Ayarları',
   '/medya': 'Medya',
@@ -33,7 +33,11 @@ const TITLES: Record<string, string> = {
   '/cari': 'Cari',
   '/stok': 'Stok',
   '/muhasebe': 'Muhasebe',
+  '/muhasebe-ayarlari': 'Muhasebe ayarları',
   '/kullanicilar': 'Kullanıcılar',
+  '/fisler': 'Fişler',
+  '/faturalar': 'Faturalar',
+  '/okc': 'ÖKC',
 };
 
 function resolveTitle(pathname: string): string {
@@ -45,7 +49,7 @@ function resolveTitle(pathname: string): string {
   if (base === '/urunler') return 'Ürün Düzenle';
   if (base === '/musteriler') return 'Müşteri Detayı';
   if (base === '/kocluk') return 'Koçluk';
-  return TITLES[base] || 'Admin';
+  return TITLES[base] || 'Yönetim';
 }
 
 type Props = {

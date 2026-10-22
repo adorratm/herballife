@@ -68,19 +68,19 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="relative border border-border-muted px-2.5 py-1.5 text-muted hover:border-accent hover:text-accent"
+        className="relative rounded-xl border border-border-muted px-2.5 py-1.5 text-muted hover:border-accent hover:text-accent"
         aria-label="Bildirimler"
       >
         <BellIcon />
         {unread > 0 ? (
-          <span className="absolute -right-1 -top-1 min-w-4 bg-accent px-1 text-center text-[9px] text-white">
+          <span className="absolute -right-1 -top-1 min-w-4 rounded-full bg-accent px-1 text-center text-[9px] text-white">
             {unread > 9 ? '9+' : unread}
           </span>
         ) : null}
       </button>
       {open ? (
-        <div className="absolute right-0 z-50 mt-2 w-80 border border-border-muted bg-background p-3 shadow-xl">
-          <div className="mb-2 flex items-center justify-between">
+        <div className="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-2xl border border-border-muted bg-surface p-3 shadow-xl">
+          <div className="mb-2 flex items-center justify-between px-1">
             <p className="mono text-[10px] uppercase text-muted">Bildirimler</p>
             <Link
               href="/bildirimler"
@@ -93,18 +93,20 @@ export function NotificationBell() {
           {!items.length ? (
             <p className="py-4 text-sm text-muted">Bildirim yok</p>
           ) : (
-            <ul className="max-h-80 space-y-1 overflow-auto">
+            <ul className="max-h-80 space-y-1.5 overflow-auto">
               {items.map((item) => (
                 <li key={item.id}>
                   <button
                     type="button"
                     onClick={() => void openItem(item)}
-                    className={`block w-full px-2 py-2 text-left text-sm hover:bg-surface ${
-                      item.readAt ? 'opacity-60' : ''
+                    className={`block w-full rounded-xl px-3 py-2.5 text-left text-sm transition-colors hover:bg-surface-high ${
+                      item.readAt
+                        ? 'opacity-60'
+                        : 'bg-accent/5 ring-1 ring-inset ring-accent/15'
                     }`}
                   >
-                    <p>{item.title}</p>
-                    <p className="text-xs text-muted">{item.body}</p>
+                    <p className="font-medium">{item.title}</p>
+                    <p className="mt-0.5 text-xs text-muted">{item.body}</p>
                   </button>
                 </li>
               ))}

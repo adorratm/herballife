@@ -63,11 +63,11 @@ export function FavoriteButton({
       disabled={busy}
       aria-label={active ? "Favorilerden çıkar" : "Favorilere ekle"}
       aria-pressed={active}
-      className={`pressable inline-flex items-center justify-center rounded-full border shadow-sm transition-colors ${sizeClass} ${
+      className={`pressable inline-flex cursor-pointer items-center justify-center rounded-full border shadow-sm transition-all hover:scale-105 ${sizeClass} ${
         active
           ? "border-tertiary bg-tertiary text-on-tertiary"
           : "border-outline-variant/40 bg-surface-container-lowest/95 text-on-surface-variant hover:border-tertiary hover:text-tertiary"
-      } disabled:opacity-60`}
+      } disabled:cursor-not-allowed disabled:opacity-60`}
     >
       <HeartIcon filled={active} />
     </button>

@@ -6,7 +6,7 @@ const ITEMS = [
   "Hızlı Teslimat",
   "WhatsApp Destek",
   "Avantajlı Setler",
-  "Shaker Hediyesi",
+  "Karıştırıcı hediyesi",
 ];
 
 export function TrustMarquee() {
