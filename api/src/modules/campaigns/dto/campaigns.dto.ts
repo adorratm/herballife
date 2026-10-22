@@ -44,7 +44,7 @@ export class CreateCampaignDto {
   @ApiPropertyOptional({
     example: 'singles-day',
     description:
-      'default | singles-day | halloween | black-friday | valentine | new-year | ramadan',
+      'default | singles-day | halloween | black-friday | valentine | new-year | ramadan | kurban',
   })
   @IsOptional()
   @IsString()

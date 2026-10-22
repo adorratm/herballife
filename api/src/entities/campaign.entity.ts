@@ -28,7 +28,7 @@ export class Campaign extends BaseEntity {
 
   /**
    * Görsel tema anahtarı:
-   * default | singles-day | halloween | black-friday | valentine | new-year | ramadan
+   * default | singles-day | halloween | black-friday | valentine | new-year | ramadan | kurban
    */
   @Column({ type: 'varchar', length: 40, nullable: true, default: 'default' })
   theme!: string | null;

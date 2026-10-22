@@ -1,11 +1,12 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api';
-import { asArray } from '@/lib/utils';
+import { asArray, asPaged } from '@/lib/utils';
 import { DataTable } from '@/components/DataTable';
 import { Checkbox } from '@/components/Checkbox';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import type { Product } from '@/lib/types';
 
 type Campaign = {
   id: string;
@@ -29,7 +30,7 @@ type FormState = {
   badge: string;
   theme: string;
   headline: string;
-  productIdsText: string;
+  productIds: string[];
   startsAt: string;
   endsAt: string;
   isActive: boolean;
@@ -43,6 +44,7 @@ const THEMES = [
   { value: 'valentine', label: 'Sevgililer Günü' },
   { value: 'new-year', label: 'Yılbaşı' },
   { value: 'ramadan', label: 'Ramazan' },
+  { value: 'kurban', label: 'Kurban Bayramı' },
 ] as const;
 
 type Preset = {
@@ -125,6 +127,18 @@ const PRESETS: Preset[] = [
     startMD: [3, 1],
     endMD: [3, 31],
   },
+  {
+    label: 'Kurban Bayramı',
+    name: 'Kurban Bayramı Kampanyası',
+    slug: 'kurban-bayrami',
+    discountPercent: '15',
+    badge: 'KURBAN',
+    theme: 'kurban',
+    headline: 'Kurban Bayramı’na özel set ve ürün indirimleri.',
+    // Hicri takvim kayar — tarihleri kaydetmeden önce kontrol edin
+    startMD: [5, 25],
+    endMD: [6, 5],
+  },
 ];
 
 const emptyForm = (): FormState => ({
@@ -134,7 +148,7 @@ const emptyForm = (): FormState => ({
   badge: '',
   theme: 'default',
   headline: '',
-  productIdsText: '',
+  productIds: [],
   startsAt: '',
   endsAt: '',
   isActive: true,
@@ -156,7 +170,6 @@ function rangeForPreset(p: Preset): { startsAt: string; endsAt: string } {
   const [em, ed] = p.endMD;
   let startYear = year;
   let endYear = year;
-  // Yılbaşı gibi yıl aşan aralık
   if (em < sm || (em === sm && ed < sd)) {
     if (now.getMonth() + 1 <= em) {
       startYear = year - 1;
@@ -172,6 +185,8 @@ function rangeForPreset(p: Preset): { startsAt: string; endsAt: string } {
 
 export default function CampaignsPage() {
   const [rows, setRows] = useState<Campaign[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [productQuery, setProductQuery] = useState('');
   const [form, setForm] = useState<FormState>(emptyForm());
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -184,8 +199,14 @@ export default function CampaignsPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await api<unknown>('/campaigns/admin/all');
-      setRows(asArray<Campaign>(data));
+      const [campaignData, productsData] = await Promise.all([
+        api<unknown>('/campaigns/admin/all'),
+        api<unknown>(
+          '/products/admin/all?limit=100&includeInactive=true&sort=name&order=asc',
+        ),
+      ]);
+      setRows(asArray<Campaign>(campaignData));
+      setProducts(asPaged<Product>(productsData, 100).items);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Kampanyalar yüklenemedi');
       setRows([]);
@@ -198,8 +219,34 @@ export default function CampaignsPage() {
     void load();
   }, []);
 
+  const productById = useMemo(() => {
+    const map = new Map<string, Product>();
+    for (const p of products) map.set(p.id, p);
+    return map;
+  }, [products]);
+
+  const filteredProducts = useMemo(() => {
+    const q = productQuery.trim().toLocaleLowerCase('tr');
+    if (!q) return products;
+    return products.filter((p) => {
+      const hay = `${p.name} ${p.slug} ${p.badge || ''}`.toLocaleLowerCase(
+        'tr',
+      );
+      return hay.includes(q);
+    });
+  }, [products, productQuery]);
+
+  const selectedProducts = useMemo(
+    () =>
+      form.productIds
+        .map((id) => productById.get(id))
+        .filter((p): p is Product => Boolean(p)),
+    [form.productIds, productById],
+  );
+
   function startCreate() {
     setForm(emptyForm());
+    setProductQuery('');
     setEditing(true);
     setMessage(null);
   }
@@ -218,8 +265,13 @@ export default function CampaignsPage() {
       endsAt: range.endsAt,
       isActive: true,
     });
+    setProductQuery('');
     setEditing(true);
-    setMessage(`Şablon: ${p.label} — tarihleri kontrol edip kaydedin.`);
+    setMessage(
+      p.theme === 'kurban'
+        ? `Şablon: ${p.label} — hicri takvim kayar, tarihleri mutlaka kontrol edin.`
+        : `Şablon: ${p.label} — tarihleri kontrol edip kaydedin.`,
+    );
   }
 
   function startEdit(row: Campaign) {
@@ -231,13 +283,38 @@ export default function CampaignsPage() {
       badge: row.badge || '',
       theme: row.theme || 'default',
       headline: row.headline || '',
-      productIdsText: (row.productIds || []).join(', '),
+      productIds: [...(row.productIds || [])],
       startsAt: toLocalInput(row.startsAt),
       endsAt: toLocalInput(row.endsAt),
       isActive: row.isActive,
     });
+    setProductQuery('');
     setEditing(true);
     setMessage(null);
+  }
+
+  function toggleProduct(id: string) {
+    setForm((f) => {
+      const has = f.productIds.includes(id);
+      return {
+        ...f,
+        productIds: has
+          ? f.productIds.filter((x) => x !== id)
+          : [...f.productIds, id],
+      };
+    });
+  }
+
+  function selectAllFiltered() {
+    setForm((f) => {
+      const next = new Set(f.productIds);
+      for (const p of filteredProducts) next.add(p.id);
+      return { ...f, productIds: [...next] };
+    });
+  }
+
+  function clearProducts() {
+    setForm((f) => ({ ...f, productIds: [] }));
   }
 
   async function onSubmit(e: FormEvent) {
@@ -246,10 +323,6 @@ export default function CampaignsPage() {
     setError(null);
     setMessage(null);
     try {
-      const productIds = form.productIdsText
-        .split(/[,\s]+/)
-        .map((s) => s.trim())
-        .filter(Boolean);
       const body = {
         name: form.name.trim(),
         slug: form.slug.trim() || undefined,
@@ -257,7 +330,7 @@ export default function CampaignsPage() {
         badge: form.badge.trim() || undefined,
         theme: form.theme || 'default',
         headline: form.headline.trim() || undefined,
-        productIds,
+        productIds: form.productIds,
         startsAt: form.startsAt
           ? new Date(form.startsAt).toISOString()
           : undefined,
@@ -297,11 +370,12 @@ export default function CampaignsPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="mono text-[10px] uppercase text-muted">Pazarlama</p>
-          <h2 className="text-xl font-semibold">Özel gün &amp; flash kampanyalar</h2>
+          <h2 className="text-xl font-semibold">
+            Özel gün &amp; flash kampanyalar
+          </h2>
           <p className="mt-1 max-w-2xl text-sm text-muted">
-            11.11, Cadılar Bayramı, Black Friday vb. için tarih aralığı + indirim
-            %. Ürün ID boşsa tüm kataloga uygulanır; vitrin rozeti ve tema
-            storefront’ta görünür.
+            11.11, Kurban Bayramı, Cadılar Bayramı vb. Tarih + indirim %; ürün
+            seçmezseniz tüm kataloga uygulanır.
           </p>
         </div>
         <button
@@ -388,7 +462,7 @@ export default function CampaignsPage() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, badge: e.target.value }))
                 }
-                placeholder="11.11, HALLOWEEN…"
+                placeholder="11.11, KURBAN…"
                 className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
               />
             </label>
@@ -419,17 +493,6 @@ export default function CampaignsPage() {
                 className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
               />
             </label>
-            <label className="text-sm md:col-span-2">
-              Ürün ID’leri (virgülle; boş = tümü)
-              <textarea
-                value={form.productIdsText}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, productIdsText: e.target.value }))
-                }
-                rows={2}
-                className="mt-1 w-full border border-border-muted bg-background px-3 py-2 font-mono text-xs"
-              />
-            </label>
             <label className="text-sm">
               Başlangıç
               <input
@@ -453,6 +516,101 @@ export default function CampaignsPage() {
               />
             </label>
           </div>
+
+          {/* Ürün çoklu seçim */}
+          <div className="border border-border-muted bg-background p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="text-sm font-semibold">Ürün kapsamı</p>
+                <p className="text-xs text-muted">
+                  Seçim yoksa tüm ürünlere uygulanır. Çoklu seçim + arama.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={selectAllFiltered}
+                  className="border border-border-muted px-2.5 py-1 text-xs hover:border-accent"
+                >
+                  Filtrelenenleri seç
+                </button>
+                <button
+                  type="button"
+                  onClick={clearProducts}
+                  className="border border-border-muted px-2.5 py-1 text-xs hover:border-danger hover:text-danger"
+                >
+                  Seçimi temizle
+                </button>
+              </div>
+            </div>
+
+            {selectedProducts.length ? (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {selectedProducts.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => toggleProduct(p.id)}
+                    className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-1 text-[11px] font-semibold text-accent"
+                    title="Kaldır"
+                  >
+                    {p.name}
+                    <span aria-hidden>×</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-3 text-xs font-medium text-muted">
+                Seçili ürün yok → tüm katalog
+              </p>
+            )}
+
+            <input
+              type="search"
+              value={productQuery}
+              onChange={(e) => setProductQuery(e.target.value)}
+              placeholder="Ürün ara (ad, slug…)"
+              className="mt-3 w-full border border-border-muted bg-surface px-3 py-2 text-sm"
+            />
+
+            <div className="mt-2 max-h-56 overflow-auto border border-border-muted">
+              {filteredProducts.length === 0 ? (
+                <p className="p-3 text-xs text-muted">Ürün bulunamadı</p>
+              ) : (
+                <ul className="divide-y divide-border-muted">
+                  {filteredProducts.map((p) => {
+                    const checked = form.productIds.includes(p.id);
+                    return (
+                      <li key={p.id}>
+                        <label className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-surface">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggleProduct(p.id)}
+                            className="accent-accent"
+                          />
+                          <span className="min-w-0 flex-1 truncate font-medium">
+                            {p.name}
+                          </span>
+                          <span className="shrink-0 mono text-[10px] text-muted">
+                            {p.slug}
+                          </span>
+                          <span className="shrink-0 text-xs text-muted">
+                            {p.basePrice} ₺
+                          </span>
+                        </label>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+            <p className="mt-2 text-[11px] text-muted">
+              {form.productIds.length} seçili · {filteredProducts.length}{' '}
+              listelenen · {products.length} toplam
+            </p>
+          </div>
+
           <Checkbox
             checked={form.isActive}
             onChange={(isActive) => setForm((f) => ({ ...f, isActive }))}

@@ -18,6 +18,7 @@ const THEME_BAR: Record<string, string> = {
   valentine: "bg-[#db2777]",
   "new-year": "bg-[#0f766e]",
   ramadan: "bg-[#047857]",
+  kurban: "bg-[#b45309]",
 };
 
 /** Ana sayfa — flash / özel gün indirim şeridi + kaydırılabilir ürünler */

@@ -46,6 +46,7 @@ const THEME_BADGE: Record<string, string> = {
   valentine: "bg-[#db2777]",
   "new-year": "bg-[#0f766e]",
   ramadan: "bg-[#047857]",
+  kurban: "bg-[#b45309]",
 };
 
 export function PromoCountdown({
