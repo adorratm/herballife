@@ -35,6 +35,28 @@ export class CreateCampaignDto {
   @Max(90)
   discountPercent!: number;
 
+  @ApiPropertyOptional({ example: '11.11', description: 'Vitrin rozeti' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  badge?: string;
+
+  @ApiPropertyOptional({
+    example: 'singles-day',
+    description:
+      'default | singles-day | halloween | black-friday | valentine | new-year | ramadan',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(40)
+  theme?: string;
+
+  @ApiPropertyOptional({ description: 'Kısa vitrin metni' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(280)
+  headline?: string;
+
   @ApiPropertyOptional({
     type: [String],
     description: 'Boş = tüm ürünler',

@@ -186,6 +186,31 @@ export async function getCategories(): Promise<Category[]> {
   }
 }
 
+export type ActiveCampaign = {
+  id: string;
+  name: string;
+  slug: string;
+  discountPercent: string | number;
+  badge?: string | null;
+  theme?: string | null;
+  headline?: string | null;
+  startsAt?: string | null;
+  endsAt?: string | null;
+  isActive: boolean;
+};
+
+/** Şu an geçerli flash / özel gün kampanyaları (en yüksek % önce) */
+export async function getActiveCampaigns(): Promise<ActiveCampaign[]> {
+  try {
+    const data = await apiFetch<ActiveCampaign[]>("/campaigns/active", {
+      next: { revalidate: 60 },
+    });
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
 export async function getCategoryBySlug(
   slug: string,
 ): Promise<Category | null> {

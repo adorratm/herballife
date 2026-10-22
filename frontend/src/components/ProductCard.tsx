@@ -58,7 +58,7 @@ export function ProductCard({
 
   return (
     <article
-      className={`group card-motion relative flex h-full flex-col overflow-hidden border border-outline-variant bg-white shadow-sm ${
+      className={`group card-motion relative flex h-full flex-col border border-outline-variant bg-white shadow-sm ${
         compact ? "rounded-lg p-1.5" : "rounded-xl p-2.5"
       }`}
     >
@@ -114,13 +114,13 @@ export function ProductCard({
             </div>
           ) : null}
           <h3
-            className={`line-clamp-2 font-display leading-snug text-on-surface group-hover:text-primary ${
+            className={`line-clamp-2 min-h-[2.5em] font-display leading-snug text-on-surface group-hover:text-primary ${
               compact ? "text-[12px]" : "text-[13px]"
             }`}
           >
             {product.name}
           </h3>
-          <div className="mt-auto flex items-baseline gap-1.5 pt-1">
+          <div className="mt-auto flex min-h-5 items-baseline gap-1.5 pt-1">
             {compareAt && Number(compareAt) > Number(price) ? (
               <span className="text-[10px] text-outline line-through">
                 {formatMoney(compareAt, product.currency)}

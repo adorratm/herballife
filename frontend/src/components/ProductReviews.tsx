@@ -82,7 +82,7 @@ export function ProductReviews({
 
   return (
     <section className="cv-auto page-shell border-b border-outline-variant/20 py-section">
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
         <div className="lg:col-span-4">
           <h2 className="mb-4 font-display text-4xl uppercase">Yorumlar</h2>
           <p className="font-meta text-sm uppercase tracking-widest text-primary">

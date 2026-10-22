@@ -15,7 +15,7 @@ const CARDS = [
 export function PaymentCardLogos() {
   return (
     <div className="border-t border-outline-variant/15">
-      <div className="page-shell py-5 md:py-6">
+      <div className="page-shell py-1 md:py-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
           <ul
             className="flex flex-wrap items-center gap-1.5"
@@ -36,15 +36,15 @@ export function PaymentCardLogos() {
               </li>
             ))}
           </ul>
-          <p className="shrink-0 text-right font-meta text-[9px] uppercase tracking-wider text-secondary/70 sm:pb-0.5">
+          <p className="shrink-0 text-center md:text-right font-meta text-[9px] uppercase tracking-wider text-secondary/70 sm:pb-0.5">
             Developed By{" "}
             <a
-              href="https://herballife.com.tr"
+              href="https://emrekilic.web.tr"
               target="_blank"
               rel="noopener noreferrer"
               className="normal-case tracking-normal text-secondary underline decoration-outline-variant/40 underline-offset-2 hover:text-primary"
             >
-              https://herballife.com.tr
+              https://emrekilic.web.tr
             </a>
           </p>
         </div>

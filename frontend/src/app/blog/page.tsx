@@ -75,13 +75,13 @@ export default async function BlogIndexPage({ searchParams }: Props) {
             </p>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="lift-safe grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
             {paged.items.map((post) => {
               const cover = productImage(post.coverImageUrl, post.slug);
               return (
                 <article
                   key={post.id}
-                  className="card-motion group flex flex-col overflow-hidden rounded-2xl border border-outline-variant/30 bg-white shadow-sm"
+                  className="card-motion group flex h-full flex-col rounded-2xl border border-outline-variant/30 bg-white shadow-sm"
                 >
                   <Link
                     href={`/blog/${post.slug}`}
@@ -100,7 +100,7 @@ export default async function BlogIndexPage({ searchParams }: Props) {
                       {formatDate(post.publishedAt)}
                       {post.authorName ? ` · ${post.authorName}` : ""}
                     </p>
-                    <h2 className="mt-2 font-display text-xl leading-snug text-on-surface">
+                    <h2 className="mt-2 line-clamp-2 min-h-[2.6em] font-display text-xl leading-snug text-on-surface">
                       <Link
                         href={`/blog/${post.slug}`}
                         className="hover:text-primary"

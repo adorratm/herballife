@@ -235,7 +235,7 @@ export function WellnessTrendChart({
       {/* Sabit yükseklik + ölçülen genişlik → 1:1 SVG, yazı ezilmez */}
       <div
         ref={wrapRef}
-        className="relative w-full overflow-hidden rounded-xl border border-outline-variant/30 bg-white"
+        className="relative w-full overflow-visible rounded-xl border border-outline-variant/30 bg-white"
         style={{ height, minHeight: height }}
         onMouseLeave={() => setHover(null)}
       >

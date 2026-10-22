@@ -2,34 +2,52 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  FAB_BOTTOM_MOBILE,
+  useFabScrollExpand,
+} from "@/hooks/useFabScrollExpand";
 
-type Props = {
-  whatsappUrl: string;
-};
-
-/** Mobil: ana sayfada sticky sipariş / danış çubuğu (bottom nav üstü) */
-export function HomeStickyCta({ whatsappUrl }: Props) {
+/** Mobil: solda — WhatsApp ile aynı boy/yükseklik; scroll ile küçülür-büyür */
+export function HomeStickyCta() {
   const pathname = usePathname();
-  if (pathname !== "/") return null;
+  const onHome = pathname === "/";
+  const expanded = useFabScrollExpand(onHome);
+
+  if (!onHome) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-[calc(3.75rem+env(safe-area-inset-bottom))] z-30 px-3 pb-2 md:hidden">
-      <div className="mx-auto flex max-w-lg gap-2 rounded-2xl border border-outline-variant/40 bg-white/95 p-2 shadow-lg backdrop-blur">
-        <Link
-          href="/urunler/kategori/avantajli-setler"
-          className="btn-cta flex-1 py-2.5 text-center text-xs font-bold"
+    <div className={`fixed left-3 z-40 md:hidden ${FAB_BOTTOM_MOBILE}`}>
+      <Link
+        href="/urunler/kategori/avantajli-setler"
+        aria-label="Paketleri incele"
+        className={`pointer-events-auto inline-flex h-[46px] items-center justify-center rounded-full border border-primary/40 bg-primary font-meta text-[11px] font-bold uppercase leading-none tracking-widest text-on-primary shadow-[0_8px_24px_rgba(21,122,76,0.35)] transition-all duration-300 ease-out hover:bg-primary-container ${
+          expanded ? "gap-2.5 px-4" : "w-[46px] px-0"
+        }`}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          className="h-5 w-5 shrink-0"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden
+        >
+          <path d="M21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9" />
+          <path d="M3.5 7h17v3H3.5z" />
+          <path d="M12 7v14" />
+          <path d="M12 7c-.8-2.2-3.2-2.8-4.5-1.5S6.2 8.8 8 9.5" />
+          <path d="M12 7c.8-2.2 3.2-2.8 4.5-1.5S17.8 8.8 16 9.5" />
+        </svg>
+        <span
+          className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
+            expanded ? "max-w-40 opacity-100" : "max-w-0 opacity-0"
+          }`}
         >
           Paketleri incele
-        </Link>
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-ghost flex-1 py-2.5 text-center text-xs font-bold"
-        >
-          WhatsApp
-        </a>
-      </div>
+        </span>
+      </Link>
     </div>
   );
 }

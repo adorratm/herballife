@@ -71,7 +71,7 @@ export function Reveal({
     <div
       ref={ref}
       data-variant={variant}
-      className={`reveal${visible ? " is-visible" : ""}${className ? ` ${className}` : ""}`}
+      className={`reveal h-full${visible ? " is-visible" : ""}${className ? ` ${className}` : ""}`}
       style={style}
     >
       {children}

@@ -7,6 +7,7 @@ import { GoogleConsentTags } from "@/components/GoogleConsentTags";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { SiteFooterGate } from "@/components/SiteFooterGate";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { WhatsAppChatGate } from "@/components/WhatsAppChatGate";
 import { getSiteSettings } from "@/lib/cms";
 import {
@@ -67,10 +68,15 @@ export default async function RootLayout({
         <JsonLd data={organizationJsonLd(settings)} />
         <JsonLd data={websiteJsonLd(settings)} />
         <SiteHeader settings={settings} />
-        <main className="flex-1 pb-20 md:pb-0">
+        <main className="flex-1">
           {children}
         </main>
         <SiteFooterGate settings={settings} />
+        {/* Mobil alt menü yüksekliği kadar nefes — footer / sayfa sonu kesilmesin */}
+        <div
+          className="h-[calc(4.75rem+env(safe-area-inset-bottom))] shrink-0 md:hidden"
+          aria-hidden
+        />
         <MobileBottomNav />
         <WhatsAppChatGate
           enabled={settings.whatsapp.enabled}
@@ -82,6 +88,7 @@ export default async function RootLayout({
           greeting={settings.whatsapp.greeting}
           presets={settings.whatsapp.presets}
         />
+        <ScrollToTopFab />
         <CartToastHost />
         <CookieBannerGate />
         <AnalyticsScripts />

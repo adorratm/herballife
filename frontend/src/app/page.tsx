@@ -12,7 +12,7 @@ import { PromoCountdown } from "@/components/PromoCountdown";
 import { Reveal } from "@/components/Reveal";
 import { TrustMarquee } from "@/components/TrustMarquee";
 import { CountUp } from "@/components/CountUp";
-import { getCategories, getProductsPaged } from "@/lib/api";
+import { getActiveCampaigns, getCategories, getProductsPaged } from "@/lib/api";
 import { categoryCatalogPath } from "@/lib/catalog-paths";
 import {
   getContentSections,
@@ -152,26 +152,37 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [settings, sections, categories, featured, gifted, bestsellers, flashPool] =
-    await Promise.all([
-      getSiteSettings(),
-      getContentSections("home"),
-      getCategories().catch(() => [] as Category[]),
-      getProductsPaged({ page: 1, limit: 12, featured: true }).catch(() => ({
-        items: [],
-      })),
-      getProductsPaged({
-        page: 1,
-        limit: 12,
-        categorySlug: "avantajli-setler",
-      }).catch(() => ({ items: [] })),
-      getProductsPaged({ page: 1, limit: 12, sort: "name", order: "asc" }).catch(
-        () => ({ items: [] }),
-      ),
-      getProductsPaged({ page: 1, limit: 30, sort: "price", order: "asc" }).catch(
-        () => ({ items: [] }),
-      ),
-    ]);
+  const [
+    settings,
+    sections,
+    categories,
+    featured,
+    gifted,
+    bestsellers,
+    flashPool,
+    activeCampaigns,
+  ] = await Promise.all([
+    getSiteSettings(),
+    getContentSections("home"),
+    getCategories().catch(() => [] as Category[]),
+    getProductsPaged({ page: 1, limit: 12, featured: true }).catch(() => ({
+      items: [],
+    })),
+    getProductsPaged({
+      page: 1,
+      limit: 12,
+      categorySlug: "avantajli-setler",
+    }).catch(() => ({ items: [] })),
+    getProductsPaged({ page: 1, limit: 12, sort: "name", order: "asc" }).catch(
+      () => ({ items: [] }),
+    ),
+    getProductsPaged({ page: 1, limit: 30, sort: "price", order: "asc" }).catch(
+      () => ({ items: [] }),
+    ),
+    getActiveCampaigns(),
+  ]);
+
+  const topCampaign = activeCampaigns[0] ?? null;
 
   const flashDeals = (flashPool.items ?? [])
     .filter((p) => {
@@ -194,13 +205,32 @@ export default async function HomePage() {
     secondaryCtaLabel: "Ücretsiz Danışmanlık Al",
   });
 
-  const promo = sectionContent(sections, "promo", {
+  const promoCms = sectionContent(sections, "promo", {
     title: "Özel Avantaj Kampanyası",
     badge: "FIRSAT",
     body: "Seçili setlerde hediye avantajı ve kargo fırsatları.",
     couponCode: "SAGLIK2026",
     endsAt: "",
   });
+  const promo = topCampaign
+    ? {
+        title: topCampaign.name,
+        badge: topCampaign.badge || "KAMPANYA",
+        body:
+          topCampaign.headline ||
+          `%${Number(topCampaign.discountPercent)} indirim — sınırlı süre.`,
+        couponCode: String(promoCms.couponCode || ""),
+        endsAt: topCampaign.endsAt || String(promoCms.endsAt || ""),
+        theme: topCampaign.theme || "default",
+      }
+    : {
+        title: String(promoCms.title),
+        badge: String(promoCms.badge || "FIRSAT"),
+        body: String(promoCms.body),
+        couponCode: String(promoCms.couponCode || ""),
+        endsAt: typeof promoCms.endsAt === "string" ? promoCms.endsAt : "",
+        theme: "default",
+      };
 
   const faqCms = sectionContent(sections, "faq", {
     title: "Sık Sorulanlar",
@@ -274,7 +304,7 @@ export default async function HomePage() {
 
   return (
     <div className="pb-16">
-      <HomeStickyCta whatsappUrl={waUrl} />
+      <HomeStickyCta />
       {faqLd ? <JsonLd data={faqLd} /> : null}
 
       <section className="border-b border-outline-variant bg-white">
@@ -363,18 +393,32 @@ export default async function HomePage() {
       <section className="page-shell pb-6">
         <Reveal>
           <PromoCountdown
-            title={String(promo.title)}
-            badge="KAMPANYA"
-            body={String(promo.body)}
-            couponCode={String(promo.couponCode)}
-            endsAt={
-              typeof promo.endsAt === "string" ? promo.endsAt : undefined
-            }
+            title={promo.title}
+            badge={promo.badge}
+            body={promo.body}
+            couponCode={promo.couponCode}
+            endsAt={promo.endsAt || undefined}
+            theme={promo.theme}
           />
         </Reveal>
       </section>
 
-      <FlashDealsBanner products={flashProducts} endsLabel="Sınırlı süre" />
+      <FlashDealsBanner
+        products={flashProducts}
+        endsLabel={
+          topCampaign?.endsAt
+            ? `Bitiş: ${new Date(topCampaign.endsAt).toLocaleDateString("tr-TR")}`
+            : "Sınırlı süre"
+        }
+        badge={topCampaign?.badge || "Anlık indirim"}
+        title={
+          topCampaign
+            ? topCampaign.headline ||
+              `${topCampaign.name} · %${Number(topCampaign.discountPercent)}`
+            : "Seçili ürünlerde anlık fırsatlar"
+        }
+        theme={topCampaign?.theme}
+      />
 
       <HomeVideoSection
         title={String(video.title)}
@@ -402,7 +446,7 @@ export default async function HomePage() {
             Tümünü Gör →
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6 md:gap-4">
+        <div className="lift-safe grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-6">
           {HOME_CATEGORY_HUB.map((hub, i) => {
             const cat = catBySlug.get(hub.slug);
             const href = categoryCatalogPath(hub.slug);
@@ -410,15 +454,15 @@ export default async function HomePage() {
               <Reveal key={hub.slug} delay={i * 55} variant="scale">
                 <Link
                   href={href}
-                  className={`group card-motion flex flex-col items-center rounded-xl border border-outline-variant bg-white p-4 text-center ${hub.hover}`}
+                  className={`group card-motion flex h-full flex-col items-center rounded-xl border border-outline-variant bg-white p-3 text-center sm:p-4 ${hub.hover}`}
                 >
-                  <span className="icon-bob mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary-fixed text-2xl text-primary">
+                  <span className="icon-bob mb-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary-fixed text-2xl text-primary">
                     {hub.icon}
                   </span>
-                  <span className="font-bold text-on-surface">
+                  <span className="line-clamp-2 min-h-[2.75em] text-sm font-bold leading-snug text-on-surface">
                     {cat?.name || hub.fallbackName}
                   </span>
-                  <span className="mt-1 text-xs font-medium text-on-surface-variant">
+                  <span className="mt-auto line-clamp-2 pt-1 text-xs font-medium leading-snug text-on-surface-variant">
                     {hub.blurb}
                   </span>
                 </Link>
@@ -566,17 +610,17 @@ export default async function HomePage() {
             </p>
           </Reveal>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="lift-safe grid gap-3 sm:gap-4 md:grid-cols-3">
           {JOURNEY.map((j, i) => (
             <Reveal key={j.step} delay={i * 80} variant="up">
-              <div className="card-motion relative h-full overflow-hidden rounded-xl border border-[#ebece8] bg-surface-container-lowest p-6 shadow-sm">
+              <div className="card-motion relative flex h-full flex-col rounded-xl border border-[#ebece8] bg-surface-container-lowest p-5 shadow-sm sm:p-6">
                 <span className="font-display text-4xl text-primary-fixed">
                   {j.step}
                 </span>
                 <h3 className="mt-3 font-display text-xl text-on-surface">
                   {j.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-on-surface-variant">
                   {j.body}
                 </p>
               </div>
@@ -624,10 +668,10 @@ export default async function HomePage() {
             Google’da değerlendir →
           </Link>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="lift-safe grid gap-3 sm:gap-4 md:grid-cols-3">
           {TESTIMONIALS.map((t, i) => (
             <Reveal key={t.name} delay={i * 70} variant="scale">
-              <blockquote className="card-motion flex h-full flex-col rounded-xl border border-[#ebece8] bg-surface-container-lowest p-5 shadow-sm">
+              <blockquote className="card-motion flex h-full flex-col rounded-xl border border-[#ebece8] bg-surface-container-lowest p-4 shadow-sm sm:p-5">
                 <div className="mb-3 flex gap-0.5 text-amber-500" aria-hidden>
                   {"★★★★★".split("").map((s, si) => (
                     <span key={si} className="star-glow text-sm">

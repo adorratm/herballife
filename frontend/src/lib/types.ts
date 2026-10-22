@@ -34,6 +34,9 @@ export type Product = {
   salePrice?: string | null;
   compareAtPrice?: string | null;
   campaignName?: string | null;
+  campaignBadge?: string | null;
+  campaignTheme?: string | null;
+  campaignHeadline?: string | null;
   currency: string;
   stock: number;
   isActive: boolean;

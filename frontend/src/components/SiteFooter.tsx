@@ -37,7 +37,7 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
   ].filter((l) => l.href?.trim());
 
   return (
-    <footer className="mt-auto border-t border-outline-variant bg-white">
+    <footer className="mt-auto border-t border-outline-variant bg-white pb-0">
       <div className="page-shell pt-10">
         <Reveal>
           <div className="surface-panel overflow-hidden p-5 md:p-6">

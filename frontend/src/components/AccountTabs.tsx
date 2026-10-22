@@ -47,7 +47,7 @@ export function resolveAccountTab(
 function TabNav({ current }: { current: AccountTabId }) {
   return (
     <nav
-      className="mt-8 flex gap-1 overflow-x-auto border-b border-outline-variant/30 pb-px"
+      className="mt-6 flex gap-0.5 overflow-x-auto overscroll-x-contain border-b border-outline-variant/30 pb-px [-ms-overflow-style:none] scrollbar-none sm:mt-8 sm:gap-1 [&::-webkit-scrollbar]:hidden"
       aria-label="Hesap bölümleri"
       role="tablist"
     >
@@ -59,7 +59,7 @@ function TabNav({ current }: { current: AccountTabId }) {
             href={tab.href}
             role="tab"
             aria-selected={selected}
-            className={`shrink-0 border-b-2 px-4 py-3 font-meta text-[11px] uppercase tracking-widest transition-colors ${
+            className={`shrink-0 border-b-2 px-3 py-2.5 font-meta text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:py-3 sm:text-[11px] ${
               selected
                 ? "border-primary text-primary"
                 : "border-transparent text-secondary hover:border-outline-variant/50 hover:text-on-surface"

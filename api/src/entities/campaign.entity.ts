@@ -2,7 +2,7 @@ import { Column, Entity, Index } from 'typeorm';
 import { BaseEntity } from '@entities/base.entity';
 
 /**
- * Flash / indirim kampanyası.
+ * Flash / özel gün indirim kampanyası (11.11, Halloween vb.).
  * productIds boşsa tüm aktif ürünlere uygulanır.
  */
 @Entity('campaigns')
@@ -21,6 +21,21 @@ export class Campaign extends BaseEntity {
     scale: 2,
   })
   discountPercent!: string;
+
+  /** Vitrin rozeti: 11.11, HALLOWEEN, BLACK FRIDAY… */
+  @Column({ type: 'varchar', length: 64, nullable: true })
+  badge!: string | null;
+
+  /**
+   * Görsel tema anahtarı:
+   * default | singles-day | halloween | black-friday | valentine | new-year | ramadan
+   */
+  @Column({ type: 'varchar', length: 40, nullable: true, default: 'default' })
+  theme!: string | null;
+
+  /** Kısa vitrin açıklaması */
+  @Column({ type: 'varchar', length: 280, nullable: true })
+  headline!: string | null;
 
   /** Boş dizi = tüm ürünler */
   @Column({ name: 'product_ids', type: 'jsonb', default: [] })

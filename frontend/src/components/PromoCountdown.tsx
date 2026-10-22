@@ -35,6 +35,17 @@ type Props = {
   badge?: string;
   body?: string;
   couponCode?: string;
+  theme?: string | null;
+};
+
+const THEME_BADGE: Record<string, string> = {
+  default: "bg-flash",
+  "singles-day": "bg-[#e11d48]",
+  halloween: "bg-[#ea580c]",
+  "black-friday": "bg-[#171717]",
+  valentine: "bg-[#db2777]",
+  "new-year": "bg-[#0f766e]",
+  ramadan: "bg-[#047857]",
 };
 
 export function PromoCountdown({
@@ -43,6 +54,7 @@ export function PromoCountdown({
   badge = "FIRSAT",
   body = "Seçili setlerde hediye avantajı ve ücretsiz kargo.",
   couponCode = "SAGLIK2026",
+  theme = "default",
 }: Props) {
   const end = useMemo(() => resolveEnd(endsAt), [endsAt]);
   /** SSR’de sabit placeholder — Date.now() hydration mismatch önler */
@@ -73,7 +85,11 @@ export function PromoCountdown({
       <div className="flex flex-col gap-5 p-5 md:flex-row md:items-center md:justify-between md:p-6">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-md bg-flash px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-white">
+            <span
+              className={`rounded-md px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-white ${
+                THEME_BADGE[theme || "default"] || THEME_BADGE.default
+              }`}
+            >
               {badge}
             </span>
             <span className="font-display text-xl font-bold text-on-surface md:text-2xl">
@@ -107,14 +123,16 @@ export function PromoCountdown({
           ))}
         </div>
 
-        <div className="flex items-center gap-2 rounded-xl border border-dashed border-flash/40 bg-flash-soft px-4 py-2.5">
-          <span className="text-xs font-medium text-on-surface-variant">
-            Kupon
-          </span>
-          <span className="font-display text-base font-bold tracking-widest text-flash">
-            {couponCode}
-          </span>
-        </div>
+        {couponCode.trim() ? (
+          <div className="flex items-center gap-2 rounded-xl border border-dashed border-flash/40 bg-flash-soft px-4 py-2.5">
+            <span className="text-xs font-medium text-on-surface-variant">
+              Kupon
+            </span>
+            <span className="font-display text-base font-bold tracking-widest text-flash">
+              {couponCode}
+            </span>
+          </div>
+        ) : null}
       </div>
     </div>
   );

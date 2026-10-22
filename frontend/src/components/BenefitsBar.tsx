@@ -63,22 +63,24 @@ export function BenefitsBar({ className = "", phone: _phone }: Props) {
   const benefits = buildBenefits();
   return (
     <div
-      className={`grid grid-cols-2 gap-3 md:grid-cols-5 md:gap-4${className ? ` ${className}` : ""}`}
+      className={`lift-safe grid grid-cols-2 items-stretch gap-2.5 sm:gap-3 md:grid-cols-5 md:gap-4${className ? ` ${className}` : ""}`}
     >
       {benefits.map((b, i) => (
         <Reveal key={b.title} delay={i * 55} variant="scale">
-          <div className="card-motion panel-motion flex items-center gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm">
+          <div className="card-motion panel-motion flex h-full min-h-[4.75rem] items-center gap-3 rounded-xl bg-surface-container-lowest p-3 shadow-sm sm:p-4">
             <span
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg ${TONE_CLASS[b.tone]}`}
               aria-hidden
             >
               {b.icon}
             </span>
-            <div className="min-w-0">
-              <p className="text-sm font-bold leading-snug text-on-surface">
+            <div className="flex min-w-0 flex-1 flex-col justify-center">
+              <p className="line-clamp-2 min-h-[2.5em] text-sm font-bold leading-snug text-on-surface">
                 {b.title}
               </p>
-              <p className="text-xs text-on-surface-variant">{b.subtitle}</p>
+              <p className="mt-0.5 line-clamp-1 text-xs leading-snug text-on-surface-variant">
+                {b.subtitle}
+              </p>
             </div>
           </div>
         </Reveal>

@@ -312,7 +312,7 @@ export default function ProductsCatalog({
               <h3 className="mb-4 font-display text-xl text-on-surface">
                 Bunları da inceleyebilirsiniz
               </h3>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+              <div className="lift-safe grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
                 {suggestions.map((product, i) => (
                   <Reveal key={product.id} delay={Math.min(i, 5) * 40}>
                     <ProductCard product={product} />
@@ -323,7 +323,7 @@ export default function ProductsCatalog({
           ) : null}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="lift-safe grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
           {paged.items.map((product, i) => (
             <Reveal key={product.id} delay={Math.min(i, 5) * 40}>
               <ProductCard product={product} />

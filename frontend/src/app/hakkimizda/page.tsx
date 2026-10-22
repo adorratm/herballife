@@ -234,7 +234,7 @@ export default async function AboutPage() {
             Ürün + rehberlik + takip — üçü bir arada.
           </p>
         </Reveal>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <div className="lift-safe mt-8 grid gap-3 sm:gap-4 md:grid-cols-3">
           {[
             {
               title: "Orijinal ürün",
@@ -253,14 +253,14 @@ export default async function AboutPage() {
             },
           ].map((card, i) => (
             <Reveal key={card.title} delay={i * 80} variant="scale">
-              <div className="card-motion h-full rounded-xl border border-[#ebece8] bg-surface-container-lowest p-6 shadow-sm">
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-fixed text-lg text-primary">
+              <div className="card-motion flex h-full flex-col rounded-xl border border-[#ebece8] bg-surface-container-lowest p-6 shadow-sm">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-fixed text-lg text-primary">
                   {card.icon}
                 </span>
                 <h3 className="mt-4 font-display text-xl text-on-surface">
                   {card.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-on-surface-variant">
                   {card.body}
                 </p>
               </div>

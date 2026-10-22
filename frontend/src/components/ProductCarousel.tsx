@@ -104,14 +104,16 @@ export function ProductCarousel({
 
       <div
         ref={scrollerRef}
-        className="flex gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-1 [-ms-overflow-style:none] scrollbar-none snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
+        className="product-carousel-track flex items-stretch gap-2.5 overflow-x-auto overscroll-x-contain scroll-smooth [-ms-overflow-style:none] scrollbar-none snap-x snap-mandatory sm:gap-3 [&::-webkit-scrollbar]:hidden"
       >
         {products.map((product) => (
           <div
             key={product.id}
-            className="w-[42%] shrink-0 snap-start sm:w-[30%] md:w-[22%] lg:w-[18%]"
+            className="flex w-[min(46%,11.5rem)] shrink-0 snap-start sm:w-[30%] md:w-[22%] lg:w-[18%]"
           >
-            <ProductCard product={product} size={size} />
+            <div className="flex w-full flex-col">
+              <ProductCard product={product} size={size} />
+            </div>
           </div>
         ))}
       </div>

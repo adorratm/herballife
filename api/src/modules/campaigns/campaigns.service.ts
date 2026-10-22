@@ -17,6 +17,9 @@ export type CampaignPriceInfo = {
   compareAtPrice: string;
   campaignName: string;
   discountPercent: number;
+  campaignBadge?: string | null;
+  campaignTheme?: string | null;
+  campaignHeadline?: string | null;
 };
 
 @Injectable()
@@ -37,6 +40,9 @@ export class CampaignsService {
       name: dto.name.trim(),
       slug,
       discountPercent: Number(dto.discountPercent).toFixed(2),
+      badge: dto.badge?.trim() || null,
+      theme: dto.theme?.trim() || 'default',
+      headline: dto.headline?.trim() || null,
       productIds: dto.productIds || [],
       startsAt: dto.startsAt ? new Date(dto.startsAt) : null,
       endsAt: dto.endsAt ? new Date(dto.endsAt) : null,
@@ -60,6 +66,15 @@ export class CampaignsService {
     }
     if (dto.discountPercent != null) {
       row.discountPercent = Number(dto.discountPercent).toFixed(2);
+    }
+    if (dto.badge !== undefined) {
+      row.badge = dto.badge?.trim() || null;
+    }
+    if (dto.theme !== undefined) {
+      row.theme = dto.theme?.trim() || 'default';
+    }
+    if (dto.headline !== undefined) {
+      row.headline = dto.headline?.trim() || null;
     }
     if (dto.productIds != null) row.productIds = dto.productIds;
     if (dto.startsAt !== undefined) {
@@ -126,7 +141,38 @@ export class CampaignsService {
       salePrice: this.applyPercent(basePrice, percent),
       campaignName: campaign.name,
       discountPercent: percent,
+      campaignBadge: campaign.badge,
+      campaignTheme: campaign.theme,
+      campaignHeadline: campaign.headline,
     };
+  }
+
+  private applyCampaignFields<
+    T extends {
+      salePrice?: string | null;
+      compareAtPrice?: string | null;
+      campaignName?: string | null;
+      campaignBadge?: string | null;
+      campaignTheme?: string | null;
+      campaignHeadline?: string | null;
+    },
+  >(decorated: T, info: CampaignPriceInfo | null): T {
+    if (!info) {
+      decorated.salePrice = null;
+      decorated.compareAtPrice = null;
+      decorated.campaignName = null;
+      decorated.campaignBadge = null;
+      decorated.campaignTheme = null;
+      decorated.campaignHeadline = null;
+      return decorated;
+    }
+    decorated.salePrice = info.salePrice;
+    decorated.compareAtPrice = info.compareAtPrice;
+    decorated.campaignName = info.campaignName;
+    decorated.campaignBadge = info.campaignBadge ?? null;
+    decorated.campaignTheme = info.campaignTheme ?? null;
+    decorated.campaignHeadline = info.campaignHeadline ?? null;
+    return decorated;
   }
 
   async decorateProduct<
@@ -142,6 +188,9 @@ export class CampaignsService {
       salePrice?: string | null;
       compareAtPrice?: string | null;
       campaignName?: string | null;
+      campaignBadge?: string | null;
+      campaignTheme?: string | null;
+      campaignHeadline?: string | null;
     }
   > {
     const info = await this.priceForProduct(product.id, product.basePrice);
@@ -149,17 +198,12 @@ export class CampaignsService {
       salePrice?: string | null;
       compareAtPrice?: string | null;
       campaignName?: string | null;
+      campaignBadge?: string | null;
+      campaignTheme?: string | null;
+      campaignHeadline?: string | null;
     };
-    if (!info) {
-      decorated.salePrice = null;
-      decorated.compareAtPrice = null;
-      decorated.campaignName = null;
-      return decorated;
-    }
-    decorated.salePrice = info.salePrice;
-    decorated.compareAtPrice = info.compareAtPrice;
-    decorated.campaignName = info.campaignName;
-    if (product.variants?.length) {
+    this.applyCampaignFields(decorated, info);
+    if (info && product.variants?.length) {
       decorated.variants = product.variants.map((v) => ({
         ...v,
         price: this.applyPercent(v.price, info.discountPercent),
@@ -183,6 +227,9 @@ export class CampaignsService {
         salePrice?: string | null;
         compareAtPrice?: string | null;
         campaignName?: string | null;
+        campaignBadge?: string | null;
+        campaignTheme?: string | null;
+        campaignHeadline?: string | null;
       }
     >
   > {
@@ -192,21 +239,28 @@ export class CampaignsService {
         salePrice?: string | null;
         compareAtPrice?: string | null;
         campaignName?: string | null;
+        campaignBadge?: string | null;
+        campaignTheme?: string | null;
+        campaignHeadline?: string | null;
       };
       const campaign =
         active.find(
           (c) => !c.productIds?.length || c.productIds.includes(product.id),
         ) || null;
       if (!campaign) {
-        decorated.salePrice = null;
-        decorated.compareAtPrice = null;
-        decorated.campaignName = null;
-        return decorated;
+        return this.applyCampaignFields(decorated, null);
       }
       const percent = Number(campaign.discountPercent);
-      decorated.salePrice = this.applyPercent(product.basePrice, percent);
-      decorated.compareAtPrice = Number(product.basePrice).toFixed(2);
-      decorated.campaignName = campaign.name;
+      const info: CampaignPriceInfo = {
+        salePrice: this.applyPercent(product.basePrice, percent),
+        compareAtPrice: Number(product.basePrice).toFixed(2),
+        campaignName: campaign.name,
+        discountPercent: percent,
+        campaignBadge: campaign.badge,
+        campaignTheme: campaign.theme,
+        campaignHeadline: campaign.headline,
+      };
+      this.applyCampaignFields(decorated, info);
       if (product.variants?.length) {
         decorated.variants = product.variants.map((v) => ({
           ...v,

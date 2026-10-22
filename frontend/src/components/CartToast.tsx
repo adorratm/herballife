@@ -29,7 +29,7 @@ export function CartToastHost() {
 
   return (
     <div
-      className={`fixed bottom-6 right-6 z-60 flex max-w-[min(100vw-2rem,22rem)] items-center gap-3 rounded-2xl border border-primary/20 bg-white px-4 py-3.5 text-on-surface shadow-[0_16px_40px_-12px_rgba(18,20,17,0.28)] transition-all duration-400 ${
+      className={`fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] left-3 right-3 z-60 mx-auto flex max-w-[min(100vw-1.5rem,22rem)] items-center gap-3 rounded-2xl border border-primary/20 bg-white px-4 py-3.5 text-on-surface shadow-[0_16px_40px_-12px_rgba(18,20,17,0.28)] transition-all duration-400 md:bottom-6 md:left-auto md:right-6 md:mx-0 ${
         visible
           ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
           : "pointer-events-none translate-y-10 scale-95 opacity-0"

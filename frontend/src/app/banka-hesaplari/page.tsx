@@ -113,7 +113,7 @@ export default async function BankAccountsPage() {
         <div className="grid gap-4 md:grid-cols-2">
           {ACCOUNTS.map((a, i) => (
             <Reveal key={a.iban} delay={i * 80} variant="scale">
-              <div className="card-motion relative overflow-hidden rounded-2xl border border-[#ebece8] bg-surface-container-lowest p-6 shadow-sm">
+              <div className="card-motion relative rounded-2xl border border-[#ebece8] bg-surface-container-lowest p-6 shadow-sm">
                 <div className="shimmer-accent absolute inset-x-0 top-0 h-px" />
                 <div className="flex items-start justify-between gap-3">
                   <div>

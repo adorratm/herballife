@@ -208,7 +208,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
       {showDescription || brew || product.storageNotes ? (
         <section className="cv-auto page-shell border-b border-outline-variant/20 py-section">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
             <Reveal className="lg:col-span-8">
               {showDescription ? (
                 <>
@@ -279,7 +279,7 @@ export default async function ProductDetailPage({ params }: Props) {
                 : "Sık birlikte alınanlar"}
             </h2>
           </Reveal>
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
+          <div className="lift-safe grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-5">
             {related.map((item, i) => (
               <Reveal key={item.id} delay={i * 60}>
                 <ProductCard product={item} />
