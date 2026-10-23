@@ -639,7 +639,6 @@ select:disabled {
 .page-shell {
   box-sizing: border-box;
   margin-inline: auto;
-  max-width: 90rem;
   padding-left: max(var(--margin-mobile), env(safe-area-inset-left));
   padding-right: max(var(--margin-mobile), env(safe-area-inset-right));
   width: 100%;
