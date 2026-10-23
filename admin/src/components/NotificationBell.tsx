@@ -68,7 +68,7 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="relative rounded-xl border border-border-muted px-2.5 py-1.5 text-muted hover:border-accent hover:text-accent"
+        className="relative rounded-xl border border-border-muted px-2.5 py-1.5 text-foreground hover:border-accent hover:text-accent"
         aria-label="Bildirimler"
       >
         <BellIcon />
@@ -101,12 +101,12 @@ export function NotificationBell() {
                     onClick={() => void openItem(item)}
                     className={`block w-full rounded-xl px-3 py-2.5 text-left text-sm transition-colors hover:bg-surface-high ${
                       item.readAt
-                        ? 'opacity-60'
-                        : 'bg-accent/5 ring-1 ring-inset ring-accent/15'
+                        ? 'text-foreground/70'
+                        : 'bg-accent/5 ring-1 ring-inset ring-accent/15 text-foreground'
                     }`}
                   >
-                    <p className="font-medium">{item.title}</p>
-                    <p className="mt-0.5 text-xs text-muted">{item.body}</p>
+                    <p className="font-semibold text-foreground">{item.title}</p>
+                    <p className="mt-0.5 text-xs text-foreground/75">{item.body}</p>
                   </button>
                 </li>
               ))}

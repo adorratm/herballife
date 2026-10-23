@@ -97,12 +97,18 @@ a {
   text-decoration: none;
 }
 
-/* Dolu yeşil aksiyonlar — yazı her zaman beyaz (inherit ezmesin) */
+/* Dolu yeşil aksiyonlar — yalnızca düz bg-accent (bg-accent/10, hover:bg-accent değil) */
 a.bg-accent,
 button.bg-accent,
-a[class*="bg-accent"],
-button[class*="bg-accent"],
+a[class~="bg-accent"],
+button[class~="bg-accent"],
 .admin-btn-primary {
+  color: #ffffff !important;
+}
+
+/* Outline → dolu hover: hover:bg-accent varken yazı beyaz */
+a[class~="hover:bg-accent"]:hover,
+button[class~="hover:bg-accent"]:hover {
   color: #ffffff !important;
 }
 
@@ -278,9 +284,8 @@ span[class*="border"][class*="px-"]:not([class*="rounded"]),
 /* Birincil / dolu aksiyonlar — hap form */
 a.bg-accent:not([class*="rounded"]),
 button.bg-accent:not([class*="rounded"]),
-[class*="bg-accent"][class*="text-white"]:not([class*="rounded"]),
-a[class*="bg-accent"]:not([class*="rounded"]),
-button[class*="bg-accent"]:not([class*="rounded"]),
+a[class~="bg-accent"]:not([class*="rounded"]),
+button[class~="bg-accent"]:not([class*="rounded"]),
 .admin-btn,
 .admin-btn-primary {
   border-radius: 9999px !important;
@@ -405,6 +410,20 @@ main select {
 .admin-btn-ghost:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+/* Outline butonlar: soluk/muted yazı yerine okunaklı foreground */
+main button[class*="border"]:not([class~="bg-accent"]):not([class*="bg-accent/"]):not([class*="text-"]),
+main a[class*="border"][class*="px-"]:not([class~="bg-accent"]):not([class*="bg-accent/"]):not([class*="text-"]) {
+  color: var(--foreground);
+}
+
+/* Başarı / hata şeritleri — yazı kontrastı */
+main [class*="border-success"][class*="text-success"],
+main [class*="border-accent"][class*="text-accent"],
+main [class*="border-danger"][class*="text-danger"],
+main [class*="border-warning"][class*="text-warning"] {
+  font-weight: 600;
 }
 
 @keyframes fade-up {

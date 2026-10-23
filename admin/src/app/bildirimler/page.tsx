@@ -105,7 +105,7 @@ export default function AdminNotificationsPage() {
           <h2 className="text-sm font-semibold">Gelen kutusu</h2>
           <button
             type="button"
-            className="rounded-full px-3 py-1 text-xs text-accent hover:bg-accent/10"
+            className="rounded-full border border-accent/30 px-3 py-1 text-xs font-semibold text-accent hover:bg-accent/10"
             onClick={() =>
               void api('/notifications/inbox/read-all', { method: 'PATCH' }).then(
                 () => load(),
@@ -128,12 +128,12 @@ export default function AdminNotificationsPage() {
                   onClick={() => void openItem(item)}
                   className={`block w-full rounded-2xl border border-border-muted bg-surface px-4 py-3.5 text-left shadow-sm transition-colors hover:border-accent/40 hover:bg-surface-high ${
                     item.readAt
-                      ? 'opacity-60'
-                      : 'ring-1 ring-inset ring-accent/20'
+                      ? 'text-foreground/70'
+                      : 'ring-1 ring-inset ring-accent/20 text-foreground'
                   }`}
                 >
-                  <p className="text-sm font-medium">{item.title}</p>
-                  <p className="mt-0.5 text-xs text-muted">{item.body}</p>
+                  <p className="text-sm font-semibold text-foreground">{item.title}</p>
+                  <p className="mt-0.5 text-xs text-foreground/75">{item.body}</p>
                 </button>
               </li>
             ))}
