@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import { Modal } from '@/components/Modal';
 
 type BlastResult = {
   id: string;
@@ -72,7 +73,7 @@ export default function CoachWhatsappPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8">
+    <div className="mx-auto  space-y-8">
       <div>
         <Link href="/kocluk" className="text-sm text-accent underline">
           ← Onay merkezi
@@ -139,39 +140,67 @@ export default function CoachWhatsappPage() {
         </button>
       </form>
 
-      {result ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="max-h-[90vh] w-full max-w-lg space-y-3 overflow-y-auto rounded-2xl border border-accent/30 bg-surface p-6 shadow-xl">
-          <div className="flex items-start justify-between gap-3">
-            <h3 className="font-semibold text-lg">Mesajlar iletildi — gönderim raporu</h3>
-            <button
-              type="button"
-              className="rounded-full px-3 py-1 text-sm text-muted hover:bg-background"
-              onClick={() => setResult(null)}
-            >
-              Kapat
-            </button>
+      <Modal
+        open={Boolean(result)}
+        onClose={() => setResult(null)}
+        size="lg"
+        title="Gönderim raporu"
+        description={result?.note || 'Mesajlar iletildi'}
+        footer={
+          <button
+            type="button"
+            className="admin-btn admin-btn-primary"
+            onClick={() => setResult(null)}
+          >
+            Tamam
+          </button>
+        }
+      >
+        {result ? (
+          <div className="space-y-3">
+            <div className="grid grid-cols-3 gap-2 text-center">
+              {[
+                { label: 'Alıcı', value: result.recipientCount },
+                { label: 'Başarılı', value: result.sentCount },
+                { label: 'Numarasız', value: result.failedCount },
+              ].map((s) => (
+                <div
+                  key={s.label}
+                  className="rounded-xl border border-border-muted bg-surface-high/50 px-2 py-3"
+                >
+                  <p className="text-lg font-bold text-foreground">{s.value}</p>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+                    {s.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <ul className="max-h-52 space-y-1.5 overflow-auto rounded-xl border border-border-muted p-3 text-sm">
+              {result.recipients.map((r) => (
+                <li
+                  key={r.phone + r.name}
+                  className="flex items-center justify-between gap-2 border-b border-border-muted/60 py-1.5 last:border-0"
+                >
+                  <span className="min-w-0 truncate">
+                    {r.name}
+                    <span className="text-muted">
+                      {' '}
+                      · {r.phone || 'telefon yok'}
+                    </span>
+                  </span>
+                  <span
+                    className={`shrink-0 text-xs font-semibold ${
+                      r.ok ? 'text-accent' : 'text-muted'
+                    }`}
+                  >
+                    {r.ok ? 'Tamam' : 'Atlandı'}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
-          <p className="text-sm text-muted">{result.note}</p>
-          <p className="text-sm">
-            Alıcı: {result.recipientCount} · Başarılı: {result.sentCount} ·
-            Numarasız: {result.failedCount}
-          </p>
-          <ul className="max-h-48 space-y-1 overflow-auto text-sm">
-            {result.recipients.map((r) => (
-              <li key={r.phone + r.name}>
-                {r.name} · {r.phone || 'telefon yok'} ·{' '}
-                {r.ok ? 'Tamam' : 'atlandı'}
-              </li>
-            ))}
-          </ul>
-          </div>
-        </div>
-      ) : null}
+        ) : null}
+      </Modal>
 
       <div className="space-y-2">
         <h3 className="font-semibold">Geçmiş</h3>

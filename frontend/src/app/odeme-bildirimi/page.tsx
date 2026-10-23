@@ -59,7 +59,7 @@ export default function PaymentNotifyPage() {
       />
 
       <section className="page-shell border-b border-outline-variant/20 pt-12 pb-10 md:pt-16">
-        <div className="page-enter max-w-2xl">
+        <div className="page-enter ">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
             Havale · EFT
           </p>

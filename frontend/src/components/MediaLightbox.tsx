@@ -131,7 +131,7 @@ export function MediaLightbox({ items, index, onClose, onIndexChange }: Props) {
             </div>
           )}
           {caption ? (
-            <p className="mt-4 max-w-2xl text-center font-meta text-[11px] uppercase leading-relaxed text-secondary">
+            <p className="mt-4  text-center font-meta text-[11px] uppercase leading-relaxed text-secondary">
               {caption}
             </p>
           ) : null}

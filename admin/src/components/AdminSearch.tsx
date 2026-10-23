@@ -182,14 +182,14 @@ export function AdminSearch() {
             <button
               type="button"
               aria-label="Kapat"
-              className="dialog-backdrop absolute inset-0 bg-[#171715]/50 backdrop-blur-[2px]"
+              className="dialog-backdrop admin-modal-backdrop absolute inset-0"
               onClick={close}
             />
             <div
               role="dialog"
               aria-modal="true"
               aria-label="Yönetim paneli araması"
-              className="dialog-panel relative z-10 flex w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-border-muted bg-surface shadow-[0_24px_64px_-16px_rgba(23,23,21,0.28)]"
+              className="dialog-panel admin-modal-panel relative z-10 flex w-full max-w-xl flex-col overflow-hidden !rounded-2xl"
               onMouseDown={(e) => e.stopPropagation()}
             >
               <div className="flex items-center border-b border-border-muted bg-surface">

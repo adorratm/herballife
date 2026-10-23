@@ -24,7 +24,7 @@ export default function NotFound() {
           404
         </p>
 
-        <h1 className="mt-6 max-w-2xl font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-on-surface md:text-6xl">
+        <h1 className="mt-6  font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-on-surface md:text-6xl">
           Sayfa bulunamadı
         </h1>
 

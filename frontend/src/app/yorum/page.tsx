@@ -57,7 +57,7 @@ export default async function ReviewPage() {
   return (
     <div className="pb-16">
       <header className="page-shell page-hero">
-        <div className="max-w-2xl">
+        <div className="">
           <p className="page-kicker">Geri bildirim</p>
           <h1 className="page-title">Deneyiminizi paylaşın</h1>
           <p className="page-lead">

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import { Modal } from '@/components/Modal';
 
 type Meal = {
   id: string;
@@ -171,86 +172,42 @@ export default function CoachPage() {
         />
       </div>
 
-      {successOpen ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setSuccessOpen(false)}
-        >
-          <div
-            className="w-full max-w-sm space-y-4 rounded-2xl bg-surface p-6 text-center shadow-xl"
-            onClick={(e) => e.stopPropagation()}
+      <Modal
+        open={successOpen}
+        onClose={() => setSuccessOpen(false)}
+        size="sm"
+        showClose={false}
+        footer={
+          <button
+            type="button"
+            className="admin-btn admin-btn-primary w-full sm:w-auto"
+            onClick={() => setSuccessOpen(false)}
           >
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/15 text-2xl text-accent">
-              ✓
-            </div>
-            <h3 className="text-lg font-semibold">İşlem tamamlandı</h3>
-            <p className="text-sm text-muted">{successText}</p>
-            <button
-              type="button"
-              className="w-full rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-white"
-              onClick={() => setSuccessOpen(false)}
-            >
-              Tamam
-            </button>
+            Tamam
+          </button>
+        }
+      >
+        <div className="py-2 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/12 text-2xl font-bold text-accent ring-1 ring-inset ring-accent/20">
+            ✓
           </div>
+          <h3 className="admin-modal-title mt-4">İşlem tamamlandı</h3>
+          <p className="admin-modal-desc">{successText}</p>
         </div>
-      ) : null}
+      </Modal>
 
-      {detail ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setDetail(null)}
-        >
-          <div
-            className="w-full max-w-md space-y-4 rounded-2xl bg-surface p-6 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-lg font-semibold">
-              {detail.kind === 'meal' ? 'Öğün onayı' : 'Ölçüm onayı'}
-            </h3>
-            <p className="text-sm text-muted">
-              {userLabel(detail.row.user)}
-            </p>
-            {detail.kind === 'meal' ? (
-              <div className="rounded-xl bg-background p-3 text-sm">
-                <p>
-                  <strong>{detail.row.mealType}</strong> · {detail.row.logDate}
-                </p>
-                <p className="mt-2">{detail.row.note || 'Not yok'}</p>
-              </div>
-            ) : (
-              <div className="rounded-xl bg-background p-3 text-sm">
-                <p>{detail.row.measuredAt}</p>
-                <p className="mt-2 font-semibold">
-                  {detail.row.weightKg ?? '—'} kg
-                  {detail.row.waistCm != null
-                    ? ` · bel ${detail.row.waistCm}`
-                    : ''}
-                </p>
-                <p className="mt-1 text-muted">{detail.row.note || ''}</p>
-              </div>
-            )}
-            <div className="flex gap-2">
+      <Modal
+        open={Boolean(detail)}
+        onClose={() => setDetail(null)}
+        size="md"
+        title={detail?.kind === 'meal' ? 'Öğün onayı' : 'Ölçüm onayı'}
+        description={detail ? userLabel(detail.row.user) : undefined}
+        footer={
+          detail ? (
+            <>
               <button
                 type="button"
-                className="flex-1 rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-white"
-                onClick={() =>
-                  void decide(
-                    detail.kind === 'meal' ? 'meals' : 'measurements',
-                    detail.row.id,
-                    'approved',
-                  )
-                }
-              >
-                Onayla
-              </button>
-              <button
-                type="button"
-                className="flex-1 rounded-full border border-danger/40 px-4 py-2.5 text-sm font-semibold text-danger"
+                className="admin-btn admin-btn-ghost border-danger/40 text-danger hover:border-danger hover:bg-danger/5 hover:text-danger"
                 onClick={() =>
                   void decide(
                     detail.kind === 'meal' ? 'meals' : 'measurements',
@@ -261,10 +218,45 @@ export default function CoachPage() {
               >
                 Reddet
               </button>
-            </div>
+              <button
+                type="button"
+                className="admin-btn admin-btn-primary"
+                onClick={() =>
+                  void decide(
+                    detail.kind === 'meal' ? 'meals' : 'measurements',
+                    detail.row.id,
+                    'approved',
+                  )
+                }
+              >
+                Onayla
+              </button>
+            </>
+          ) : null
+        }
+      >
+        {detail?.kind === 'meal' ? (
+          <div className="rounded-xl border border-border-muted bg-surface-high/60 p-3.5 text-sm">
+            <p>
+              <strong>{detail.row.mealType}</strong> · {detail.row.logDate}
+            </p>
+            <p className="mt-2 text-foreground/80">
+              {detail.row.note || 'Not yok'}
+            </p>
           </div>
-        </div>
-      ) : null}
+        ) : detail ? (
+          <div className="rounded-xl border border-border-muted bg-surface-high/60 p-3.5 text-sm">
+            <p className="text-muted">{detail.row.measuredAt}</p>
+            <p className="mt-2 text-base font-semibold">
+              {detail.row.weightKg ?? '—'} kg
+              {detail.row.waistCm != null ? ` · bel ${detail.row.waistCm}` : ''}
+            </p>
+            {detail.row.note ? (
+              <p className="mt-1 text-foreground/80">{detail.row.note}</p>
+            ) : null}
+          </div>
+        ) : null}
+      </Modal>
 
       <section id="pending-queue" className="space-y-3">
         <h3 className="font-semibold">Onay kuyruğu — öğünler</h3>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { api, uploadMedia } from '@/lib/api';
 import { ImageDropZone } from '@/components/ImageDropZone';
+import { Modal } from '@/components/Modal';
 
 type MediaAsset = {
   id: string;
@@ -194,91 +195,70 @@ export function GalleryMediaField({
 
       {error ? <p className="text-xs text-danger">{error}</p> : null}
 
-      {pickerOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <button
-            type="button"
-            aria-label="Kapat"
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setPickerOpen(false)}
-          />
-          <div className="relative z-10 flex max-h-[85vh] w-full max-w-3xl flex-col border border-border-muted bg-surface shadow-lg">
-            <div className="flex items-center justify-between border-b border-border-muted px-4 py-3">
-              <div>
-                <p className="text-sm font-semibold">Medya kütüphanesi</p>
-                <p className="mono text-[10px] uppercase text-muted">
-                  {selected.size} seçili · çoklu seçim
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setPickerOpen(false)}
-                className="text-sm text-muted hover:text-foreground"
-              >
-                Kapat
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4">
-              {loadingLibrary ? (
-                <p className="text-sm text-muted">Yükleniyor…</p>
-              ) : library.length === 0 ? (
-                <p className="text-sm text-muted">
-                  Kütüphanede görsel yok. Önce yükleyin.
-                </p>
-              ) : (
-                <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
-                  {library.map((asset) => {
-                    const active = selected.has(asset.url);
-                    return (
-                      <li key={asset.id}>
-                        <button
-                          type="button"
-                          onClick={() => toggleSelect(asset.url)}
-                          className={`relative w-full border ${
-                            active
-                              ? 'border-accent ring-1 ring-accent'
-                              : 'border-border-muted'
-                          }`}
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={asset.url}
-                            alt={asset.filename}
-                            className="aspect-square w-full object-cover"
-                          />
-                          {active ? (
-                            <span className="absolute right-1 top-1 bg-accent px-1.5 py-0.5 text-[10px] text-white">
-                              ✓
-                            </span>
-                          ) : null}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-2 border-t border-border-muted px-4 py-3">
-              <button
-                type="button"
-                onClick={() => setPickerOpen(false)}
-                className="border border-border-muted px-4 py-2 text-sm"
-              >
-                Vazgeç
-              </button>
-              <button
-                type="button"
-                onClick={applyPicker}
-                className="bg-accent px-4 py-2 text-sm text-white hover:bg-accent-hover"
-              >
-                Seçimi uygula ({selected.size})
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <Modal
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        size="xl"
+        title="Medya kütüphanesi"
+        description={`${selected.size} seçili · çoklu seçim`}
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setPickerOpen(false)}
+              className="admin-btn admin-btn-ghost"
+            >
+              Vazgeç
+            </button>
+            <button
+              type="button"
+              onClick={applyPicker}
+              className="admin-btn admin-btn-primary"
+            >
+              Seçimi uygula ({selected.size})
+            </button>
+          </>
+        }
+      >
+        {loadingLibrary ? (
+          <p className="text-sm text-muted">Yükleniyor…</p>
+        ) : library.length === 0 ? (
+          <p className="text-sm text-muted">
+            Kütüphanede görsel yok. Önce yükleyin.
+          </p>
+        ) : (
+          <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 md:grid-cols-5">
+            {library.map((asset) => {
+              const active = selected.has(asset.url);
+              return (
+                <li key={asset.id}>
+                  <button
+                    type="button"
+                    onClick={() => toggleSelect(asset.url)}
+                    className={`relative w-full overflow-hidden rounded-xl border transition ${
+                      active
+                        ? 'border-accent ring-2 ring-accent/30'
+                        : 'border-border-muted hover:border-accent/50'
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={asset.url}
+                      alt={asset.filename}
+                      className="aspect-square w-full object-cover"
+                    />
+                    {active ? (
+                      <span className="absolute right-1.5 top-1.5 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-white">
+                        ✓
+                      </span>
+                    ) : null}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </Modal>
     </div>
   );
 }

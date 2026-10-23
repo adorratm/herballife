@@ -412,6 +412,151 @@ main select {
   color: var(--accent);
 }
 
+.admin-btn-danger {
+  background: var(--danger) !important;
+  color: #ffffff !important;
+}
+
+.admin-btn-danger:hover {
+  background: color-mix(in srgb, var(--danger) 88%, #000) !important;
+}
+
+/* —— Modal / backdrop —— */
+.admin-modal-backdrop {
+  border: 0;
+  background:
+    radial-gradient(
+      120% 80% at 50% 0%,
+      color-mix(in srgb, var(--accent) 18%, transparent),
+      transparent 55%
+    ),
+    color-mix(in srgb, #171715 48%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.admin-modal-panel {
+  border: 1px solid color-mix(in srgb, var(--border) 70%, white);
+  background: var(--surface);
+  border-radius: 1.25rem 1.25rem 0 0;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.4) inset,
+    0 24px 64px -20px rgba(23, 23, 21, 0.35),
+    0 8px 24px -8px rgba(23, 23, 21, 0.18);
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .admin-modal-panel {
+    border-radius: 1.25rem;
+  }
+}
+
+.admin-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.15rem 1.25rem 0.85rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-muted) 80%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-high) 70%, white) 0%,
+    var(--surface) 100%
+  );
+}
+
+.admin-modal-title {
+  font-family: var(--font-display), var(--font-inter), system-ui, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: var(--foreground);
+}
+
+.admin-modal-desc {
+  margin-top: 0.35rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.admin-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 1px solid var(--border-muted);
+  background: var(--surface);
+  color: var(--foreground);
+  transition:
+    background-color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    color var(--motion-fast) ease;
+}
+
+.admin-modal-close:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, white);
+}
+
+.admin-modal-body {
+  padding: 1rem 1.25rem 1.15rem;
+  overflow: auto;
+  min-height: 0;
+}
+
+.admin-modal-body:empty {
+  display: none;
+  padding: 0;
+}
+
+.admin-modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.85rem 1.25rem 1.15rem;
+  border-top: 1px solid color-mix(in srgb, var(--border-muted) 80%, transparent);
+  background: color-mix(in srgb, var(--surface-high) 55%, white);
+}
+
+.admin-confirm-header {
+  align-items: flex-start;
+}
+
+.admin-confirm-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.admin-confirm-icon-danger {
+  background: color-mix(in srgb, var(--danger) 12%, white);
+  color: var(--danger);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger) 25%, transparent);
+}
+
+.admin-confirm-icon-accent {
+  background: color-mix(in srgb, var(--accent) 12%, white);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.admin-confirm-modal .admin-modal-body {
+  display: none;
+}
+
 /* Outline butonlar: soluk/muted yazı yerine okunaklı foreground */
 main button[class*="border"]:not([class~="bg-accent"]):not([class*="bg-accent/"]):not([class*="text-"]),
 main a[class*="border"][class*="px-"]:not([class~="bg-accent"]):not([class*="bg-accent/"]):not([class*="text-"]) {
@@ -560,11 +705,11 @@ main [class*="border-warning"][class*="text-warning"] {
 }
 
 .dialog-backdrop {
-  animation: backdrop-in 0.2s ease both;
+  animation: backdrop-in 0.22s ease both;
 }
 
 .dialog-panel {
-  animation: dialog-in 0.28s var(--motion-ease) both;
+  animation: dialog-in 0.3s var(--motion-ease) both;
 }
 
 .sidebar-enter {

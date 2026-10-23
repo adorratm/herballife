@@ -26,7 +26,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <AdminHeader onMenuOpen={() => setMenuOpen(true)} />
         <main className="flex-1 overflow-auto px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
-          <div key={pathname} className="admin-page-in mx-auto max-w-7xl">
+          <div key={pathname} className="admin-page-in mx-auto">
             {children}
           </div>
         </main>

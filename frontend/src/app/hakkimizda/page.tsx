@@ -403,7 +403,7 @@ export default async function AboutPage() {
             <p className="font-meta text-xs uppercase tracking-[0.25em] text-primary-fixed">
               {ethos.eyebrow}
             </p>
-            <p className="mt-4 max-w-2xl font-display text-3xl leading-tight text-white md:text-4xl lg:text-5xl">
+            <p className="mt-4  font-display text-3xl leading-tight text-white md:text-4xl lg:text-5xl">
               {ethos.quote}
             </p>
             {ethos.linkLabel ? (

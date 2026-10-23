@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Modal } from '@/components/Modal';
 
 type Props = {
   open: boolean;
@@ -25,49 +25,64 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: Props) {
-  useEffect(() => {
-    if (!open) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onCancel();
-    }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open, onCancel]);
-
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <button
-        type="button"
-        aria-label="Kapat"
-        className="dialog-backdrop absolute inset-0 bg-black/70 backdrop-blur-[2px]"
-        onClick={onCancel}
-      />
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="confirm-dialog-title"
-        className="dialog-panel relative w-full max-w-md border border-border-muted bg-surface p-6 shadow-2xl"
-      >
-        <p className="mono text-[10px] uppercase tracking-widest text-muted">
-          Onay
-        </p>
-        <h3
-          id="confirm-dialog-title"
-          className="mt-2 text-lg font-medium text-foreground"
-        >
-          {title}
-        </h3>
-        {description ? (
-          <p className="mt-3 text-sm leading-relaxed text-muted">{description}</p>
-        ) : null}
-        <div className="mt-6 flex flex-wrap justify-end gap-2">
+    <Modal
+      open={open}
+      onClose={onCancel}
+      size="sm"
+      showClose={!loading}
+      labelledBy="confirm-dialog-title"
+      className="admin-confirm-modal"
+      header={
+        <div className="admin-modal-header admin-confirm-header">
+          <div
+            className={`admin-confirm-icon ${
+              danger ? 'admin-confirm-icon-danger' : 'admin-confirm-icon-accent'
+            }`}
+            aria-hidden
+          >
+            {danger ? '!' : '✓'}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 id="confirm-dialog-title" className="admin-modal-title">
+              {title}
+            </h3>
+            {description ? (
+              <p className="admin-modal-desc">{description}</p>
+            ) : null}
+          </div>
+          {!loading ? (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="admin-modal-close"
+              aria-label="Kapat"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden
+              >
+                <path
+                  d="M6 6l12 12M18 6L6 18"
+                  stroke="currentColor"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          ) : null}
+        </div>
+      }
+      footer={
+        <>
           <button
             type="button"
             onClick={onCancel}
             disabled={loading}
-            className="btn-motion border border-border-muted px-4 py-2 text-sm text-muted hover:border-muted hover:text-foreground disabled:opacity-50"
+            className="admin-btn admin-btn-ghost disabled:opacity-50"
           >
             {cancelLabel}
           </button>
@@ -75,16 +90,16 @@ export function ConfirmDialog({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className={`btn-motion px-4 py-2 text-sm text-white disabled:opacity-50 ${
-              danger
-                ? 'bg-danger hover:bg-danger/90'
-                : 'bg-accent hover:bg-accent-hover'
+            className={`admin-btn admin-btn-primary disabled:opacity-50 ${
+              danger ? 'admin-btn-danger' : ''
             }`}
           >
             {loading ? 'İşleniyor…' : confirmLabel}
           </button>
-        </div>
-      </div>
-    </div>
+        </>
+      }
+    >
+      <></>
+    </Modal>
   );
 }

@@ -189,7 +189,7 @@ export default function OrderDetailPage() {
       <Reveal className="mt-10" delay={40}>
         <OrderStatusStepper status={order.status} />
         {hint ? (
-          <p className="mt-4 max-w-2xl font-meta text-xs uppercase leading-relaxed text-secondary">
+          <p className="mt-4  font-meta text-xs uppercase leading-relaxed text-secondary">
             {hint}
           </p>
         ) : null}

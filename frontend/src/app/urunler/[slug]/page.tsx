@@ -36,7 +36,7 @@ function ProductDescription({ html }: { html: string }) {
   if (looksLikeHtml(html)) {
     return (
       <div
-        className="prose-blog max-w-2xl space-y-5 font-sans text-base leading-8 text-on-surface-variant [&_a]:text-primary [&_a]:underline [&_h2]:mt-10 [&_h2]:font-display [&_h2]:text-3xl [&_h2]:text-foreground [&_h3]:mt-8 [&_h3]:font-display [&_h3]:text-2xl [&_h3]:text-foreground [&_p]:mb-0 [&_strong]:text-foreground [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5"
+        className="prose-blog  space-y-5 font-sans text-base leading-8 text-on-surface-variant [&_a]:text-primary [&_a]:underline [&_h2]:mt-10 [&_h2]:font-display [&_h2]:text-3xl [&_h2]:text-foreground [&_h3]:mt-8 [&_h3]:font-display [&_h3]:text-2xl [&_h3]:text-foreground [&_p]:mb-0 [&_strong]:text-foreground [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5"
         dangerouslySetInnerHTML={{ __html: html }}
       />
     );
@@ -46,7 +46,7 @@ function ProductDescription({ html }: { html: string }) {
     .map((p) => p.trim())
     .filter(Boolean);
   return (
-    <div className="max-w-2xl space-y-4 font-sans text-lg leading-relaxed text-on-surface-variant">
+    <div className=" space-y-4 font-sans text-lg leading-relaxed text-on-surface-variant">
       {blocks.map((block) => (
         <p key={block.slice(0, 48)} className="whitespace-pre-wrap">
           {block}

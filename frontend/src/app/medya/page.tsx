@@ -89,7 +89,7 @@ export default async function MediaPage() {
         {empty ? (
           <Reveal>
             <div className="rounded-2xl border border-outline-variant bg-surface-container-low p-8 text-center md:p-12">
-              <div className="mx-auto grid max-w-2xl grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
+              <div className="mx-auto grid  grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
                 {Array.from({ length: 8 }).map((_, i) => (
                   <div
                     key={i}

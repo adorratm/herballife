@@ -165,7 +165,7 @@ export default function CashAdminPage() {
 
       <form
         onSubmit={onSubmit}
-        className="grid max-w-2xl gap-3 border border-border-muted p-4"
+        className="grid  gap-3 border border-border-muted p-4"
       >
         <p className="mono text-[10px] uppercase text-muted">Yeni hareket</p>
         <label className="block text-sm">

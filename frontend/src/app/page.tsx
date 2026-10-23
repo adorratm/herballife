@@ -556,7 +556,7 @@ export default async function HomePage() {
                         "Bağımsız Distribütör"}
                     </span>
                   </div>
-                  <p className="max-w-2xl text-sm leading-relaxed text-on-surface-variant md:text-base">
+                  <p className=" text-sm leading-relaxed text-on-surface-variant md:text-base">
                     “Kişisel distribütörünüzle birebir ilişki, beslenme ve ideal
                     kilo hedeflerinize ulaşmanın anahtarıdır. Size özel takip
                     programı ile yanınızdayız.”

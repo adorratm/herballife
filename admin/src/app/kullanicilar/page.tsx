@@ -182,7 +182,7 @@ export default function UsersAdminPage() {
     <div className="space-y-8">
       <div>
         <h2 className="text-lg font-semibold">Kullanıcılar</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <p className="mt-1  text-sm text-muted">
           Yönetici: kullanıcı ekleme/çıkarma, personel tanımlama, müşteri
           görüntüleme ve rol yetkisi. Birden fazla yönetici Google izin listesi
           veya rol ataması ile çalışır. Personel mağaza operasyonunu yönetir;

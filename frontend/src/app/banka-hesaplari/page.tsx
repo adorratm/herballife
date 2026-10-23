@@ -77,7 +77,7 @@ export default async function BankAccountsPage() {
           <h1 className="mt-3 font-display text-4xl tracking-tight text-on-surface md:text-5xl">
             Banka hesapları
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-on-surface-variant">
+          <p className="mt-4  text-base leading-relaxed text-on-surface-variant">
             Havale yaptıktan sonra{" "}
             <Link
               href="/odeme-bildirimi"

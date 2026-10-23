@@ -262,10 +262,10 @@ export function AdminSidebar({ mobileOpen = false, onMobileClose }: Props) {
             <button
               type="button"
               aria-label="Kapat"
-              className="absolute inset-0 bg-black/45 backdrop-blur-[2px]"
+              className="dialog-backdrop admin-modal-backdrop absolute inset-0"
               onClick={onMobileClose}
             />
-            <aside className="admin-menu-drawer absolute inset-y-0 left-0 flex w-[min(100%,18rem)] flex-col bg-surface shadow-2xl">
+            <aside className="admin-menu-drawer absolute inset-y-0 left-0 flex w-[min(100%,18rem)] flex-col border-r border-border-muted bg-surface shadow-[0_24px_64px_-16px_rgba(23,23,21,0.35)]">
               <BrandBlock />
               <NavLinks isAdmin={isAdmin} onNavigate={onMobileClose} />
             </aside>
