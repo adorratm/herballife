@@ -40,7 +40,7 @@ import { normalizePhoneE164 } from '@common/utils/phone';
 
 const DEFAULT_ORDER_CHANNELS: NotificationChannelName[] = ['email', 'whatsapp'];
 
-const DEFAULT_ORDER_ALERT_EMAIL = 'info@herballife.com.tr';
+const DEFAULT_ORDER_ALERT_EMAIL = 'info@herbalife.com.tr';
 
 @Injectable()
 export class NotificationsService {

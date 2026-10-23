@@ -13,12 +13,12 @@ function FailureContent() {
   const orderId =
     params.get("orderId") ||
     (typeof window !== "undefined"
-      ? sessionStorage.getItem("herballife_last_order_id")
+      ? sessionStorage.getItem("herbalife_last_order_id")
       : null);
   const orderNumber =
     params.get("orderNumber") ||
     (typeof window !== "undefined"
-      ? sessionStorage.getItem("herballife_last_order_number")
+      ? sessionStorage.getItem("herbalife_last_order_number")
       : null);
   const reason = params.get("reason");
   const [loggedIn, setLoggedIn] = useState(false);
@@ -39,7 +39,7 @@ function FailureContent() {
     try {
       const email =
         typeof window !== "undefined"
-          ? sessionStorage.getItem("herballife_last_order_email") || undefined
+          ? sessionStorage.getItem("herbalife_last_order_email") || undefined
           : undefined;
       const result = await retryPayment(orderId, email, getToken());
       if (!redirectToPayment(result)) {

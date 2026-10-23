@@ -77,7 +77,7 @@ async function download(url, dest, extras = []) {
   for (const candidate of candidates) {
     try {
       const res = await fetch(candidate, {
-        headers: { "User-Agent": "herballife-stock-upload/1.0" },
+        headers: { "User-Agent": "herbalife-stock-upload/1.0" },
       });
       if (!res.ok) {
         lastErr = new Error(`Download failed ${res.status}: ${candidate}`);

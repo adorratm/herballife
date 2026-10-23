@@ -40,7 +40,7 @@ const C = {
   footer: '#120f0d',
 };
 
-const CID = 'herballife-brand-logo';
+const CID = 'herbalife-brand-logo';
 const logoPath = path.join(root, 'api/assets/email/logo-email.png');
 const host = process.env.MAIL_HOST || '';
 const user = process.env.MAIL_USER || '';
@@ -49,7 +49,7 @@ const port = parseInt(process.env.MAIL_PORT || '465', 10);
 const secure = process.env.MAIL_SECURE === 'true' || port === 465;
 const from =
   process.env.MAIL_FROM ||
-  'Herballife <info@herballife.com.tr>';
+  'Herbalife <info@herbalife.com.tr>';
 
 const alertEmails = (process.env.ORDER_ALERT_EMAILS || user)
   .split(',')
@@ -83,7 +83,7 @@ async function main() {
 <tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:${C.card};border:1px solid ${C.line};">
   <tr><td style="padding:28px 28px 22px;background:${C.header};border-bottom:3px solid ${C.accent};text-align:center;">
-    <img src="cid:${CID}" width="220" alt="Herballife" style="display:block;margin:0 auto;width:220px;max-width:72%;height:auto;border:0;" />
+    <img src="cid:${CID}" width="220" alt="Herbalife" style="display:block;margin:0 auto;width:220px;max-width:72%;height:auto;border:0;" />
     <p style="margin:14px 0 0;font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:${C.accent};">Torbalı · İzmir</p>
   </td></tr>
   <tr><td style="height:3px;background:${C.accent};font-size:0;line-height:0;">&nbsp;</td></tr>
@@ -93,7 +93,7 @@ async function main() {
     <p style="font-family:Arial,sans-serif;font-size:15px;line-height:1.65;color:${C.soft};"><strong style="color:${C.cream};">${orderNo}</strong> — logo Gmail’de CID (inline attachment) ile geliyor; uzak URL değil.</p>
   </td></tr>
   <tr><td style="padding:24px 28px;border-top:1px solid ${C.line};background:${C.footer};">
-    <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;color:${C.muted};">info@herballife.com.tr · +90 541 214 79 63</p>
+    <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;color:${C.muted};">info@herbalife.com.tr · +90 541 214 79 63</p>
   </td></tr>
 </table>
 </td></tr></table>

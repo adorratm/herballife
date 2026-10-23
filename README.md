@@ -9,7 +9,7 @@ cp .env.example .env
 docker compose up -d postgres redis
 yarn install
 yarn migration:run   # veya geliştirmede synchronize açık
-yarn workspace @herballife/api seed
+yarn workspace @herbalife/api seed
 yarn dev:api
 yarn dev:frontend
 yarn dev:admin
@@ -25,7 +25,7 @@ Toptan / B2B katalog kaldırıldı. Mağaza + wellness + koç paneli odaklıdır
 
 ## Sunum yayın
 
-Geçici hostlar: `herballife.emrekilic.web.tr` / `admin.` / `api.` — **parent `emrekilic.web.tr` server block’una dokunmayın.**
+Geçici hostlar: `herbalife.emrekilic.web.tr` / `admin.` / `api.` — **parent `emrekilic.web.tr` server block’una dokunmayın.**
 
 Detay ve checklist: [`deploy/DEMO.md`](deploy/DEMO.md)
 

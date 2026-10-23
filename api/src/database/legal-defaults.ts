@@ -9,7 +9,7 @@ const SELLER = {
   email: 'info@ornek.com',
   phone: '+90 500 000 00 00',
   hours: 'Pzt — Paz / 09:00 — 20:00',
-  website: 'https://herballife.emrekilic.web.tr',
+  website: 'https://herbalife.emrekilic.web.tr',
   taxOffice: '[Vergi dairesi — güncellenecek]',
   taxNumber: '',
   mersis: '[MERSİS No — güncellenecek]',

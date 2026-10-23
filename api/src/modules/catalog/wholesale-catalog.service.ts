@@ -470,7 +470,7 @@ export class WholesaleCatalogService {
     ) {
       return brandRow.value.name.trim();
     }
-    return 'Herballife';
+    return 'Herbalife';
   }
 
   async getPublicCatalog(token: string): Promise<{

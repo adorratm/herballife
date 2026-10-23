@@ -11,7 +11,7 @@ function imageRemotePatterns() {
     {
       protocol: "https",
       hostname:
-        "herballife.s3.eu-central-1.amazonaws.com",
+        "herbalife.s3.eu-central-1.amazonaws.com",
       pathname: "/**",
     },
     {

@@ -83,11 +83,6 @@ export const ADMIN_NAV_GROUPS: NavGroup[] = [
         adminOnly: true,
       },
       { href: '/kullanicilar', label: 'Kullanıcılar', adminOnly: true },
-      {
-        href: '/personel-onaylari',
-        label: 'Personel onayları',
-        adminOnly: true,
-      },
       { href: '/pazaryeri', label: 'Pazaryeri', adminOnly: true },
       { href: '/sozlesmeler', label: 'Sözleşmeler', adminOnly: true },
       { href: '/bildirimler', label: 'Bildirimler' },

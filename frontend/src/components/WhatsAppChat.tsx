@@ -30,7 +30,7 @@ function openWhatsApp(phone: string | null | undefined, text: string) {
 export function WhatsAppChat({
   enabled = true,
   phone = DEFAULT_WHATSAPP_PHONE,
-  brandName = "Herballife",
+  brandName = "Herbalife",
   greeting = DEFAULT_WHATSAPP_SETTINGS.greeting,
   presets = DEFAULT_WHATSAPP_SETTINGS.presets,
 }: Props) {
@@ -52,10 +52,10 @@ export function WhatsAppChat({
       setLiftForCookie(!readCookieConsent());
     }
     syncCookieLift();
-    window.addEventListener("herballife:cookie-consent", syncCookieLift);
+    window.addEventListener("herbalife:cookie-consent", syncCookieLift);
     window.addEventListener("storage", syncCookieLift);
     return () => {
-      window.removeEventListener("herballife:cookie-consent", syncCookieLift);
+      window.removeEventListener("herbalife:cookie-consent", syncCookieLift);
       window.removeEventListener("storage", syncCookieLift);
     };
   }, []);

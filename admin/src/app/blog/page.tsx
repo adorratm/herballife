@@ -32,7 +32,7 @@ const emptyForm = (): FormState => ({
   excerpt: '',
   content: '',
   coverImageUrl: '',
-  authorName: 'Herballife',
+  authorName: 'Herbalife',
   tags: '',
   relatedProductSlugs: '',
   relatedCategorySlugs: '',

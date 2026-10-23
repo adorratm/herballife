@@ -7,7 +7,7 @@ export class AccountingSettings extends BaseEntity {
     name: 'company_title',
     type: 'varchar',
     length: 200,
-    default: 'Herballife',
+    default: 'Herbalife',
   })
   companyTitle!: string;
 

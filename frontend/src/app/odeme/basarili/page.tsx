@@ -15,7 +15,7 @@ function SuccessContent() {
   const orderNumber =
     params.get("orderNumber") ||
     (typeof window !== "undefined"
-      ? sessionStorage.getItem("herballife_last_order_number")
+      ? sessionStorage.getItem("herbalife_last_order_number")
       : null);
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -23,10 +23,10 @@ function SuccessContent() {
     const token = getToken();
     setLoggedIn(Boolean(token));
     if (orderNumber) {
-      sessionStorage.setItem("herballife_last_order_number", orderNumber);
+      sessionStorage.setItem("herbalife_last_order_number", orderNumber);
     }
     if (!orderId) return;
-    sessionStorage.setItem("herballife_last_order_id", orderId);
+    sessionStorage.setItem("herbalife_last_order_id", orderId);
 
     let cancelled = false;
     (async () => {

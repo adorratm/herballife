@@ -436,14 +436,14 @@ export default function CheckoutPage() {
 
       if (result.orderId) {
         try {
-          sessionStorage.setItem("herballife_last_order_id", result.orderId);
+          sessionStorage.setItem("herbalife_last_order_id", result.orderId);
           sessionStorage.setItem(
-            "herballife_last_order_email",
+            "herbalife_last_order_email",
             form.customerEmail.trim(),
           );
           if (result.orderNumber) {
             sessionStorage.setItem(
-              "herballife_last_order_number",
+              "herbalife_last_order_number",
               result.orderNumber,
             );
           }

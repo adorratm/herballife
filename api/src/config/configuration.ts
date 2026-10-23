@@ -52,12 +52,12 @@ export default () => ({
   frontendUrl: resolvePublicUrl(
     process.env.FRONTEND_URL,
     'http://localhost:3000',
-    'https://herballife.com.tr',
+    'https://herbalife.com.tr',
   ),
   adminUrl: resolvePublicUrl(
     process.env.ADMIN_URL,
     'http://localhost:3001',
-    'https://admin.herballife.com.tr',
+    'https://admin.herbalife.com.tr',
   ),
   /**
    * @deprecated Auth/yetki için kullanılmaz — `admin_allowlist` tablosu + Kullanıcılar UI.
@@ -74,9 +74,9 @@ export default () => ({
   database: {
     host: process.env.DATABASE_HOST || 'localhost',
     port: parseInt(process.env.DATABASE_PORT || '5432', 10),
-    username: process.env.POSTGRES_USER || 'herballife',
-    password: process.env.POSTGRES_PASSWORD || 'herballife_secret',
-    name: process.env.POSTGRES_DB || 'herballife',
+    username: process.env.POSTGRES_USER || 'herbalife',
+    password: process.env.POSTGRES_PASSWORD || 'herbalife_secret',
+    name: process.env.POSTGRES_DB || 'herbalife',
   },
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID || '',
@@ -90,7 +90,7 @@ export default () => ({
   },
   apple: {
     /** Virgülle: iOS bundle id ve isteğe bağlı Services ID */
-    clientIds: process.env.APPLE_CLIENT_ID || 'tr.herballife.ops',
+    clientIds: process.env.APPLE_CLIENT_ID || 'tr.herbalife.ops',
   },
   payment: {
     /** paytr | iyzico — boşsa PayTR bilgileri varsa paytr, değilse iyzico */
@@ -132,7 +132,7 @@ export default () => ({
     url: resolveRedisUrl(),
   },
   mail: {
-    from: process.env.MAIL_FROM || 'Herballife <info@herballife.com.tr>',
+    from: process.env.MAIL_FROM || 'Herbalife <info@herbalife.com.tr>',
     host: process.env.MAIL_HOST || '',
     port: parseInt(process.env.MAIL_PORT || '587', 10),
     /** true = 465 SSL; false = 587 STARTTLS */
@@ -223,13 +223,13 @@ export default () => ({
       mpopBaseUrl:
         process.env.HEPSIBURADA_MPOP_BASE_URL || 'https://mpop.hepsiburada.com',
       /** HB Developer Username (User-Agent); credentials.userAgent override eder */
-      userAgent: process.env.HEPSIBURADA_USER_AGENT || 'herballife_dev',
+      userAgent: process.env.HEPSIBURADA_USER_AGENT || 'herbalife_dev',
       /** Opsiyonel; set edilirse webhook ?secret= veya x-webhook-secret ister */
       webhookSecret: process.env.HEPSIBURADA_WEBHOOK_SECRET || '',
     },
     n11: {
       baseUrl: process.env.N11_API_BASE_URL || 'https://api.n11.com',
-      integrator: process.env.N11_INTEGRATOR_NAME || 'Herballife',
+      integrator: process.env.N11_INTEGRATOR_NAME || 'Herbalife',
     },
   },
   lowStock: {
@@ -247,7 +247,7 @@ export default () => ({
   instagram: {
     accessToken: process.env.INSTAGRAM_ACCESS_TOKEN || '',
     userId: process.env.INSTAGRAM_USER_ID || '',
-    username: process.env.INSTAGRAM_USERNAME || 'herballife',
+    username: process.env.INSTAGRAM_USERNAME || 'herbalife',
   },
   einvoice: {
     mock:

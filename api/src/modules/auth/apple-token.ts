@@ -86,9 +86,9 @@ export async function verifyAppleIdentityToken(
 }
 
 export function appleAudiencesFromEnv(raw?: string): string[] {
-  const list = (raw || 'tr.herballife.ops')
+  const list = (raw || 'tr.herbalife.ops')
     .split(',')
     .map((item) => item.trim())
     .filter(Boolean);
-  return list.length ? list : ['tr.herballife.ops'];
+  return list.length ? list : ['tr.herbalife.ops'];
 }

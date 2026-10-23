@@ -41,10 +41,10 @@ export class TrendyolGoMarketAdapter implements IMarketplaceAdapter {
     );
     const headers: Record<string, string> = {
       Authorization: basicAuthHeader(apiKey, apiSecret),
-      'User-Agent': `${sellerId} - Herballife`,
-      'x-agentname': credentials.integratorName?.trim() || 'Herballife',
+      'User-Agent': `${sellerId} - Herbalife`,
+      'x-agentname': credentials.integratorName?.trim() || 'Herbalife',
       'x-executor-user':
-        credentials.executorEmail?.trim() || 'integration@herballife.local',
+        credentials.executorEmail?.trim() || 'integration@herbalife.local',
       sellerId,
       storeId: credentials.storeId?.trim() || '',
     };

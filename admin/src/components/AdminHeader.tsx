@@ -16,7 +16,6 @@ const TITLES: Record<string, string> = {
   '/galeri': 'Site Galerisi',
   '/siparisler': 'Siparişler',
   '/musteriler': 'Müşteriler',
-  '/personel-onaylari': 'Personel onayları',
   '/iadeler': 'İade Talepleri',
   '/kuponlar': 'Kuponlar',
   '/kampanyalar': 'Kampanyalar',

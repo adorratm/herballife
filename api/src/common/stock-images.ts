@@ -14,7 +14,7 @@ function mediaBase(): string {
     return `https://${bucket}.s3.${region}.amazonaws.com`;
   }
 
-  return 'https://herballife.s3.eu-central-1.amazonaws.com';
+  return 'https://herbalife.s3.eu-central-1.amazonaws.com';
 }
 
 export type ApiStockImageKey =

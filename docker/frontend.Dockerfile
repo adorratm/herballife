@@ -13,9 +13,9 @@ COPY .yarn/vendor ./.yarn/vendor
 COPY frontend ./frontend
 COPY api/package.json ./api/
 COPY admin/package.json ./admin/
-ARG NEXT_PUBLIC_API_URL=https://api.herballife.com.tr
-ARG NEXT_PUBLIC_SITE_URL=https://herballife.com.tr
-ARG NEXT_PUBLIC_ADMIN_URL=https://admin.herballife.com.tr
+ARG NEXT_PUBLIC_API_URL=https://api.herbalife.com.tr
+ARG NEXT_PUBLIC_SITE_URL=https://herbalife.com.tr
+ARG NEXT_PUBLIC_ADMIN_URL=https://admin.herbalife.com.tr
 ARG NEXT_PUBLIC_CDN_URL=
 ARG NEXT_PUBLIC_GA4_ID=
 ARG NEXT_PUBLIC_GTM_ID=
@@ -39,7 +39,7 @@ ENV AWS_REGION=$AWS_REGION
 ENV AWS_CDN_URL=$AWS_CDN_URL
 ENV NEXT_PUBLIC_S3_BUCKET=$AWS_S3_BUCKET
 ENV NEXT_PUBLIC_S3_REGION=$AWS_REGION
-RUN yarn workspaces focus @herballife/frontend
+RUN yarn workspaces focus @herbalife/frontend
 WORKDIR /app/frontend
 RUN yarn build
 

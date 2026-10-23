@@ -4,14 +4,14 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-herballife_secret}
-      POSTGRES_DB: ${POSTGRES_DB:-herballife}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-herbalife_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-herbalife}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "${DATABASE_PORT:-5432}:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-herballife}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-herbalife}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -54,8 +54,8 @@ services:
       context: .
       dockerfile: docker/frontend.Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.herballife.com.tr}
-        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://herballife.com.tr}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.herbalife.com.tr}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://herbalife.com.tr}
     restart: unless-stopped
     environment:
       APPLE_TEAM_ID: ${APPLE_TEAM_ID:-}
@@ -70,8 +70,8 @@ services:
       context: .
       dockerfile: docker/admin.Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.herballife.com.tr}
-        NEXT_PUBLIC_ADMIN_URL: ${NEXT_PUBLIC_ADMIN_URL:-https://admin.herballife.com.tr}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.herbalife.com.tr}
+        NEXT_PUBLIC_ADMIN_URL: ${NEXT_PUBLIC_ADMIN_URL:-https://admin.herbalife.com.tr}
     restart: unless-stopped
     ports:
       - "3001:3001"

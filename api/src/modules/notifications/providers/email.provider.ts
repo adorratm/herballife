@@ -38,7 +38,7 @@ export class EmailProvider {
   constructor(private readonly config: ConfigService) {
     this.from =
       this.config.get<string>('mail.from') ||
-      'Herballife <info@herballife.com.tr>';
+      'Herbalife <info@herbalife.com.tr>';
 
     const host = this.config.get<string>('mail.host') || '';
     const user = this.config.get<string>('mail.user') || '';

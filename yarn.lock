@@ -953,15 +953,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@herballife/accounting-contracts@workspace:packages/accounting-contracts":
+"@herbalife/accounting-contracts@workspace:packages/accounting-contracts":
   version: 0.0.0-use.local
-  resolution: "@herballife/accounting-contracts@workspace:packages/accounting-contracts"
+  resolution: "@herbalife/accounting-contracts@workspace:packages/accounting-contracts"
   languageName: unknown
   linkType: soft
 
-"@herballife/admin@workspace:admin":
+"@herbalife/admin@workspace:admin":
   version: 0.0.0-use.local
-  resolution: "@herballife/admin@workspace:admin"
+  resolution: "@herbalife/admin@workspace:admin"
   dependencies:
     "@tailwindcss/postcss": "npm:^4.3.3"
     "@types/node": "npm:^26.6.5"
@@ -980,9 +980,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@herballife/api@workspace:api":
+"@herbalife/api@workspace:api":
   version: 0.0.0-use.local
-  resolution: "@herballife/api@workspace:api"
+  resolution: "@herbalife/api@workspace:api"
   dependencies:
     "@aws-sdk/client-s3": "npm:3.1155.0"
     "@bull-board/api": "npm:9.10.5"
@@ -1064,9 +1064,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@herballife/frontend@workspace:frontend":
+"@herbalife/frontend@workspace:frontend":
   version: 0.0.0-use.local
-  resolution: "@herballife/frontend@workspace:frontend"
+  resolution: "@herbalife/frontend@workspace:frontend"
   dependencies:
     "@tailwindcss/postcss": "npm:^4.3.3"
     "@types/node": "npm:^26.6.5"
@@ -1083,9 +1083,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@herballife/ui-tokens@workspace:packages/ui-tokens":
+"@herbalife/ui-tokens@workspace:packages/ui-tokens":
   version: 0.0.0-use.local
-  resolution: "@herballife/ui-tokens@workspace:packages/ui-tokens"
+  resolution: "@herbalife/ui-tokens@workspace:packages/ui-tokens"
   languageName: unknown
   linkType: soft
 
@@ -4650,9 +4650,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"braces@portal:./.yarn/vendor/braces::locator=herballife%40workspace%3A.":
+"braces@portal:./.yarn/vendor/braces::locator=herbalife%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "braces@portal:./.yarn/vendor/braces::locator=herballife%40workspace%3A."
+  resolution: "braces@portal:./.yarn/vendor/braces::locator=herbalife%40workspace%3A."
   dependencies:
     fill-range: "npm:^7.1.1"
   languageName: node
@@ -6884,9 +6884,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"herballife@workspace:.":
+"herbalife@workspace:.":
   version: 0.0.0-use.local
-  resolution: "herballife@workspace:."
+  resolution: "herbalife@workspace:."
   languageName: unknown
   linkType: soft
 

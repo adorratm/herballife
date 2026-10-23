@@ -1,6 +1,6 @@
-const TOKEN_KEY = "herballife_access_token";
-const COOKIE_NAME = "herballife_token";
-const AUTH_NEXT_KEY = "herballife_auth_next";
+const TOKEN_KEY = "herbalife_access_token";
+const COOKIE_NAME = "herbalife_token";
+const AUTH_NEXT_KEY = "herbalife_auth_next";
 
 function canUseDom() {
   return typeof window !== "undefined";

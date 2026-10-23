@@ -29,10 +29,10 @@ const STATUS_LABELS: Record<string, string> = {
   returned: 'İade kargo',
 };
 
-const BRAND = 'Herballife';
-const BRAND_EMAIL = 'info@herballife.com.tr';
+const BRAND = 'Herbalife';
+const BRAND_EMAIL = 'info@herbalife.com.tr';
 const BRAND_PHONE = '+90 541 214 79 63';
-const DEFAULT_SITE_URL = 'https://herballife.com.tr';
+const DEFAULT_SITE_URL = 'https://herbalife.com.tr';
 
 function isLoopbackHost(url: string): boolean {
   try {
@@ -73,7 +73,7 @@ export function resolveAdminUrl(config: ConfigService): string {
   const raw = (config.get<string>('adminUrl') || '').trim().replace(/\/$/, '');
   const nodeEnv =
     config.get<string>('nodeEnv') || process.env.NODE_ENV || 'development';
-  const defaultAdmin = 'https://admin.herballife.com.tr';
+  const defaultAdmin = 'https://admin.herbalife.com.tr';
   if (nodeEnv === 'production') {
     if (raw && !isLoopbackHost(raw)) return raw;
     return defaultAdmin;
@@ -321,7 +321,7 @@ export function renderBrandedEmail(input: {
   metaRows?: { label: string; value: string }[];
   /** Önceden escape edilmiş / güvenli HTML (sipariş tablosu vb.) */
   extraHtml?: string;
-  /** Logo için vitrin kök URL (https://herballife.com.tr) */
+  /** Logo için vitrin kök URL (https://herbalife.com.tr) */
   siteUrl?: string;
 }): string {
   const preheader = input.preheader || input.title;
@@ -415,7 +415,7 @@ export function renderBrandedEmail(input: {
                 <a href="tel:+905553332211" style="color:${C.muted};text-decoration:none;">${BRAND_PHONE}</a>
               </p>
               <p style="margin:10px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6d5f52;">
-                <a href="${escapeHtml(site)}" style="color:#6d5f52;text-decoration:none;">herballife.com.tr</a>
+                <a href="${escapeHtml(site)}" style="color:#6d5f52;text-decoration:none;">herbalife.com.tr</a>
               </p>
             </td>
           </tr>
@@ -470,7 +470,7 @@ export function buildEmailContent(
       const adminBase = (
         ctx.adminUrl ||
         process.env.ADMIN_URL ||
-        'https://admin.herballife.com.tr'
+        'https://admin.herbalife.com.tr'
       ).replace(/\/$/, '');
       return {
         subject: isPaid

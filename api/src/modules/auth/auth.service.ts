@@ -501,7 +501,7 @@ export class AuthService {
 
       const frontendUrl = resolveFrontendUrl(this.config);
       const resetUrl = `${frontendUrl}/sifre-sifirla?token=${encodeURIComponent(token)}`;
-      const appResetUrl = `herballifeops://reset-password?token=${encodeURIComponent(token)}`;
+      const appResetUrl = `herbalifeops://reset-password?token=${encodeURIComponent(token)}`;
       const name = [user.firstName, user.lastName]
         .filter(Boolean)
         .join(' ')

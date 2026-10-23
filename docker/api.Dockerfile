@@ -16,7 +16,7 @@ COPY .yarn/vendor ./.yarn/vendor
 COPY api ./api
 COPY frontend/package.json ./frontend/
 COPY admin/package.json ./admin/
-RUN yarn workspaces focus @herballife/api
+RUN yarn workspaces focus @herbalife/api
 WORKDIR /app/api
 RUN yarn build
 

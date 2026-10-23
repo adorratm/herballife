@@ -1,5 +1,5 @@
 /** Auto-generated brand logo for CID email attachments — do not edit by hand. */
-export const BRAND_LOGO_CID = 'herballife-brand-logo';
+export const BRAND_LOGO_CID = 'herbalife-brand-logo';
 export const BRAND_LOGO_FILENAME = 'logo-email.png';
 export const BRAND_LOGO_CONTENT_TYPE = 'image/png';
 export const BRAND_LOGO_BASE64 =

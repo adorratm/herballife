@@ -1,5 +1,5 @@
 {
-  "name": "herballife",
+  "name": "herbalife",
   "private": true,
   "workspaces": [
     "api",
@@ -8,15 +8,15 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:api": "yarn workspace @herballife/api start:dev",
-    "dev:frontend": "yarn workspace @herballife/frontend dev",
-    "dev:admin": "yarn workspace @herballife/admin dev",
+    "dev:api": "yarn workspace @herbalife/api start:dev",
+    "dev:frontend": "yarn workspace @herbalife/frontend dev",
+    "dev:admin": "yarn workspace @herbalife/admin dev",
     "build": "yarn workspaces foreach -Apt run build",
-    "build:api": "yarn workspace @herballife/api build",
-    "build:frontend": "yarn workspace @herballife/frontend build",
-    "build:admin": "yarn workspace @herballife/admin build",
-    "migration:run": "yarn workspace @herballife/api migration:run",
-    "migration:generate": "yarn workspace @herballife/api migration:generate",
+    "build:api": "yarn workspace @herbalife/api build",
+    "build:frontend": "yarn workspace @herbalife/frontend build",
+    "build:admin": "yarn workspace @herbalife/admin build",
+    "migration:run": "yarn workspace @herbalife/api migration:run",
+    "migration:generate": "yarn workspace @herbalife/api migration:generate",
     "lint": "yarn workspaces foreach -Apt run lint",
     "stock:upload": "node scripts/upload-stock-images.mjs",
     "s3:cors": "node scripts/apply-s3-cors.cjs"

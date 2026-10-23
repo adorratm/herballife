@@ -10,7 +10,6 @@ const OPS_ROLES = new Set(['admin', 'staff', 'accountant']);
 
 const ADMIN_ONLY_PREFIXES = [
   '/kullanicilar',
-  '/personel-onaylari',
   '/blog',
   '/icerik',
   '/site-ayarlari',

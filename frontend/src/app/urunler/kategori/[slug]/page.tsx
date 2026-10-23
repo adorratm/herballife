@@ -10,7 +10,10 @@ import {
   getProductsPaged,
 } from "@/lib/api";
 import { getSiteSettings } from "@/lib/cms";
-import { categoryCatalogPath } from "@/lib/catalog-paths";
+import {
+  categoryCatalogPath,
+  categoryFallback,
+} from "@/lib/catalog-paths";
 import { looksLikeHtml } from "@/lib/catalog-seo";
 import {
   buildCatalogMetadata,
@@ -19,6 +22,9 @@ import {
   JsonLd,
 } from "@/lib/seo";
 import ProductsCatalog from "../../ProductsCatalog";
+
+/** API kısa süre düşse bile chip URL’leri 404 cache’lenmesin */
+export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -43,7 +49,8 @@ export async function generateMetadata({
   ]);
   const category =
     categories.find((c) => c.slug === slug) ||
-    (await getCategoryBySlug(slug));
+    (await getCategoryBySlug(slug)) ||
+    categoryFallback(slug);
   if (!category) {
     return { title: "Kategori bulunamadı", robots: { index: false, follow: false } };
   }
@@ -68,7 +75,10 @@ export default async function CategoryCatalogPage({ params }: Props) {
     getBlogPosts({ categorySlug: slug, limit: 3, sort: "publishedAt" }),
     getCategoryBySlug(slug),
   ]);
-  const category = categories.find((c) => c.slug === slug) || bySlug;
+  const category =
+    categories.find((c) => c.slug === slug) ||
+    bySlug ||
+    categoryFallback(slug);
   if (!category) notFound();
 
   const crumbs = [

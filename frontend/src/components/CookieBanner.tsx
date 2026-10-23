@@ -31,7 +31,7 @@ export function CookieBanner() {
     writeCookieConsent(payload);
     setVisible(false);
     setCustomize(false);
-    window.dispatchEvent(new Event("herballife:cookie-consent"));
+    window.dispatchEvent(new Event("herbalife:cookie-consent"));
     await logCookieConsent(payload);
   }
 

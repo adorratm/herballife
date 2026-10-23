@@ -25,12 +25,12 @@ const SEEDED_CONTACT = {
   email: DEFAULT_SETTINGS.contact.email,
   phone: DEFAULT_SETTINGS.contact.phone,
   hours: DEFAULT_SETTINGS.contact.hours,
-  website: "https://herballife.com.tr",
+  website: "https://herbalife.com.tr",
 } as const;
 
 export function sellerFromSettings(settings: SiteSettings): LegalSeller {
   const siteUrl = (
-    process.env.NEXT_PUBLIC_SITE_URL || "https://herballife.com.tr"
+    process.env.NEXT_PUBLIC_SITE_URL || "https://herbalife.com.tr"
   ).replace(/\/$/, "");
   return {
     name: settings.brand.name || DEFAULT_SETTINGS.brand.name,

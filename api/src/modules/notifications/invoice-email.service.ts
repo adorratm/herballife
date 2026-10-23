@@ -326,7 +326,7 @@ export class InvoiceEmailService {
     if (!row) {
       row = await this.em.save(
         this.em.create(AccountingSettings, {
-          companyTitle: 'Herballife',
+          companyTitle: 'Herbalife',
         }),
       );
     }

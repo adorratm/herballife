@@ -12,15 +12,15 @@ COPY .yarn/vendor ./.yarn/vendor
 COPY admin ./admin
 COPY api/package.json ./api/
 COPY frontend/package.json ./frontend/
-ARG NEXT_PUBLIC_API_URL=https://api.herballife.com.tr
-ARG NEXT_PUBLIC_ADMIN_URL=https://admin.herballife.com.tr
-ARG NEXT_PUBLIC_SITE_URL=https://herballife.com.tr
+ARG NEXT_PUBLIC_API_URL=https://api.herbalife.com.tr
+ARG NEXT_PUBLIC_ADMIN_URL=https://admin.herbalife.com.tr
+ARG NEXT_PUBLIC_SITE_URL=https://herbalife.com.tr
 ARG NEXT_PUBLIC_CDN_URL=
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_ADMIN_URL=$NEXT_PUBLIC_ADMIN_URL
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_CDN_URL=$NEXT_PUBLIC_CDN_URL
-RUN yarn workspaces focus @herballife/admin
+RUN yarn workspaces focus @herbalife/admin
 WORKDIR /app/admin
 RUN yarn build
 

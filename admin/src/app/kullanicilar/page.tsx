@@ -424,7 +424,7 @@ export default function UsersAdminPage() {
           <li>
             <strong className="text-foreground">Admin:</strong> kullanıcı/yetki,
             site ayarları, CMS, blog, galeri, sözleşmeler, pazaryeri hesapları,
-            kuyruklar, personel onayları.
+            kuyruklar.
           </li>
           <li>
             <strong className="text-foreground">Personel / Muhasebe:</strong>{' '}

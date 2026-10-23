@@ -55,7 +55,7 @@ Placeholder (`+90 500…`, `info@ornek.com`) ile reklam açmayın.
 ## 7. İçerik / katalog
 
 - [ ] Seed demo ürünleri gözden geçir veya gerçek katalog yükle
-- [ ] `yarn workspace @herballife/api seed` (veya proje seed komutu) — blog + yorumlar
+- [ ] `yarn workspace @herbalife/api seed` (veya proje seed komutu) — blog + yorumlar
 - [ ] Yanıltıcı kampanya metinleri yok (kapıda ödeme yok; “en düşük fiyat” iddiası yok)
 - [ ] Ürün görselleri CDN / S3
 

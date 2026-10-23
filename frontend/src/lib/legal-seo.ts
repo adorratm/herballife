@@ -9,17 +9,17 @@ const LEGAL_META: Record<
   gizlilik: {
     title: "Gizlilik Politikası",
     description:
-      "Herballife gizlilik politikası — kişisel verilerinizin korunması hakkında bilgilendirme.",
+      "Herbalife gizlilik politikası — kişisel verilerinizin korunması hakkında bilgilendirme.",
   },
   kvkk: {
     title: "KVKK",
     description:
-      "6698 sayılı KVKK kapsamında Herballife veri işleme bilgilendirmesi.",
+      "6698 sayılı KVKK kapsamında Herbalife veri işleme bilgilendirmesi.",
   },
   "cerez-politikasi": {
     title: "Çerez Politikası",
     description:
-      "Herballife web sitesinde kullanılan çerezler hakkında bilgilendirme.",
+      "Herbalife web sitesinde kullanılan çerezler hakkında bilgilendirme.",
   },
   "mesafeli-satis": {
     title: "Mesafeli Satış Sözleşmesi",
@@ -39,7 +39,7 @@ const LEGAL_META: Record<
   "musteri-memnuniyeti": {
     title: "Müşteri Memnuniyeti",
     description:
-      "Herballife müşteri memnuniyeti politikası ve destek süreci.",
+      "Herbalife müşteri memnuniyeti politikası ve destek süreci.",
   },
   "guvenli-alisveris": {
     title: "Güvenli Alışveriş",
