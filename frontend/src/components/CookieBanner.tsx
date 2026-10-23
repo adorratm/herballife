@@ -47,7 +47,7 @@ export function CookieBanner() {
   return (
     <div className="banner-enter fixed bottom-0 left-0 right-0 z-60 border-t border-outline-variant/30 bg-surface-container-lowest">
       <div className="page-shell flex flex-col gap-4 py-5">
-        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <p className=" font-meta text-[11px] uppercase leading-relaxed text-secondary">
             Bu site, oturum ve yasal zorunluluklar için gerekli çerezleri kullanır.
             Analitik ve pazarlama çerezlerini ayrı ayrı seçebilirsiniz. Ayrıntılar
