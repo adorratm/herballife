@@ -1,8 +1,8 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
+import { trackingHref } from "@/i18n/hrefs";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Reveal } from "@/components/Reveal";
 
@@ -15,7 +15,7 @@ export default function TrackingLandingPage() {
     e.preventDefault();
     const value = code.trim();
     if (!value) return;
-    router.push(`/takip/${encodeURIComponent(value)}`);
+    router.push(trackingHref(value));
   }
 
   return (

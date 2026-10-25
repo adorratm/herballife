@@ -54,8 +54,14 @@ export default getRequestConfig(async ({ requestLocale }) => {
     ? requested
     : routing.defaultLocale;
 
-  const localMessages = (await import(`../../messages/${locale}.json`))
-    .default as Record<string, unknown>;
+  let localMessages: Record<string, unknown>;
+  try {
+    localMessages = (await import(`../../messages/${locale}.json`))
+      .default as Record<string, unknown>;
+  } catch {
+    localMessages = (await import(`../../messages/en.json`))
+      .default as Record<string, unknown>;
+  }
   const remoteMessages = await fetchUiMessagesFromApi(locale);
   const messages = remoteMessages
     ? (deepMergeMessages(localMessages, remoteMessages) as typeof localMessages)

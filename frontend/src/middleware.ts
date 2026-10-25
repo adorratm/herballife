@@ -29,14 +29,13 @@ export default function middleware(request: NextRequest) {
       : routing.defaultLocale
   ) as AppLocale;
 
-  let currency = pickCurrency(
+  const currency = pickCurrency(
     request.cookies.get(CURRENCY_COOKIE)?.value,
     locale,
   );
-  if (locale === 'tr') currency = 'TRY';
 
   const existing = request.cookies.get(CURRENCY_COOKIE)?.value;
-  if (!existing || (locale === 'tr' && existing !== 'TRY')) {
+  if (!existing) {
     response.cookies.set(CURRENCY_COOKIE, currency, {
       path: '/',
       maxAge: 60 * 60 * 24 * 365,
@@ -48,5 +47,9 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/(tr|en|de|fr|es)/:path*', '/((?!api|_next|_vercel|.*\\..*).*)'],
+  matcher: [
+    '/',
+    '/(tr|en|de|fr|es|it|nl|pt|pl|ru|az)/:path*',
+    '/((?!api|_next|_vercel|.*\\..*).*)',
+  ],
 };

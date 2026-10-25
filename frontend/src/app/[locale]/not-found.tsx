@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/routing";
+import { AppImage as Image } from "@/components/AppImage";
+import { ArrowRight, Home, MessageCircle, Search } from "lucide-react";
+import { getLocale, getTranslations } from "next-intl/server";
+import { Link, toLinkHref } from "@/i18n/routing";
+import { getSiteSettings } from "@/lib/cms";
+import { buildWhatsAppUrl, resolveWhatsAppPhone } from "@/lib/whatsapp";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("notFoundPage");
@@ -11,67 +15,122 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function NotFound() {
-  const t = await getTranslations("notFoundPage");
+  const locale = await getLocale();
+  const [t, settings] = await Promise.all([
+    getTranslations("notFoundPage"),
+    getSiteSettings(locale).catch(() => null),
+  ]);
+
+  const brand = settings?.brand.name?.trim() || "Herbal Kapıda";
+  const waUrl =
+    settings?.whatsapp.enabled !== false
+      ? buildWhatsAppUrl(
+          resolveWhatsAppPhone({
+            whatsappPhone: settings?.whatsapp.phone,
+            contactPhone: settings?.contact.phone,
+          }),
+          t("waMessage"),
+        )
+      : null;
+
+  const shortcuts = [
+    {
+      href: "/urunler/kategori/avantajli-setler",
+      label: t("linkGiftSets"),
+    },
+    { href: "/blog", label: t("linkBlog") },
+    { href: "/iletisim", label: t("linkContact") },
+    { href: "/sss", label: t("linkFaq") },
+  ];
 
   return (
-    <div className="relative overflow-hidden">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 55% at 15% 10%, color-mix(in srgb, var(--primary) 14%, transparent), transparent 55%), radial-gradient(ellipse 55% 45% at 90% 85%, color-mix(in srgb, var(--tertiary) 12%, transparent), transparent 50%), linear-gradient(180deg, var(--primary-fixed) 0%, transparent 42%)",
-        }}
-        aria-hidden
-      />
-
-      <div className="page-shell relative flex min-h-[70vh] flex-col items-center justify-center py-20 text-center md:py-28">
-        <p className="inline-flex items-center gap-2 rounded-full bg-primary-fixed px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-primary">
-          <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
-          404
-        </p>
-
-        <h1 className="mt-6  font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-on-surface md:text-6xl">
-          {t("title")}
-        </h1>
-
-        <p className="mt-5 max-w-lg text-base leading-relaxed text-on-surface-variant md:text-lg">
-          {t("description")}
-        </p>
-
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/urunler"
-            className="btn-cta pressable inline-flex items-center px-7 py-3.5 text-sm shadow-md"
-          >
-            {t("goProducts")}
-          </Link>
-          <Link
-            href="/"
-            className="btn-ghost pressable inline-flex items-center bg-white/80 px-7 py-3.5 text-sm backdrop-blur-sm"
-          >
-            {t("goHome")}
-          </Link>
-        </div>
-
-        <div className="mt-14 grid w-full max-w-xl grid-cols-3 gap-3 md:gap-4">
-          {[
-            {
-              href: "/urunler/kategori/avantajli-setler",
-              label: t("linkGiftSets"),
-            },
-            { href: "/iletisim", label: t("linkContact") },
-            { href: "/sss", label: t("linkFaq") },
-          ].map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded-xl border border-outline-variant/50 bg-white/70 px-3 py-3 text-xs font-semibold text-on-surface-variant shadow-sm backdrop-blur-sm transition-colors hover:border-primary/40 hover:text-primary md:text-sm"
+    <>
+      {/* Tek kompozisyon: marka + 404 + cümle + CTA + baskın ürün */}
+      <section className="hero-forest relative isolate min-h-[min(42rem,calc(100svh-4.5rem))] overflow-hidden">
+        <div className="page-shell relative grid items-center gap-10 py-16 sm:py-20 lg:min-h-[min(42rem,calc(100svh-4.5rem))] lg:grid-cols-12 lg:gap-8 lg:py-24">
+          <div className="hero-enter relative z-10 lg:col-span-6">
+            <p className="eyebrow text-[#8fe0b6]">{brand}</p>
+            <p
+              className="mt-5 font-display text-[clamp(5.5rem,18vw,9.5rem)] font-extrabold leading-none tracking-[-0.06em] text-white/15"
+              aria-hidden
             >
-              {item.label}
-            </Link>
-          ))}
+              404
+            </p>
+            <h1 className="display-md -mt-6 text-white md:-mt-10">
+              {t("title")}
+            </h1>
+            <p className="mt-5 max-w-md text-base leading-relaxed text-white/75 md:text-lg">
+              {t("description")}
+            </p>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <Link href="/urunler" className="btn-brand-light">
+                <Search className="h-4 w-4" aria-hidden />
+                {t("goProducts")}
+              </Link>
+              <Link href="/" className="btn-outline-light">
+                <Home className="h-4 w-4" aria-hidden />
+                {t("goHome")}
+              </Link>
+              {waUrl ? (
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-outline-light"
+                >
+                  <MessageCircle className="h-4 w-4" aria-hidden />
+                  {t("waWrite")}
+                </a>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="relative lg:col-span-6">
+            <div className="hero-media relative mx-auto aspect-square max-w-md lg:max-w-none">
+              <div
+                className="absolute inset-[12%] rounded-full bg-[#17694a]/opacity-90"
+                aria-hidden
+              />
+              <Image
+                src="/images/cutouts/formul-1-shake.png"
+                alt=""
+                fill
+                priority
+                className="float-soft object-contain drop-shadow-[0_28px_48px_rgba(0,0,0,0.35)]"
+                sizes="(max-width: 1024px) 80vw, 40vw"
+              />
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+
+      {/* İkinci bölüm: hızlı yönlendirmeler — kartsız, tek iş */}
+      <section className="mint-wash border-b border-outline-variant/30">
+        <div className="page-shell py-12 md:py-16">
+          <p className="eyebrow text-primary">{t("shortcutsEyebrow")}</p>
+          <h2 className="display-md mt-3 text-on-surface">
+            {t("shortcutsTitle")}
+          </h2>
+          <ul className="mt-8 flex flex-col divide-y divide-outline-variant/40 border-y border-outline-variant/40 sm:mt-10">
+            {shortcuts.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={toLinkHref(item.href)}
+                  className="group flex items-center justify-between gap-4 py-4 transition-colors hover:text-primary sm:py-5"
+                >
+                  <span className="font-display text-lg font-bold tracking-tight text-on-surface group-hover:text-primary sm:text-xl">
+                    {item.label}
+                  </span>
+                  <ArrowRight
+                    className="h-5 w-5 shrink-0 text-on-surface-variant transition-transform group-hover:translate-x-1 group-hover:text-primary"
+                    aria-hidden
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </>
   );
 }

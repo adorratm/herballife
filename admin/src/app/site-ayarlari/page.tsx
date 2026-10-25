@@ -816,8 +816,12 @@ export default function SiteSettingsPage() {
         </legend>
         <p className="text-xs text-muted">
           Türkçe alanlar yukarıdaki formlarda kalır. Diğer diller için marka,
-          SEO ve footer metinlerini buradan düzenleyin. Navigasyon ve tam UI
-          ağacı seed ile güncellenir.
+          SEO ve footer metinlerini buradan düzenleyin. Aktif diller, para
+          birimleri ve tam UI çeviri ağacı için{' '}
+          <a href="/dil-para-ceviriler" className="text-accent underline">
+            Dil / Para / Çeviriler
+          </a>{' '}
+          sayfasını kullanın.
         </p>
         <div className="flex flex-wrap gap-2">
           {EXTRA_LOCALES.map((loc) => (

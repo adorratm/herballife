@@ -1,8 +1,8 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
+import { Link, usePathname } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next/navigation";
+import { categoryHref } from "@/i18n/hrefs";
 import {
   FAB_BOTTOM_MOBILE,
   useFabScrollExpand,
@@ -20,7 +20,7 @@ export function HomeStickyCta() {
   return (
     <div className={`fixed left-3 z-40 md:hidden ${FAB_BOTTOM_MOBILE}`}>
       <Link
-        href="/urunler/kategori/avantajli-setler"
+        href={categoryHref("avantajli-setler")}
         aria-label={t("browsePackages")}
         className={`pointer-events-auto inline-flex h-11.5 items-center justify-center rounded-full border border-primary/40 bg-primary font-meta text-[11px] font-bold uppercase leading-none tracking-widest text-on-primary shadow-[0_8px_24px_rgba(21,122,76,0.35)] transition-all duration-300 ease-out hover:bg-primary-container ${
           expanded ? "gap-2.5 px-4" : "w-11.5 px-0"

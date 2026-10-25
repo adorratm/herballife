@@ -164,6 +164,80 @@ export function resolveLocalizedImage(
 }
 
 /** Boş prices ise basePrice → TRY; seçilen para birimi için fiyat döner. */
+/** 1 TRY = X foreign (yaklaşık; panel localization.exchangeRates ile override edilebilir) */
+export const DEFAULT_FX_FROM_TRY: Record<SupportedCurrency, number> = {
+  TRY: 1,
+  USD: 0.029,
+  EUR: 0.027,
+  GBP: 0.023,
+};
+
+let runtimeFxFromTry: Record<SupportedCurrency, number> = {
+  ...DEFAULT_FX_FROM_TRY,
+};
+
+export function setRuntimeExchangeRatesFromTry(
+  rates: Partial<Record<SupportedCurrency, number>> | null | undefined,
+) {
+  runtimeFxFromTry = { ...DEFAULT_FX_FROM_TRY };
+  if (!rates) return;
+  for (const key of SUPPORTED_CURRENCIES) {
+    const n = Number(rates[key]);
+    if (Number.isFinite(n) && n > 0) {
+      runtimeFxFromTry[key] = n;
+    }
+  }
+}
+
+export function convertTryToCurrency(
+  amountTry: number,
+  currency: SupportedCurrency,
+): number {
+  if (!Number.isFinite(amountTry)) return 0;
+  if (currency === 'TRY') return amountTry;
+  const rate = runtimeFxFromTry[currency] || DEFAULT_FX_FROM_TRY[currency];
+  return amountTry * rate;
+}
+
+/** TR kök + zorunlu diller (+ mağaza dilleri EN’ye düşer) için slug haritası. */
+export function buildLocaleSlugs(
+  baseSlug: string,
+  translations?:
+    | ProductTranslations
+    | CategoryTranslations
+    | BlogTranslations
+    | null,
+): Record<string, string> {
+  const root = (baseSlug || '').trim().toLowerCase();
+  const en =
+    (translations as ProductTranslations | undefined)?.en?.slug?.trim() ||
+    root;
+  const out: Record<string, string> = { tr: root };
+  for (const loc of MANDATORY_LOCALES) {
+    const s = translations?.[loc]?.slug?.trim();
+    out[loc] = (s || en || root).toLowerCase();
+  }
+  for (const loc of SUPPORTED_LOCALES) {
+    if (!out[loc]) out[loc] = en || root;
+  }
+  return out;
+}
+
+/** Herhangi bir dildeki slug ile eşleşme (dil değişiminde 404 önler). */
+export function sqlMatchSlugAnyLocale(
+  alias: string,
+  param = 'slug',
+): string {
+  const parts = [
+    `${alias}.slug = :${param}`,
+    ...MANDATORY_LOCALES.map(
+      (loc) =>
+        `${alias}.translations -> '${loc}' ->> 'slug' = :${param}`,
+    ),
+  ];
+  return `(${parts.join(' OR ')})`;
+}
+
 export function resolveProductPrices(
   basePrice: string | number,
   prices: ProductPrices | null | undefined,
@@ -178,13 +252,15 @@ export function resolveProductPrices(
   }
 
   const picked = map[currency];
-  if (picked != null && Number.isFinite(Number(picked))) {
+  if (picked != null && Number.isFinite(Number(picked)) && Number(picked) > 0) {
     return Number(picked).toFixed(2);
   }
-  if (currency !== 'TRY' && map.TRY != null) {
-    return Number(map.TRY).toFixed(2);
+  // Eksik currency fiyatı → TRY’den kur ile çevir (aynı rakamı farklı sembolle gösterme)
+  const tryAmount = Number(map.TRY);
+  if (Number.isFinite(tryAmount)) {
+    return convertTryToCurrency(tryAmount, currency).toFixed(2);
   }
-  return baseNum.toFixed(2);
+  return convertTryToCurrency(baseNum, currency).toFixed(2);
 }
 
 export function ensureProductPrices(
@@ -215,7 +291,10 @@ export function applyProductLocale<
   if (locale === 'tr') {
     return product;
   }
-  const block = product.translations?.[locale];
+  const block =
+    locale in (product.translations || {})
+      ? product.translations?.[locale as MandatoryLocale]
+      : undefined;
   if (!block) {
     return {
       ...product,
@@ -241,16 +320,21 @@ export function applyCategoryLocale<
     description?: string | null;
     translations?: CategoryTranslations | null;
   },
->(category: T, locale: LocaleCode): T {
+>(category: T, locale: LocaleCode): T & { localeSlugs: Record<string, string> } {
+  const localeSlugs = buildLocaleSlugs(category.slug, category.translations);
   if (locale === 'tr') {
-    return category;
+    return { ...category, localeSlugs };
   }
-  const block = category.translations?.[locale];
+  const block =
+    locale in (category.translations || {})
+      ? category.translations?.[locale as MandatoryLocale]
+      : undefined;
   if (!block) {
     return {
       ...category,
       name: '',
       description: '',
+      localeSlugs,
     };
   }
   const localizedSlug = block.slug?.trim();
@@ -259,6 +343,7 @@ export function applyCategoryLocale<
     slug: localizedSlug || category.slug,
     name: block.name?.trim() || '',
     description: block.description?.trim() || '',
+    localeSlugs,
   };
 }
 
@@ -281,7 +366,10 @@ export function applyCampaignLocale<
   if (locale === 'tr') {
     return { ...campaign, imageUrl };
   }
-  const block = campaign.translations?.[locale];
+  const block =
+    locale in (campaign.translations || {})
+      ? campaign.translations?.[locale as MandatoryLocale]
+      : undefined;
   if (!block) {
     return {
       ...campaign,
@@ -311,7 +399,11 @@ export function applyBlogLocale<
     imagesByLocale?: ImagesByLocale | null;
     useSharedImage?: boolean;
   },
->(post: T, locale: LocaleCode): T {
+>(
+  post: T,
+  locale: LocaleCode,
+): T & { localeSlugs: Record<string, string> } {
+  const localeSlugs = buildLocaleSlugs(post.slug, post.translations);
   const coverImageUrl = resolveLocalizedImage(
     post.coverImageUrl,
     post.imagesByLocale,
@@ -319,9 +411,12 @@ export function applyBlogLocale<
     locale,
   );
   if (locale === 'tr') {
-    return { ...post, coverImageUrl };
+    return { ...post, coverImageUrl, localeSlugs };
   }
-  const block = post.translations?.[locale];
+  const block =
+    locale in (post.translations || {})
+      ? post.translations?.[locale as MandatoryLocale]
+      : undefined;
   if (!block) {
     return {
       ...post,
@@ -331,6 +426,7 @@ export function applyBlogLocale<
       seoTitle: null,
       seoDescription: null,
       coverImageUrl,
+      localeSlugs,
     };
   }
   const localizedSlug = block.slug?.trim();
@@ -343,6 +439,7 @@ export function applyBlogLocale<
     seoTitle: block.seoTitle?.trim() || null,
     seoDescription: block.seoDescription?.trim() || null,
     coverImageUrl,
+    localeSlugs,
   };
 }
 
@@ -370,7 +467,12 @@ export function localizeProductForCatalog<
       translations?: CategoryTranslations | null;
     } | null;
   },
->(product: T, locale: LocaleCode, currency: SupportedCurrency): T {
+>(
+  product: T,
+  locale: LocaleCode,
+  currency: SupportedCurrency,
+): T & { localeSlugs: Record<string, string> } {
+  const localeSlugs = buildLocaleSlugs(product.slug, product.translations);
   const localized = applyProductLocale(product, locale);
   const imageUrl = resolveLocalizedImage(
     localized.imageUrl,
@@ -384,13 +486,16 @@ export function localizeProductForCatalog<
     currency,
   );
   const variants = localized.variants?.map((v) => {
-    const vLocalized =
-      locale !== 'tr' && v.translations?.[locale]?.name
-        ? {
-            ...v,
-            weightLabel: v.translations[locale]!.name!.trim() || v.weightLabel,
-          }
-        : v;
+    const vName =
+      locale !== 'tr'
+        ? v.translations?.[locale as MandatoryLocale]?.name
+        : undefined;
+    const vLocalized = vName
+      ? {
+          ...v,
+          weightLabel: vName.trim() || v.weightLabel,
+        }
+      : v;
     return {
       ...vLocalized,
       price: resolveProductPrices(v.price, v.prices, currency),
@@ -408,6 +513,7 @@ export function localizeProductForCatalog<
     currency,
     variants,
     category,
+    localeSlugs,
     prices: ensureProductPrices(localized.basePrice, localized.prices),
   };
 }

@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { CartToastHost } from "@/components/CartToast";
 import { CookieBannerGate } from "@/components/CookieBannerGate";
 import { AnalyticsScripts } from "@/components/AnalyticsScripts";
+import { LocaleAlternatesProvider } from "@/components/LocaleAlternates";
 import { PanelGoogleTags } from "@/components/PanelGoogleTags";
 import { SiteTour } from "@/components/SiteTour";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
@@ -100,32 +101,34 @@ export default async function LocaleLayout({ children, params }: Props) {
       </head>
       <body className="flex min-h-full flex-col bg-background text-on-background antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <PanelGoogleTags />
-          <JsonLd data={organizationJsonLd(settings)} />
-          <JsonLd data={websiteJsonLd(settings)} />
-          <SiteHeader settings={settings} />
-          <main className="flex-1">{children}</main>
-          <SiteFooterGate settings={settings} />
-          <div
-            className="h-[calc(4.75rem+env(safe-area-inset-bottom))] shrink-0 md:hidden"
-            aria-hidden
-          />
-          <MobileBottomNav />
-          <WhatsAppChatGate
-            enabled={settings.whatsapp.enabled}
-            phone={resolveWhatsAppPhone({
-              whatsappPhone: settings.whatsapp.phone,
-              contactPhone: settings.contact.phone,
-            })}
-            brandName={settings.brand.name}
-            greeting={settings.whatsapp.greeting}
-            presets={settings.whatsapp.presets}
-          />
-          <ScrollToTopFab />
-          <CartToastHost />
-          <CookieBannerGate />
-          <AnalyticsScripts />
-          <SiteTour />
+          <LocaleAlternatesProvider>
+            <PanelGoogleTags />
+            <JsonLd data={organizationJsonLd(settings)} />
+            <JsonLd data={websiteJsonLd(settings, locale)} />
+            <SiteHeader settings={settings} />
+            <main className="flex-1">{children}</main>
+            <SiteFooterGate settings={settings} />
+            <div
+              className="h-[calc(4.75rem+env(safe-area-inset-bottom))] shrink-0 md:hidden"
+              aria-hidden
+            />
+            <MobileBottomNav />
+            <WhatsAppChatGate
+              enabled={settings.whatsapp.enabled}
+              phone={resolveWhatsAppPhone({
+                whatsappPhone: settings.whatsapp.phone,
+                contactPhone: settings.contact.phone,
+              })}
+              brandName={settings.brand.name}
+              greeting={settings.whatsapp.greeting}
+              presets={settings.whatsapp.presets}
+            />
+            <ScrollToTopFab />
+            <CartToastHost />
+            <CookieBannerGate />
+            <AnalyticsScripts />
+            <SiteTour />
+          </LocaleAlternatesProvider>
         </NextIntlClientProvider>
       </body>
     </html>

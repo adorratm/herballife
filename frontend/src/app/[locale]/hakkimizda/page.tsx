@@ -1,5 +1,6 @@
 import { AppImage as Image } from "@/components/AppImage";
-import { Link } from "@/i18n/routing";
+import { Link, toLinkHref } from "@/i18n/routing";
+import { categoryHref } from "@/i18n/hrefs";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import {
@@ -216,9 +217,10 @@ export default async function AboutPage() {
           settings,
           tSeo("aboutTitle"),
           tSeo("aboutJsonLdDescription"),
+          locale,
         )}
       />
-      <JsonLd data={breadcrumbJsonLd(crumbs)} />
+      <JsonLd data={breadcrumbJsonLd(crumbs, locale)} />
 
       {/* 1 — Sinematik hero: marka, tek cümle, CTA, baskın görsel */}
       <section className="hero-forest relative isolate overflow-hidden">
@@ -249,14 +251,14 @@ export default async function AboutPage() {
                 </a>
               ) : (
                 <Link
-                  href={body.ctaSecondary?.href || "/iletisim"}
+                  href={toLinkHref(body.ctaSecondary?.href || "/iletisim")}
                   className="btn-brand-light"
                 >
                   {body.ctaSecondary?.label || t("ctaContact")}
                 </Link>
               )}
               <Link
-                href={body.ctaPrimary?.href || "/urunler"}
+                href={toLinkHref(body.ctaPrimary?.href || "/urunler")}
                 className="btn-outline-light"
               >
                 {body.ctaPrimary?.label || t("ctaProducts")}
@@ -380,7 +382,7 @@ export default async function AboutPage() {
             <p className="display-lg mt-6 text-white">“{ethos.quote}”</p>
             {ethos.linkLabel ? (
               <Link
-                href={ethos.linkHref || "/blog"}
+                href={toLinkHref(ethos.linkHref || "/blog")}
                 className="btn-outline-light mt-10"
               >
                 {String(ethos.linkLabel).replace(/\s*→\s*$/, "")}
@@ -473,7 +475,7 @@ export default async function AboutPage() {
                 </Link>
               )}
               <Link
-                href="/urunler/kategori/avantajli-setler"
+                href={categoryHref("avantajli-setler")}
                 className="btn-outline-light"
               >
                 Setleri incele

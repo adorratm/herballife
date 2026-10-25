@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { useEffect, useState, type MouseEvent } from "react";
-import { loginPath } from "@/lib/auth";
+import { loginHref } from "@/lib/auth";
 import {
   ensureWishlistIds,
   subscribeWishlist,
@@ -42,7 +42,7 @@ export function FavoriteButton({
     try {
       const result = await toggleWishlistProduct(productId);
       if ("needsAuth" in result) {
-        router.push(loginPath(window.location.pathname));
+        router.push(loginHref(window.location.pathname));
         return;
       }
       setActive(result.inWishlist);

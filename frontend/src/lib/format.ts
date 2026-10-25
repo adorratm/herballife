@@ -2,6 +2,11 @@ import {
   herbalImageForSlug,
   localProductFallback,
 } from "@/lib/herbal-images";
+import {
+  isBrokenRemoteImageUrl,
+  stockImage,
+  type StockImageKey,
+} from "@/lib/stock-images";
 
 /**
  * CSS `text-transform: uppercase` ve `toUpperCase()` Türkçe locale’de
@@ -30,57 +35,59 @@ export function formatMoney(
   }
 }
 
+function isUsableImageUrl(url: string): boolean {
+  const trimmed = url.trim();
+  if (!trimmed) return false;
+  if (trimmed.startsWith("/images/")) return true;
+  if (!/^https?:\/\//i.test(trimmed)) return false;
+  return !isBrokenRemoteImageUrl(trimmed);
+}
+
 export function productImage(url: string | null | undefined, seed = "product") {
   const bySlug = herbalImageForSlug(seed);
   if (bySlug) return bySlug;
 
-  if (
-    url &&
-    (url.startsWith("/images/") ||
-      (!url.includes("unsplash.com") &&
-        !url.includes("aida-public") &&
-        !url.includes("lh3.googleusercontent.com/aida") &&
-        !/kilic-coffee/i.test(url) &&
-        !/\/stock\/(hero|ethos|workshop|blog|og|product-\d+)\.jpg/i.test(url) &&
-        !/herbalurunleri\.com\/upload/i.test(url) &&
-        !/1781247663/i.test(url)))
-  ) {
-    return url;
+  if (url && isUsableImageUrl(url)) {
+    return url.trim();
   }
   return localProductFallback(seed);
 }
 
-const BLOG_PLACEHOLDER_IMAGES = [
-  "/images/blog-placeholder.svg",
-  "/images/blog-placeholder-2.svg",
-  "/images/blog-placeholder-3.svg",
-] as const;
+const BLOG_PLACEHOLDER_KEYS: StockImageKey[] = [
+  "blog",
+  "workshop",
+  "ethos",
+  "hero",
+  "product-5",
+];
 
 function blogPlaceholderForSeed(seed: string): string {
   let hash = 0;
   for (let i = 0; i < seed.length; i += 1) {
     hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
   }
-  return BLOG_PLACEHOLDER_IMAGES[hash % BLOG_PLACEHOLDER_IMAGES.length];
+  return stockImage(BLOG_PLACEHOLDER_KEYS[hash % BLOG_PLACEHOLDER_KEYS.length]);
 }
 
-/** Blog kapak — ürün stok görseline düşmez (öne çıkan yazı bozuk görünmesin). */
+/** Blog kapak — eksik/bozuk URL’de yerel PNG (SVG değil; next/image ile sorunsuz). */
 export function blogCoverImage(
   url: string | null | undefined,
   slug?: string | null,
 ) {
   const trimmed = (url || "").trim();
-  if (
-    trimmed &&
-    (trimmed.startsWith("/images/") ||
-      trimmed.startsWith("http://") ||
-      trimmed.startsWith("https://")) &&
-    !trimmed.includes("unsplash.com") &&
-    !/\/stock\/(hero|ethos|workshop|blog|og|product-\d+)\.jpg/i.test(trimmed) &&
-    !/herbalurunleri\.com\/upload/i.test(trimmed)
-  ) {
+  if (trimmed && isUsableImageUrl(trimmed)) {
     return trimmed;
   }
   const seed = (slug || "blog").trim() || "blog";
   return blogPlaceholderForSeed(seed);
+}
+
+/** Genel içerik görseli (CMS, medya, OG vb.) */
+export function contentImage(
+  url: string | null | undefined,
+  fallback: string = stockImage("og"),
+): string {
+  const trimmed = (url || "").trim();
+  if (trimmed && isUsableImageUrl(trimmed)) return trimmed;
+  return fallback;
 }

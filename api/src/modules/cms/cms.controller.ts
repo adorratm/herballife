@@ -80,6 +80,103 @@ export class CmsController {
 
   @ApiBearerAuth()
   @Roles(UserRole.ADMIN)
+  @Get('admin/localization')
+  @ApiOperation({ summary: 'Admin: dil ve para birimi ayarları' })
+  getLocalizationAdmin() {
+    return this.cmsService.getLocalizationAdmin();
+  }
+
+  @ApiBearerAuth()
+  @Roles(UserRole.ADMIN)
+  @Patch('admin/localization')
+  @ApiOperation({ summary: 'Admin: dil ve para birimi ayarlarını kaydet' })
+  upsertLocalization(@Body() body: Record<string, unknown>) {
+    return this.cmsService.upsertLocalization(body);
+  }
+
+  @Public()
+  @Get('languages')
+  @ApiOperation({ summary: 'Yayımlanmış (aktif) diller' })
+  getPublicLanguages() {
+    return this.cmsService.getPublicLanguages();
+  }
+
+  @ApiBearerAuth()
+  @Roles(UserRole.ADMIN)
+  @Get('admin/languages')
+  @ApiOperation({ summary: 'Admin: dil listesi ve eklenebilir havuz' })
+  listLanguagesAdmin() {
+    return this.cmsService.listLanguagesAdmin();
+  }
+
+  @ApiBearerAuth()
+  @Roles(UserRole.ADMIN)
+  @Post('admin/languages')
+  @ApiOperation({ summary: 'Admin: yeni dil ekle (sistem havuzundan)' })
+  createLanguage(
+    @Body()
+    body: {
+      code: string;
+      name?: string;
+      nativeName?: string;
+      currency?: string;
+      enabled?: boolean;
+      sortOrder?: number;
+      copyMessagesFrom?: string;
+    },
+  ) {
+    return this.cmsService.createLanguage(body);
+  }
+
+  @ApiBearerAuth()
+  @Roles(UserRole.ADMIN)
+  @Patch('admin/languages/:code')
+  @ApiOperation({ summary: 'Admin: dil düzenle' })
+  updateLanguage(
+    @Param('code') code: string,
+    @Body()
+    body: {
+      name?: string;
+      nativeName?: string;
+      currency?: string;
+      enabled?: boolean;
+      sortOrder?: number;
+    },
+  ) {
+    return this.cmsService.updateLanguage(code, body);
+  }
+
+  @ApiBearerAuth()
+  @Roles(UserRole.ADMIN)
+  @Delete('admin/languages/:code')
+  @ApiOperation({ summary: 'Admin: dil sil (TR hariç)' })
+  deleteLanguage(@Param('code') code: string) {
+    return this.cmsService.deleteLanguage(code);
+  }
+
+  @ApiBearerAuth()
+  @Roles(UserRole.ADMIN)
+  @Get('admin/ui-messages')
+  @ApiOperation({ summary: 'Admin: tüm locale UI çeviri ağaçları' })
+  getUiMessagesAdmin() {
+    return this.cmsService.getUiMessagesAdmin();
+  }
+
+  @ApiBearerAuth()
+  @Roles(UserRole.ADMIN)
+  @Patch('admin/ui-messages')
+  @ApiOperation({ summary: 'Admin: bir locale UI çeviri ağacını güncelle' })
+  upsertUiMessages(
+    @Body() body: { locale: string; messages: Record<string, unknown> },
+  ) {
+    return this.cmsService.upsertUiMessagesLocale(
+      body.locale,
+      body.messages || {},
+    );
+  }
+
+  @ApiBearerAuth()
+  @Roles(UserRole.ADMIN)
   @Get('admin/sections')
   @ApiOperation({ summary: 'Admin: içerik bölümleri' })
   listSectionsAdmin(@Query('page') page?: string) {

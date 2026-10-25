@@ -1,4 +1,4 @@
-import { Link } from "@/i18n/routing";
+import { Link, toLinkHref } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 
 export type BreadcrumbItem = { name: string; path: string };
@@ -26,7 +26,7 @@ export async function PageBreadcrumb({ items }: { items: BreadcrumbItem[] }) {
                 <span className="text-on-surface">{item.name}</span>
               ) : (
                 <Link
-                  href={item.path}
+                  href={toLinkHref(item.path)}
                   className="transition-colors hover:text-primary"
                 >
                   {item.name}

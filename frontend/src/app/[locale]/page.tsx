@@ -1,5 +1,6 @@
 import { AppImage as Image } from "@/components/AppImage";
-import { Link } from "@/i18n/routing";
+import { Link, toLinkHref } from "@/i18n/routing";
+import { blogPostHref, categoryHref } from "@/i18n/hrefs";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import {
@@ -24,7 +25,6 @@ import { Reveal } from "@/components/Reveal";
 import { getBlogPosts } from "@/lib/blog.server";
 import { getActiveCampaigns } from "@/lib/campaigns.server";
 import { getCategories, getProductsPaged } from "@/lib/catalog.server";
-import { categoryCatalogPath } from "@/lib/catalog-paths";
 import {
   getContentSections,
   getSiteSettings,
@@ -188,7 +188,7 @@ export default async function HomePage() {
               {String(hero.body)}
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <Link href={String(hero.ctaHref)} className="btn-brand-light">
+              <Link href={toLinkHref(String(hero.ctaHref))} className="btn-brand-light">
                 {String(hero.ctaLabel)}
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
@@ -278,7 +278,7 @@ export default async function HomePage() {
                 <li key={hub.slug}>
                   <Reveal delay={i * 50} className="h-full">
                     <Link
-                      href={categoryCatalogPath(hub.slug)}
+                      href={categoryHref(hub.slug)}
                       className="group flex h-full flex-col border-t-2 border-outline-variant pt-5 transition-colors hover:border-primary"
                     >
                       <hub.Icon
@@ -336,7 +336,7 @@ export default async function HomePage() {
                 </p>
               </div>
               <Link
-                href="/urunler/kategori/avantajli-setler"
+                href={categoryHref("avantajli-setler")}
                 className="link-arrow text-sm"
               >
                 {tHome("giftedAllLink")}
@@ -452,7 +452,7 @@ export default async function HomePage() {
               {posts.slice(0, 3).map((p, i) => (
                 <Reveal key={p.id} delay={i * 70}>
                   <Link
-                    href={`/blog/${p.slug}`}
+                    href={blogPostHref(p.slug)}
                     className="group flex h-full flex-col overflow-hidden rounded-2xl border border-outline-variant/40 bg-white shadow-sm transition-shadow hover:shadow-md"
                   >
                     <div className="relative aspect-16/10 overflow-hidden bg-[#0f3d2e]">

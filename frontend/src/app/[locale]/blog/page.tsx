@@ -1,5 +1,6 @@
 import { AppImage as Image } from "@/components/AppImage";
-import { Link } from "@/i18n/routing";
+import { Link, toLinkHref } from "@/i18n/routing";
+import { blogPostHref } from "@/i18n/hrefs";
 import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import { PageBreadcrumb } from "@/components/PageBreadcrumb";
@@ -129,7 +130,7 @@ export default async function BlogIndexPage({ searchParams }: Props) {
               {tabs.map((tab) => (
                 <Link
                   key={tab}
-                  href={`/blog?tag=${encodeURIComponent(tab)}`}
+                  href={toLinkHref(`/blog?tag=${encodeURIComponent(tab)}`)}
                   className={`border-b-2 pb-1 text-sm font-bold transition-colors ${
                     tag === tab
                       ? "border-[#8fe0b6] text-white"
@@ -170,7 +171,7 @@ export default async function BlogIndexPage({ searchParams }: Props) {
             {featured ? (
               <Reveal>
                 <Link
-                  href={`/blog/${featured.slug}`}
+                  href={blogPostHref(featured.slug)}
                   className="group grid overflow-hidden rounded-2xl border border-outline-variant/40 bg-white shadow-sm transition-shadow hover:shadow-md lg:grid-cols-12"
                 >
                   <div className="relative aspect-16/11 overflow-hidden bg-[#0f3d2e] lg:col-span-7 lg:aspect-auto lg:min-h-88">
@@ -222,7 +223,7 @@ export default async function BlogIndexPage({ searchParams }: Props) {
                   <li key={post.id}>
                     <Reveal delay={Math.min(i, 5) * 60}>
                       <Link
-                        href={`/blog/${post.slug}`}
+                        href={blogPostHref(post.slug)}
                         className="group flex h-full flex-col overflow-hidden rounded-2xl border border-outline-variant/35 bg-white shadow-sm transition-shadow hover:shadow-md"
                       >
                         <div className="relative aspect-16/10 overflow-hidden bg-surface-container">
@@ -281,7 +282,9 @@ export default async function BlogIndexPage({ searchParams }: Props) {
           >
             {page > 1 ? (
               <Link
-                href={`/blog?page=${page - 1}${tag ? `&tag=${encodeURIComponent(tag)}` : ""}`}
+                href={toLinkHref(
+                  `/blog?page=${page - 1}${tag ? `&tag=${encodeURIComponent(tag)}` : ""}`,
+                )}
                 className="btn-outline-dark px-5 py-2.5 text-sm"
               >
                 {t("previous")}
@@ -296,7 +299,9 @@ export default async function BlogIndexPage({ searchParams }: Props) {
             </span>
             {page < paged.totalPages ? (
               <Link
-                href={`/blog?page=${page + 1}${tag ? `&tag=${encodeURIComponent(tag)}` : ""}`}
+                href={toLinkHref(
+                  `/blog?page=${page + 1}${tag ? `&tag=${encodeURIComponent(tag)}` : ""}`,
+                )}
                 className="btn-outline-dark px-5 py-2.5 text-sm"
               >
                 {t("next")}

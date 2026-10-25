@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/routing";
+import { orderHref } from "@/i18n/hrefs";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
@@ -198,7 +199,7 @@ export default function TrackingPage() {
                 ) : null}
                 {result.order?.id && loggedIn ? (
                   <Link
-                    href={`/hesabim/siparisler/${result.order.id}`}
+                    href={orderHref(String(result.order.id))}
                     className="font-meta text-xs uppercase text-primary underline"
                   >
                     {t("orderDetail")}

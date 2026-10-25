@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { asRouterHref, useRouter } from "@/i18n/routing";
 import { useLocale, useTranslations } from "next-intl";
 import { AccountTabs } from "@/components/AccountTabs";
 import {
@@ -41,7 +41,7 @@ export default function AccountNotificationsPage() {
   async function load() {
     const token = getToken();
     if (!token) {
-      router.replace("/giris?next=/hesabim/bildirimler");
+      router.replace(asRouterHref("/giris?next=/hesabim/bildirimler"));
       return;
     }
     try {
@@ -75,7 +75,7 @@ export default function AccountNotificationsPage() {
     const token = getToken();
     if (token && !item.readAt)
       await markInboxRead(token, item.id).catch(() => undefined);
-    if (item.href) router.push(item.href);
+    if (item.href) router.push(asRouterHref(item.href));
     else void load();
   }
 

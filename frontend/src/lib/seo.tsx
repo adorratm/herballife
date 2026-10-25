@@ -3,6 +3,12 @@ import { categoryCatalogPath } from "@/lib/catalog-paths";
 import { productGtin, productKindLabel } from "@/lib/catalog-seo";
 import type { SiteSettings } from "@/lib/cms";
 import type { BlogPost, Product, ProductReview } from "@/lib/types";
+import {
+  getPathname,
+  locales,
+  type AppLocale,
+  type AppPathname,
+} from "@/i18n/routing";
 
 export { categoryCatalogPath };
 
@@ -17,12 +23,96 @@ export const OPEN_GRAPH_LOCALE: Record<string, string> = {
   es: "es_ES",
 };
 
-export function localizedPath(locale: string, path: string): string {
-  const normalized = path.startsWith("/") ? path : `/${path}`;
-  if (normalized === "/" || normalized === "") {
-    return `/${locale}`;
+type PathnameHref =
+  | AppPathname
+  | {
+      pathname: AppPathname;
+      params?: Record<string, string | string[]>;
+    };
+
+function asLocale(locale: string): AppLocale {
+  return (locales as readonly string[]).includes(locale)
+    ? (locale as AppLocale)
+    : "tr";
+}
+
+/**
+ * Locale-prefixed public URL path (localized segments for non-TR).
+ * Accepts internal pathnames (`/urunler/...`) or dynamic href objects.
+ */
+export function localizedPath(
+  locale: string,
+  path: string | PathnameHref,
+): string {
+  const loc = asLocale(locale);
+  if (typeof path !== "string") {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return getPathname({ locale: loc, href: path as any });
   }
-  return `/${locale}${normalized}`;
+  const [pathOnly, qs] = (path.startsWith("/") ? path : `/${path}`).split("?", 2);
+  const normalized = pathOnly;
+  const suffix = qs ? `?${qs}` : "";
+  if (normalized === "/" || normalized === "") {
+    return `${getPathname({ locale: loc, href: "/" })}${suffix}`;
+  }
+
+  const product = normalized.match(/^\/urunler\/([^/]+)\/?$/);
+  if (product && product[1] !== "kategori") {
+    return `${getPathname({
+      locale: loc,
+      href: {
+        pathname: "/urunler/[slug]",
+        params: { slug: product[1] },
+      },
+    })}${suffix}`;
+  }
+  const category = normalized.match(/^\/urunler\/kategori\/([^/]+)\/?$/);
+  if (category) {
+    return `${getPathname({
+      locale: loc,
+      href: {
+        pathname: "/urunler/kategori/[slug]",
+        params: { slug: category[1] },
+      },
+    })}${suffix}`;
+  }
+  const blog = normalized.match(/^\/blog\/([^/]+)\/?$/);
+  if (blog) {
+    return `${getPathname({
+      locale: loc,
+      href: {
+        pathname: "/blog/[slug]",
+        params: { slug: blog[1] },
+      },
+    })}${suffix}`;
+  }
+  const order = normalized.match(/^\/hesabim\/siparisler\/([^/]+)\/?$/);
+  if (order) {
+    return `${getPathname({
+      locale: loc,
+      href: {
+        pathname: "/hesabim/siparisler/[id]",
+        params: { id: order[1] },
+      },
+    })}${suffix}`;
+  }
+  const tracking = normalized.match(/^\/takip\/([^/]+)\/?$/);
+  if (tracking) {
+    return `${getPathname({
+      locale: loc,
+      href: {
+        pathname: "/takip/[kod]",
+        params: { kod: tracking[1] },
+      },
+    })}${suffix}`;
+  }
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return `${getPathname({ locale: loc, href: normalized as any })}${suffix}`;
+  } catch {
+    return `/${loc}${normalized}${suffix}`;
+  }
 }
 
 type PageMetaInput = {
@@ -66,7 +156,12 @@ export function buildPageMetadata({
     keywords: keywords?.length
       ? [...(settings.seo.keywords || []), ...keywords]
       : undefined,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      languages: Object.fromEntries(
+        locales.map((l) => [l, `${SITE_URL}${localizedPath(l, path)}`]),
+      ),
+    },
     robots: noIndex
       ? { index: false, follow: false }
       : { index: true, follow: true },
@@ -427,19 +522,27 @@ export function buildBlogPostMetadata(
   };
 }
 
-export function websiteJsonLd(settings: SiteSettings) {
+export function websiteJsonLd(settings: SiteSettings, locale = "tr") {
+  const catalog = localizedPath(locale, "/urunler");
+  const langMap: Record<string, string> = {
+    tr: "tr-TR",
+    en: "en-US",
+    de: "de-DE",
+    fr: "fr-FR",
+    es: "es-ES",
+  };
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: settings.brand.name,
-    url: SITE_URL,
+    url: `${SITE_URL}${localizedPath(locale, "/")}`,
     description: settings.seo.description,
-    inLanguage: "tr-TR",
+    inLanguage: langMap[locale] || "tr-TR",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${SITE_URL}/urunler?q={search_term_string}`,
+        urlTemplate: `${SITE_URL}${catalog}?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
@@ -538,6 +641,7 @@ function geoCoordinates(latRaw?: string, lngRaw?: string) {
 
 export function breadcrumbJsonLd(
   items: { name: string; path: string }[],
+  locale = "tr",
 ) {
   return {
     "@context": "https://schema.org",
@@ -546,7 +650,7 @@ export function breadcrumbJsonLd(
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `${SITE_URL}${item.path}`,
+      item: `${SITE_URL}${localizedPath(locale, item.path || "/")}`,
     })),
   };
 }
@@ -606,6 +710,7 @@ export function productJsonLd(
   product: Product,
   settings: SiteSettings,
   reviews: ProductReview[] = [],
+  locale = "tr",
 ) {
   const activeVariants = (product.variants || []).filter((v) => v.isActive);
   const inStock =
@@ -620,7 +725,7 @@ export function productJsonLd(
     product.seoDescription ||
     product.shortDescription ||
     product.description;
-  const url = `${SITE_URL}/urunler/${product.slug}`;
+  const url = `${SITE_URL}${localizedPath(locale, `/urunler/${product.slug}`)}`;
   const currency = product.currency || "TRY";
   const seller = {
     "@type": "Organization",
@@ -757,7 +862,11 @@ export function productJsonLd(
   };
 }
 
-export function blogPostJsonLd(post: BlogPost, settings: SiteSettings) {
+export function blogPostJsonLd(
+  post: BlogPost,
+  settings: SiteSettings,
+  locale = "tr",
+) {
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -779,10 +888,10 @@ export function blogPostJsonLd(post: BlogPost, settings: SiteSettings) {
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${SITE_URL}/blog/${post.slug}`,
+      "@id": `${SITE_URL}${localizedPath(locale, `/blog/${post.slug}`)}`,
     },
     keywords: post.tags?.join(", ") || undefined,
-    inLanguage: post.locale || "tr",
+    inLanguage: locale || post.locale || "tr",
   };
 }
 
@@ -806,18 +915,19 @@ export function faqJsonLd(
 
 export function itemListJsonLd(
   products: Pick<Product, "name" | "slug" | "imageUrl" | "shortDescription">[],
-  opts: { name: string; path: string },
+  opts: { name: string; path: string; locale?: string },
 ) {
+  const locale = opts.locale || "tr";
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: opts.name,
-    url: `${SITE_URL}${opts.path}`,
+    url: `${SITE_URL}${localizedPath(locale, opts.path)}`,
     numberOfItems: products.length,
     itemListElement: products.map((product, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      url: `${SITE_URL}/urunler/${product.slug}`,
+      url: `${SITE_URL}${localizedPath(locale, `/urunler/${product.slug}`)}`,
       name: product.name,
       ...(product.imageUrl ? { image: product.imageUrl } : {}),
       ...(product.shortDescription
@@ -831,6 +941,7 @@ export function aboutPageJsonLd(
   settings: SiteSettings,
   aboutTitle = "About us",
   aboutDescriptionTemplate?: string,
+  locale = "tr",
 ) {
   const { brand, contact, seo } = settings;
   const fallbackAbout =
@@ -843,7 +954,7 @@ export function aboutPageJsonLd(
     "@context": "https://schema.org",
     "@type": "AboutPage",
     name: `${aboutTitle} | ${brand.name}`,
-    url: `${SITE_URL}/hakkimizda`,
+    url: `${SITE_URL}${localizedPath(locale, "/hakkimizda")}`,
     description: seo.description || fallbackAbout,
     mainEntity: {
       "@type": "Store",

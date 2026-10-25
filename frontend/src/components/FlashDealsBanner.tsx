@@ -1,4 +1,4 @@
-import { Link } from "@/i18n/routing";
+import { Link, toLinkHref } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 import { AppImage as Image } from "@/components/AppImage";
 import { ProductCarousel } from "@/components/ProductCarousel";
@@ -72,7 +72,7 @@ export async function FlashDealsBanner({
                   {resolvedEnds}
                 </span>
                 <Link
-                  href="/urunler?sort=price&order=asc"
+                  href={toLinkHref("/urunler?sort=price&order=asc")}
                   className="cursor-pointer rounded-full bg-white px-3.5 py-1.5 text-xs font-bold text-on-surface transition-colors hover:bg-white/90"
                 >
                   {t("allDeals")}

@@ -3,12 +3,16 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import type { ProductTranslations } from '@common/catalog/localization.types';
+import type {
+  ProductTranslations,
+  SupportedCurrency,
+} from '@common/catalog/localization.types';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { Product } from '@entities/product.entity';
 import { ProductVariant } from '@entities/product-variant.entity';
 import { Category } from '@entities/category.entity';
+import { SiteSetting } from '@entities/site-setting.entity';
 import {
   CreateProductDto,
   ProductQueryDto,
@@ -26,6 +30,8 @@ import {
   localizeProductForCatalog,
   normalizeCurrency,
   normalizeLocale,
+  setRuntimeExchangeRatesFromTry,
+  sqlMatchSlugAnyLocale,
 } from '@common/catalog/localization.util';
 
 /** Seed / varsayılan kategori slug → ürün kind eşlemesi */
@@ -48,11 +54,27 @@ export class ProductsService {
     private readonly campaigns: CampaignsService,
   ) {}
 
+  private async applyStoreFxRates() {
+    try {
+      const row = await this.em.findOne(SiteSetting, {
+        where: { key: 'localization' },
+      });
+      const rates = (row?.value as { exchangeRates?: Record<string, number> })
+        ?.exchangeRates;
+      setRuntimeExchangeRatesFromTry(
+        rates as Partial<Record<SupportedCurrency, number>> | undefined,
+      );
+    } catch {
+      setRuntimeExchangeRatesFromTry(undefined);
+    }
+  }
+
   async findAllPublic(
     query: ProductQueryDto = {},
   ): Promise<PaginatedResult<Product>> {
     const locale = normalizeLocale(query.locale);
     const currency = normalizeCurrency(query.currency, locale);
+    await this.applyStoreFxRates();
     const result = await this.queryProducts({
       ...query,
       includeInactive: false,
@@ -187,25 +209,15 @@ export class ProductsService {
   ): Promise<Product> {
     const locale = normalizeLocale(query.locale);
     const currency = normalizeCurrency(query.currency, locale);
+    await this.applyStoreFxRates();
     const normalized = slug.trim().toLowerCase();
-    let product: Product | null;
-    if (locale === 'tr') {
-      product = await this.em.findOne(Product, {
-        where: { slug: normalized, isActive: true },
-        relations: { category: true, variants: true },
-      });
-    } else {
-      product = await this.em
-        .createQueryBuilder(Product, 'p')
-        .leftJoinAndSelect('p.category', 'category')
-        .leftJoinAndSelect('p.variants', 'variants')
-        .where('p.is_active = true')
-        .andWhere(
-          `(p.slug = :slug OR p.translations -> :locale ->> 'slug' = :slug)`,
-          { slug: normalized, locale },
-        )
-        .getOne();
-    }
+    const product = await this.em
+      .createQueryBuilder(Product, 'p')
+      .leftJoinAndSelect('p.category', 'category')
+      .leftJoinAndSelect('p.variants', 'variants')
+      .where('p.is_active = true')
+      .andWhere(sqlMatchSlugAnyLocale('p'), { slug: normalized })
+      .getOne();
     if (!product) {
       throw new NotFoundException('Ürün bulunamadı');
     }

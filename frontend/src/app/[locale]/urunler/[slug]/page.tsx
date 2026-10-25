@@ -1,6 +1,7 @@
-import { Link } from "@/i18n/routing";
+import { Link, redirect } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { RegisterLocaleAlternates } from "@/components/LocaleAlternates";
 import { PageBreadcrumb } from "@/components/PageBreadcrumb";
 import { ProductBuyBox } from "@/components/ProductBuyBox";
 import { ProductCard } from "@/components/ProductCard";
@@ -13,6 +14,7 @@ import {
   getProductBySlug,
   getProductsPaged,
 } from "@/lib/catalog.server";
+import { categoryHref } from "@/i18n/hrefs";
 import { categoryCatalogPath } from "@/lib/catalog-paths";
 import {
   asBrewGuide,
@@ -84,6 +86,17 @@ export default async function ProductDetailPage({ params }: Props) {
 
   if (!product) notFound();
 
+  const requestSlug = decodeURIComponent(slug).toLowerCase();
+  if (product.slug && product.slug.toLowerCase() !== requestSlug) {
+    redirect({
+      href: {
+        pathname: "/urunler/[slug]",
+        params: { slug: product.slug },
+      },
+      locale,
+    });
+  }
+
   const t = await getTranslations("product");
   const tBlog = await getTranslations("blog");
   const tCommon = await getTranslations("common");
@@ -102,10 +115,14 @@ export default async function ProductDetailPage({ params }: Props) {
     .filter((item) => item.slug !== product.slug)
     .slice(0, 4);
 
-  const images =
-    product.gallery?.length > 0
-      ? product.gallery
-      : [productImage(product.imageUrl, product.slug)];
+  const images = Array.from(
+    new Set(
+      (product.gallery?.length
+        ? product.gallery
+        : [product.imageUrl]
+      ).map((u) => productImage(u, product.slug)),
+    ),
+  );
 
   const kindLabel = productKindLabel(product.kind);
   const brew = asBrewGuide(product.brewGuide);
@@ -154,14 +171,21 @@ export default async function ProductDetailPage({ params }: Props) {
 
   return (
     <div>
+      <RegisterLocaleAlternates
+        pathname="/urunler/[slug]"
+        localeSlugs={product.localeSlugs}
+        currentSlug={product.slug}
+      />
       <ProductViewTracker
         id={product.id}
         name={product.name}
         price={Number(product.salePrice ?? product.basePrice ?? 0)}
         currency={product.currency || "TRY"}
       />
-      <JsonLd data={productJsonLd(product, settings, reviews?.items ?? [])} />
-      <JsonLd data={breadcrumbJsonLd(crumbs)} />
+      <JsonLd
+        data={productJsonLd(product, settings, reviews?.items ?? [], locale)}
+      />
+      <JsonLd data={breadcrumbJsonLd(crumbs, locale)} />
       <PageBreadcrumb items={crumbs} />
 
       <section className="grid grid-cols-1 border-b border-outline-variant/25 bg-white lg:grid-cols-12">
@@ -283,7 +307,7 @@ export default async function ProductDetailPage({ params }: Props) {
               ) : null}
               {category ? (
                 <Link
-                  href={categoryCatalogPath(category.slug)}
+                  href={categoryHref(category.slug)}
                   className="rounded-full inline-flex border border-primary px-4 py-2 font-meta text-xs uppercase tracking-widest text-primary hover:bg-primary hover:text-background"
                 >
                   {t("categoryLink", { name: category.name })}

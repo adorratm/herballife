@@ -57,7 +57,10 @@ export type Product = {
     id: string;
     slug: string;
     name: string;
+    localeSlugs?: Record<string, string>;
   } | null;
+  /** Dil kodu → o dildeki ürün slug’ı (dil değiştirici için) */
+  localeSlugs?: Record<string, string>;
   kind?: string;
   barcode?: string | null;
   brewGuide?: {
@@ -133,6 +136,7 @@ export type Category = {
   description: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
+  localeSlugs?: Record<string, string>;
   productCount?: number;
   createdAt?: string;
   updatedAt?: string;
@@ -313,6 +317,7 @@ export type BlogPost = {
   isPublished: boolean;
   publishedAt: string | null;
   locale: string;
+  localeSlugs?: Record<string, string>;
   createdAt?: string;
   updatedAt?: string;
 };

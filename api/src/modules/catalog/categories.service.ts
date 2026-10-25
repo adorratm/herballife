@@ -19,6 +19,7 @@ import {
   applyCategoryLocale,
   assertRequiredLocales,
   normalizeLocale,
+  sqlMatchSlugAnyLocale,
 } from '@common/catalog/localization.util';
 
 @Injectable()
@@ -64,21 +65,11 @@ export class CategoriesService {
   ): Promise<Category> {
     const locale = normalizeLocale(query.locale);
     const normalized = slug.trim().toLowerCase();
-    let category: Category | null;
-    if (locale === 'tr') {
-      category = await this.em.findOne(Category, {
-        where: { slug: normalized, isActive: true },
-      });
-    } else {
-      category = await this.em
-        .createQueryBuilder(Category, 'c')
-        .where('c.is_active = true')
-        .andWhere(
-          `(c.slug = :slug OR c.translations -> :locale ->> 'slug' = :slug)`,
-          { slug: normalized, locale },
-        )
-        .getOne();
-    }
+    const category = await this.em
+      .createQueryBuilder(Category, 'c')
+      .where('c.is_active = true')
+      .andWhere(sqlMatchSlugAnyLocale('c'), { slug: normalized })
+      .getOne();
     if (!category) {
       throw new NotFoundException('Kategori bulunamadı');
     }

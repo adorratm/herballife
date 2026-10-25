@@ -1,9 +1,8 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
+import { Link, asRouterHref, toLinkHref, useRouter } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   fetchInbox,
   fetchNotificationPrefs,
@@ -83,7 +82,7 @@ export function NotificationBell({
       );
     }
     setOpen(false);
-    if (item.href) router.push(item.href);
+    if (item.href) router.push(asRouterHref(item.href));
   }
 
   async function readAll() {
@@ -156,7 +155,7 @@ export function NotificationBell({
             </ul>
           )}
           <Link
-            href={listHref}
+            href={toLinkHref(listHref)}
             onClick={() => setOpen(false)}
             className="mt-2 block rounded-xl border-t border-outline-variant/30 pt-2.5 text-center font-meta text-[10px] uppercase tracking-widest text-primary hover:bg-surface-container-low"
           >

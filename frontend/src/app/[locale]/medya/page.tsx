@@ -71,10 +71,13 @@ export default async function MediaPage() {
   return (
     <div className="bg-white pb-16">
       <JsonLd
-        data={breadcrumbJsonLd([
-          { name: tCommon("home"), path: "/" },
-          { name: tNav("media"), path: "/medya" },
-        ])}
+        data={breadcrumbJsonLd(
+          [
+            { name: tCommon("home"), path: "/" },
+            { name: tNav("media"), path: "/medya" },
+          ],
+          locale,
+        )}
       />
 
       <section className="border-b border-outline-variant bg-[#f7f8f6]">
@@ -83,14 +86,14 @@ export default async function MediaPage() {
           <h1 className="page-title">{header.title || "Medya"}</h1>
           <p className="page-lead">{header.subtitle}</p>
           {instagramUrl ? (
-            <Link
+            <a
               href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-cta mt-6 inline-flex cursor-pointer px-5 py-2.5"
             >
               {t("followInstagram")}
-            </Link>
+            </a>
           ) : null}
         </div>
       </section>

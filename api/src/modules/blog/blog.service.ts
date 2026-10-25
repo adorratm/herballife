@@ -18,6 +18,7 @@ import {
   assertImagesByLocaleWhenNotShared,
   assertRequiredLocales,
   normalizeLocale,
+  sqlMatchSlugAnyLocale,
 } from '@common/catalog/localization.util';
 
 @Injectable()
@@ -100,25 +101,13 @@ export class BlogService {
   ): Promise<BlogPost> {
     const locale = normalizeLocale(localeRaw);
     const normalized = slug.trim().toLowerCase();
-    let post: BlogPost | null;
-    if (locale === 'tr') {
-      post = await this.em.findOne(BlogPost, {
-        where: includeDraft
-          ? { slug: normalized }
-          : { slug: normalized, isPublished: true },
-      });
-    } else {
-      const qb = this.em.createQueryBuilder(BlogPost, 'p');
-      if (!includeDraft) {
-        qb.andWhere('p.is_published = true');
-      }
-      post = await qb
-        .andWhere(
-          `(p.slug = :slug OR p.translations -> :locale ->> 'slug' = :slug)`,
-          { slug: normalized, locale },
-        )
-        .getOne();
+    const qb = this.em
+      .createQueryBuilder(BlogPost, 'p')
+      .andWhere(sqlMatchSlugAnyLocale('p'), { slug: normalized });
+    if (!includeDraft) {
+      qb.andWhere('p.is_published = true');
     }
+    const post = await qb.getOne();
     if (!post) {
       throw new NotFoundException('Blog yazısı bulunamadı');
     }

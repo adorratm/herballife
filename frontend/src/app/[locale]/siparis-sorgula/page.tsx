@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/routing";
+import { trackingHref } from "@/i18n/hrefs";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useState } from "react";
@@ -186,7 +187,7 @@ function LookupForm() {
                     </div>
                     {s.trackingNumber ? (
                       <Link
-                        href={`/takip/${encodeURIComponent(s.trackingNumber)}`}
+                        href={trackingHref(s.trackingNumber)}
                         className="btn-cta px-5 py-3 text-[10px]"
                       >
                         {t("liveTracking")}

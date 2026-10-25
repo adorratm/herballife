@@ -64,6 +64,11 @@ export const ADMIN_NAV_GROUPS: NavGroup[] = [
       { href: '/medya', label: 'Medya', adminOnly: true },
       { href: '/galeri', label: 'Site Galerisi', adminOnly: true },
       { href: '/site-ayarlari', label: 'Site Ayarları', adminOnly: true },
+      {
+        href: '/dil-para-ceviriler',
+        label: 'Dil / Para / Çeviriler',
+        adminOnly: true,
+      },
     ],
   },
   {

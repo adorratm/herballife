@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import { Link } from "@/i18n/routing";
+import { Link, redirect } from "@/i18n/routing";
+import { blogPostHref } from "@/i18n/hrefs";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { RegisterLocaleAlternates } from "@/components/LocaleAlternates";
 import { PageBreadcrumb } from "@/components/PageBreadcrumb";
 import { getBlogPosts } from "@/lib/blog.server";
 import {
@@ -80,7 +82,7 @@ export async function generateMetadata({
 }
 
 export default async function CategoryCatalogPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const [tCommon, tCatalog] = await Promise.all([
     getTranslations("common"),
     getTranslations("catalog"),
@@ -95,6 +97,17 @@ export default async function CategoryCatalogPage({ params }: Props) {
     bySlug ||
     categoryFallback(slug);
   if (!category) notFound();
+
+  const requestSlug = decodeURIComponent(slug).toLowerCase();
+  if (category.slug && category.slug.toLowerCase() !== requestSlug) {
+    redirect({
+      href: {
+        pathname: "/urunler/kategori/[slug]",
+        params: { slug: category.slug },
+      },
+      locale,
+    });
+  }
 
   const crumbs = [
     { name: tCommon("home"), path: "/" },
@@ -115,12 +128,18 @@ export default async function CategoryCatalogPage({ params }: Props) {
 
   return (
     <>
-      <JsonLd data={breadcrumbJsonLd(crumbs)} />
+      <RegisterLocaleAlternates
+        pathname="/urunler/kategori/[slug]"
+        localeSlugs={category.localeSlugs}
+        currentSlug={category.slug}
+      />
+      <JsonLd data={breadcrumbJsonLd(crumbs, locale)} />
       {catalog?.items?.length ? (
         <JsonLd
           data={itemListJsonLd(catalog.items, {
             name: category.name,
             path: categoryCatalogPath(category.slug),
+            locale,
           })}
         />
       ) : null}
@@ -146,7 +165,7 @@ export default async function CategoryCatalogPage({ params }: Props) {
             {relatedBlog.items.map((post) => (
               <Link
                 key={post.id}
-                href={`/blog/${post.slug}`}
+                href={blogPostHref(post.slug)}
                 className="text-sm text-on-surface-variant hover:text-primary"
               >
                 {post.title}

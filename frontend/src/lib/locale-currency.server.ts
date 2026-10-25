@@ -30,9 +30,9 @@ export async function getServerLocaleCurrency(): Promise<{
   }
 
   const cookieStore = await cookies();
-  let currency = pickCurrency(cookieStore.get(CURRENCY_COOKIE)?.value, locale);
-  if (locale === "tr") {
-    currency = "TRY";
-  }
+  const currency = pickCurrency(
+    cookieStore.get(CURRENCY_COOKIE)?.value,
+    locale,
+  );
   return { locale, currency };
 }

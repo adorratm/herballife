@@ -1,7 +1,6 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
-import { useRouter } from "next/navigation";
+import { Link, asRouterHref, useRouter } from "@/i18n/routing";
 import { useEffect, useState } from "react";
 import { AccountTabs } from "@/components/AccountTabs";
 import { ProductCard } from "@/components/ProductCard";
@@ -22,7 +21,7 @@ export default function FavoritesPage() {
   async function load() {
     const token = getToken();
     if (!token) {
-      router.replace("/giris?next=/hesabim/favoriler");
+      router.replace(asRouterHref("/giris?next=/hesabim/favoriler"));
       return;
     }
     setLoading(true);
@@ -48,7 +47,7 @@ export default function FavoritesPage() {
   async function remove(productId: string) {
     const token = getToken();
     if (!token) {
-      router.replace("/giris?next=/hesabim/favoriler");
+      router.replace(asRouterHref("/giris?next=/hesabim/favoriler"));
       return;
     }
     try {

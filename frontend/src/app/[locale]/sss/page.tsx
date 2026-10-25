@@ -72,7 +72,7 @@ export default async function FaqPage() {
   return (
     <>
       {faqSchema ? <JsonLd data={faqSchema} /> : null}
-      <JsonLd data={breadcrumbJsonLd(crumbs)} />
+      <JsonLd data={breadcrumbJsonLd(crumbs, locale)} />
 
       <section className="page-shell page-hero">
         <p className="page-kicker">{t("kicker")}</p>

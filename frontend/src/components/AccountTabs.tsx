@@ -1,7 +1,7 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
-import { usePathname, useSearchParams } from "next/navigation";
+import { Link, toLinkHref, usePathname } from "@/i18n/routing";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 export type AccountTabId =
@@ -73,7 +73,7 @@ function TabNav({ current }: { current: AccountTabId }) {
         return (
           <Link
             key={tab.id}
-            href={tab.href}
+            href={toLinkHref(tab.href)}
             role="tab"
             aria-selected={selected}
             className={`shrink-0 border-b-2 px-3 py-2.5 font-meta text-[10px] uppercase tracking-widest transition-colors sm:px-4 sm:py-3 sm:text-[11px] ${

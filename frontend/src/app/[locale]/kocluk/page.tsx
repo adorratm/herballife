@@ -119,10 +119,13 @@ export default async function CoachingPage() {
   return (
     <div className="pb-16">
       <JsonLd
-        data={breadcrumbJsonLd([
-          { name: t("breadcrumbHome"), path: "/" },
-          { name: tNav("coaching"), path: "/kocluk" },
-        ])}
+        data={breadcrumbJsonLd(
+          [
+            { name: t("breadcrumbHome"), path: "/" },
+            { name: tNav("coaching"), path: "/kocluk" },
+          ],
+          locale,
+        )}
       />
 
       <section className="relative overflow-hidden bg-surface-container-low">

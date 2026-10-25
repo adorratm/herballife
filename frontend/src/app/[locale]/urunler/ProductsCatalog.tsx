@@ -2,12 +2,13 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { asRouterHref, usePathname, useRouter, toLinkHref } from "@/i18n/routing";
+import { categoryHref } from "@/i18n/hrefs";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import { getCategories, getProductsPaged } from "@/lib/api";
-import { getClientLocaleCurrency } from "@/lib/locale-currency";
-import { categoryCatalogPath } from "@/lib/catalog-paths";
+import { useActiveCurrency } from "@/hooks/useActiveCurrency";
 import type { Category, Paginated, Product } from "@/lib/types";
 
 type SortKey = "name" | "price" | "createdAt" | "stock";
@@ -30,12 +31,13 @@ export default function ProductsCatalog({
   const tCommon = useTranslations("common");
   const tForms = useTranslations("forms");
   const pathname = usePathname();
+  const { currency: activeCurrency } = useActiveCurrency();
   const catalogLocale = useMemo(
     () => ({
       locale: intlLocale,
-      currency: getClientLocaleCurrency().currency,
+      currency: activeCurrency,
     }),
-    [intlLocale],
+    [intlLocale, activeCurrency],
   );
   const searchParams = useSearchParams();
   const [pending, startTransition] = useTransition();
@@ -154,11 +156,18 @@ export default function ProductsCatalog({
     }
     if (!("page" in next)) sp.delete("page");
     const base = nextCategory
-      ? categoryCatalogPath(nextCategory)
-      : "/urunler";
+      ? categoryHref(nextCategory)
+      : ("/urunler" as const);
     const qs = sp.toString();
+    const href = qs
+      ? asRouterHref(
+          nextCategory
+            ? `/urunler/kategori/${encodeURIComponent(nextCategory)}?${qs}`
+            : `/urunler?${qs}`,
+        )
+      : base;
     startTransition(() => {
-      router.push(qs ? `${base}?${qs}` : base);
+      router.push(href as Parameters<typeof router.push>[0]);
     });
   }
 

@@ -3,9 +3,8 @@ import { MANDATORY_LOCALES } from '@common/catalog/localization.types';
 
 type LocaleBlock = Record<string, unknown>;
 
-const NAV_LABELS: Record<
-  LocaleCode,
-  Record<string, string>
+const NAV_LABELS: Partial<
+  Record<LocaleCode, Record<string, string>>
 > = {
   tr: {},
   en: {
@@ -131,7 +130,7 @@ function translateNav(
   locale: LocaleCode,
 ): { href: string; label: string }[] | undefined {
   if (!links?.length || locale === 'tr') return undefined;
-  const map = NAV_LABELS[locale];
+  const map = NAV_LABELS[locale] || {};
   return links.map((link) => ({
     href: link.href,
     label: map[link.href] || link.label,

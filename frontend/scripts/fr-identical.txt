@@ -1,0 +1,269 @@
+header.pages	Pages
+checkout.vatIncluded	 incl.
+checkout.total	Total
+product.stock	Stock
+product.specHerbalifeId	Herbalife ID
+product.specKind	Type
+catalog.sortStock	Stock
+blog.postTag	Article
+blog.readMinutes	{minutes} min
+tour.eyebrow	Site tour · {current}/{total}
+tour.step1Title	Search products
+tour.step1Body	Quick search across Formula 1, bundles, and categories.
+tour.step2Body	Your items live here — proceed to checkout when ready.
+tour.step3Title	WhatsApp support
+tour.step3Body	Live WhatsApp for nutrition and product questions.
+tour.step4Title	My account
+tour.step4Body	Orders, addresses, and wellness tracking in your account.
+siteSearch.dialogLabel	Site search
+siteSearch.placeholder	Products, articles, pages…
+siteSearch.closeSearch	Close search
+siteSearch.hintMinChars	At least 2 characters · arrow keys and Enter
+siteSearch.searching	Searching…
+siteSearch.noResults	No results
+siteSearch.searchInCatalog	Search “{q}” in catalog →
+siteSearch.seeAll	See all
+siteSearch.goToCatalog	Go to catalog
+siteSearch.searchProducts	Search products
+siteSearch.searchShort	Search…
+siteSearch.quickOrderLookup	Track order
+notFoundPage.metaTitle	Page not found
+notFoundPage.title	Page not found
+notFoundPage.description	The page you’re looking for may have moved or been removed. Return to the catalog to find what you need.
+notFoundPage.goProducts	Go to products
+notFoundPage.linkGiftSets	Gift bundles
+guestOrder.eyebrow	Order / Lookup
+guestOrder.title	Track order
+guestOrder.lead	Use your order number and the email from checkout to see status and shipment info.
+guestOrder.orderNumberLabel	Order no.
+guestOrder.orderNumberPlaceholder	HBL-…
+guestOrder.submit	Look up
+guestOrder.submitting	Looking up…
+guestOrder.lookupFailed	Could not look up order. Check your details.
+guestOrder.orderNumberHeading	Order no.
+guestOrder.total	Total
+guestOrder.trackingPending	Code pending
+guestOrder.liveTracking	Live tracking
+guestOrder.hasTrackingCode	Have a tracking code?
+guestOrder.cargoTrackingLink	Shipment tracking
+guestOrder.loading	Loading…
+tracking.eyebrow	Logistics / Tracking
+tracking.title	Shipment tracking
+tracking.lead	Enter the tracking code from your order email or account.
+tracking.orderLookupLink	Track order
+tracking.codePlaceholder	Tracking code
+tracking.submit	Look up
+tracking.searching	Looking up…
+tracking.notFound	Shipment record not found.
+tracking.codeLabel	Code
+tracking.providerLabel	Carrier
+tracking.providerPage	Carrier page
+tracking.orderDetail	Order details
+tracking.backToAccount	Back to my account
+tracking.movementsHeading	Updates
+authPassword.forgotTitle	Forgot password
+authPassword.forgotLead	Enter the email on your account. For Google accounts you can set a password; otherwise we send a reset link valid for 1 hour.
+authPassword.forgotDone	If the email is registered, we sent a link. Check inbox and spam. Google sign-up users can also set a password with this link.
+authPassword.backToLogin	Back to sign in
+authPassword.sendResetLink	Send reset link
+authPassword.sending	Sending…
+authPassword.requestFailed	Could not send request. Try again later.
+authPassword.resetTitle	New password
+authPassword.invalidLink	Invalid reset link.
+authPassword.passwordMismatch	Passwords do not match.
+authPassword.resetFailed	Could not update password. The link may have expired.
+authPassword.missingToken	No token in link. Use the link from your email.
+authPassword.newPassword	New password
+authPassword.newPasswordRepeat	New password (again)
+authPassword.savePassword	Save password
+authPassword.saving	Saving…
+authPassword.resetDone	Password saved. You can sign in with email/password or Google.
+authPassword.signIn	Sign in
+authPassword.loading	Loading…
+faqPage.metaDescription	Frequently asked questions about {brand}: products, bundles, shipping, and nutrition tracking.
+faqPage.lead	Common questions about products, orders, shipping, and nutrition tracking.
+faqPage.empty	No questions added yet.
+faqPage.stillQuestions	Still have a question?
+faqPage.distributorHelp	Distributor {name} can give you personalized answers.
+faqPage.askWhatsapp	Ask on WhatsApp
+faqPage.contactForm	Contact form
+faqPage.browseProducts	Browse products
+faqPage.whatsappPrefill	Hello, I have a question beyond the FAQ.
+faqPage.fallbackTitle	Frequently asked questions
+faqPage.fallbackItems[0].question	Are the products genuine?
+faqPage.fallbackItems[0].answer	Yes. Products sold are original Herbalife products. This site belongs to an independent Herbalife Nutrition distributor.
+faqPage.fallbackItems[1].question	Which bundle should I choose?
+faqPage.fallbackItems[1].answer	We offer gift bundles for your goal (weight, sport, general wellness). Free product advice is available on WhatsApp.
+faqPage.fallbackItems[2].question	How long does shipping take?
+faqPage.fallbackItems[2].answer	After payment confirmation, orders usually ship within 1–3 business days. We share the tracking code with your order notification.
+faqPage.fallbackItems[3].question	How does nutrition tracking work?
+faqPage.fallbackItems[3].answer	Under Account → Nutrition tracking you can log water, meals, and measurements. Your coach reviews progress from the approval queue.
+faqPage.fallbackItems[4].question	Is cash on delivery available?
+faqPage.fallbackItems[4].answer	Yes, cash or card on delivery may be offered. Choose the available method at checkout.
+faqPage.fallbackItems[5].question	What are the return terms?
+faqPage.fallbackItems[5].answer	Returns are possible for unopened products within the legal period. See Returns & cancellation or contact us.
+mediaPage.metaDescription	Instagram posts, stories, and selected images from {brand}.
+mediaPage.followInstagram	Follow on Instagram
+mediaPage.emptySoon	Media content coming soon. Instagram or gallery uploads can be added from the admin panel.
+mediaPage.storiesTitle	Instagram stories
+mediaPage.storiesLead	Active stories from the last 24 hours — tap for full view.
+mediaPage.noActiveStories	No active Instagram stories right now.
+mediaPage.storiesSoon	Instagram stories will appear here soon.
+mediaPage.postsTitle	Instagram posts
+mediaPage.lastSync	Last sync:
+mediaPage.postsNotSynced	Instagram posts not synced yet.
+mediaPage.feedSoon	Instagram feed coming soon.
+mediaPage.galleryTitle	Gallery picks
+mediaPage.galleryLead	Products, bundles, and lifestyle moments — tap for full view.
+mediaPage.galleryEmpty	No gallery images yet.
+mediaPage.fallbackSubtitle	Products, bundles, and healthy living moments. Instagram posts and selected images.
+reviewsPage.metaTitle	Review on Google
+reviewsPage.metaDescription	Share your {brand} experience on Google Business Profile.
+reviewsPage.title	Share your experience
+reviewsPage.lead	A short Google review helps local visibility. Scan the QR code or use the link below.
+reviewsPage.highlight1Title	30 seconds
+reviewsPage.highlight1Body	A quick star rating and sentence on Google makes a big difference for local visibility.
+reviewsPage.highlight2Title	Real experience
+reviewsPage.highlight2Body	Honest feedback on product quality, shipping, and coaching support matters.
+reviewsPage.highlight3Body	Reviews help new visitors start with confidence.
+reviewsPage.googleBusiness	Google Business
+reviewsPage.reviewQrAlt	Google review QR code
+reviewsPage.scanQr	Scan QR code
+reviewsPage.reviewOnGoogle	Review on Google
+reviewsPage.reviewAria	Review on Google — scan QR code
+reviewsPage.whatsappPrefill	Hello, I’d like the Google review link.
+seo.pageSuffix	 · Page {page}
+seo.keywordsCatalogDefault[0]	catalog
+seo.keywordsCatalogDefault[1]	products
+seo.keywordsCatalogDefault[2]	bundles
+seo.keywordsCatalogDefault[3]	sets
+seo.keywordsCategoryExtra[0]	product
+seo.keywordsCategoryExtra[1]	bundle
+seo.keywordsBlog[0]	articles
+seo.keywordsBlog[1]	nutrition
+footer.navigation	Navigation
+contactPage.message	Message
+paymentFailure.loading	Loading payment result…
+paymentFailure.kicker	Payment / Failed
+paymentFailure.lead	If your card was not charged, you can retry payment for the same order.
+paymentFailure.orderNo	Order no.
+paymentFailure.providerDeclined	The payment provider did not approve the transaction.
+paymentFailure.errNoOrder	Order not found. Please place a new order.
+paymentFailure.errRedirect	Payment redirect was not received.
+paymentFailure.errRetry	Could not restart payment.
+paymentFailure.retry	Retry payment
+paymentFailure.newOrder	New order
+paymentFailure.continueShopping	Continue shopping
+paymentFailure.orderStatus	Order status
+paymentFailure.redirecting	Redirecting…
+paymentSuccess.loading	Loading…
+paymentSuccess.kicker	Payment successful
+paymentSuccess.lead	Payment received. We have started preparing your order; we will notify you by email and in your account when it ships.
+paymentSuccess.orderReceived	Order received
+paymentSuccess.orderNo	Order no.
+paymentSuccess.orderNoEmail	Your order number will be sent to your email.
+paymentSuccess.orderDetail	Order details
+paymentSuccess.lookupOrder	Track order
+paymentSuccess.myAccount	My account
+paymentSuccess.signIn	Sign in
+paymentSuccess.continueShopping	Continue shopping
+paymentSuccess.trackShipment	Shipment tracking
+paymentNotify.modalTitle	Notification ready
+paymentNotify.modalBody	Your payment notice was sent via WhatsApp. Your order will be processed after confirmation.
+paymentNotify.eyebrow	Wire transfer · EFT
+paymentNotify.leadBefore	After transferring, fill out the form. Details are sent to the distributor via WhatsApp. See
+paymentNotify.bankAccounts	bank accounts
+paymentNotify.leadAfter	for account details.
+paymentNotify.step1Body	Send the amount to one of our bank accounts.
+paymentNotify.step2Title	Notification form
+paymentNotify.step2Body	Enter order no., amount, and sender details.
+paymentNotify.step3Title	Confirmation
+paymentNotify.step3Body	After WhatsApp notice, your order is processed.
+paymentNotify.waMessageIntro	Hello, payment notification:
+paymentNotify.waAmount	Amount
+paymentNotify.waSender	Sender
+paymentNotify.waNote	Note
+paymentNotify.submit	Notify via WhatsApp
+paymentNotify.whyTitle	Why notify?
+paymentNotify.why1	We match your payment to your order
+paymentNotify.why2	After approval, we prepare for shipping quickly
+paymentNotify.why3	We send you the tracking code
+paymentNotify.tipBody	Adding a receipt screenshot in WhatsApp speeds up confirmation.
+paymentNotify.viewIbans	View IBANs
+paymentNotify.notePlaceholder	Receipt time, bank name…
+paymentNotify.asideShip	After approval, we prepare for shipping quickly
+orderDetail.loading	Loading order…
+orderDetail.notFound	Order not found.
+orderDetail.backAccount	Back to account
+orderDetail.completePayment	Complete payment
+orderDetail.redirecting	Redirecting…
+orderDetail.errRedirect	Payment redirect was not received.
+orderDetail.errRetry	Retry payment failed
+orderDetail.itemsHeading	Items
+orderDetail.deliveryHeading	Delivery
+orderDetail.pickupInfo	Store pickup — collect from the store when your order is ready.
+orderDetail.noShipmentYet	No shipment record yet. Tracking will appear here when the order is prepared.
+orderDetail.trackingPending	Code pending
+orderDetail.liveTrack	Live tracking
+orderDetail.copied	Copied
+orderDetail.copyCode	Copy code
+orderDetail.carrierSite	Carrier website
+orderDetail.returnsHeading	Cancel / Return
+orderDetail.typeReturn	Return / withdrawal
+orderDetail.returnRequested	Under review
+orderDetail.adminNote	Note
+orderDetail.cancelHint	Order not shipped yet — you can open a cancellation request.
+orderDetail.returnHint	After delivery / shipping you can open a return request (14 days).
+orderDetail.reasonPlaceholder	Describe your reason (at least 10 characters)
+orderDetail.requestSent	Request received. We will notify you after review.
+orderDetail.requestFailed	Could not submit request
+orderDetail.sending	Sending…
+orderDetail.submitRequest	Submit request
+orderDetail.returnsPolicyBefore	See
+orderDetail.returnsPolicyLink	returns & cancellation terms
+orderDetail.openRequestReview	Your open request is under review.
+orderDetail.cannotOpenRequest	A new request cannot be opened for this order now.
+orderDetail.amountHeading	Amount
+orderDetail.deliveryLabel	Delivery
+orderDetail.pickupFree	Store · Free
+orderDetail.total	Total
+orderDetail.deliveryAddress	Delivery address
+orderDetail.billingAddress	Billing address
+notificationsPage.title	My account
+notificationsPage.markAllRead	Mark all as read
+notificationsPage.empty	No notifications
+notificationsPage.loadError	Could not load
+notificationsPage.toggleInApp	In-app notifications
+notificationsPage.togglePush	Browser notifications
+notificationsPage.toggleOrders	Orders
+notificationsPage.toggleReturns	Returns / cancel
+notificationsPage.toggleAccount	Account
+notificationsPage.toggleMarketing	Cart reminders
+legalPage.comingSoon	This legal text will be published soon.
+legalPage.version	Version {version}
+legalSeo.gizlilik.description	Privacy policy — how your personal data is protected.
+legalSeo.kvkk.description	Personal data processing information under Turkish KVKK law.
+legalSeo.cerez-politikasi.title	Cookie Policy
+legalSeo.cerez-politikasi.description	Information about cookies used on this website.
+legalSeo.mesafeli-satis.title	Distance Sales Agreement
+legalSeo.mesafeli-satis.description	Distance sales contract text for online orders.
+legalSeo.on-bilgilendirme.title	Pre-contract Information
+legalSeo.on-bilgilendirme.description	Consumer pre-contract information form.
+legalSeo.iptal-iade.description	Order cancellation, withdrawal, and return conditions.
+legalSeo.musteri-memnuniyeti.title	Customer Satisfaction
+legalSeo.musteri-memnuniyeti.description	Customer satisfaction policy and support process.
+legalSeo.guvenli-alisveris.title	Secure Shopping
+legalSeo.guvenli-alisveris.description	Secure PayTR payment, SSL, and data protection.
+legalSeo.aydinlatma-metni.title	Privacy Notice
+legalSeo.aydinlatma-metni.description	Notice on processing of personal data.
+catalogSeo.supplement	Supplement / Formula
+catalogSeo.beverage	Beverage
+catalogSeo.herbal_tea	Herbal tea
+catalogSeo.defaultType	Products > Supplements
+aria.imageN	Image {n}
+promo.minute	Min
+promo.second	Sec
+cookies.marketing	Marketing (Google Ads / Meta)
+wellnessPage.note	Note
+wellnessPage.photo	Photo
+wellnessPage.tableDate	Date

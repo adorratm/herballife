@@ -1,6 +1,7 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
+import { Link, toLinkHref } from "@/i18n/routing";
+import { orderHref } from "@/i18n/hrefs";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -105,18 +106,18 @@ function SuccessContent() {
           <div className="flex flex-wrap gap-3">
             {loggedIn && orderId ? (
               <Link
-                href={`/hesabim/siparisler/${orderId}`}
+                href={orderHref(orderId)}
                 className="btn-cta px-6 py-3 text-xs"
               >
                 {t("orderDetail")}
               </Link>
             ) : (
               <Link
-                href={
+                href={toLinkHref(
                   orderNumber
                     ? `/siparis-sorgula?orderNumber=${encodeURIComponent(orderNumber)}`
-                    : "/siparis-sorgula"
-                }
+                    : "/siparis-sorgula",
+                )}
                 className="btn-cta px-6 py-3 text-xs"
               >
                 {t("lookupOrder")}

@@ -2,9 +2,13 @@ export type SupportedCurrency = 'TRY' | 'USD' | 'EUR' | 'GBP';
 
 export type ProductPrices = Partial<Record<SupportedCurrency, number>>;
 
-export type LocaleCode = 'tr' | 'en' | 'de' | 'fr' | 'es';
+import type { StoreLocaleCode } from '@common/catalog/locale-catalog';
+import { STORE_LOCALE_CODES } from '@common/catalog/locale-catalog';
 
-export type MandatoryLocale = Exclude<LocaleCode, 'tr'>;
+export type LocaleCode = StoreLocaleCode;
+
+/** Ürün/kategori/blog için zorunlu çeviri dilleri (TR dışı çekirdek set) */
+export type MandatoryLocale = 'en' | 'de' | 'fr' | 'es';
 
 export const MANDATORY_LOCALES: MandatoryLocale[] = ['en', 'de', 'fr', 'es'];
 
@@ -53,7 +57,7 @@ export type BlogTranslations = Partial<
   Record<MandatoryLocale, BlogLocaleFields>
 >;
 
-export const SUPPORTED_LOCALES: LocaleCode[] = ['tr', 'en', 'de', 'fr', 'es'];
+export const SUPPORTED_LOCALES: LocaleCode[] = [...STORE_LOCALE_CODES];
 export const SUPPORTED_CURRENCIES: SupportedCurrency[] = [
   'TRY',
   'USD',
@@ -61,11 +65,16 @@ export const SUPPORTED_CURRENCIES: SupportedCurrency[] = [
   'GBP',
 ];
 
-export const DEFAULT_CURRENCY_BY_LOCALE: Record<LocaleCode, SupportedCurrency> =
-  {
-    tr: 'TRY',
-    en: 'USD',
-    de: 'EUR',
-    fr: 'EUR',
-    es: 'EUR',
-  };
+export const DEFAULT_CURRENCY_BY_LOCALE: Record<string, SupportedCurrency> = {
+  tr: 'TRY',
+  en: 'USD',
+  de: 'EUR',
+  fr: 'EUR',
+  es: 'EUR',
+  it: 'EUR',
+  nl: 'EUR',
+  pt: 'EUR',
+  pl: 'EUR',
+  ru: 'USD',
+  az: 'USD',
+};

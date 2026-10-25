@@ -4,7 +4,12 @@ import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { oauthUrl } from "@/lib/api";
-import { loginPath, rememberAuthNext, safeNextPath } from "@/lib/auth";
+import {
+  loginHref,
+  registerHref,
+  rememberAuthNext,
+  safeNextPath,
+} from "@/lib/auth";
 
 type AuthMode = "login" | "register";
 
@@ -26,11 +31,9 @@ export function AuthShell({
   const t = useTranslations("auth");
   const isLogin = mode === "login";
   const next = safeNextPath(nextPath, "/hesabim");
-  const registerHref =
-    next === "/hesabim"
-      ? "/kayit"
-      : `/kayit?next=${encodeURIComponent(next)}`;
-  const loginHref = loginPath(next === "/hesabim" ? null : next);
+  const registerLink =
+    registerHref(next === "/hesabim" ? null : next);
+  const loginLink = loginHref(next === "/hesabim" ? null : next);
 
   return (
     <div className="page-shell mx-auto max-w-xl py-16 md:py-24">
@@ -61,14 +64,14 @@ export function AuthShell({
           {isLogin ? (
             <>
               {t("noAccount")}{" "}
-              <Link href={registerHref} className="text-primary underline">
+              <Link href={registerLink} className="text-primary underline">
                 {t("registerLink")}
               </Link>
             </>
           ) : (
             <>
               {t("hasAccount")}{" "}
-              <Link href={loginHref} className="text-primary underline">
+              <Link href={loginLink} className="text-primary underline">
                 {t("loginLink")}
               </Link>
             </>

@@ -1,16 +1,20 @@
 /**
- * Fills de/fr/es from en.json (resume-safe, rate-limit friendly).
+ * Fills de/fr/es from en.json (resume-safe).
+ * Prefers MyMemory; falls back to @vitalets/google-translate-api.
  */
 import fs from "fs";
 import path from "path";
-import { translate } from "@vitalets/google-translate-api";
+import { translate as gTranslate } from "@vitalets/google-translate-api";
 
 const root = path.join(import.meta.dirname, "..", "messages");
 const en = JSON.parse(fs.readFileSync(path.join(root, "en.json"), "utf8"));
 
-const TARGETS = { de: "de", fr: "fr", es: "es" };
-const BATCH_PER_LOCALE = 80;
-const DELAY_MS = 1800;
+const TARGETS = process.argv.slice(2).length
+  ? Object.fromEntries(process.argv.slice(2).map((l) => [l, l]))
+  : { de: "de", fr: "fr", es: "es" };
+
+const BATCH_PER_LOCALE = Number(process.env.I18N_BATCH || 120);
+const DELAY_MS = Number(process.env.I18N_DELAY || 2500);
 
 const KEEP = [
   "Herbalife",
@@ -26,10 +30,10 @@ const KEEP = [
   "FAQ",
   "Blog",
   "Coaching",
-  "Legal_Document",
   "SSL",
   "TLS",
   "PCI-DSS",
+  "DHL",
 ];
 
 function sleep(ms) {
@@ -109,14 +113,32 @@ function restore(text, tokens) {
   return r;
 }
 
+async function myMemory(text, target) {
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${target}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`mymemory ${res.status}`);
+  const data = await res.json();
+  const translated = data?.responseData?.translatedText;
+  if (!translated || /MYMEMORY WARNING/i.test(translated)) {
+    throw new Error("mymemory quota");
+  }
+  return translated;
+}
+
 async function translateText(text, target) {
+  if (!text.trim() || text.length < 2) return text;
+  // Identical short tokens / codes — keep
+  if (/^[A-Z0-9_./\-]+$/.test(text) && text.length <= 12) return text;
   const { out, tokens } = protect(text);
-  for (let attempt = 0; attempt < 6; attempt++) {
+  for (let attempt = 0; attempt < 5; attempt++) {
     try {
-      const res = await translate(out, { from: "en", to: target });
-      return restore(res.text, tokens);
+      const raw =
+        attempt % 2 === 0
+          ? await myMemory(out, target)
+          : (await gTranslate(out, { from: "en", to: target })).text;
+      return restore(raw, tokens);
     } catch {
-      await sleep(4000 * (attempt + 1));
+      await sleep(5000 * (attempt + 1));
     }
   }
   throw new Error("rate limited");
@@ -138,15 +160,22 @@ for (const [file, lang] of Object.entries(TARGETS)) {
     if (batch >= BATCH_PER_LOCALE) break;
     try {
       const translated = await translateText(fe[key], lang);
-      setPath(locale, key, translated);
+      if (translated && translated !== fe[key]) {
+        setPath(locale, key, translated);
+      }
       batch++;
-      if (batch % 10 === 0) console.log(`  ${file}: ${batch}/${Math.min(BATCH_PER_LOCALE, pending.length)}`);
+      if (batch % 15 === 0) {
+        console.log(
+          `  ${file}: ${batch}/${Math.min(BATCH_PER_LOCALE, pending.length)}`,
+        );
+        fs.writeFileSync(filePath, `${JSON.stringify(locale, null, 2)}\n`, "utf8");
+      }
       await sleep(DELAY_MS);
-    } catch {
-      console.log(`  ${file}: stopping batch early (rate limit)`);
+    } catch (e) {
+      console.log(`  ${file}: stopping early — ${e.message || e}`);
       break;
     }
   }
   fs.writeFileSync(filePath, `${JSON.stringify(locale, null, 2)}\n`, "utf8");
-  console.log(`Wrote ${file}.json (+${batch} strings)`);
+  console.log(`Wrote ${file}.json (+${batch} attempted)`);
 }

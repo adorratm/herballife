@@ -1,30 +1,44 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LocaleFlag } from "@/components/LocaleFlag";
+import { useLocaleAlternates } from "@/components/LocaleAlternates";
+import { useActiveCurrency } from "@/hooks/useActiveCurrency";
 import {
-  CURRENCY_COOKIE,
-  currencies,
-  currencyByLocale,
+  currencies as allCurrencies,
+  currencyByLocale as defaultCurrencyByLocale,
   currencyLabels,
   currencySymbols,
-  localeNames,
-  locales,
+  localeNativeNames,
+  locales as allLocales,
   usePathname,
   useRouter,
   type AppCurrency,
   type AppLocale,
 } from "@/i18n/routing";
 
-function readCookie(name: string): string | undefined {
-  if (typeof document === "undefined") return undefined;
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : undefined;
+export type LocalizationConfig = {
+  enabledLocales?: string[];
+  currencies?: string[];
+  currencyByLocale?: Record<string, string>;
+  defaultCurrency?: string;
+  languages?: Array<{
+    code: string;
+    name?: string;
+    nativeName?: string;
+    enabled?: boolean;
+    currency?: string;
+    sortOrder?: number;
+  }>;
+};
+
+function isAppLocale(v: string): v is AppLocale {
+  return (allLocales as readonly string[]).includes(v);
 }
 
-function writeCookie(name: string, value: string) {
-  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
+function isAppCurrency(v: string): v is AppCurrency {
+  return (allCurrencies as readonly string[]).includes(v);
 }
 
 function DropdownShell({
@@ -92,48 +106,144 @@ function DropdownShell({
   );
 }
 
-export function LocaleCurrencyControls({ compact }: { compact?: boolean }) {
+export function LocaleCurrencyControls({
+  compact,
+  localization,
+}: {
+  compact?: boolean;
+  localization?: LocalizationConfig | null;
+}) {
   const t = useTranslations("locale");
   const locale = useLocale() as AppLocale;
   const pathname = usePathname();
   const router = useRouter();
-  const [currency, setCurrency] = useState<AppCurrency>("TRY");
+  const { currency, setCurrency } = useActiveCurrency();
+  const { alternates } = useLocaleAlternates();
   const [langOpen, setLangOpen] = useState(false);
   const [curOpen, setCurOpen] = useState(false);
 
-  useEffect(() => {
-    const stored = readCookie(CURRENCY_COOKIE);
-    const upper = (stored || "").toUpperCase();
-    if (upper === "TRY" || upper === "USD" || upper === "EUR" || upper === "GBP") {
-      setCurrency(upper as AppCurrency);
-    } else {
-      setCurrency(currencyByLocale[locale]);
+  const languageMeta = useMemo(() => {
+    const map = new Map<
+      string,
+      { nativeName: string; currency?: string; sortOrder: number }
+    >();
+    for (const row of localization?.languages || []) {
+      const code = String(row.code || "").toLowerCase();
+      if (!code) continue;
+      if (row.enabled === false) continue;
+      map.set(code, {
+        nativeName:
+          row.nativeName?.trim() ||
+          row.name?.trim() ||
+          localeNativeNames[code as AppLocale] ||
+          code.toUpperCase(),
+        currency: row.currency,
+        sortOrder: Number(row.sortOrder) || 0,
+      });
     }
-  }, [locale]);
+    return map;
+  }, [localization?.languages]);
+
+  const enabledLocales = useMemo(() => {
+    if (languageMeta.size > 0) {
+      return [...languageMeta.keys()]
+        .filter(isAppLocale)
+        .sort(
+          (a, b) =>
+            (languageMeta.get(a)?.sortOrder || 0) -
+            (languageMeta.get(b)?.sortOrder || 0),
+        );
+    }
+    const fromCms = (localization?.enabledLocales || [])
+      .map((x) => x.toLowerCase())
+      .filter(isAppLocale);
+    return fromCms.length > 0 ? fromCms : [...allLocales];
+  }, [languageMeta, localization?.enabledLocales]);
+
+  const enabledCurrencies = useMemo(() => {
+    const fromCms = (localization?.currencies || [])
+      .map((x) => x.toUpperCase())
+      .filter(isAppCurrency);
+    return fromCms.length > 0 ? fromCms : [...allCurrencies];
+  }, [localization?.currencies]);
+
+  const currencyMap = useMemo(() => {
+    const map: Record<AppLocale, AppCurrency> = {
+      ...defaultCurrencyByLocale,
+    };
+    for (const [loc, meta] of languageMeta) {
+      if (isAppLocale(loc) && meta.currency && isAppCurrency(meta.currency)) {
+        map[loc] = meta.currency;
+      }
+    }
+    const fromCms = localization?.currencyByLocale || {};
+    for (const [loc, cur] of Object.entries(fromCms)) {
+      if (isAppLocale(loc) && isAppCurrency(cur)) {
+        map[loc] = cur;
+      }
+    }
+    return map;
+  }, [languageMeta, localization?.currencyByLocale]);
 
   const onLocale = useCallback(
     (next: AppLocale) => {
-      const nextCurrency = next === "tr" ? "TRY" : currencyByLocale[next];
-      writeCookie(CURRENCY_COOKIE, nextCurrency);
-      setCurrency(nextCurrency);
+      if (!enabledLocales.includes(next)) return;
+      const nextCurrency =
+        next === "tr" ? "TRY" : currencyMap[next] || enabledCurrencies[0] || "TRY";
+      const safeCurrency = enabledCurrencies.includes(nextCurrency)
+        ? nextCurrency
+        : enabledCurrencies[0] || "TRY";
+      setCurrency(safeCurrency);
       setLangOpen(false);
-      router.replace(pathname, { locale: next });
+
+      // Detay sayfalarında hedef dilin slug’ına git (404 / yanlış içerik önlemi)
+      if (alternates?.localeSlugs) {
+        const targetSlug =
+          alternates.localeSlugs[next] ||
+          alternates.localeSlugs.en ||
+          alternates.localeSlugs.tr ||
+          Object.values(alternates.localeSlugs)[0];
+        if (targetSlug) {
+          router.replace(
+            {
+              pathname: alternates.pathname,
+              params: { slug: targetSlug },
+            },
+            { locale: next },
+          );
+          return;
+        }
+      }
+
+      router.replace(
+        pathname as Parameters<typeof router.replace>[0],
+        { locale: next },
+      );
     },
-    [pathname, router],
+    [
+      pathname,
+      router,
+      enabledLocales,
+      currencyMap,
+      enabledCurrencies,
+      setCurrency,
+      alternates,
+    ],
   );
 
   const onCurrency = useCallback(
     (next: AppCurrency) => {
-      if (locale === "tr") return;
-      writeCookie(CURRENCY_COOKIE, next);
+      if (!enabledCurrencies.includes(next)) return;
       setCurrency(next);
       setCurOpen(false);
       router.refresh();
     },
-    [locale, router],
+    [router, enabledCurrencies, setCurrency],
   );
 
-  const activeCurrency = locale === "tr" ? "TRY" : currency;
+  const activeCurrency = enabledCurrencies.includes(currency)
+    ? currency
+    : enabledCurrencies[0] || "TRY";
 
   return (
     <div
@@ -154,7 +264,7 @@ export function LocaleCurrencyControls({ compact }: { compact?: boolean }) {
           </>
         }
       >
-        {locales.map((code) => (
+        {enabledLocales.map((code) => (
           <li key={code} role="option" aria-selected={code === locale}>
             <button
               type="button"
@@ -163,7 +273,8 @@ export function LocaleCurrencyControls({ compact }: { compact?: boolean }) {
             >
               <LocaleFlag locale={code} />
               <span className="locale-dd__label">
-                {localeNames[locale][code]}
+                {languageMeta.get(code)?.nativeName ||
+                  localeNativeNames[code]}
               </span>
               <span className="locale-dd__code-muted">{code.toUpperCase()}</span>
             </button>
@@ -175,7 +286,6 @@ export function LocaleCurrencyControls({ compact }: { compact?: boolean }) {
         label={t("currency")}
         open={curOpen}
         onToggle={() => {
-          if (locale === "tr") return;
           setCurOpen((v) => !v);
           setLangOpen(false);
         }}
@@ -188,12 +298,11 @@ export function LocaleCurrencyControls({ compact }: { compact?: boolean }) {
           </>
         }
       >
-        {currencies.map((code) => (
+        {enabledCurrencies.map((code) => (
           <li key={code} role="option" aria-selected={code === activeCurrency}>
             <button
               type="button"
               className={`locale-dd__item ${code === activeCurrency ? "is-active" : ""}`}
-              disabled={locale === "tr" && code !== "TRY"}
               onClick={() => onCurrency(code)}
             >
               <span className="locale-dd__symbol">{currencySymbols[code]}</span>

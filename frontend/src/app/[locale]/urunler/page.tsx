@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { permanentRedirect } from "next/navigation";
+import { redirect } from "@/i18n/routing";
 import { getProductsPaged } from "@/lib/catalog.server";
 import { getSiteSettings } from "@/lib/cms";
 import { getSeoLabels } from "@/lib/seo-i18n";
@@ -51,6 +51,7 @@ export async function generateMetadata({
 
 export default async function ProductsPage({ searchParams }: Props) {
   const sp = await searchParams;
+  const locale = await getLocale();
 
   if (sp.category?.trim()) {
     const qs = new URLSearchParams();
@@ -59,10 +60,15 @@ export default async function ProductsPage({ searchParams }: Props) {
     if (sp.sort) qs.set("sort", sp.sort);
     if (sp.order) qs.set("order", sp.order);
     if (sp.page) qs.set("page", sp.page);
-    const suffix = qs.toString() ? `?${qs.toString()}` : "";
-    permanentRedirect(
-      `/urunler/kategori/${encodeURIComponent(sp.category.trim())}${suffix}`,
-    );
+    const query = Object.fromEntries(qs.entries());
+    redirect({
+      href: {
+        pathname: "/urunler/kategori/[slug]",
+        params: { slug: sp.category.trim() },
+        ...(Object.keys(query).length ? { query } : {}),
+      },
+      locale,
+    });
   }
 
   const [tCommon, tCatalog, tSeo] = await Promise.all([
@@ -81,12 +87,13 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   return (
     <>
-      <JsonLd data={breadcrumbJsonLd(crumbs)} />
+      <JsonLd data={breadcrumbJsonLd(crumbs, locale)} />
       {listItems.length ? (
         <JsonLd
           data={itemListJsonLd(listItems, {
             name: tCatalog("title"),
             path: "/urunler",
+            locale,
           })}
         />
       ) : null}

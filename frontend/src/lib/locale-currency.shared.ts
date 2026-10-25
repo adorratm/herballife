@@ -36,7 +36,6 @@ export function getClientLocaleCurrency(): {
   currency: AppCurrency;
 } {
   const locale = pickLocale(readBrowserCookie(LOCALE_COOKIE));
-  let currency = pickCurrency(readBrowserCookie(CURRENCY_COOKIE), locale);
-  if (locale === "tr") currency = "TRY";
+  const currency = pickCurrency(readBrowserCookie(CURRENCY_COOKIE), locale);
   return { locale, currency };
 }

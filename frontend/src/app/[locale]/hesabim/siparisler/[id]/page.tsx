@@ -1,7 +1,8 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
-import { useParams, useRouter } from "next/navigation";
+import { Link, toLinkHref, asRouterHref, useRouter } from "@/i18n/routing";
+import { trackingHref } from "@/i18n/hrefs";
+import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { FormEvent, useEffect, useState } from "react";
 import { OrderStatusStepper } from "@/components/OrderStatusStepper";
@@ -59,7 +60,7 @@ export default function OrderDetailPage() {
   async function load() {
     const token = getToken();
     if (!token) {
-      router.replace("/giris?next=/hesabim");
+      router.replace(asRouterHref("/giris?next=/hesabim"));
       return;
     }
     const [o, r] = await Promise.all([
@@ -95,7 +96,7 @@ export default function OrderDetailPage() {
           {t("notFound")}
         </p>
         <Link
-          href="/hesabim?sekme=siparisler"
+          href={toLinkHref("/hesabim?sekme=siparisler")}
           className="btn-ghost mt-8 inline-block px-8 py-4 text-xs"
         >
           {t("backAccount")}
@@ -177,7 +178,7 @@ export default function OrderDetailPage() {
     <div className="page-shell py-16 md:py-24">
       <div className="page-enter">
         <Link
-          href="/hesabim?sekme=siparisler"
+          href={toLinkHref("/hesabim?sekme=siparisler")}
           className="font-meta text-[11px] uppercase text-secondary hover:text-primary"
         >
           ← Hesabım
@@ -302,7 +303,7 @@ export default function OrderDetailPage() {
                         {s.trackingNumber ? (
                           <>
                             <Link
-                              href={`/takip/${encodeURIComponent(s.trackingNumber)}`}
+                              href={trackingHref(s.trackingNumber)}
                               className="btn-cta px-5 py-3 text-[10px]"
                             >
                               {t("liveTrack")}

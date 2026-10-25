@@ -1,9 +1,8 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
+import { Link, asRouterHref, useRouter } from "@/i18n/routing";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { AccountTabs } from "@/components/AccountTabs";
 import { Reveal } from "@/components/Reveal";
 import {
@@ -38,7 +37,7 @@ export default function ProgressReportPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.replace("/giris?next=/hesabim/rapor");
+      router.replace(asRouterHref("/giris?next=/hesabim/rapor"));
       return;
     }
     const token = getToken();

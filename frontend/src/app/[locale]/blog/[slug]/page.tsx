@@ -1,14 +1,15 @@
 import { AppImage as Image } from "@/components/AppImage";
-import { Link } from "@/i18n/routing";
+import { Link, redirect, toLinkHref } from "@/i18n/routing";
+import { categoryHref, productHref } from "@/i18n/hrefs";
 import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { RegisterLocaleAlternates } from "@/components/LocaleAlternates";
 import { PageBreadcrumb } from "@/components/PageBreadcrumb";
 import { Reveal } from "@/components/Reveal";
 import { getBlogPostBySlug } from "@/lib/blog.server";
 import { getBlogPosts as getBlogPostsApi } from "@/lib/api";
 import { getCategories, getProductBySlug } from "@/lib/catalog.server";
-import { categoryCatalogPath } from "@/lib/catalog-paths";
 import { getSiteSettings } from "@/lib/cms";
 import { blogCoverImage, formatMoney, productImage } from "@/lib/format";
 import {
@@ -102,7 +103,7 @@ function RelatedProductTeaser({ product }: { product: Product }) {
 
   return (
     <Link
-      href={`/urunler/${product.slug}`}
+      href={productHref(product.slug)}
       className="card-motion group flex h-full gap-4 rounded-xl border border-outline-variant/40 bg-white p-3"
     >
       <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-surface-container-low">
@@ -143,6 +144,17 @@ export default async function BlogPostPage({ params }: Props) {
 
   if (!post) notFound();
 
+  const requestSlug = decodeURIComponent(slug).toLowerCase();
+  if (post.slug && post.slug.toLowerCase() !== requestSlug) {
+    redirect({
+      href: {
+        pathname: "/blog/[slug]",
+        params: { slug: post.slug },
+      },
+      locale,
+    });
+  }
+
   const cover = blogCoverImage(post.coverImageUrl, post.slug);
   const relatedProducts = await loadRelatedProducts(post.relatedProductSlugs);
   const categorySlugs = relatedSlugList(post.relatedCategorySlugs);
@@ -171,8 +183,13 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <article>
-      <JsonLd data={blogPostJsonLd(post, settings)} />
-      <JsonLd data={breadcrumbJsonLd(crumbs)} />
+      <RegisterLocaleAlternates
+        pathname="/blog/[slug]"
+        localeSlugs={post.localeSlugs}
+        currentSlug={post.slug}
+      />
+      <JsonLd data={blogPostJsonLd(post, settings, locale)} />
+      <JsonLd data={breadcrumbJsonLd(crumbs, locale)} />
       <PageBreadcrumb items={crumbs} />
 
       {/* Başlık */}
@@ -184,7 +201,7 @@ export default async function BlogPostPage({ params }: Props) {
                 tags.map((t) => (
                   <Link
                     key={t}
-                    href={`/blog?tag=${encodeURIComponent(t)}`}
+                    href={toLinkHref(`/blog?tag=${encodeURIComponent(t)}`)}
                     className="eyebrow text-primary hover:underline"
                   >
                     {t}
@@ -246,7 +263,7 @@ export default async function BlogPostPage({ params }: Props) {
                 {relatedCategories.map((cat) => (
                   <li key={cat.id}>
                     <Link
-                      href={categoryCatalogPath(cat.slug)}
+                      href={categoryHref(cat.slug)}
                       className="link-arrow text-base"
                     >
                       {cat.name}
@@ -286,7 +303,7 @@ export default async function BlogPostPage({ params }: Props) {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Link
-                href="/urunler/kategori/avantajli-setler"
+                href={categoryHref("avantajli-setler")}
                 className="btn-brand-light"
               >
                 {t("ctaSets")}

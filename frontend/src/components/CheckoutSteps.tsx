@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
+import { Link, toLinkHref } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 
 type Step = 1 | 2 | 3;
@@ -54,7 +54,7 @@ export function CheckoutSteps({ active }: { active: Step }) {
             ) : null}
             {step.href && !current ? (
               <Link
-                href={step.href}
+                href={toLinkHref(step.href)}
                 className="flex items-center gap-2 hover:opacity-80"
               >
                 {circle}

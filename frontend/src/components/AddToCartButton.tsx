@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { emitCartToast } from "@/components/CartToast";
@@ -59,7 +59,7 @@ export function AddToCartButton({
       emitCartToast(productName);
       onAdded?.();
       window.setTimeout(() => setAdded(false), 1600);
-      if (goToCart) router.push("/sepet");
+      if (goToCart) router.push("/sepet" as const);
       else router.refresh();
     } catch (err) {
       setError(

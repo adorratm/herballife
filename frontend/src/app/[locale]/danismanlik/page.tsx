@@ -1,6 +1,8 @@
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/routing";
 
 /** Eski / alternatif URL — koçluk sayfasına yönlendir */
-export default function DanismanlikRedirectPage() {
-  redirect("/kocluk");
+export default async function DanismanlikRedirectPage() {
+  const locale = await getLocale();
+  redirect({ href: "/kocluk", locale });
 }

@@ -1,8 +1,8 @@
 "use client";
 
 import { AppImage as Image } from "@/components/AppImage";
-import { Link } from "@/i18n/routing";
-import { useRouter } from "next/navigation";
+import { Link, asRouterHref, useRouter } from "@/i18n/routing";
+import { productHref } from "@/i18n/hrefs";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { AddToCartButton } from "@/components/AddToCartButton";
@@ -18,8 +18,8 @@ import {
   getCartSessionId,
 } from "@/lib/cart";
 import { getProductsPaged, setCartGuestEmail } from "@/lib/api";
-import { getClientLocaleCurrency } from "@/lib/locale-currency";
-import { getToken, isAuthenticated, loginPath } from "@/lib/auth";
+import { useActiveCurrency } from "@/hooks/useActiveCurrency";
+import { getToken, isAuthenticated, loginHref } from "@/lib/auth";
 import { formatMoney, productImage } from "@/lib/format";
 import { toggleWishlistProduct } from "@/lib/wishlist";
 import type { Cart, Product } from "@/lib/types";
@@ -29,12 +29,13 @@ export default function CartPage() {
   const tCommon = useTranslations("common");
   const router = useRouter();
   const intlLocale = useLocale();
+  const { currency: activeCurrency } = useActiveCurrency();
   const catalogLocale = useMemo(
     () => ({
       locale: intlLocale,
-      currency: getClientLocaleCurrency().currency,
+      currency: activeCurrency,
     }),
-    [intlLocale],
+    [intlLocale, activeCurrency],
   );
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(true);
@@ -138,7 +139,7 @@ export default function CartPage() {
     try {
       const result = await toggleWishlistProduct(productId);
       if ("needsAuth" in result) {
-        router.push(loginPath("/sepet"));
+        router.push(loginHref("/sepet"));
         return;
       }
       if (!result.inWishlist) {
@@ -271,7 +272,7 @@ export default function CartPage() {
                     >
                       {productSlug ? (
                         <Link
-                          href={`/urunler/${productSlug}`}
+                          href={productHref(productSlug)}
                           className="flex min-w-0 items-center gap-4 transition-opacity hover:opacity-90"
                         >
                           {productLeft}
@@ -335,7 +336,7 @@ export default function CartPage() {
                         key={p.id}
                         className="flex flex-col rounded-xl border border-surface-container p-3"
                       >
-                        <Link href={`/urunler/${p.slug}`} className="group">
+                        <Link href={productHref(p.slug)} className="group">
                           <div className="relative mb-2 aspect-square overflow-hidden rounded-lg bg-surface-container-low">
                             <Image
                               src={productImage(p.imageUrl, p.slug)}
@@ -380,11 +381,11 @@ export default function CartPage() {
               <div className="space-y-3 border-b border-surface-container pb-4 text-sm">
                 <div className="flex justify-between text-on-surface-variant">
                   <span>{t("productsLine", { count })}</span>
-                  <span>{formatMoney(subtotal)}</span>
+                  <span>{formatMoney(subtotal, "TRY")}</span>
                 </div>
                 <div className="flex justify-between font-semibold text-on-surface">
                   <span>{t("subtotal")}</span>
-                  <span className="text-primary">{formatMoney(subtotal)}</span>
+                  <span className="text-primary">{formatMoney(subtotal, "TRY")}</span>
                 </div>
               </div>
               {!loggedIn ? (

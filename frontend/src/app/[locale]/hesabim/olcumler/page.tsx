@@ -1,9 +1,8 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
+import { Link, asRouterHref, useRouter } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { AccountTabs } from "@/components/AccountTabs";
 import { SuccessModal } from "@/components/SuccessModal";
 import { WellnessTrendChart } from "@/components/WellnessTrendChart";
@@ -45,7 +44,7 @@ export default function MeasurementsPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.replace("/giris?next=/hesabim/olcumler");
+      router.replace(asRouterHref("/giris?next=/hesabim/olcumler"));
       return;
     }
     void load().catch((e) =>

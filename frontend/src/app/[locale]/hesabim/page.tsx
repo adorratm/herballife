@@ -1,8 +1,10 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
+import { Link, asRouterHref, useRouter } from "@/i18n/routing";
+import { orderHref, trackingHref } from "@/i18n/hrefs";
+import { loginHref } from "@/lib/auth";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   Suspense,
   useEffect,
@@ -114,7 +116,7 @@ function AccountPageInner() {
   useEffect(() => {
     const token = getToken();
     if (!token) {
-      router.replace("/giris?next=/hesabim");
+      router.replace(asRouterHref("/giris?next=/hesabim"));
       return;
     }
 
@@ -129,7 +131,7 @@ function AccountPageInner() {
   function logout() {
     clearToken();
     clearWishlistCache();
-    router.push("/giris");
+    router.push("/giris" as const);
   }
 
   async function onChangePassword(e: FormEvent) {
@@ -295,7 +297,7 @@ function AccountPageInner() {
           {error || tAccount("unauthorized")}
         </p>
         <Link
-          href="/giris?next=/hesabim"
+          href={loginHref("/hesabim")}
           className="btn-cta mt-8 inline-block px-8 py-4 text-xs"
         >
           {tAccount("login")}
@@ -363,7 +365,7 @@ function AccountPageInner() {
                   >
                     <div className="row-motion flex flex-col justify-between gap-4 px-5 py-5 hover:bg-surface-container-low md:flex-row md:items-center">
                       <Link
-                        href={`/hesabim/siparisler/${order.id}`}
+                        href={orderHref(String(order.id))}
                         className="min-w-0 flex-1"
                       >
                         <div className="flex flex-wrap items-center gap-3">
@@ -399,14 +401,14 @@ function AccountPageInner() {
                         </div>
                         {trackCode ? (
                           <Link
-                            href={`/takip/${encodeURIComponent(trackCode)}`}
+                            href={trackingHref(trackCode)}
                             className="font-meta text-[10px] uppercase tracking-widest text-primary underline"
                           >
                             {tAccount("trackShipment")}
                           </Link>
                         ) : (
                           <Link
-                            href={`/hesabim/siparisler/${order.id}`}
+                            href={orderHref(String(order.id))}
                             className="font-meta text-[10px] uppercase tracking-widest text-secondary underline hover:text-primary"
                           >
                             {tAccount("detail")}

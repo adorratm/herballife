@@ -1,0 +1,257 @@
+[
+  {
+    "path": "checkout.errSelectSavedAddress",
+    "en": "Select a saved delivery address or enter a new one.",
+    "tr": "Teslimat için kayıtlı bir adres seçin veya yeni adres girin."
+  },
+  {
+    "path": "checkout.errSelectShippingProvider",
+    "en": "Select a shipping carrier.",
+    "tr": "Kargo sağlayıcısı seçin."
+  },
+  {
+    "path": "checkout.errDefaultAddress",
+    "en": "Could not set default address.",
+    "tr": "Varsayılan adres ayarlanamadı"
+  },
+  {
+    "path": "checkout.errPaymentRedirect",
+    "en": "Payment redirect was not received.",
+    "tr": "Ödeme yönlendirmesi alınamadı."
+  },
+  {
+    "path": "checkout.errPaymentStart",
+    "en": "Could not start payment. Check your connection.",
+    "tr": "Ödeme başlatılamadı. Sunucu bağlantısını kontrol edin."
+  },
+  {
+    "path": "checkout.pickupSubline",
+    "en": "Free · Collect when ready",
+    "tr": "Ücretsiz · Hazır olduğunda mağazadan alın"
+  },
+  {
+    "path": "checkout.storeAddress",
+    "en": "Store address",
+    "tr": "Mağaza adresi"
+  },
+  {
+    "path": "checkout.storeHours",
+    "en": "Hours",
+    "tr": "Çalışma"
+  },
+  {
+    "path": "checkout.storePhone",
+    "en": "Phone",
+    "tr": "Tel"
+  },
+  {
+    "path": "checkout.shippingAddressHeading",
+    "en": "Delivery address",
+    "tr": "Teslimat adresi"
+  },
+  {
+    "path": "checkout.billingAddressHeading",
+    "en": "Billing address",
+    "tr": "Fatura adresi"
+  },
+  {
+    "path": "checkout.defaultBadge",
+    "en": " · default",
+    "tr": " · varsayılan"
+  },
+  {
+    "path": "checkout.makeDefaultShipping",
+    "en": "Set as default delivery",
+    "tr": "Varsayılan teslimat yap"
+  },
+  {
+    "path": "checkout.addNewAddress",
+    "en": "+ Add new address",
+    "tr": "+ Yeni adres ekle"
+  },
+  {
+    "path": "checkout.saveToAddressBook",
+    "en": "Save this address to my address book",
+    "tr": "Bu adresi adres defterime kaydet"
+  },
+  {
+    "path": "checkout.setDefaultShippingAddress",
+    "en": "Set as default delivery address",
+    "tr": "Varsayılan teslimat adresi olarak tanımla"
+  },
+  {
+    "path": "checkout.billingSamePickup",
+    "en": "I do not need a separate billing address",
+    "tr": "Ayrı fatura adresi istemiyorum"
+  },
+  {
+    "path": "checkout.billingSameDelivery",
+    "en": "Same as delivery",
+    "tr": "Teslimat ile aynı"
+  },
+  {
+    "path": "checkout.defaultBillingBadge",
+    "en": " · default billing",
+    "tr": " · varsayılan fatura"
+  },
+  {
+    "path": "checkout.makeDefaultBilling",
+    "en": "Set as default billing",
+    "tr": "Varsayılan fatura yap"
+  },
+  {
+    "path": "checkout.addNewBillingAddress",
+    "en": "+ New billing address",
+    "tr": "+ Yeni fatura adresi"
+  },
+  {
+    "path": "checkout.billingNoSeparatePickup",
+    "en": "No separate billing address will be requested.",
+    "tr": "Fatura için ayrı adres istenmeyecek."
+  },
+  {
+    "path": "checkout.billingSameAsShipping",
+    "en": "Billing details will match the delivery address.",
+    "tr": "Fatura bilgileri teslimat adresiyle aynı olacak."
+  },
+  {
+    "path": "checkout.corporateBilling",
+    "en": "Business invoice (e-invoice / e-archive)",
+    "tr": "Kurumsal fatura (e-Fatura / e-Arşiv)"
+  },
+  {
+    "path": "checkout.summaryHeading",
+    "en": "Summary",
+    "tr": "Özet"
+  },
+  {
+    "path": "checkout.couponLabel",
+    "en": "Coupon code",
+    "tr": "Kupon kodu"
+  },
+  {
+    "path": "checkout.invalidCoupon",
+    "en": "Invalid coupon",
+    "tr": "Geçersiz kupon"
+  },
+  {
+    "path": "checkout.couponApplied",
+    "en": "{title} applied",
+    "tr": "{title} uygulandı"
+  },
+  {
+    "path": "checkout.discount",
+    "en": "Discount ({code})",
+    "tr": "İndirim ({code})"
+  },
+  {
+    "path": "checkout.pickupFree",
+    "en": "Store · Free",
+    "tr": "Mağaza · Ücretsiz"
+  },
+  {
+    "path": "checkout.vatLine",
+    "en": "VAT ({rate}%{included})",
+    "tr": "KDV (%{rate}%{included})"
+  },
+  {
+    "path": "checkout.vatIncluded",
+    "en": " incl.",
+    "tr": " dahil"
+  },
+  {
+    "path": "checkout.legalApprovals",
+    "en": "Legal confirmations",
+    "tr": "Yasal onaylar"
+  },
+  {
+    "path": "checkout.legalMesafeli",
+    "en": "I have read and accept the",
+    "tr": "okudum, kabul ediyorum."
+  },
+  {
+    "path": "checkout.legalMesafeliLink",
+    "en": "distance sales agreement",
+    "tr": "Mesafeli satış sözleşmesini"
+  },
+  {
+    "path": "checkout.legalOnBilgi",
+    "en": "I have read the",
+    "tr": "okudum."
+  },
+  {
+    "path": "checkout.legalOnBilgiLink",
+    "en": "pre-contract information form",
+    "tr": "Ön bilgilendirme formunu"
+  },
+  {
+    "path": "checkout.legalKvkk",
+    "en": "I accept the",
+    "tr": "metnini kabul ediyorum."
+  },
+  {
+    "path": "checkout.legalKvkkRest",
+    "en": "text.",
+    "tr": ""
+  },
+  {
+    "path": "checkout.legalSecure",
+    "en": "Secure shopping",
+    "tr": "Güvenli alışveriş"
+  },
+  {
+    "path": "checkout.legalReturns",
+    "en": "returns policy",
+    "tr": "iade politikası"
+  },
+  {
+    "path": "checkout.legalRead",
+    "en": "I have read the",
+    "tr": "bilgilendirmelerini okudum."
+  },
+  {
+    "path": "checkout.legalInform",
+    "en": "information.",
+    "tr": "ve"
+  },
+  {
+    "path": "checkout.paySecure",
+    "en": "PayTR secure payment",
+    "tr": "PayTR güvenli ödeme"
+  },
+  {
+    "path": "checkout.ssl256",
+    "en": "256-bit SSL",
+    "tr": "256-bit SSL"
+  },
+  {
+    "path": "checkout.originalGuarantee",
+    "en": "Genuine product guarantee",
+    "tr": "Orijinal ürün garantisi"
+  },
+  {
+    "path": "checkout.payWithPaytr",
+    "en": "Pay securely with PayTR",
+    "tr": "PayTR ile Güvenli Öde"
+  },
+  {
+    "path": "checkout.redirecting",
+    "en": "Redirecting…",
+    "tr": "Yönlendiriliyor…"
+  },
+  {
+    "path": "checkout.mobilePay",
+    "en": "Pay securely",
+    "tr": "Güvenli öde"
+  },
+  {
+    "path": "checkout.selectedDefaultShipping",
+    "en": " · default delivery",
+    "tr": " · varsayılan teslimat"
+  },
+  {
+    "path": "checkout.selectedDefaultBilling",
+    "en": " · default billing",
+    "tr": " · varsayılan fatura"
+  }
+]

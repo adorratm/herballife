@@ -1,7 +1,8 @@
 "use client";
 
 import { Suspense, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { asRouterHref, useRouter } from "@/i18n/routing";
+import { useSearchParams } from "next/navigation";
 import { consumeAuthNext, setToken } from "@/lib/auth";
 import { fetchCart } from "@/lib/cart";
 
@@ -13,7 +14,9 @@ function CallbackInner() {
     const token = params.get("token");
     const oauthError = params.get("error");
     if (oauthError) {
-      router.replace(`/giris?error=${encodeURIComponent(oauthError)}`);
+      router.replace(
+        asRouterHref(`/giris?error=${encodeURIComponent(oauthError)}`),
+      );
       return;
     }
     if (token) {
@@ -21,11 +24,11 @@ function CallbackInner() {
       const next = consumeAuthNext("/hesabim");
       void (async () => {
         await fetchCart().catch(() => null);
-        router.replace(next);
+        router.replace(asRouterHref(next));
       })();
       return;
     }
-    router.replace("/giris");
+    router.replace("/giris" as const);
   }, [params, router]);
 
   return (

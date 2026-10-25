@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/routing";
+import { loginHref } from "@/lib/auth";
 import {
   useEffect,
   useMemo,
@@ -631,7 +632,7 @@ export default function CheckoutPage() {
           ) : (
             <p className="mt-2 text-sm text-on-surface-variant">
               {tCheckout("loginForAddressBook")}{" "}
-              <Link href="/giris?next=/odeme" className="text-primary underline">
+              <Link href={loginHref("/odeme")} className="text-primary underline">
                 {tCheckout("signInLink")}
               </Link>
               .

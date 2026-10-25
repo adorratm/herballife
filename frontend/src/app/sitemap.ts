@@ -5,7 +5,7 @@ import { getCategories } from "@/lib/catalog.server";
 import { fetchAllCatalogProducts } from "@/lib/catalog-feed";
 import { categoryCatalogPath } from "@/lib/catalog-paths";
 import { productImage } from "@/lib/format";
-import { SITE_URL } from "@/lib/seo";
+import { localizedPath, SITE_URL } from "@/lib/seo";
 
 const STATIC_ROUTES: {
   path: string;
@@ -58,11 +58,11 @@ function withLocales(
   meta: Omit<MetadataRoute.Sitemap[number], "url">,
 ): MetadataRoute.Sitemap {
   return locales.map((locale) => ({
-    url: `${SITE_URL}/${locale}${path}`,
+    url: `${SITE_URL}${localizedPath(locale, path || "/")}`,
     ...meta,
     alternates: {
       languages: Object.fromEntries(
-        locales.map((l) => [l, `${SITE_URL}/${l}${path}`]),
+        locales.map((l) => [l, `${SITE_URL}${localizedPath(l, path || "/")}`]),
       ),
     },
   }));

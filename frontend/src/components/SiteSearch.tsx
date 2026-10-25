@@ -1,8 +1,7 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
+import { Link, asRouterHref, toLinkHref, useRouter } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import {
   useEffect,
   useMemo,
@@ -125,7 +124,7 @@ export function SiteSearch({ className = "", variant = "both" }: Props) {
 
   function go(href: string) {
     close();
-    router.push(href);
+    router.push(asRouterHref(href));
   }
 
   function goCatalog() {
@@ -285,7 +284,7 @@ export function SiteSearch({ className = "", variant = "both" }: Props) {
                             return (
                               <li key={`${hit.type}-${hit.id}`}>
                                 <Link
-                                  href={hit.href}
+                                  href={toLinkHref(hit.href)}
                                   data-search-index={idx}
                                   onClick={(e) => {
                                     e.preventDefault();

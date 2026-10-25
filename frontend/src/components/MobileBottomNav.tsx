@@ -1,11 +1,11 @@
 "use client";
 
-import { Link, usePathname } from "@/i18n/routing";
+import { Link, toLinkHref, usePathname } from "@/i18n/routing";
 import { Home, Package, ShoppingBag, Heart, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { cartItemCount, fetchCart } from "@/lib/cart";
-import { isAuthenticated, loginPath } from "@/lib/auth";
+import { isAuthenticated, loginHref } from "@/lib/auth";
 import {
   ensureWishlistIds,
   subscribeWishlist,
@@ -61,8 +61,8 @@ export function MobileBottomNav() {
         {ITEMS.map((item) => {
           const href =
             "auth" in item && item.auth && !authed
-              ? loginPath(item.href)
-              : item.href;
+              ? loginHref(item.href)
+              : toLinkHref(item.href);
           const active =
             item.href === "/"
               ? pathname === "/"

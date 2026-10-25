@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/routing";
+import { orderHref } from "@/i18n/hrefs";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -118,7 +119,7 @@ function FailureContent() {
             </Link>
             {loggedIn && orderId ? (
               <Link
-                href={`/hesabim/siparisler/${orderId}`}
+                href={orderHref(orderId)}
                 className="border border-outline-variant/40 px-6 py-3 font-meta text-[10px] uppercase tracking-widest hover:border-primary"
               >
                 {t("orderStatus")}

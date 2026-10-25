@@ -42,6 +42,23 @@ export function loginPath(next?: string | null): string {
   return safe ? `/giris?next=${encodeURIComponent(safe)}` : "/giris";
 }
 
+/** Typed href for next-intl Link / router (internal `/giris` pathname). */
+export function loginHref(next?: string | null) {
+  const safe = safeNextPath(next, "");
+  if (safe) {
+    return { pathname: "/giris" as const, query: { next: safe } };
+  }
+  return "/giris" as const;
+}
+
+export function registerHref(next?: string | null) {
+  const safe = safeNextPath(next, "");
+  if (safe) {
+    return { pathname: "/kayit" as const, query: { next: safe } };
+  }
+  return "/kayit" as const;
+}
+
 export function getToken(): string | null {
   if (!canUseDom()) return null;
   return (

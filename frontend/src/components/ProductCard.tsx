@@ -2,6 +2,7 @@
 
 import { AppImage as Image } from "@/components/AppImage";
 import { Link } from "@/i18n/routing";
+import { productHref } from "@/i18n/hrefs";
 import { useTranslations } from "next-intl";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { FavoriteButton } from "@/components/FavoriteButton";
@@ -59,7 +60,7 @@ export function ProductCard({
       <div className={`absolute z-10 ${compact ? "right-1.5 top-1.5" : "right-2.5 top-2.5"}`}>
         <FavoriteButton productId={product.id} size="sm" />
       </div>
-      <Link href={`/urunler/${product.slug}`} className="flex flex-1 flex-col">
+      <Link href={productHref(product.slug)} className="flex flex-1 flex-col">
         <div
           className={`card-media-shine relative overflow-hidden rounded-lg ${
             compact

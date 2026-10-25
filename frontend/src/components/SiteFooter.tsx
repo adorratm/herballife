@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
+import { Link, toLinkHref } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { Reveal } from "@/components/Reveal";
 import { FooterNavLinks } from "@/components/FooterNavLinks";
@@ -75,7 +75,7 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
                 {UTILITY_CHIPS.map((l) => (
                   <Link
                     key={l.href}
-                    href={l.href}
+                    href={toLinkHref(l.href)}
                     className="rounded-full border border-outline-variant/40 bg-white px-3.5 py-1.5 text-xs font-semibold text-on-surface-variant transition-colors hover:border-primary hover:text-primary"
                   >
                     {tFooter(l.key)}
@@ -167,7 +167,7 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
           {navigation.footerLegal.map((item) => (
             <Link
               key={item.href}
-              href={item.href}
+              href={toLinkHref(item.href)}
               className="text-on-surface-variant hover:text-primary"
             >
               {item.label}

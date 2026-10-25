@@ -17,7 +17,7 @@ export async function getProductsPaged(
   params?: ProductQuery,
 ): Promise<Paginated<Product>> {
   const { locale, currency } = await ctx();
-  return getProductsPagedBase({ locale, currency, ...params });
+  return getProductsPagedBase({ ...params, locale, currency });
 }
 
 export async function getCategories(): Promise<Category[]> {

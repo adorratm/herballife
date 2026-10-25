@@ -1,0 +1,961 @@
+{
+  "nav.blog": {
+    "en": "Blog",
+    "tr": "Yazılar"
+  },
+  "nav.faq": {
+    "en": "FAQ",
+    "tr": "SSS"
+  },
+  "nav.coaching": {
+    "en": "Coaching",
+    "tr": "Koçluk"
+  },
+  "header.support": {
+    "en": "Support",
+    "tr": "Destek"
+  },
+  "home.categoryHub.icecekler.name": {
+    "en": "Drinks",
+    "tr": "İçecekler"
+  },
+  "home.categoryHub.atistirmalik.name": {
+    "en": "Snacks",
+    "tr": "Atıştırmalık"
+  },
+  "home.fallbackFaqTitle": {
+    "en": "FAQ",
+    "tr": "Sık Sorulanlar"
+  },
+  "cart.guestEmailPlaceholder": {
+    "en": "you@example.com",
+    "tr": "ornek@eposta.com"
+  },
+  "checkout.vatLine": {
+    "en": "VAT ({rate}%{included})",
+    "tr": "KDV (%{rate}%{included})"
+  },
+  "checkout.legalKvkkLink": {
+    "en": "KVKK",
+    "tr": "KVKK"
+  },
+  "product.ratio": {
+    "en": "Ratio",
+    "tr": "Oran"
+  },
+  "product.specHerbalifeId": {
+    "en": "Herbalife ID",
+    "tr": "Herbalife ID"
+  },
+  "whatsapp.label": {
+    "en": "WhatsApp",
+    "tr": "WhatsApp"
+  },
+  "auth.emailLabel": {
+    "en": "Email",
+    "tr": "E-posta"
+  },
+  "blog.readMinutes": {
+    "en": "{minutes} min",
+    "tr": "{minutes} dk"
+  },
+  "forms.email": {
+    "en": "Email",
+    "tr": "E-posta"
+  },
+  "forms.emailExample": {
+    "en": "you@example.com",
+    "tr": "ornek@eposta.com"
+  },
+  "notFoundPage.linkFaq": {
+    "en": "FAQ",
+    "tr": "SSS"
+  },
+  "guestOrder.orderNumberPlaceholder": {
+    "en": "HBL-…",
+    "tr": "HBL-…"
+  },
+  "guestOrder.emailLabel": {
+    "en": "Email",
+    "tr": "E-posta"
+  },
+  "tracking.liveBadge": {
+    "en": "Live",
+    "tr": "Canlı"
+  },
+  "tracking.codeLabel": {
+    "en": "Code",
+    "tr": "Kod"
+  },
+  "tracking.statusLabel": {
+    "en": "Status",
+    "tr": "Durum"
+  },
+  "tracking.movementsHeading": {
+    "en": "Updates",
+    "tr": "Hareketler"
+  },
+  "account.detail": {
+    "en": "Details",
+    "tr": "Detay"
+  },
+  "faqPage.kicker": {
+    "en": "Support",
+    "tr": "Destek"
+  },
+  "reviewsPage.kicker": {
+    "en": "Feedback",
+    "tr": "Geri bildirim"
+  },
+  "aboutPage.email": {
+    "en": "Email",
+    "tr": "E-posta"
+  },
+  "footer.navigation": {
+    "en": "Navigation",
+    "tr": "Navigasyon"
+  },
+  "footer.approvedBadge": {
+    "en": "Verified",
+    "tr": "Onaylı"
+  },
+  "footer.bankAccounts": {
+    "en": "Bank accounts",
+    "tr": "Banka hesapları"
+  },
+  "footer.myFavorites": {
+    "en": "My favorites",
+    "tr": "Favorilerim"
+  },
+  "footer.membershipCta": {
+    "en": "Official Herbalife membership",
+    "tr": "Resmi Herbalife üyeliği"
+  },
+  "footer.map": {
+    "en": "Map",
+    "tr": "Harita"
+  },
+  "footer.googleReview": {
+    "en": "Google review",
+    "tr": "Google Yorum"
+  },
+  "footer.whatsappPrefill": {
+    "en": "Hello, I'm writing about {brand}.",
+    "tr": "Merhaba, {brand} hakkında yazıyorum."
+  },
+  "footer.legalDisclaimerFallback": {
+    "en": "This site belongs to an independent Herbalife Nutrition distributor. Products are 100% original.",
+    "tr": "Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir. Ürünler %100 orijinaldir."
+  },
+  "locale.language": {
+    "en": "Language",
+    "tr": "Dil"
+  },
+  "locale.currency": {
+    "en": "Currency",
+    "tr": "Para birimi"
+  },
+  "trustMarquee.item0": {
+    "en": "100% genuine products",
+    "tr": "%100 Orijinal Ürün"
+  },
+  "trustMarquee.item2": {
+    "en": "One-to-one coaching",
+    "tr": "Birebir Koç Takibi"
+  },
+  "trustMarquee.item3": {
+    "en": "Secure payment",
+    "tr": "Güvenli Ödeme"
+  },
+  "trustMarquee.item5": {
+    "en": "WhatsApp support",
+    "tr": "WhatsApp Destek"
+  },
+  "trustMarquee.item6": {
+    "en": "Value bundles",
+    "tr": "Avantajlı Setler"
+  },
+  "trustMarquee.item7": {
+    "en": "Free shaker gift",
+    "tr": "Karıştırıcı hediyesi"
+  },
+  "trustMarquee.srOnly": {
+    "en": "Genuine products, free shipping, coaching follow-up, and secure payment.",
+    "tr": "Orijinal ürün, ücretsiz kargo, koç takibi ve güvenli ödeme güvenceleri."
+  },
+  "orderStatus.pending_payment": {
+    "en": "Payment pending",
+    "tr": "Ödeme bekleniyor"
+  },
+  "orderStatus.paid": {
+    "en": "Payment received",
+    "tr": "Ödeme alındı"
+  },
+  "orderStatus.processing": {
+    "en": "Preparing",
+    "tr": "Hazırlanıyor"
+  },
+  "orderStatus.shipped": {
+    "en": "Shipped",
+    "tr": "Kargoya verildi"
+  },
+  "orderStatus.delivered": {
+    "en": "Delivered",
+    "tr": "Teslim edildi"
+  },
+  "orderStatus.cancelled": {
+    "en": "Cancelled",
+    "tr": "İptal edildi"
+  },
+  "orderStatus.refunded": {
+    "en": "Refunded",
+    "tr": "İade edildi"
+  },
+  "orderStatus.shipment_pending": {
+    "en": "Pending",
+    "tr": "Beklemede"
+  },
+  "orderStatus.shipment_label_created": {
+    "en": "Label created",
+    "tr": "Etiket oluşturuldu"
+  },
+  "orderStatus.shipment_in_transit": {
+    "en": "In transit",
+    "tr": "Yolda"
+  },
+  "orderStatus.shipment_delivered": {
+    "en": "Delivered",
+    "tr": "Teslim edildi"
+  },
+  "orderStatus.shipment_failed": {
+    "en": "Failed",
+    "tr": "Başarısız"
+  },
+  "orderStatus.shipment_returned": {
+    "en": "Return shipment",
+    "tr": "İade kargo"
+  },
+  "orderStatus.step_pending_payment": {
+    "en": "Payment",
+    "tr": "Ödeme"
+  },
+  "orderStatus.step_paid": {
+    "en": "Confirmed",
+    "tr": "Onay"
+  },
+  "orderStatus.step_processing": {
+    "en": "Prep",
+    "tr": "Hazırlık"
+  },
+  "orderStatus.step_shipped": {
+    "en": "Shipping",
+    "tr": "Kargo"
+  },
+  "orderStatus.step_delivered": {
+    "en": "Delivered",
+    "tr": "Teslim"
+  },
+  "orderStatus.hint_pending_payment": {
+    "en": "Payment not completed. Finish the process if you were sent to the payment screen.",
+    "tr": "Ödeme tamamlanmadı. Ödeme ekranına yönlendirildiyseniz işlemi bitirin."
+  },
+  "orderStatus.hint_paid": {
+    "en": "Payment received. Your order is queued for preparation.",
+    "tr": "Ödemeniz alındı. Siparişiniz hazırlık sırasına alındı."
+  },
+  "orderStatus.hint_processing": {
+    "en": "Your order is being prepared. You will be emailed when it ships.",
+    "tr": "Siparişiniz hazırlanıyor. Kargoya verildiğinde e-posta ile bilgilendirileceksiniz."
+  },
+  "orderStatus.hint_shipped": {
+    "en": "The carrier has picked up your package. Track it with your code.",
+    "tr": "Paketinizi kargo firması teslim aldı. Takip koduyla durumu izleyebilirsiniz."
+  },
+  "orderStatus.hint_delivered": {
+    "en": "Delivered. Enjoy — leave a review on the product page if you like.",
+    "tr": "Teslim edildi. Afiyet olsun — dilerseniz ürün sayfasından yorum bırakın."
+  },
+  "orderStatus.hint_cancelled": {
+    "en": "This order was cancelled.",
+    "tr": "Bu sipariş iptal edildi."
+  },
+  "orderStatus.hint_refunded": {
+    "en": "A refund was processed for this order.",
+    "tr": "Bu sipariş için iade işlemi yapıldı."
+  },
+  "contactPage.phone": {
+    "en": "Phone",
+    "tr": "Telefon"
+  },
+  "contactPage.email": {
+    "en": "Email",
+    "tr": "E-posta"
+  },
+  "contactPage.writeNow": {
+    "en": "Message now",
+    "tr": "Hemen yaz"
+  },
+  "contactPage.hours": {
+    "en": "Opening hours",
+    "tr": "Çalışma saatleri"
+  },
+  "contactPage.writeWhatsapp": {
+    "en": "Message on WhatsApp",
+    "tr": "WhatsApp ile yaz"
+  },
+  "contactPage.sendMessage": {
+    "en": "Send a message",
+    "tr": "Mesaj gönder"
+  },
+  "contactPage.reachUs": {
+    "en": "Get in touch",
+    "tr": "Bize ulaşın"
+  },
+  "contactPage.subject": {
+    "en": "Subject",
+    "tr": "Konu"
+  },
+  "contactPage.message": {
+    "en": "Message",
+    "tr": "Mesaj"
+  },
+  "contactPage.subjectGeneral": {
+    "en": "General",
+    "tr": "Genel"
+  },
+  "contactPage.subjectCoaching": {
+    "en": "Nutrition coaching",
+    "tr": "Beslenme danışmanlığı"
+  },
+  "contactPage.subjectLogistics": {
+    "en": "Order / shipping",
+    "tr": "Sipariş / kargo"
+  },
+  "contactPage.subjectTechnical": {
+    "en": "Technical",
+    "tr": "Teknik"
+  },
+  "contactPage.sending": {
+    "en": "Sending…",
+    "tr": "Gönderiliyor…"
+  },
+  "contactPage.send": {
+    "en": "Send",
+    "tr": "Gönder"
+  },
+  "contactPage.success": {
+    "en": "Message received. We will reply as soon as we can.",
+    "tr": "Mesajınız alındı. En kısa sürede dönüş yapacağız."
+  },
+  "contactPage.error": {
+    "en": "Could not send. Please try again later.",
+    "tr": "Gönderim başarısız. Lütfen daha sonra tekrar deneyin."
+  },
+  "contactPage.waPrefill": {
+    "en": "Hello, I'm writing from the {brand} contact page.",
+    "tr": "Merhaba, {brand} iletişim sayfasından yazıyorum."
+  },
+  "contactPage.metaDescription": {
+    "en": "Write to us for product advice, orders, and nutrition tracking. {brand} — independent distributor.",
+    "tr": "Ürün danışmanlığı, sipariş ve beslenme takibi için bize yazın. {brand} — bağımsız distribütör."
+  },
+  "contactPage.metaDescriptionLocation": {
+    "en": "Contact {brand} — {location} workshop and order questions.",
+    "tr": "{brand} ile iletişime geçin — {location} atölye ve sipariş soruları."
+  },
+  "paymentFailure.loading": {
+    "en": "Loading payment result…",
+    "tr": "Ödeme sonucu yükleniyor…"
+  },
+  "paymentFailure.kicker": {
+    "en": "Payment / Failed",
+    "tr": "Ödeme / Başarısız"
+  },
+  "paymentFailure.lead": {
+    "en": "If your card was not charged, you can retry payment for the same order.",
+    "tr": "Kartınızdan çekim yapılmadıysa endişelenmeyin. Aynı sipariş için ödemeyi yeniden deneyebilirsiniz."
+  },
+  "paymentFailure.orderNo": {
+    "en": "Order no.",
+    "tr": "Sipariş no"
+  },
+  "paymentFailure.providerDeclined": {
+    "en": "The payment provider did not approve the transaction.",
+    "tr": "Ödeme sağlayıcısı işlemi onaylamadı."
+  },
+  "paymentFailure.errNoOrder": {
+    "en": "Order not found. Please place a new order.",
+    "tr": "Sipariş bilgisi bulunamadı. Yeni sipariş oluşturun."
+  },
+  "paymentFailure.errRedirect": {
+    "en": "Payment redirect was not received.",
+    "tr": "Ödeme yönlendirmesi alınamadı."
+  },
+  "paymentFailure.errRetry": {
+    "en": "Could not restart payment.",
+    "tr": "Yeniden ödeme başlatılamadı."
+  },
+  "paymentFailure.retry": {
+    "en": "Retry payment",
+    "tr": "Ödemeyi yeniden dene"
+  },
+  "paymentFailure.newOrder": {
+    "en": "New order",
+    "tr": "Yeni sipariş"
+  },
+  "paymentFailure.continueShopping": {
+    "en": "Continue shopping",
+    "tr": "Alışverişe devam"
+  },
+  "paymentFailure.orderStatus": {
+    "en": "Order status",
+    "tr": "Sipariş durumu"
+  },
+  "paymentFailure.redirecting": {
+    "en": "Redirecting…"
+  },
+  "paymentSuccess.loading": {
+    "en": "Loading…",
+    "tr": "Yükleniyor…"
+  },
+  "paymentSuccess.kicker": {
+    "en": "Payment successful",
+    "tr": "Ödeme başarılı"
+  },
+  "paymentSuccess.lead": {
+    "en": "Payment received. We have started preparing your order; we will notify you by email and in your account when it ships.",
+    "tr": "Ödemeniz alındı. Siparişiniz hazırlanmaya başladı; kargoya verildiğinde e-posta ve hesabınızdan bilgilendireceğiz."
+  },
+  "paymentSuccess.orderReceived": {
+    "en": "Order received",
+    "tr": "Sipariş alındı"
+  },
+  "paymentSuccess.orderNo": {
+    "en": "Order no.",
+    "tr": "Sipariş no"
+  },
+  "paymentSuccess.orderNoEmail": {
+    "en": "Your order number will be sent to your email.",
+    "tr": "Sipariş numaranız e-postanıza iletilecek."
+  },
+  "paymentSuccess.orderDetail": {
+    "en": "Order details",
+    "tr": "Sipariş detayı"
+  },
+  "paymentSuccess.lookupOrder": {
+    "en": "Track order",
+    "tr": "Siparişi sorgula"
+  },
+  "paymentSuccess.myAccount": {
+    "en": "My account",
+    "tr": "Hesabım"
+  },
+  "paymentSuccess.signIn": {
+    "en": "Sign in",
+    "tr": "Giriş yap"
+  },
+  "paymentSuccess.continueShopping": {
+    "en": "Continue shopping",
+    "tr": "Alışverişe devam"
+  },
+  "paymentSuccess.trackShipment": {
+    "en": "Shipment tracking",
+    "tr": "Kargo takip"
+  },
+  "paymentNotify.modalTitle": {
+    "en": "Notification ready",
+    "tr": "Bildirim hazır"
+  },
+  "paymentNotify.modalBody": {
+    "en": "Your payment notice was sent via WhatsApp. Your order will be processed after confirmation.",
+    "tr": "WhatsApp üzerinden ödeme bildiriminiz iletildi. Onay sonrası siparişiniz işleme alınır."
+  },
+  "paymentNotify.eyebrow": {
+    "en": "Wire transfer · EFT",
+    "tr": "Havale · EFT"
+  },
+  "paymentNotify.leadBefore": {
+    "en": "After transferring, fill out the form. Details are sent to the distributor via WhatsApp. See",
+    "tr": "Havale yaptıktan sonra formu doldurun. Bilgiler WhatsApp ile distribütöre iletilir."
+  },
+  "paymentNotify.bankAccounts": {
+    "en": "bank accounts",
+    "tr": "banka hesapları"
+  },
+  "paymentNotify.leadAfter": {
+    "en": "for account details.",
+    "tr": "sayfasına bakın."
+  },
+  "paymentNotify.step1Title": {
+    "en": "Transfer",
+    "tr": "Havale"
+  },
+  "paymentNotify.step1Body": {
+    "en": "Send the amount to one of our bank accounts.",
+    "tr": "Banka hesaplarından birine tutarı gönderin."
+  },
+  "paymentNotify.step2Title": {
+    "en": "Notification form",
+    "tr": "Bildirim formu"
+  },
+  "paymentNotify.step2Body": {
+    "en": "Enter order no., amount, and sender details.",
+    "tr": "Sipariş no, tutar ve gönderen bilgisini yazın."
+  },
+  "paymentNotify.step3Title": {
+    "en": "Confirmation",
+    "tr": "Onay"
+  },
+  "paymentNotify.step3Body": {
+    "en": "After WhatsApp notice, your order is processed.",
+    "tr": "WhatsApp bildirimi sonrası siparişiniz işleme alınır."
+  },
+  "paymentNotify.waMessageIntro": {
+    "en": "Hello, payment notification:",
+    "tr": "Merhaba, ödeme bildirimi:"
+  },
+  "paymentNotify.waOrder": {
+    "en": "Order",
+    "tr": "Sipariş"
+  },
+  "paymentNotify.waAmount": {
+    "en": "Amount",
+    "tr": "Tutar"
+  },
+  "paymentNotify.waSender": {
+    "en": "Sender",
+    "tr": "Gönderen"
+  },
+  "paymentNotify.waNote": {
+    "en": "Note",
+    "tr": "Not"
+  },
+  "paymentNotify.submit": {
+    "en": "Notify via WhatsApp",
+    "tr": "WhatsApp ile bildir"
+  },
+  "paymentNotify.whyTitle": {
+    "en": "Why notify?",
+    "tr": "Neden bildirim?"
+  },
+  "paymentNotify.why1": {
+    "en": "We match your payment to your order",
+    "tr": "Ödemenizi siparişinizle eşleştiririz"
+  },
+  "paymentNotify.why2": {
+    "en": "After approval, we prepare for shipping quickly",
+    "tr": "Onay sonrası hızlıca kargoya hazırlanır"
+  },
+  "paymentNotify.why3": {
+    "en": "We send you the tracking code",
+    "tr": "Takip kodunu size iletiriz"
+  },
+  "paymentNotify.tip": {
+    "en": "Tip",
+    "tr": "İpucu"
+  },
+  "paymentNotify.tipBody": {
+    "en": "Adding a receipt screenshot in WhatsApp speeds up confirmation.",
+    "tr": "Dekont ekran görüntüsünü WhatsApp sohbetine eklemek onayı hızlandırır."
+  },
+  "paymentNotify.viewIbans": {
+    "en": "View IBANs",
+    "tr": "IBAN'ları gör"
+  },
+  "paymentNotify.notePlaceholder": {
+    "en": "Receipt time, bank name…",
+    "tr": "Dekont saati, banka adı…"
+  },
+  "paymentNotify.asideShip": {
+    "en": "After approval, we prepare for shipping quickly",
+    "tr": "After approval, we prepare for shipping quickly"
+  },
+  "orderDetail.loading": {
+    "en": "Loading order…",
+    "tr": "Sipariş yükleniyor…"
+  },
+  "orderDetail.notFound": {
+    "en": "Order not found.",
+    "tr": "Sipariş bulunamadı."
+  },
+  "orderDetail.backAccount": {
+    "en": "Back to account",
+    "tr": "← Hesabım"
+  },
+  "orderDetail.completePayment": {
+    "en": "Complete payment",
+    "tr": "Ödemeyi tamamla"
+  },
+  "orderDetail.redirecting": {
+    "en": "Redirecting…",
+    "tr": "Yönlendiriliyor…"
+  },
+  "orderDetail.errRedirect": {
+    "en": "Payment redirect was not received.",
+    "tr": "Ödeme yönlendirmesi alınamadı."
+  },
+  "orderDetail.errRetry": {
+    "en": "Retry payment failed",
+    "tr": "Yeniden ödeme başarısız"
+  },
+  "orderDetail.itemsHeading": {
+    "en": "Items",
+    "tr": "Kalemler"
+  },
+  "orderDetail.deliveryHeading": {
+    "en": "Delivery",
+    "tr": "Teslimat"
+  },
+  "orderDetail.shippingHeading": {
+    "en": "Shipping",
+    "tr": "Kargo"
+  },
+  "orderDetail.pickupInfo": {
+    "en": "Store pickup — collect from the store when your order is ready.",
+    "tr": "Mağazadan teslim — sipariş hazırlandığında mağazadan alabilirsiniz."
+  },
+  "orderDetail.noShipmentYet": {
+    "en": "No shipment record yet. Tracking will appear here when the order is prepared.",
+    "tr": "Henüz kargo kaydı oluşmadı. Sipariş hazırlandığında takip bilgisi burada görünür."
+  },
+  "orderDetail.trackingPending": {
+    "en": "Code pending",
+    "tr": "Kod bekleniyor"
+  },
+  "orderDetail.liveTrack": {
+    "en": "Live tracking",
+    "tr": "Canlı takip"
+  },
+  "orderDetail.copied": {
+    "en": "Copied",
+    "tr": "Kopyalandı"
+  },
+  "orderDetail.copyCode": {
+    "en": "Copy code",
+    "tr": "Kodu kopyala"
+  },
+  "orderDetail.carrierSite": {
+    "en": "Carrier website",
+    "tr": "Kargo sitesi"
+  },
+  "orderDetail.returnsHeading": {
+    "en": "Cancel / Return",
+    "tr": "İptal / İade"
+  },
+  "orderDetail.typeCancel": {
+    "en": "Cancel",
+    "tr": "İptal"
+  },
+  "orderDetail.typeReturn": {
+    "en": "Return / withdrawal",
+    "tr": "İade / cayma"
+  },
+  "orderDetail.returnRequested": {
+    "en": "Under review",
+    "tr": "İncelemede"
+  },
+  "orderDetail.returnApproved": {
+    "en": "Approved",
+    "tr": "Onaylandı"
+  },
+  "orderDetail.returnRejected": {
+    "en": "Rejected",
+    "tr": "Reddedildi"
+  },
+  "orderDetail.returnCompleted": {
+    "en": "Completed",
+    "tr": "Tamamlandı"
+  },
+  "orderDetail.adminNote": {
+    "en": "Note",
+    "tr": "Not"
+  },
+  "orderDetail.cancelHint": {
+    "en": "Order not shipped yet — you can open a cancellation request.",
+    "tr": "Sipariş henüz kargoya verilmedi — iptal talebi açabilirsiniz."
+  },
+  "orderDetail.returnHint": {
+    "en": "After delivery / shipping you can open a return request (14 days).",
+    "tr": "Teslim / kargo sonrası cayma için iade talebi açabilirsiniz (14 gün)."
+  },
+  "orderDetail.reasonPlaceholder": {
+    "en": "Describe your reason (at least 10 characters)",
+    "tr": "Talebinizin nedenini yazın (en az 10 karakter)"
+  },
+  "orderDetail.requestSent": {
+    "en": "Request received. We will notify you after review.",
+    "tr": "Talebiniz alındı. İnceleme sonrası bilgilendirileceksiniz."
+  },
+  "orderDetail.requestFailed": {
+    "en": "Could not submit request",
+    "tr": "Talep gönderilemedi"
+  },
+  "orderDetail.sending": {
+    "en": "Sending…",
+    "tr": "Gönderiliyor…"
+  },
+  "orderDetail.submitRequest": {
+    "en": "Submit request",
+    "tr": "Talep gönder"
+  },
+  "orderDetail.returnsPolicyBefore": {
+    "en": "See",
+    "tr": "Ayrıntılar için"
+  },
+  "orderDetail.returnsPolicyLink": {
+    "en": "returns & cancellation terms",
+    "tr": "iptal ve iade koşulları"
+  },
+  "orderDetail.openRequestReview": {
+    "en": "Your open request is under review.",
+    "tr": "Açık talebiniz inceleniyor."
+  },
+  "orderDetail.cannotOpenRequest": {
+    "en": "A new request cannot be opened for this order now.",
+    "tr": "Bu sipariş için şu an yeni talep açılamaz."
+  },
+  "orderDetail.amountHeading": {
+    "en": "Amount",
+    "tr": "Tutar"
+  },
+  "orderDetail.subtotal": {
+    "en": "Subtotal",
+    "tr": "Ara toplam"
+  },
+  "orderDetail.discount": {
+    "en": "Discount",
+    "tr": "İndirim"
+  },
+  "orderDetail.deliveryLabel": {
+    "en": "Delivery",
+    "tr": "Teslimat"
+  },
+  "orderDetail.shippingLabel": {
+    "en": "Shipping",
+    "tr": "Kargo"
+  },
+  "orderDetail.pickupFree": {
+    "en": "Store · Free",
+    "tr": "Mağaza · Ücretsiz"
+  },
+  "orderDetail.vat": {
+    "en": "VAT",
+    "tr": "KDV"
+  },
+  "orderDetail.total": {
+    "en": "Total",
+    "tr": "Toplam"
+  },
+  "orderDetail.deliveryAddress": {
+    "en": "Delivery address",
+    "tr": "Teslimat adresi"
+  },
+  "orderDetail.billingAddress": {
+    "en": "Billing address",
+    "tr": "Fatura adresi"
+  },
+  "notificationsPage.breadcrumb": {
+    "en": "Account / Notifications",
+    "tr": "Hesap / Bildirimler"
+  },
+  "notificationsPage.title": {
+    "en": "My account",
+    "tr": "Hesabım"
+  },
+  "notificationsPage.subtitle": {
+    "en": "Notifications",
+    "tr": "Bildirimler"
+  },
+  "notificationsPage.prefs": {
+    "en": "Preferences",
+    "tr": "Tercihler"
+  },
+  "notificationsPage.inbox": {
+    "en": "Inbox",
+    "tr": "Gelen kutusu"
+  },
+  "notificationsPage.markAllRead": {
+    "en": "Mark all as read",
+    "tr": "Tümünü okundu işaretle"
+  },
+  "notificationsPage.empty": {
+    "en": "No notifications",
+    "tr": "Bildirim yok"
+  },
+  "notificationsPage.loadError": {
+    "en": "Could not load",
+    "tr": "Yüklenemedi"
+  },
+  "notificationsPage.toggleInApp": {
+    "en": "In-app notifications",
+    "tr": "Uygulama içi bildirimler"
+  },
+  "notificationsPage.togglePush": {
+    "en": "Browser notifications",
+    "tr": "Tarayıcı bildirimleri"
+  },
+  "notificationsPage.toggleOrders": {
+    "en": "Orders",
+    "tr": "Siparişler"
+  },
+  "notificationsPage.toggleShipping": {
+    "en": "Shipping",
+    "tr": "Kargo"
+  },
+  "notificationsPage.toggleReturns": {
+    "en": "Returns / cancel",
+    "tr": "İade / iptal"
+  },
+  "notificationsPage.toggleAccount": {
+    "en": "Account",
+    "tr": "Hesap"
+  },
+  "notificationsPage.toggleMarketing": {
+    "en": "Cart reminders",
+    "tr": "Sepet hatırlatmaları"
+  },
+  "legalPage.comingSoon": {
+    "en": "This legal text will be published soon.",
+    "tr": "Bu yasal metin yakında yayınlanacaktır."
+  },
+  "legalPage.version": {
+    "en": "Version {version}",
+    "tr": "Sürüm {version}"
+  },
+  "legalSeo.kvkk.title": {
+    "en": "KVKK",
+    "tr": "KVKK"
+  },
+  "legalSeo.cerez-politikasi.description": {
+    "en": "Information about cookies used on this website.",
+    "tr": "Web sitesinde kullanılan çerezler hakkında bilgilendirme."
+  },
+  "legalSeo.mesafeli-satis.description": {
+    "en": "Distance sales contract text for online orders.",
+    "tr": "Çevrimiçi siparişler için mesafeli satış sözleşmesi metni."
+  },
+  "legalSeo.on-bilgilendirme.description": {
+    "en": "Consumer pre-contract information form.",
+    "tr": "Mesafeli satış öncesi tüketici ön bilgilendirme formu."
+  },
+  "legalSeo.iptal-iade.description": {
+    "en": "Order cancellation, withdrawal, and return conditions.",
+    "tr": "Sipariş iptal, cayma hakkı ve iade koşulları."
+  },
+  "legalSeo.musteri-memnuniyeti.title": {
+    "en": "Customer Satisfaction",
+    "tr": "Müşteri Memnuniyeti"
+  },
+  "legalSeo.musteri-memnuniyeti.description": {
+    "en": "Customer satisfaction policy and support process.",
+    "tr": "Müşteri memnuniyeti politikası ve destek süreci."
+  },
+  "legalSeo.guvenli-alisveris.title": {
+    "en": "Secure Shopping",
+    "tr": "Güvenli Alışveriş"
+  },
+  "legalSeo.guvenli-alisveris.description": {
+    "en": "Secure PayTR payment, SSL, and data protection.",
+    "tr": "PayTR ile güvenli ödeme, SSL ve kişisel veri koruma."
+  },
+  "legalSeo.aydinlatma-metni.title": {
+    "en": "Privacy Notice",
+    "tr": "Aydınlatma Metni"
+  },
+  "legalSeo.aydinlatma-metni.description": {
+    "en": "Notice on processing of personal data.",
+    "tr": "Kişisel verilerin işlenmesine ilişkin aydınlatma metni."
+  },
+  "legalSeo.keywords": {
+    "en": "legal",
+    "tr": "yasal"
+  },
+  "catalogSeo.supplement": {
+    "en": "Supplement / Formula",
+    "tr": "Takviye / Formül"
+  },
+  "catalogSeo.beverage": {
+    "en": "Beverage",
+    "tr": "İçecek"
+  },
+  "catalogSeo.herbal_tea": {
+    "en": "Herbal tea",
+    "tr": "Bitki çayı"
+  },
+  "catalogSeo.tea": {
+    "en": "Tea",
+    "tr": "Çay"
+  },
+  "catalogSeo.other": {
+    "en": "Other",
+    "tr": "Diğer"
+  },
+  "catalogSeo.productsPrefix": {
+    "en": "Products",
+    "tr": "Ürünler"
+  },
+  "catalogSeo.defaultType": {
+    "en": "Products > Supplements",
+    "tr": "Ürünler > Takviye"
+  },
+  "accountTabs.ariaLabel": {
+    "en": "Account sections",
+    "tr": "Hesap bölümleri"
+  },
+  "coachingPage.breadcrumbCoaching": {
+    "en": "Coaching",
+    "tr": "Koçluk"
+  },
+  "promo.defaultBadge": {
+    "en": "DEAL",
+    "tr": "FIRSAT"
+  },
+  "promo.minute": {
+    "en": "Min",
+    "tr": "Dakika"
+  },
+  "promo.dealStrip": {
+    "en": "Deal",
+    "tr": "Fırsat"
+  },
+  "cookies.marketing": {
+    "en": "Marketing (Google Ads / Meta)",
+    "tr": "Pazarlama (Google Ads / Meta)"
+  },
+  "productReviews.writeTitle": {
+    "en": "Write a review",
+    "tr": "Yorum yaz"
+  },
+  "productReviews.ratingLabel": {
+    "en": "Rating",
+    "tr": "Puan"
+  },
+  "productReviews.bodyLabel": {
+    "en": "Review",
+    "tr": "Yorum"
+  },
+  "wellnessChart.weight": {
+    "en": "Weight",
+    "tr": "Kilo"
+  },
+  "wellnessChart.waist": {
+    "en": "Waist",
+    "tr": "Bel"
+  },
+  "wellnessPage.mealSnack": {
+    "en": "Snack",
+    "tr": "Ara öğün"
+  },
+  "wellnessPage.startLabel": {
+    "en": "Start",
+    "tr": "Başlangıç"
+  },
+  "wellnessPage.tableStatus": {
+    "en": "Status",
+    "tr": "Durum"
+  },
+  "wellnessPage.goal": {
+    "en": "Goal",
+    "tr": "Hedef"
+  }
+}

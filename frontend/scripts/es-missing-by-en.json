@@ -1,0 +1,2238 @@
+{
+  "Campaign": {
+    "paths": [
+      "product.campaign"
+    ],
+    "tr": "Kampanya"
+  },
+  "off": {
+    "paths": [
+      "product.discount"
+    ],
+    "tr": "indirim"
+  },
+  " · Out": {
+    "paths": [
+      "product.variantOut"
+    ],
+    "tr": " · Yok"
+  },
+  "Flavor note (info)": {
+    "paths": [
+      "product.flavorNotes"
+    ],
+    "tr": "Lezzet notası (bilgi)"
+  },
+  "Shaker color": {
+    "paths": [
+      "product.shakerColor"
+    ],
+    "tr": "Karıştırıcı rengi"
+  },
+  "(VAT included)": {
+    "paths": [
+      "product.vatIncluded"
+    ],
+    "tr": "(KDV dahil)"
+  },
+  "none": {
+    "paths": [
+      "product.stockNone"
+    ],
+    "tr": "yok"
+  },
+  "Only {count} left — limited stock": {
+    "paths": [
+      "product.lowStock"
+    ],
+    "tr": "Son {count} adet — stok sınırlı"
+  },
+  "Genuine product": {
+    "paths": [
+      "product.trustOriginal"
+    ],
+    "tr": "Orijinal ürün"
+  },
+  "Secure payment (PayTR)": {
+    "paths": [
+      "product.trustPaytr"
+    ],
+    "tr": "Güvenli ödeme (PayTR)"
+  },
+  "14-day withdrawal right": {
+    "paths": [
+      "product.trustReturn"
+    ],
+    "tr": "14 gün cayma hakkı"
+  },
+  "Ask on WhatsApp — typical reply under 1 hour": {
+    "paths": [
+      "product.whatsappConsult"
+    ],
+    "tr": "WhatsApp ile danış — ortalama yanıt 1 saatten kısa"
+  },
+  "Product not found": {
+    "paths": [
+      "product.notFound"
+    ],
+    "tr": "Ürün bulunamadı"
+  },
+  "{count} reviews": {
+    "paths": [
+      "product.reviewsCount"
+    ],
+    "tr": "{count} değerlendirme"
+  },
+  "Usage tips": {
+    "paths": [
+      "product.usageGuide"
+    ],
+    "tr": "Kullanım önerisi"
+  },
+  "Storage": {
+    "paths": [
+      "product.storage"
+    ],
+    "tr": "Saklama"
+  },
+  "{name} category →": {
+    "paths": [
+      "product.categoryLink"
+    ],
+    "tr": "{name} kategorisi →"
+  },
+  "Frequently bought together": {
+    "paths": [
+      "product.relatedEyebrow"
+    ],
+    "tr": "Birlikte alınanlar"
+  },
+  "Complete with {name}": {
+    "paths": [
+      "product.relatedWithCategory"
+    ],
+    "tr": "{name} ile tamamla"
+  },
+  "Often bought together": {
+    "paths": [
+      "product.relatedDefault"
+    ],
+    "tr": "Sık birlikte alınanlar"
+  },
+  "Herbalife ID": {
+    "paths": [
+      "product.specHerbalifeId"
+    ],
+    "tr": "Herbalife ID"
+  },
+  "Type": {
+    "paths": [
+      "product.specKind"
+    ],
+    "tr": "Tür"
+  },
+  "Form / type": {
+    "paths": [
+      "product.specForm"
+    ],
+    "tr": "Form / tip"
+  },
+  "Key ingredients": {
+    "paths": [
+      "product.specHighlight"
+    ],
+    "tr": "İçerik vurgusu"
+  },
+  "Origin": {
+    "paths": [
+      "product.specOrigin",
+      "catalog.originLabel"
+    ],
+    "tr": "Üretim / menşei"
+  },
+  "Target region": {
+    "paths": [
+      "product.specRegion"
+    ],
+    "tr": "Hedef bölge"
+  },
+  "Serving size": {
+    "paths": [
+      "product.specServing"
+    ],
+    "tr": "Porsiyon / servis"
+  },
+  "Lot / batch no.": {
+    "paths": [
+      "product.specLot"
+    ],
+    "tr": "Lot / parti no"
+  },
+  "Package": {
+    "paths": [
+      "product.specPackage"
+    ],
+    "tr": "Paket"
+  },
+  "Flavor options": {
+    "paths": [
+      "product.specFlavors"
+    ],
+    "tr": "Lezzet seçenekleri"
+  },
+  "Bright green": {
+    "paths": [
+      "product.shakerGreen"
+    ],
+    "tr": "Parlak yeşil"
+  },
+  "Adding…": {
+    "paths": [
+      "product.adding"
+    ],
+    "tr": "Ekleniyor…"
+  },
+  "Added to cart ✓": {
+    "paths": [
+      "product.addedCheck"
+    ],
+    "tr": "Sepete eklendi ✓"
+  },
+  "Could not add to cart. Check your connection.": {
+    "paths": [
+      "product.addError"
+    ],
+    "tr": "Sepete eklenemedi. Sunucu bağlantısını kontrol edin."
+  },
+  "Order by {cutoff} — same-day shipping": {
+    "paths": [
+      "benefits.sameDayTitle"
+    ],
+    "tr": "{cutoff}'a kadar sipariş — aynı gün kargo"
+  },
+  "Fast dispatch on business days": {
+    "paths": [
+      "benefits.sameDaySubtitle"
+    ],
+    "tr": "İş günlerinde hızlı sevk"
+  },
+  "Free shipping over {amount}": {
+    "paths": [
+      "benefits.freeShippingTitle"
+    ],
+    "tr": "{amount} üzeri ücretsiz kargo"
+  },
+  "Nationwide": {
+    "paths": [
+      "benefits.freeShippingSubtitle"
+    ],
+    "tr": "Türkiye geneli"
+  },
+  "Fast shipping": {
+    "paths": [
+      "benefits.fastShippingTitle"
+    ],
+    "tr": "Hızlı kargo"
+  },
+  "Ships in 1–3 business days": {
+    "paths": [
+      "benefits.fastShippingSubtitle"
+    ],
+    "tr": "1–3 iş günü sevk"
+  },
+  "Secure PayTR payment": {
+    "paths": [
+      "benefits.securePayTitle"
+    ],
+    "tr": "PayTR güvenli ödeme"
+  },
+  "256-bit SSL": {
+    "paths": [
+      "benefits.securePaySubtitle"
+    ],
+    "tr": "256 bit SSL"
+  },
+  "{days}-day returns": {
+    "paths": [
+      "benefits.returnTitle"
+    ],
+    "tr": "{days} gün iade"
+  },
+  "Right of withdrawal": {
+    "paths": [
+      "benefits.returnSubtitle"
+    ],
+    "tr": "Cayma hakkı"
+  },
+  "Genuine products": {
+    "paths": [
+      "benefits.originalTitle",
+      "aboutPage.pillarOriginalTitle"
+    ],
+    "tr": "Orijinal ürün"
+  },
+  "Independent distributor": {
+    "paths": [
+      "benefits.originalSubtitle"
+    ],
+    "tr": "Bağımsız distribütör"
+  },
+  "Free coaching support": {
+    "paths": [
+      "benefits.coachingTitle"
+    ],
+    "tr": "Ücretsiz koçluk desteği"
+  },
+  "Follow-up via WhatsApp": {
+    "paths": [
+      "benefits.coachingSubtitle"
+    ],
+    "tr": "WhatsApp ile takip"
+  },
+  "Hi! Message us for product and bundle suggestions.": {
+    "paths": [
+      "whatsapp.popup0"
+    ],
+    "tr": "Merhaba! Ürün ve set önerisi için yazın."
+  },
+  "Nutrition tracking and coach support here.": {
+    "paths": [
+      "whatsapp.popup1"
+    ],
+    "tr": "Beslenme takibi ve koç desteği burada."
+  },
+  "Wondering about delivery time? Ask us.": {
+    "paths": [
+      "whatsapp.popup2"
+    ],
+    "tr": "Kargo süresi mi merak ediyorsunuz? Sorun."
+  },
+  "Learn about special bundles.": {
+    "paths": [
+      "whatsapp.popup3"
+    ],
+    "tr": "Avantajlı paketler hakkında bilgi alın."
+  },
+  "Herbal Kapıda — WhatsApp line is open.": {
+    "paths": [
+      "whatsapp.popup4"
+    ],
+    "tr": "Herbal Kapıda — WhatsApp hattı açık."
+  },
+  "Herbal Kapıda · WhatsApp support": {
+    "paths": [
+      "whatsapp.title0"
+    ],
+    "tr": "Herbal Kapıda · WhatsApp destek"
+  },
+  "Genuine products · Door delivery": {
+    "paths": [
+      "whatsapp.title1"
+    ],
+    "tr": "Orijinal ürün · Kapıda teslimat"
+  },
+  "Nutrition coaching · WhatsApp": {
+    "paths": [
+      "whatsapp.title2"
+    ],
+    "tr": "Beslenme koçluğu · WhatsApp"
+  },
+  "Formula 1 and bundles · Ask us": {
+    "paths": [
+      "whatsapp.title3"
+    ],
+    "tr": "Formül 1 ve setler · Sorun"
+  },
+  "Herbal Kapıda — We're here for you": {
+    "paths": [
+      "whatsapp.title4"
+    ],
+    "tr": "Herbal Kapıda — Yanınızdayız"
+  },
+  "WhatsApp chat": {
+    "paths": [
+      "whatsapp.dialogLabel"
+    ],
+    "tr": "WhatsApp sohbet"
+  },
+  "WhatsApp channel": {
+    "paths": [
+      "whatsapp.channelEyebrow"
+    ],
+    "tr": "WhatsApp kanalı"
+  },
+  "Live support": {
+    "paths": [
+      "whatsapp.liveSupport"
+    ],
+    "tr": "Canlı destek"
+  },
+  "Pick a quick question or type · {phone}": {
+    "paths": [
+      "whatsapp.presetHint"
+    ],
+    "tr": "Hazır soru seçin veya yazın · {phone}"
+  },
+  "Close chat": {
+    "paths": [
+      "whatsapp.closeChat"
+    ],
+    "tr": "Sohbeti kapat"
+  },
+  "Close": {
+    "paths": [
+      "whatsapp.close",
+      "siteSearch.close",
+      "siteSearch.closeOverlay",
+      "account.closeDialog"
+    ],
+    "tr": "Kapat"
+  },
+  "Your message": {
+    "paths": [
+      "whatsapp.customMessageLabel"
+    ],
+    "tr": "Kendi mesajınız"
+  },
+  "Send on WhatsApp": {
+    "paths": [
+      "whatsapp.sendOnWhatsapp"
+    ],
+    "tr": "WhatsApp'ta gönder"
+  },
+  "Open WhatsApp": {
+    "paths": [
+      "whatsapp.openFab"
+    ],
+    "tr": "WhatsApp aç"
+  },
+  "Close WhatsApp": {
+    "paths": [
+      "whatsapp.closeFab"
+    ],
+    "tr": "WhatsApp kapat"
+  },
+  "Hello, I'm writing about {brand}.": {
+    "paths": [
+      "whatsapp.defaultCustomMessage"
+    ],
+    "tr": "Merhaba, {brand} hakkında yazıyorum."
+  },
+  "Hello — how can we help you today?": {
+    "paths": [
+      "whatsapp.defaultGreeting"
+    ],
+    "tr": "Merhaba — Herbal Kapıda. Size nasıl yardımcı olabiliriz?"
+  },
+  "Order status": {
+    "paths": [
+      "whatsapp.presetOrderStatusLabel"
+    ],
+    "tr": "Sipariş durumu"
+  },
+  "Hello, I would like an update on my order status.": {
+    "paths": [
+      "whatsapp.presetOrderStatusMessage"
+    ],
+    "tr": "Merhaba, sipariş durumum hakkında bilgi almak istiyorum."
+  },
+  "Product advice": {
+    "paths": [
+      "whatsapp.presetProductLabel"
+    ],
+    "tr": "Ürün danışmanlığı"
+  },
+  "Hello, can you suggest products / bundles for my goals?": {
+    "paths": [
+      "whatsapp.presetProductMessage"
+    ],
+    "tr": "Merhaba, hedeflerime uygun ürün / paket önerisi alabilir miyim?"
+  },
+  "Nutrition tracking": {
+    "paths": [
+      "whatsapp.presetTrackingLabel"
+    ],
+    "tr": "Beslenme takibi"
+  },
+  "Hello, I have a question about nutrition tracking.": {
+    "paths": [
+      "whatsapp.presetTrackingMessage"
+    ],
+    "tr": "Merhaba, beslenme ve takip programı hakkında yazıyorum."
+  },
+  "Shipping & delivery": {
+    "paths": [
+      "whatsapp.presetShippingLabel"
+    ],
+    "tr": "Kargo & teslimat"
+  },
+  "Hello, I have a question about shipping times and delivery options.": {
+    "paths": [
+      "whatsapp.presetShippingMessage"
+    ],
+    "tr": "Merhaba, kargo süresi ve teslimat seçenekleri hakkında yazıyorum."
+  },
+  "Something else": {
+    "paths": [
+      "whatsapp.presetOtherLabel"
+    ],
+    "tr": "Başka bir konu"
+  },
+  "Hello, I'm writing to you.": {
+    "paths": [
+      "whatsapp.presetOtherMessage"
+    ],
+    "tr": "Merhaba, yazıyorum."
+  },
+  "Sign in": {
+    "paths": [
+      "auth.loginEyebrow",
+      "auth.loginTitle",
+      "auth.loginLink",
+      "auth.submitLogin",
+      "authPassword.signIn"
+    ],
+    "tr": "Oturum açma"
+  },
+  "Create account": {
+    "paths": [
+      "auth.registerEyebrow",
+      "auth.createAccount"
+    ],
+    "tr": "Hesap oluşturma"
+  },
+  "Register": {
+    "paths": [
+      "auth.registerTitle",
+      "auth.registerLink"
+    ],
+    "tr": "Kayıt"
+  },
+  "Continue with email or connect with Google.": {
+    "paths": [
+      "auth.subtitle"
+    ],
+    "tr": "E-posta ile devam edin veya Google ile bağlanın."
+  },
+  "Don't have an account?": {
+    "paths": [
+      "auth.noAccount"
+    ],
+    "tr": "Hesabınız yok mu?"
+  },
+  "Already a member?": {
+    "paths": [
+      "auth.hasAccount"
+    ],
+    "tr": "Zaten üye misiniz?"
+  },
+  "Social sign-in": {
+    "paths": [
+      "auth.socialLogin"
+    ],
+    "tr": "Sosyal giriş"
+  },
+  "Continue with Google": {
+    "paths": [
+      "auth.googleContinue"
+    ],
+    "tr": "Google ile devam et"
+  },
+  "Password": {
+    "paths": [
+      "auth.passwordLabel",
+      "forms.password"
+    ],
+    "tr": "Şifre"
+  },
+  "Forgot password": {
+    "paths": [
+      "auth.forgotPassword",
+      "authPassword.forgotTitle"
+    ],
+    "tr": "Şifremi unuttum"
+  },
+  "Verifying…": {
+    "paths": [
+      "auth.verifying"
+    ],
+    "tr": "Doğrulanıyor…"
+  },
+  "Sign-in failed. Check your details.": {
+    "paths": [
+      "auth.loginFailed"
+    ],
+    "tr": "Giriş başarısız. Bilgileri kontrol edin."
+  },
+  "Creating…": {
+    "paths": [
+      "auth.creating"
+    ],
+    "tr": "Oluşturuluyor…"
+  },
+  "Registration could not be completed.": {
+    "paths": [
+      "auth.registerFailed"
+    ],
+    "tr": "Kayıt tamamlanamadı."
+  },
+  "Products in {name}": {
+    "paths": [
+      "catalog.categorySubtitle"
+    ],
+    "tr": "{name} kategorisindeki ürünler"
+  },
+  "Search, filter, and sort the catalog": {
+    "paths": [
+      "catalog.defaultSubtitle"
+    ],
+    "tr": "Arama, filtre ve sıralama ile katalog"
+  },
+  "Filter / Search": {
+    "paths": [
+      "catalog.filterToggle"
+    ],
+    "tr": "Filtrele / Ara"
+  },
+  "Clear filters": {
+    "paths": [
+      "catalog.clearFilters"
+    ],
+    "tr": "Filtreleri temizle"
+  },
+  "Category": {
+    "paths": [
+      "catalog.categoryLabel"
+    ],
+    "tr": "Kategori"
+  },
+  "Sort": {
+    "paths": [
+      "catalog.sortLabel"
+    ],
+    "tr": "Sırala"
+  },
+  "Loading…": {
+    "paths": [
+      "catalog.summaryLoading",
+      "guestOrder.loading",
+      "authPassword.loading"
+    ],
+    "tr": "Yükleniyor…"
+  },
+  "{total} products · Page {page}/{totalPages}": {
+    "paths": [
+      "catalog.summary"
+    ],
+    "tr": "{total} ürün · Sayfa {page}/{totalPages}"
+  },
+  "We couldn't find that product": {
+    "paths": [
+      "catalog.emptyFilteredTitle"
+    ],
+    "tr": "Aradığınız ürünü bulamadık"
+  },
+  "No products in catalog": {
+    "paths": [
+      "catalog.emptyCatalogTitle"
+    ],
+    "tr": "Katalogda ürün yok"
+  },
+  "No results for \"{q}\". Clear filters and try again.": {
+    "paths": [
+      "catalog.emptyQuery"
+    ],
+    "tr": "\"{q}\" için sonuç yok. Filtreleri temizleyip tekrar deneyin."
+  },
+  "No products match the selected filters.": {
+    "paths": [
+      "catalog.emptyFilters"
+    ],
+    "tr": "Seçili filtrelere uygun ürün yok."
+  },
+  "No products to list right now.": {
+    "paths": [
+      "catalog.emptyDefault"
+    ],
+    "tr": "Şu an listelenecek ürün bulunmuyor."
+  },
+  "You might also like": {
+    "paths": [
+      "catalog.suggestionsTitle"
+    ],
+    "tr": "Bunları da inceleyebilirsiniz"
+  },
+  "Name A→Z": {
+    "paths": [
+      "catalog.sortNameAsc"
+    ],
+    "tr": "İsim A→Z"
+  },
+  "Name Z→A": {
+    "paths": [
+      "catalog.sortNameDesc"
+    ],
+    "tr": "İsim Z→A"
+  },
+  "Price low to high": {
+    "paths": [
+      "catalog.sortPriceAsc"
+    ],
+    "tr": "Fiyat artan"
+  },
+  "Price high to low": {
+    "paths": [
+      "catalog.sortPriceDesc"
+    ],
+    "tr": "Fiyat azalan"
+  },
+  "Newest": {
+    "paths": [
+      "catalog.sortNewest"
+    ],
+    "tr": "En yeni"
+  },
+  "Articles": {
+    "paths": [
+      "blog.postsCrumb",
+      "blog.title"
+    ],
+    "tr": "Yazılar"
+  },
+  "Nutrition routines, bundle tips, and wellness notes.": {
+    "paths": [
+      "blog.heroBody"
+    ],
+    "tr": "Beslenme rutinleri, paket önerileri ve sağlıklı yaşam notları."
+  },
+  "Tags": {
+    "paths": [
+      "blog.tagsNav"
+    ],
+    "tr": "Etiketler"
+  },
+  "No posts yet": {
+    "paths": [
+      "blog.emptyTitle"
+    ],
+    "tr": "Henüz yazı yok"
+  },
+  "No content with tag “{tag}”.": {
+    "paths": [
+      "blog.emptyTag"
+    ],
+    "tr": "“{tag}” etiketinde içerik bulunamadı."
+  },
+  "New posts coming soon.": {
+    "paths": [
+      "blog.emptyDefault"
+    ],
+    "tr": "Yeni yazılar yakında burada."
+  },
+  "All articles": {
+    "paths": [
+      "blog.allPosts",
+      "blog.ctaAllPosts"
+    ],
+    "tr": "Tüm yazılar"
+  },
+  "Explore products": {
+    "paths": [
+      "blog.exploreProducts"
+    ],
+    "tr": "Ürünleri keşfet"
+  },
+  "Featured": {
+    "paths": [
+      "blog.featuredTag"
+    ],
+    "tr": "Öne çıkan"
+  },
+  "Read article": {
+    "paths": [
+      "blog.readPost"
+    ],
+    "tr": "Yazıyı oku"
+  },
+  "{minutes} min read": {
+    "paths": [
+      "blog.readMinutesLong"
+    ],
+    "tr": "{minutes} dk okuma"
+  },
+  "Previous": {
+    "paths": [
+      "blog.previous"
+    ],
+    "tr": "Önceki"
+  },
+  "Next": {
+    "paths": [
+      "blog.next"
+    ],
+    "tr": "Sonraki"
+  },
+  "Post not found": {
+    "paths": [
+      "blog.notFound"
+    ],
+    "tr": "Yazı bulunamadı"
+  },
+  "Related categories": {
+    "paths": [
+      "blog.relatedCategories"
+    ],
+    "tr": "İlgili kategoriler"
+  },
+  "Related products": {
+    "paths": [
+      "blog.relatedProducts"
+    ],
+    "tr": "İlgili ürünler"
+  },
+  "Often viewed with this article": {
+    "paths": [
+      "blog.relatedProductsBody"
+    ],
+    "tr": "Bu yazıyla birlikte sık bakılanlar"
+  },
+  "Continue your routine with products": {
+    "paths": [
+      "blog.ctaTitle"
+    ],
+    "tr": "Rutinine ürünle devam et"
+  },
+  "Browse bundles or return to all articles.": {
+    "paths": [
+      "blog.ctaBody"
+    ],
+    "tr": "Avantajlı setleri incele veya tüm yazılara dön."
+  },
+  "Browse bundles": {
+    "paths": [
+      "blog.ctaSets"
+    ],
+    "tr": "Setleri incele"
+  },
+  "Site tour · {current}/{total}": {
+    "paths": [
+      "tour.eyebrow"
+    ],
+    "tr": "Site turu · {current}/{total}"
+  },
+  "Search products": {
+    "paths": [
+      "tour.step1Title",
+      "siteSearch.searchProducts"
+    ],
+    "tr": "Ürün ara"
+  },
+  "Quick search across Formula 1, bundles, and categories.": {
+    "paths": [
+      "tour.step1Body"
+    ],
+    "tr": "Formül 1, setler ve kategoriler arasında hızlı arama yapın."
+  },
+  "Cart": {
+    "paths": [
+      "tour.step2Title"
+    ],
+    "tr": "Sepet"
+  },
+  "Your items live here — proceed to checkout when ready.": {
+    "paths": [
+      "tour.step2Body"
+    ],
+    "tr": "Eklediğiniz ürünler burada; ödeme adımına geçebilirsiniz."
+  },
+  "WhatsApp support": {
+    "paths": [
+      "tour.step3Title"
+    ],
+    "tr": "WhatsApp destek"
+  },
+  "Live WhatsApp for nutrition and product questions.": {
+    "paths": [
+      "tour.step3Body"
+    ],
+    "tr": "Beslenme ve ürün sorularınız için canlı WhatsApp hattı."
+  },
+  "My account": {
+    "paths": [
+      "tour.step4Title"
+    ],
+    "tr": "Hesabım"
+  },
+  "Orders, addresses, and wellness tracking in your account.": {
+    "paths": [
+      "tour.step4Body"
+    ],
+    "tr": "Siparişler, adresler ve wellness takibi hesabınızda."
+  },
+  "Finish": {
+    "paths": [
+      "tour.finish"
+    ],
+    "tr": "Bitir"
+  },
+  "Skip": {
+    "paths": [
+      "tour.skip"
+    ],
+    "tr": "Atla"
+  },
+  "Full name": {
+    "paths": [
+      "forms.fullName"
+    ],
+    "tr": "Ad Soyad"
+  },
+  "Product name, bundle…": {
+    "paths": [
+      "forms.searchProducts"
+    ],
+    "tr": "Ürün adı, set…"
+  },
+  "Type your message…": {
+    "paths": [
+      "forms.customMessage"
+    ],
+    "tr": "Mesajınızı yazın…"
+  },
+  "City": {
+    "paths": [
+      "forms.city",
+      "account.city"
+    ],
+    "tr": "Şehir"
+  },
+  "District": {
+    "paths": [
+      "forms.district",
+      "account.district"
+    ],
+    "tr": "İlçe"
+  },
+  "Neighborhood": {
+    "paths": [
+      "forms.neighborhood",
+      "account.neighborhood"
+    ],
+    "tr": "Mahalle"
+  },
+  "Postal code": {
+    "paths": [
+      "forms.postalCode",
+      "account.postalCode"
+    ],
+    "tr": "Posta Kodu"
+  },
+  "Address": {
+    "paths": [
+      "forms.addressLine",
+      "account.addressLine"
+    ],
+    "tr": "Adres"
+  },
+  "Address label": {
+    "paths": [
+      "forms.addressTitle"
+    ],
+    "tr": "Adres başlığı"
+  },
+  "Company name": {
+    "paths": [
+      "forms.companyTitle",
+      "account.companyTitle"
+    ],
+    "tr": "Ünvan / Firma adı"
+  },
+  "Tax ID": {
+    "paths": [
+      "forms.taxNumber",
+      "account.taxNumber"
+    ],
+    "tr": "VKN"
+  },
+  "Tax office": {
+    "paths": [
+      "forms.taxOffice",
+      "account.taxOffice"
+    ],
+    "tr": "Vergi dairesi"
+  },
+  "First name": {
+    "paths": [
+      "forms.firstName"
+    ],
+    "tr": "Ad"
+  },
+  "Last name": {
+    "paths": [
+      "forms.lastName"
+    ],
+    "tr": "Soyad"
+  },
+  "Note (optional)": {
+    "paths": [
+      "forms.noteOptional"
+    ],
+    "tr": "Not (isteğe bağlı)"
+  },
+  "Order no.": {
+    "paths": [
+      "forms.orderNumber",
+      "guestOrder.orderNumberLabel",
+      "guestOrder.orderNumberHeading"
+    ],
+    "tr": "Sipariş no"
+  },
+  "Amount (TRY)": {
+    "paths": [
+      "forms.amountTry"
+    ],
+    "tr": "Tutar (TL)"
+  },
+  "Sender full name": {
+    "paths": [
+      "forms.senderName"
+    ],
+    "tr": "Gönderen ad soyad"
+  },
+  "Site search": {
+    "paths": [
+      "siteSearch.dialogLabel"
+    ],
+    "tr": "Site arama"
+  },
+  "Products, articles, pages…": {
+    "paths": [
+      "siteSearch.placeholder"
+    ],
+    "tr": "Ürün, yazı, sayfa…"
+  },
+  "Close search": {
+    "paths": [
+      "siteSearch.closeSearch"
+    ],
+    "tr": "Aramayı kapat"
+  },
+  "At least 2 characters · arrow keys and Enter": {
+    "paths": [
+      "siteSearch.hintMinChars"
+    ],
+    "tr": "En az 2 karakter · yön tuşları ve Enter"
+  },
+  "Searching…": {
+    "paths": [
+      "siteSearch.searching"
+    ],
+    "tr": "Aranıyor…"
+  },
+  "No results": {
+    "paths": [
+      "siteSearch.noResults"
+    ],
+    "tr": "Sonuç yok"
+  },
+  "Search “{q}” in catalog →": {
+    "paths": [
+      "siteSearch.searchInCatalog"
+    ],
+    "tr": "Katalogda “{q}” ara →"
+  },
+  "See all": {
+    "paths": [
+      "siteSearch.seeAll"
+    ],
+    "tr": "Tümünü gör"
+  },
+  "Go to catalog": {
+    "paths": [
+      "siteSearch.goToCatalog"
+    ],
+    "tr": "Kataloğa git"
+  },
+  "Search…": {
+    "paths": [
+      "siteSearch.searchShort"
+    ],
+    "tr": "Ara…"
+  },
+  "Search": {
+    "paths": [
+      "siteSearch.searchAria"
+    ],
+    "tr": "Ara"
+  },
+  "Products": {
+    "paths": [
+      "siteSearch.quickProducts",
+      "siteSearch.sectionProducts",
+      "seo.products"
+    ],
+    "tr": "Ürünler"
+  },
+  "Track order": {
+    "paths": [
+      "siteSearch.quickOrderLookup",
+      "guestOrder.title",
+      "tracking.orderLookupLink"
+    ],
+    "tr": "Sipariş sorgula"
+  },
+  "Legal": {
+    "paths": [
+      "siteSearch.sectionLegal",
+      "footer.legal"
+    ],
+    "tr": "Yasal"
+  },
+  "Page not found": {
+    "paths": [
+      "notFoundPage.metaTitle",
+      "notFoundPage.title"
+    ],
+    "tr": "Sayfa bulunamadı"
+  },
+  "The page you’re looking for may have moved or been removed. Return to the catalog to find what you need.": {
+    "paths": [
+      "notFoundPage.description"
+    ],
+    "tr": "Aradığınız sayfa taşınmış veya yayından kalkmış olabilir. Kataloğa dönüp doğru ürünü bulabilirsiniz."
+  },
+  "Go to products": {
+    "paths": [
+      "notFoundPage.goProducts"
+    ],
+    "tr": "Ürünlere git"
+  },
+  "Gift bundles": {
+    "paths": [
+      "notFoundPage.linkGiftSets"
+    ],
+    "tr": "Hediyeli setler"
+  },
+  "Order / Lookup": {
+    "paths": [
+      "guestOrder.eyebrow"
+    ],
+    "tr": "Sipariş / Sorgula"
+  },
+  "Use your order number and the email from checkout to see status and shipment info.": {
+    "paths": [
+      "guestOrder.lead"
+    ],
+    "tr": "Sipariş numaranız ve ödeme sırasında kullandığınız e-posta ile durum ve kargo bilgisine ulaşın."
+  },
+  "HBL-…": {
+    "paths": [
+      "guestOrder.orderNumberPlaceholder"
+    ],
+    "tr": "HBL-…"
+  },
+  "Look up": {
+    "paths": [
+      "guestOrder.submit",
+      "tracking.submit"
+    ],
+    "tr": "Sorgula"
+  },
+  "Looking up…": {
+    "paths": [
+      "guestOrder.submitting",
+      "tracking.searching"
+    ],
+    "tr": "Sorgulanıyor…"
+  },
+  "Could not look up order. Check your details.": {
+    "paths": [
+      "guestOrder.lookupFailed"
+    ],
+    "tr": "Sorgulanamadı. Bilgileri kontrol edin."
+  },
+  "Discount": {
+    "paths": [
+      "guestOrder.discount"
+    ],
+    "tr": "İndirim"
+  },
+  "Shipping": {
+    "paths": [
+      "guestOrder.shipping"
+    ],
+    "tr": "Kargo"
+  },
+  "Shipment": {
+    "paths": [
+      "guestOrder.shipmentHeading"
+    ],
+    "tr": "Kargo"
+  },
+  "Code pending": {
+    "paths": [
+      "guestOrder.trackingPending"
+    ],
+    "tr": "Kod bekleniyor"
+  },
+  "Live tracking": {
+    "paths": [
+      "guestOrder.liveTracking"
+    ],
+    "tr": "Canlı takip"
+  },
+  "Have a tracking code?": {
+    "paths": [
+      "guestOrder.hasTrackingCode"
+    ],
+    "tr": "Kargo takip kodunuz mu var?"
+  },
+  "Shipment tracking": {
+    "paths": [
+      "guestOrder.cargoTrackingLink",
+      "tracking.title"
+    ],
+    "tr": "Kargo takip"
+  },
+  "Logistics / Tracking": {
+    "paths": [
+      "tracking.eyebrow"
+    ],
+    "tr": "Lojistik / Takip"
+  },
+  "Enter the tracking code from your order email or account.": {
+    "paths": [
+      "tracking.lead"
+    ],
+    "tr": "Sipariş e-postanızdaki veya hesabınızdaki takip kodunu girin."
+  },
+  "Tracking code": {
+    "paths": [
+      "tracking.codePlaceholder"
+    ],
+    "tr": "Takip kodu"
+  },
+  "Shipment record not found.": {
+    "paths": [
+      "tracking.notFound"
+    ],
+    "tr": "Kargo kaydı bulunamadı."
+  },
+  "Carrier": {
+    "paths": [
+      "tracking.providerLabel"
+    ],
+    "tr": "Sağlayıcı"
+  },
+  "Carrier page": {
+    "paths": [
+      "tracking.providerPage"
+    ],
+    "tr": "Sağlayıcı sayfası"
+  },
+  "Order details": {
+    "paths": [
+      "tracking.orderDetail"
+    ],
+    "tr": "Sipariş detayına git"
+  },
+  "Back to my account": {
+    "paths": [
+      "tracking.backToAccount"
+    ],
+    "tr": "Hesabıma dön"
+  },
+  "Enter the email on your account. For Google accounts you can set a password; otherwise we send a reset link valid for 1 hour.": {
+    "paths": [
+      "authPassword.forgotLead"
+    ],
+    "tr": "Hesabınıza bağlı e-postayı girin. Google hesabıysa şifre belirleme, değilse sıfırlama bağlantısı gider. 1 saat geçerlidir."
+  },
+  "If the email is registered, we sent a link. Check inbox and spam. Google sign-up users can also set a password with this link.": {
+    "paths": [
+      "authPassword.forgotDone"
+    ],
+    "tr": "E-posta kayıtlıysa bağlantı gönderildi. Gelen kutusu ve spam klasörünü kontrol edin. Google ile kayıt olduysanız bu bağlantıyla şifre de belirleyebilirsiniz."
+  },
+  "Back to sign in": {
+    "paths": [
+      "authPassword.backToLogin"
+    ],
+    "tr": "Girişe dön"
+  },
+  "Send reset link": {
+    "paths": [
+      "authPassword.sendResetLink"
+    ],
+    "tr": "Sıfırlama bağlantısı gönder"
+  },
+  "Sending…": {
+    "paths": [
+      "authPassword.sending"
+    ],
+    "tr": "Gönderiliyor…"
+  },
+  "Could not send request. Try again later.": {
+    "paths": [
+      "authPassword.requestFailed"
+    ],
+    "tr": "İstek gönderilemedi. Daha sonra tekrar deneyin."
+  },
+  "New password": {
+    "paths": [
+      "authPassword.resetTitle",
+      "authPassword.newPassword",
+      "account.newPassword"
+    ],
+    "tr": "Yeni şifre"
+  },
+  "Invalid reset link.": {
+    "paths": [
+      "authPassword.invalidLink"
+    ],
+    "tr": "Geçersiz sıfırlama bağlantısı."
+  },
+  "Passwords do not match.": {
+    "paths": [
+      "authPassword.passwordMismatch"
+    ],
+    "tr": "Şifreler eşleşmiyor."
+  },
+  "Could not update password. The link may have expired.": {
+    "paths": [
+      "authPassword.resetFailed"
+    ],
+    "tr": "Şifre güncellenemedi. Bağlantı süresi dolmuş olabilir."
+  },
+  "No token in link. Use the link from your email.": {
+    "paths": [
+      "authPassword.missingToken"
+    ],
+    "tr": "Bağlantıda token yok. E-postadaki linki kullanın."
+  },
+  "New password (again)": {
+    "paths": [
+      "authPassword.newPasswordRepeat",
+      "account.newPasswordRepeat"
+    ],
+    "tr": "Yeni şifre (tekrar)"
+  },
+  "Save password": {
+    "paths": [
+      "authPassword.savePassword"
+    ],
+    "tr": "Şifreyi kaydet"
+  },
+  "Saving…": {
+    "paths": [
+      "authPassword.saving"
+    ],
+    "tr": "Kaydediliyor…"
+  },
+  "Password saved. You can sign in with email/password or Google.": {
+    "paths": [
+      "authPassword.resetDone"
+    ],
+    "tr": "Şifreniz kaydedildi. Artık e-posta/şifre veya Google ile giriş yapabilirsiniz."
+  },
+  "Loading account…": {
+    "paths": [
+      "account.loading"
+    ],
+    "tr": "Hesap yükleniyor…"
+  },
+  "Session could not be verified. Please sign in again.": {
+    "paths": [
+      "account.sessionInvalid"
+    ],
+    "tr": "Oturum doğrulanamadı. Tekrar giriş yapın."
+  },
+  "Unauthorized": {
+    "paths": [
+      "account.unauthorized"
+    ],
+    "tr": "Yetkisiz erişim"
+  },
+  "Account / {tab}": {
+    "paths": [
+      "account.breadcrumb"
+    ],
+    "tr": "Hesap / {tab}"
+  },
+  "Orders": {
+    "paths": [
+      "account.tabOrders"
+    ],
+    "tr": "Siparişler"
+  },
+  "Addresses": {
+    "paths": [
+      "account.tabAddresses"
+    ],
+    "tr": "Adresler"
+  },
+  "Account": {
+    "paths": [
+      "account.tabAccount"
+    ],
+    "tr": "Hesap"
+  },
+  "No orders yet.": {
+    "paths": [
+      "account.noOrders"
+    ],
+    "tr": "Henüz sipariş yok."
+  },
+  "Browse catalog": {
+    "paths": [
+      "account.browseCatalog"
+    ],
+    "tr": "Koleksiyona git"
+  },
+  "Track shipment": {
+    "paths": [
+      "account.trackShipment"
+    ],
+    "tr": "Kargo takip"
+  },
+  "Delivery and billing addresses for checkout.": {
+    "paths": [
+      "account.addressesHint"
+    ],
+    "tr": "Ödeme adımında kullanılacak teslimat ve fatura adresleri."
+  },
+  "Add address": {
+    "paths": [
+      "account.addAddress"
+    ],
+    "tr": "Adres ekle"
+  },
+  "Edit address": {
+    "paths": [
+      "account.editAddress"
+    ],
+    "tr": "Adresi düzenle"
+  },
+  "New address": {
+    "paths": [
+      "account.newAddress"
+    ],
+    "tr": "Yeni adres"
+  },
+  "Label": {
+    "paths": [
+      "account.addressTitle"
+    ],
+    "tr": "Başlık"
+  },
+  "Home, Work": {
+    "paths": [
+      "account.addressTitlePlaceholder"
+    ],
+    "tr": "Ev, İş"
+  },
+  "Billing (optional)": {
+    "paths": [
+      "account.billingOptional"
+    ],
+    "tr": "Fatura (isteğe bağlı)"
+  },
+  "Default delivery address": {
+    "paths": [
+      "account.defaultShipping"
+    ],
+    "tr": "Varsayılan teslimat adresi"
+  },
+  "Default billing address": {
+    "paths": [
+      "account.defaultBilling"
+    ],
+    "tr": "Varsayılan fatura adresi"
+  },
+  "Save": {
+    "paths": [
+      "account.save"
+    ],
+    "tr": "Kaydet"
+  },
+  "Cancel": {
+    "paths": [
+      "account.cancel",
+      "account.dismiss"
+    ],
+    "tr": "İptal"
+  },
+  "No saved addresses.": {
+    "paths": [
+      "account.noAddresses"
+    ],
+    "tr": "Kayıtlı adres yok."
+  },
+  "Default delivery": {
+    "paths": [
+      "account.defaultShippingBadge"
+    ],
+    "tr": "Varsayılan teslimat"
+  },
+  "Default billing": {
+    "paths": [
+      "account.defaultBillingBadge"
+    ],
+    "tr": "Varsayılan fatura"
+  },
+  "Set as delivery default": {
+    "paths": [
+      "account.makeDefaultShipping"
+    ],
+    "tr": "Teslimat varsayılanı yap"
+  },
+  "Set as billing default": {
+    "paths": [
+      "account.makeDefaultBilling"
+    ],
+    "tr": "Fatura varsayılanı yap"
+  },
+  "Delete": {
+    "paths": [
+      "account.delete",
+      "account.deleteAddressConfirm"
+    ],
+    "tr": "Sil"
+  },
+  "Change password": {
+    "paths": [
+      "account.changePassword"
+    ],
+    "tr": "Şifre değiştir"
+  },
+  "Set password": {
+    "paths": [
+      "account.setPassword",
+      "account.setPasswordAction"
+    ],
+    "tr": "Şifre belirle"
+  },
+  "You signed in with Google. You can set a password here and then sign in with email too. Your Google link stays active.": {
+    "paths": [
+      "account.googlePasswordHint"
+    ],
+    "tr": "Google ile giriş yaptınız. İsterseniz bir şifre belirleyin; ardından e-posta ile de oturum açabilirsiniz. Google bağlantınız korunur."
+  },
+  "Current password": {
+    "paths": [
+      "account.currentPassword"
+    ],
+    "tr": "Mevcut şifre"
+  },
+  "New passwords do not match.": {
+    "paths": [
+      "account.passwordMismatch"
+    ],
+    "tr": "Yeni şifreler eşleşmiyor."
+  },
+  "Enter your current password.": {
+    "paths": [
+      "account.currentPasswordRequired"
+    ],
+    "tr": "Mevcut şifreyi girin."
+  },
+  "Password updated.": {
+    "paths": [
+      "account.passwordUpdated"
+    ],
+    "tr": "Şifreniz güncellendi."
+  },
+  "Password set. You can now sign in with email too.": {
+    "paths": [
+      "account.passwordSet"
+    ],
+    "tr": "Şifreniz belirlendi. Artık e-posta ile de giriş yapabilirsiniz."
+  },
+  "Could not update password": {
+    "paths": [
+      "account.passwordUpdateFailed"
+    ],
+    "tr": "Şifre güncellenemedi"
+  },
+  "Update password": {
+    "paths": [
+      "account.updatePassword"
+    ],
+    "tr": "Şifreyi güncelle"
+  },
+  "Close account": {
+    "paths": [
+      "account.closeAccount"
+    ],
+    "tr": "Hesabı kapat"
+  },
+  "Permanently deletes your account and personal data per our privacy policy.": {
+    "paths": [
+      "account.closeAccountLead"
+    ],
+    "tr": "Hesabınızı ve kişisel verilerinizi gizlilik politikamıza uygun şekilde kalıcı olarak siler."
+  },
+  "Could not close account": {
+    "paths": [
+      "account.closeAccountFailed"
+    ],
+    "tr": "Hesap kapatılamadı"
+  },
+  "Delete account": {
+    "paths": [
+      "account.deleteAccount"
+    ],
+    "tr": "Hesabı sil"
+  },
+  "Closing…": {
+    "paths": [
+      "account.closingAccount"
+    ],
+    "tr": "Kapatılıyor…"
+  },
+  "Delete address?": {
+    "paths": [
+      "account.deleteAddressTitle"
+    ],
+    "tr": "Adresi sil?"
+  },
+  "This address will be permanently removed.": {
+    "paths": [
+      "account.deleteAddressBody"
+    ],
+    "tr": "Bu adres kalıcı olarak silinecek."
+  },
+  "Deleting…": {
+    "paths": [
+      "account.deleting"
+    ],
+    "tr": "Siliniyor…"
+  },
+  "Delete account?": {
+    "paths": [
+      "account.deleteAccountTitle"
+    ],
+    "tr": "Hesabı sil?"
+  },
+  "This action cannot be undone. Orders already placed remain on record.": {
+    "paths": [
+      "account.deleteAccountBody"
+    ],
+    "tr": "Bu işlem geri alınamaz. Verilmiş siparişler kayıtta kalır."
+  },
+  "Could not save address": {
+    "paths": [
+      "account.addressSaveFailed"
+    ],
+    "tr": "Adres kaydedilemedi"
+  },
+  "Could not set default": {
+    "paths": [
+      "account.defaultFailed"
+    ],
+    "tr": "Varsayılan ayarlanamadı"
+  },
+  "Could not delete": {
+    "paths": [
+      "account.deleteFailed"
+    ],
+    "tr": "Silinemedi"
+  },
+  "Corporate invoice (optional)": {
+    "paths": [
+      "account.corporateBillingOptional"
+    ],
+    "tr": "Kurumsal fatura (opsiyonel)"
+  },
+  "No saved addresses. Add one for delivery and billing.": {
+    "paths": [
+      "account.noAddressesHint"
+    ],
+    "tr": "Kayıtlı adres yok. Teslimat ve fatura için adres ekleyin."
+  },
+  "Confirm": {
+    "paths": [
+      "account.confirmLabel"
+    ],
+    "tr": "Onay"
+  },
+  "“{title}” will be permanently removed.": {
+    "paths": [
+      "account.deleteAddressNamed"
+    ],
+    "tr": "“{title}” kalıcı olarak silinecek."
+  },
+  "Billing": {
+    "paths": [
+      "account.billingBadge"
+    ],
+    "tr": "Fatura"
+  },
+  "Your account is deactivated and personal data is anonymized. Past order records remain for legal retention. This cannot be undone.": {
+    "paths": [
+      "account.closeAccountDetail"
+    ],
+    "tr": "Hesabınız pasife alınır, kişisel verileriniz anonimleştirilir. Geçmiş sipariş kayıtları yasal saklama için durur. Bu işlem geri alınamaz."
+  },
+  "You will not be able to sign in. Order history remains in store records for the legal retention period.": {
+    "paths": [
+      "account.closeAccountConfirmDetail"
+    ],
+    "tr": "Giriş yapamazsınız. Sipariş geçmişi mağaza kayıtlarında yasal süre boyunca kalır."
+  },
+  "Delete my account": {
+    "paths": [
+      "account.deleteMyAccount"
+    ],
+    "tr": "Hesabımı sil"
+  },
+  "Frequently asked questions about {brand}: products, bundles, shipping, and nutrition tracking.": {
+    "paths": [
+      "faqPage.metaDescription"
+    ],
+    "tr": "{brand} hakkında sıkça sorulan sorular: ürünler, paketler, kargo ve beslenme takibi."
+  },
+  "Common questions about products, orders, shipping, and nutrition tracking.": {
+    "paths": [
+      "faqPage.lead"
+    ],
+    "tr": "Ürünler, sipariş, kargo ve beslenme takibi hakkında merak edilenler."
+  },
+  "No questions added yet.": {
+    "paths": [
+      "faqPage.empty"
+    ],
+    "tr": "Henüz soru eklenmemiş."
+  },
+  "Still have a question?": {
+    "paths": [
+      "faqPage.stillQuestions"
+    ],
+    "tr": "Hâlâ sorunuz mu var?"
+  },
+  "Distributor {name} can give you personalized answers.": {
+    "paths": [
+      "faqPage.distributorHelp"
+    ],
+    "tr": "Distribütör {name} size özel yanıtlar."
+  },
+  "Ask on WhatsApp": {
+    "paths": [
+      "faqPage.askWhatsapp"
+    ],
+    "tr": "WhatsApp’tan sor"
+  },
+  "Contact form": {
+    "paths": [
+      "faqPage.contactForm"
+    ],
+    "tr": "İletişim formu"
+  },
+  "Browse products": {
+    "paths": [
+      "faqPage.browseProducts",
+      "aboutPage.ctaProducts"
+    ],
+    "tr": "Ürünleri incele"
+  },
+  "Hello, I have a question beyond the FAQ.": {
+    "paths": [
+      "faqPage.whatsappPrefill"
+    ],
+    "tr": "Merhaba, SSS dışında bir sorum var."
+  },
+  "Frequently asked questions": {
+    "paths": [
+      "faqPage.fallbackTitle"
+    ],
+    "tr": "Sıkça Sorulan Sorular"
+  },
+  "Yes. Products sold are original Herbalife products. This site belongs to an independent Herbalife Nutrition distributor.": {
+    "paths": [
+      "faqPage.fallbackItems[0].answer"
+    ],
+    "tr": "Evet. Satılan ürünler orijinal Herbalife ürünleridir. Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir."
+  },
+  "We offer gift bundles for your goal (weight, sport, general wellness). Free product advice is available on WhatsApp.": {
+    "paths": [
+      "faqPage.fallbackItems[1].answer"
+    ],
+    "tr": "Hedefinize (kilo yönetimi, spor, genel wellness) göre avantajlı setler sunuyoruz. WhatsApp’tan ücretsiz ürün danışmanlığı alabilirsiniz."
+  },
+  "After payment confirmation, orders usually ship within 1–3 business days. We share the tracking code with your order notification.": {
+    "paths": [
+      "faqPage.fallbackItems[2].answer"
+    ],
+    "tr": "Ödeme onayı sonrası siparişler genellikle 1–3 iş günü içinde kargoya verilir. Takip kodunu sipariş bildirimiyle paylaşıyoruz."
+  },
+  "How does nutrition tracking work?": {
+    "paths": [
+      "faqPage.fallbackItems[3].question"
+    ],
+    "tr": "Beslenme takibi nasıl çalışır?"
+  },
+  "Under Account → Nutrition tracking you can log water, meals, and measurements. Your coach reviews progress from the approval queue.": {
+    "paths": [
+      "faqPage.fallbackItems[3].answer"
+    ],
+    "tr": "Hesabım → Beslenme Takibi üzerinden su, öğün ve ölçüm kaydı ekleyebilirsiniz. Koçunuz onay kuyruğundan ilerlemeyi takip eder."
+  },
+  "Is cash on delivery available?": {
+    "paths": [
+      "faqPage.fallbackItems[4].question"
+    ],
+    "tr": "Kapıda ödeme var mı?"
+  },
+  "Yes, cash or card on delivery may be offered. Choose the available method at checkout.": {
+    "paths": [
+      "faqPage.fallbackItems[4].answer"
+    ],
+    "tr": "Evet, nakit veya kart ile kapıda ödeme seçenekleri sunulur. Ödeme adımında uygun yöntemi seçebilirsiniz."
+  },
+  "What are the return terms?": {
+    "paths": [
+      "faqPage.fallbackItems[5].question"
+    ],
+    "tr": "İade koşulları neler?"
+  },
+  "Returns are possible for unopened products within the legal period. See Returns & cancellation or contact us.": {
+    "paths": [
+      "faqPage.fallbackItems[5].answer"
+    ],
+    "tr": "Açılmamış ürünlerde yasal süre içinde iade mümkündür. Detaylar için İptal & İade sayfasını inceleyin veya bize yazın."
+  },
+  "Instagram posts, stories, and selected images from {brand}.": {
+    "paths": [
+      "mediaPage.metaDescription"
+    ],
+    "tr": "{brand} Instagram paylaşımları, hikayeler ve seçilmiş görseller."
+  },
+  "Follow on Instagram": {
+    "paths": [
+      "mediaPage.followInstagram"
+    ],
+    "tr": "Instagram’da takip et"
+  },
+  "Media content coming soon. Instagram or gallery uploads can be added from the admin panel.": {
+    "paths": [
+      "mediaPage.emptySoon"
+    ],
+    "tr": "Medya içeriği yakında burada. Instagram veya galeri yüklemeleri admin panelinden eklenebilir."
+  },
+  "Instagram stories": {
+    "paths": [
+      "mediaPage.storiesTitle"
+    ],
+    "tr": "Instagram hikayeleri"
+  },
+  "Active stories from the last 24 hours — tap for full view.": {
+    "paths": [
+      "mediaPage.storiesLead"
+    ],
+    "tr": "Son 24 saatteki aktif hikayeler — tıklayınca büyük görünüm."
+  },
+  "No active Instagram stories right now.": {
+    "paths": [
+      "mediaPage.noActiveStories"
+    ],
+    "tr": "Şu an aktif Instagram hikayesi yok."
+  },
+  "Instagram stories will appear here soon.": {
+    "paths": [
+      "mediaPage.storiesSoon"
+    ],
+    "tr": "Instagram hikayeleri yakında burada olacak."
+  },
+  "Instagram posts": {
+    "paths": [
+      "mediaPage.postsTitle"
+    ],
+    "tr": "Instagram paylaşımları"
+  },
+  "Last sync:": {
+    "paths": [
+      "mediaPage.lastSync"
+    ],
+    "tr": "Son senkron:"
+  },
+  "Instagram posts not synced yet.": {
+    "paths": [
+      "mediaPage.postsNotSynced"
+    ],
+    "tr": "Instagram gönderileri henüz senkronize edilmedi."
+  },
+  "Instagram feed coming soon.": {
+    "paths": [
+      "mediaPage.feedSoon"
+    ],
+    "tr": "Instagram akışı yakında burada olacak."
+  },
+  "Gallery picks": {
+    "paths": [
+      "mediaPage.galleryTitle"
+    ],
+    "tr": "Galeriden seçkiler"
+  },
+  "Products, bundles, and lifestyle moments — tap for full view.": {
+    "paths": [
+      "mediaPage.galleryLead"
+    ],
+    "tr": "Ürün, paket ve yaşam anları — tıklayınca büyük görünüm."
+  },
+  "No gallery images yet.": {
+    "paths": [
+      "mediaPage.galleryEmpty"
+    ],
+    "tr": "Henüz galeri görseli eklenmedi."
+  },
+  "Products, bundles, and healthy living moments. Instagram posts and selected images.": {
+    "paths": [
+      "mediaPage.fallbackSubtitle"
+    ],
+    "tr": "Ürünler, paketler ve sağlıklı yaşam anlarından kareler. Instagram paylaşımlarımız ve seçilmiş görseller."
+  },
+  "Review on Google": {
+    "paths": [
+      "reviewsPage.metaTitle",
+      "reviewsPage.reviewOnGoogle"
+    ],
+    "tr": "Google’da Değerlendir"
+  },
+  "Share your {brand} experience on Google Business Profile.": {
+    "paths": [
+      "reviewsPage.metaDescription"
+    ],
+    "tr": "{brand} deneyiminizi Google İşletme Profili’nde paylaşın."
+  },
+  "Share your experience": {
+    "paths": [
+      "reviewsPage.title"
+    ],
+    "tr": "Deneyiminizi paylaşın"
+  },
+  "A short Google review helps local visibility. Scan the QR code or use the link below.": {
+    "paths": [
+      "reviewsPage.lead"
+    ],
+    "tr": "Google’da kısa bir değerlendirme yerel görünürlüğümüze yardımcı olur. QR kodu tarayın veya aşağıdaki bağlantıya tıklayın."
+  },
+  "30 seconds": {
+    "paths": [
+      "reviewsPage.highlight1Title"
+    ],
+    "tr": "30 saniye"
+  },
+  "A quick star rating and sentence on Google makes a big difference for local visibility.": {
+    "paths": [
+      "reviewsPage.highlight1Body"
+    ],
+    "tr": "Google’da kısa bir yıldız + cümle yeter; yerel görünürlüğümüze büyük katkı."
+  },
+  "Real experience": {
+    "paths": [
+      "reviewsPage.highlight2Title"
+    ],
+    "tr": "Gerçek deneyim"
+  },
+  "Honest feedback on product quality, shipping, and coaching support matters.": {
+    "paths": [
+      "reviewsPage.highlight2Body"
+    ],
+    "tr": "Ürün kalitesi, kargo ve koç desteği hakkında dürüst geri bildiriminiz değerli."
+  },
+  "Community": {
+    "paths": [
+      "reviewsPage.highlight3Title"
+    ],
+    "tr": "Topluluk"
+  },
+  "Reviews help new visitors start with confidence.": {
+    "paths": [
+      "reviewsPage.highlight3Body"
+    ],
+    "tr": "Yorumlar yeni misafirlerin güvenle başlamasına yardımcı olur."
+  },
+  "Google Business": {
+    "paths": [
+      "reviewsPage.googleBusiness"
+    ],
+    "tr": "Google İşletme"
+  },
+  "Google review QR code": {
+    "paths": [
+      "reviewsPage.reviewQrAlt"
+    ],
+    "tr": "Google yorum QR kodu"
+  },
+  "Scan QR code": {
+    "paths": [
+      "reviewsPage.scanQr"
+    ],
+    "tr": "QR kodu tarayın"
+  },
+  "Review on Google — scan QR code": {
+    "paths": [
+      "reviewsPage.reviewAria"
+    ],
+    "tr": "Google’da değerlendir — QR kodu tarayın"
+  },
+  "Hello, I’d like the Google review link.": {
+    "paths": [
+      "reviewsPage.whatsappPrefill"
+    ],
+    "tr": "Merhaba, Google yorum linki için yazıyorum."
+  },
+  "Nutrition bundles, sets, and Formula products. Independent distributor assurance.": {
+    "paths": [
+      "seo.productsDescription"
+    ],
+    "tr": "Beslenme paketleri, setler ve Formül ürünleri. Bağımsız distribütör güvencesiyle."
+  },
+  "Nutrition tips, bundle guides, and wellness articles.": {
+    "paths": [
+      "seo.blogDescription"
+    ],
+    "tr": "Beslenme ipuçları, paket rehberleri ve sağlıklı yaşam yazıları."
+  },
+  "Search: {query}": {
+    "paths": [
+      "seo.searchTitle"
+    ],
+    "tr": "Arama: {query}"
+  },
+  "Product results for “{query}” — {brand}.": {
+    "paths": [
+      "seo.searchDescription"
+    ],
+    "tr": "“{query}” için ürün sonuçları — {brand}."
+  },
+  "Products in {categoryName} — {brand}.": {
+    "paths": [
+      "seo.categoryDescription"
+    ],
+    "tr": "{categoryName} kategorisindeki ürünler — {brand}."
+  },
+  "Articles · {tag}": {
+    "paths": [
+      "seo.blogTagTitle"
+    ],
+    "tr": "Yazılar · {tag}"
+  },
+  "Posts tagged “{tag}” — {brand}.": {
+    "paths": [
+      "seo.blogTagDescription"
+    ],
+    "tr": "“{tag}” etiketli yazılar — {brand}."
+  },
+  " · Page {page}": {
+    "paths": [
+      "seo.pageSuffix"
+    ],
+    "tr": " · Sayfa {page}"
+  },
+  "Category not found": {
+    "paths": [
+      "seo.categoryNotFound"
+    ],
+    "tr": "Kategori bulunamadı"
+  },
+  "Loading catalog…": {
+    "paths": [
+      "seo.catalogLoading"
+    ],
+    "tr": "Katalog yükleniyor…"
+  },
+  "{brand} — independent Herbalife distributor.": {
+    "paths": [
+      "seo.aboutJsonLdDescription",
+      "aboutPage.jsonLdDescription"
+    ],
+    "tr": "{brand} — bağımsız Herbalife distribütörü."
+  },
+  "catalog": {
+    "paths": [
+      "seo.keywordsCatalogDefault[0]"
+    ],
+    "tr": "katalog"
+  },
+  "products": {
+    "paths": [
+      "seo.keywordsCatalogDefault[1]"
+    ],
+    "tr": "ürün"
+  },
+  "bundles": {
+    "paths": [
+      "seo.keywordsCatalogDefault[2]"
+    ],
+    "tr": "paket"
+  },
+  "sets": {
+    "paths": [
+      "seo.keywordsCatalogDefault[3]"
+    ],
+    "tr": "set"
+  },
+  "product": {
+    "paths": [
+      "seo.keywordsCategoryExtra[0]"
+    ],
+    "tr": "ürün"
+  },
+  "bundle": {
+    "paths": [
+      "seo.keywordsCategoryExtra[1]"
+    ],
+    "tr": "paket"
+  },
+  "articles": {
+    "paths": [
+      "seo.keywordsBlog[0]"
+    ],
+    "tr": "yazılar"
+  },
+  "nutrition": {
+    "paths": [
+      "seo.keywordsBlog[1]"
+    ],
+    "tr": "beslenme"
+  },
+  "About us": {
+    "paths": [
+      "aboutPage.fallbackHeroTitle"
+    ],
+    "tr": "Hakkımızda"
+  },
+  "Original products, gift bundles, and personalized nutrition support with an independent Herbalife distributor.": {
+    "paths": [
+      "aboutPage.fallbackHeroSeo"
+    ],
+    "tr": "Herbal Kapıda — bağımsız Herbalife distribütörü ile orijinal ürünler, avantajlı setler ve kişiselleştirilmiş beslenme desteği."
+  },
+  "Healthy living": {
+    "paths": [
+      "aboutPage.fallbackBodyLine1"
+    ],
+    "tr": "Sağlıklı yaşam"
+  },
+  "with you": {
+    "paths": [
+      "aboutPage.fallbackBodyLine2"
+    ],
+    "tr": "yanınızda"
+  },
+  "We bring original Herbalife products, value bundles, and one-to-one nutrition guidance together.": {
+    "paths": [
+      "aboutPage.fallbackBodyP1"
+    ],
+    "tr": "Herbal Kapıda olarak orijinal Herbalife ürünlerini, avantajlı paketleri ve birebir beslenme danışmanlığını bir arada sunuyoruz."
+  },
+  "Our goal is not random shelf products — but the right program, sustainable habits, and trusted access.": {
+    "paths": [
+      "aboutPage.fallbackBodyP2"
+    ],
+    "tr": "Amacımız raflara rastgele ürün koymak değil; hedefinize uygun program, sürdürülebilir alışkanlıklar ve güvenilir ürün erişimi sağlamaktır."
+  },
+  "Reach us on WhatsApp or contact channels for product choice, bundle advice, or wellness tracking.": {
+    "paths": [
+      "aboutPage.fallbackBodyP3"
+    ],
+    "tr": "Ürün seçimi, set önerisi veya wellness takibi için WhatsApp ve iletişim kanallarımızdan bize ulaşabilirsiniz."
+  },
+  "Our nutrition approach": {
+    "paths": [
+      "aboutPage.fallbackEthosEyebrow"
+    ],
+    "tr": "Beslenme yaklaşımımız"
+  },
+  "Sustainable results come from the right products, consistent tracking, and personal guidance.": {
+    "paths": [
+      "aboutPage.fallbackEthosQuote"
+    ],
+    "tr": "Sürdürülebilir sonuçlar; doğru ürün, düzenli takip ve kişisel rehberlikle gelir."
+  },
+  "Read articles": {
+    "paths": [
+      "aboutPage.fallbackEthosLink"
+    ],
+    "tr": "Yazıları oku"
+  },
+  "100% original Herbalife products with independent distributor assurance.": {
+    "paths": [
+      "aboutPage.pillarOriginalBody"
+    ],
+    "tr": "Bağımsız distribütör güvencesiyle %100 orijinal Herbalife ürünleri."
+  },
+  "Personal program": {
+    "paths": [
+      "aboutPage.pillarProgramTitle"
+    ],
+    "tr": "Kişisel program"
+  },
+  "Bundle recommendations for your goal and one-to-one WhatsApp coaching.": {
+    "paths": [
+      "aboutPage.pillarProgramBody"
+    ],
+    "tr": "Hedefinize göre set önerisi ve WhatsApp üzerinden birebir danışmanlık."
+  },
+  "Health tracking": {
+    "paths": [
+      "aboutPage.pillarTrackingTitle"
+    ],
+    "tr": "Sağlık takibi"
+  },
+  "Water, meals, and measurements in your account; progress with coach approval.": {
+    "paths": [
+      "aboutPage.pillarTrackingBody"
+    ],
+    "tr": "Su, öğün ve ölçüm kayıtlarınız hesabınızda; koç onayıyla ilerlersiniz."
+  },
+  "Opening hours": {
+    "paths": [
+      "aboutPage.hours"
+    ],
+    "tr": "Çalışma saatleri"
+  },
+  "Message on WhatsApp": {
+    "paths": [
+      "aboutPage.waWrite"
+    ],
+    "tr": "WhatsApp'tan yaz"
+  },
+  "Hello {brand}, I would like to learn more about you.": {
+    "paths": [
+      "aboutPage.waPrefillAbout"
+    ],
+    "tr": "Merhaba {brand}, hakkınızda bilgi almak istiyorum."
+  },
+  "Privacy policy — how your personal data is protected.": {
+    "paths": [
+      "legalSeo.gizlilik.description"
+    ],
+    "tr": "Gizlilik politikası — kişisel verilerinizin korunması hakkında bilgilendirme."
+  },
+  "Personal data processing information under Turkish KVKK law.": {
+    "paths": [
+      "legalSeo.kvkk.description"
+    ],
+    "tr": "6698 sayılı KVKK kapsamında veri işleme bilgilendirmesi."
+  },
+  "Cookie Policy": {
+    "paths": [
+      "legalSeo.cerez-politikasi.title"
+    ],
+    "tr": "Çerez Politikası"
+  },
+  "Distance Sales Agreement": {
+    "paths": [
+      "legalSeo.mesafeli-satis.title"
+    ],
+    "tr": "Mesafeli Satış Sözleşmesi"
+  },
+  "Pre-contract Information": {
+    "paths": [
+      "legalSeo.on-bilgilendirme.title"
+    ],
+    "tr": "Ön Bilgilendirme Formu"
+  }
+}

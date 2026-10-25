@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Link } from "@/i18n/routing";
+import { Link, toLinkHref } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 
@@ -118,7 +118,7 @@ export function HomeHeroSlider({ slides, intervalMs = 5200 }: Props) {
             </div>
           ) : null}
           <Link
-            href={slide.href}
+            href={toLinkHref(slide.href)}
             className="inline-flex cursor-pointer bg-primary px-3.5 py-2 text-xs font-bold text-on-primary hover:bg-primary-container rounded-full"
           >
             {tCta("inspect")}

@@ -1,15 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { Link } from "@/i18n/routing";
+import { Link, toLinkHref, usePathname } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { SiteSearch } from "@/components/SiteSearch";
 import { NotificationBell } from "@/components/NotificationBell";
 import { DealStripCountdown } from "@/components/PromoCountdown";
-import { isAuthenticated, loginPath } from "@/lib/auth";
+import { isAuthenticated, loginHref } from "@/lib/auth";
 import { cartItemCount, fetchCart } from "@/lib/cart";
 import type { SiteSettings } from "@/lib/cms";
 import { DEFAULT_SETTINGS } from "@/lib/cms";
@@ -143,9 +142,11 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
   }, [catOpen]);
 
   const favoritesHref = authed
-    ? "/hesabim/favoriler"
-    : loginPath("/hesabim/favoriler");
-  const accountHref = authed ? "/hesabim" : loginPath(pathname);
+    ? toLinkHref("/hesabim/favoriler")
+    : loginHref("/hesabim/favoriler");
+  const accountHref = authed
+    ? toLinkHref("/hesabim")
+    : loginHref(pathname);
 
   const menu =
     open && mounted
@@ -184,7 +185,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
               </div>
 
               <div className="shrink-0 border-b border-outline-variant px-4 py-4">
-                <LocaleCurrencyControls />
+                <LocaleCurrencyControls localization={settings.localization} />
               </div>
 
               {phone ? (
@@ -218,7 +219,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                       return (
                         <Link
                           key={`m-cat-${chip.href}`}
-                          href={chip.href}
+                          href={toLinkHref(chip.href)}
                           onClick={() => setOpen(false)}
                           className={`group overflow-hidden rounded-xl border ${
                             active
@@ -274,7 +275,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                     {nav.map((item, i) => (
                       <Link
                         key={`m-nav-${item.href}`}
-                        href={item.href}
+                        href={toLinkHref(item.href)}
                         onClick={() => setOpen(false)}
                         className={`px-4 py-3.5 text-sm font-semibold ${
                           i > 0 ? "border-t border-outline-variant" : ""
@@ -298,7 +299,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                     {MOBILE_SUPPORT_LINKS.map((item, i) => (
                       <Link
                         key={`m-sup-${item.href}`}
-                        href={item.href}
+                        href={toLinkHref(item.href)}
                         onClick={() => setOpen(false)}
                         className={`px-4 py-3.5 text-sm font-semibold text-on-surface ${
                           i > 0 ? "border-t border-outline-variant" : ""
@@ -318,7 +319,9 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                     {ACCOUNT_LINKS.map((item, i) => (
                       <Link
                         key={`m-acc-${item.href}`}
-                        href={authed ? item.href : loginPath(item.href)}
+                        href={
+                          authed ? toLinkHref(item.href) : loginHref(item.href)
+                        }
                         onClick={() => setOpen(false)}
                         className={`px-4 py-3.5 text-sm font-semibold text-on-surface ${
                           i > 0 ? "border-t border-outline-variant" : ""
@@ -350,7 +353,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                 : tHeader("shippingBannerShort")}
             </p>
             <div className="flex items-center gap-4">
-              <LocaleCurrencyControls />
+              <LocaleCurrencyControls localization={settings.localization} />
               <DealStripCountdown />
               {phone ? (
                 <a
@@ -365,8 +368,8 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                   key={item.href}
                   href={
                     item.href.includes("favoriler") && !authed
-                      ? loginPath(item.href)
-                      : item.href
+                      ? loginHref(item.href)
+                      : toLinkHref(item.href)
                   }
                   className="font-medium text-on-primary/85 hover:text-on-primary"
                 >
@@ -465,7 +468,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                         return (
                           <Link
                             key={`mega-${chip.href}`}
-                            href={chip.href}
+                            href={toLinkHref(chip.href)}
                             className={`group flex cursor-pointer flex-col overflow-hidden rounded-xl border bg-white transition-colors hover:border-primary ${
                               active
                                 ? "border-primary"
@@ -522,7 +525,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
               return (
                 <Link
                   key={`d-nav-${item.href}`}
-                  href={item.href}
+                  href={toLinkHref(item.href)}
                   className={`relative shrink-0 px-1 py-1.5 text-[11px] font-semibold whitespace-nowrap transition-colors xl:px-2.5 xl:py-2 xl:text-sm ${
                     active
                       ? "text-primary"
@@ -592,7 +595,10 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
             </Link>
 
             <div className="lg:hidden">
-              <LocaleCurrencyControls compact />
+              <LocaleCurrencyControls
+                compact
+                localization={settings.localization}
+              />
             </div>
 
             <button
