@@ -32,7 +32,7 @@ export class CheckoutController {
   })
   @ApiOperation({
     summary:
-      'Sepetten sipariş + ödeme başlat (PayTR / iyzico — fiziksel ürün, tüm istemciler)',
+      'Sepetten sipariş + ödeme başlat (PayTR — fiziksel ürün, tüm istemciler)',
   })
   async checkout(
     @Body() dto: CreateOrderDto,

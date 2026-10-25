@@ -94,7 +94,9 @@ export default function ShippingPage() {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted">
-        Sağlayıcıları etkinleştirin, kargo ücretini ve kimlik bilgilerini ayarlayın.
+        Operasyon için yalnızca DHL önerilir; yeni kurulumlarda varsayılan olarak
+        yalnızca DHL aktiftir. Kargo ücreti ve kimlik bilgilerini buradan
+        ayarlayın.
       </p>
       {error ? (
         <p className="border border-danger/40 bg-surface px-3 py-2 text-sm text-danger">

@@ -8,17 +8,52 @@ import { DataTable } from '@/components/DataTable';
 import { MediaUpload } from '@/components/MediaUpload';
 import { GalleryMediaField } from '@/components/GalleryMediaField';
 import { Checkbox } from '@/components/Checkbox';
+import { AdminListThumb } from '@/components/AdminListThumb';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { RichTextEditor } from '@/components/RichTextEditor';
+import { AdminFormPanel } from '@/components/AdminFormPanel';
 import type { Category, Product, ProductVariant } from '@/lib/types';
+
+type LocaleKey = 'en' | 'de' | 'fr' | 'es';
+
+type LocaleFields = {
+  name: string;
+  slug: string;
+  description: string;
+  shortDescription: string;
+};
 
 type VariantForm = {
   id?: string;
   sku: string;
   weightLabel: string;
+  categoryKey: string;
+  categoryLabel: string;
   price: string;
   stock: string;
   isActive: boolean;
 };
+
+const LOCALE_TABS: { key: LocaleKey; label: string }[] = [
+  { key: 'en', label: 'EN' },
+  { key: 'de', label: 'DE' },
+  { key: 'fr', label: 'FR' },
+  { key: 'es', label: 'ES' },
+];
+
+const emptyLocaleFields = (): LocaleFields => ({
+  name: '',
+  slug: '',
+  description: '',
+  shortDescription: '',
+});
+
+const emptyTranslations = (): Record<LocaleKey, LocaleFields> => ({
+  en: emptyLocaleFields(),
+  de: emptyLocaleFields(),
+  fr: emptyLocaleFields(),
+  es: emptyLocaleFields(),
+});
 
 type FormState = {
   id?: string;
@@ -29,6 +64,12 @@ type FormState = {
   seoTitle: string;
   seoDescription: string;
   basePrice: string;
+  priceUsd: string;
+  priceEur: string;
+  priceGbp: string;
+  priceTaxIncluded: boolean;
+  translationTab: LocaleKey;
+  translations: Record<LocaleKey, LocaleFields>;
   stock: string;
   originCountry: string;
   originRegion: string;
@@ -39,6 +80,8 @@ type FormState = {
   badge: string;
   flavorNotes: string;
   imageUrl: string;
+  useSharedImage: boolean;
+  imagesByLocale: Record<LocaleKey, string>;
   gallery: string;
   categoryId: string;
   hepsiburadaCategoryId: string;
@@ -58,6 +101,8 @@ type FormState = {
 const emptyVariant = (_kind = 'other'): VariantForm => ({
   sku: '',
   weightLabel: '250g',
+  categoryKey: '',
+  categoryLabel: '',
   price: '',
   stock: '0',
   isActive: true,
@@ -83,6 +128,12 @@ const emptyForm = (): FormState => ({
   seoTitle: '',
   seoDescription: '',
   basePrice: '',
+  priceUsd: '',
+  priceEur: '',
+  priceGbp: '',
+  priceTaxIncluded: true,
+  translationTab: 'en',
+  translations: emptyTranslations(),
   stock: '0',
   originCountry: '',
   originRegion: '',
@@ -93,6 +144,8 @@ const emptyForm = (): FormState => ({
   badge: '',
   flavorNotes: '',
   imageUrl: '',
+  useSharedImage: true,
+  imagesByLocale: { en: '', de: '', fr: '', es: '' },
   gallery: '',
   categoryId: '',
   hepsiburadaCategoryId: '',
@@ -122,6 +175,7 @@ function ProductsPageInner() {
   const [error, setError] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [highlightRowKey, setHighlightRowKey] = useState<string | null>(null);
   const [deleteVariantIndex, setDeleteVariantIndex] = useState<number | null>(
     null,
   );
@@ -193,11 +247,23 @@ function ProductsPageInner() {
             id: v.id,
             sku: v.sku || '',
             weightLabel: v.weightLabel || '',
+            categoryKey: v.categoryKey || '',
+            categoryLabel: v.translations?.tr?.categoryLabel || '',
             price: String(v.price ?? ''),
             stock: String(v.stock ?? 0),
             isActive: v.isActive !== false,
           }))
         : [emptyVariant(p.kind || 'other')];
+    const tr = emptyTranslations();
+    for (const { key } of LOCALE_TABS) {
+      const row = p.translations?.[key];
+      tr[key] = {
+        name: row?.name || '',
+        slug: row?.slug || '',
+        description: row?.description || '',
+        shortDescription: row?.shortDescription || '',
+      };
+    }
     setForm({
       id: p.id,
       name: p.name,
@@ -206,7 +272,13 @@ function ProductsPageInner() {
       shortDescription: p.shortDescription || '',
       seoTitle: p.seoTitle || '',
       seoDescription: p.seoDescription || '',
-      basePrice: String(p.basePrice ?? ''),
+      basePrice: String(p.prices?.TRY ?? p.basePrice ?? ''),
+      priceUsd: p.prices?.USD != null ? String(p.prices.USD) : '',
+      priceEur: p.prices?.EUR != null ? String(p.prices.EUR) : '',
+      priceGbp: p.prices?.GBP != null ? String(p.prices.GBP) : '',
+      priceTaxIncluded: p.priceTaxIncluded !== false,
+      translationTab: 'en',
+      translations: tr,
       stock: String(p.stock ?? 0),
       originCountry: p.originCountry || '',
       originRegion: p.originRegion || '',
@@ -217,6 +289,13 @@ function ProductsPageInner() {
       badge: p.badge || '',
       flavorNotes: (p.flavorNotes || []).join(', '),
       imageUrl: p.imageUrl || '',
+      useSharedImage: p.useSharedImage !== false,
+      imagesByLocale: {
+        en: p.imagesByLocale?.en || '',
+        de: p.imagesByLocale?.de || '',
+        fr: p.imagesByLocale?.fr || '',
+        es: p.imagesByLocale?.es || '',
+      },
       gallery: (p.gallery || []).join('\n'),
       categoryId: p.categoryId || '',
       hepsiburadaCategoryId: p.hepsiburadaCategoryId || '',
@@ -277,10 +356,65 @@ function ProductsPageInner() {
             .join('-')
             .toUpperCase(),
         weightLabel: v.weightLabel.trim(),
+        categoryKey: v.categoryKey.trim() || undefined,
+        translations: v.categoryLabel.trim()
+          ? { tr: { categoryLabel: v.categoryLabel.trim() } }
+          : undefined,
         price: String(v.price),
         stock: Number(v.stock) || 0,
         isActive: v.isActive,
       }));
+    if (!String(form.basePrice).trim()) {
+      setError('TRY fiyatı zorunludur.');
+      setSaving(false);
+      return;
+    }
+
+    const prices: Record<string, number> = {
+      TRY: Number(form.basePrice),
+    };
+    if (form.priceUsd.trim()) prices.USD = Number(form.priceUsd);
+    if (form.priceEur.trim()) prices.EUR = Number(form.priceEur);
+    if (form.priceGbp.trim()) prices.GBP = Number(form.priceGbp);
+
+    for (const { key, label } of LOCALE_TABS) {
+      const row = form.translations[key];
+      if (
+        !row.name.trim() ||
+        !row.description.trim() ||
+        !row.slug.trim()
+      ) {
+        setError(`${label}: ad, slug ve açıklama zorunludur.`);
+        setSaving(false);
+        return;
+      }
+    }
+    if (!form.useSharedImage) {
+      for (const { key, label } of LOCALE_TABS) {
+        if (!form.imagesByLocale[key]?.trim()) {
+          setError(`${label} görsel URL zorunludur (ortak görsel kapalı).`);
+          setSaving(false);
+          return;
+        }
+      }
+      if (!form.imageUrl.trim()) {
+        setError('TR ana görsel (imageUrl) zorunludur.');
+        setSaving(false);
+        return;
+      }
+    }
+
+    const translations: Record<string, LocaleFields> = {};
+    for (const { key } of LOCALE_TABS) {
+      const row = form.translations[key];
+      translations[key] = {
+        name: row.name.trim(),
+        slug: row.slug.trim() || slugify(row.name),
+        description: row.description.trim(),
+        shortDescription: row.shortDescription.trim(),
+      };
+    }
+
     const payload = {
       name: form.name,
       slug: form.slug || slugify(form.name),
@@ -289,6 +423,9 @@ function ProductsPageInner() {
       seoTitle: form.seoTitle || null,
       seoDescription: form.seoDescription || null,
       basePrice: String(form.basePrice),
+      prices,
+      translations,
+      priceTaxIncluded: form.priceTaxIncluded,
       stock: Number(form.stock),
       originCountry: form.originCountry || null,
       originRegion: form.originRegion || null,
@@ -302,6 +439,15 @@ function ProductsPageInner() {
         .map((n) => n.trim())
         .filter(Boolean),
       imageUrl: form.imageUrl || null,
+      useSharedImage: form.useSharedImage,
+      imagesByLocale: form.useSharedImage
+        ? {}
+        : {
+            en: form.imagesByLocale.en.trim(),
+            de: form.imagesByLocale.de.trim(),
+            fr: form.imagesByLocale.fr.trim(),
+            es: form.imagesByLocale.es.trim(),
+          },
       gallery: form.gallery
         .split('\n')
         .map((u) => u.trim())
@@ -326,11 +472,17 @@ function ProductsPageInner() {
       variants,
     };
     try {
+      let savedId = form.id;
       if (form.id) {
         await api(`/products/${form.id}`, { method: 'PATCH', body: payload });
       } else {
-        await api('/products', { method: 'POST', body: payload });
+        const created = await api<{ id: string }>('/products', {
+          method: 'POST',
+          body: payload,
+        });
+        savedId = created.id;
       }
+      setHighlightRowKey(savedId || null);
       setEditing(false);
       setForm(emptyForm());
       await load();
@@ -423,10 +575,40 @@ function ProductsPageInner() {
         </p>
       ) : null}
 
-      {editing ? (
+      <AdminFormPanel
+        open={editing}
+        onClose={() => {
+          setEditing(false);
+          setForm(emptyForm());
+        }}
+        title={form.id ? 'Ürün düzenle' : 'Yeni ürün'}
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                setEditing(false);
+                setForm(emptyForm());
+              }}
+              className="admin-btn admin-btn-ghost"
+            >
+              İptal
+            </button>
+            <button
+              type="submit"
+              form="product-form"
+              disabled={saving}
+              className="admin-btn admin-btn-primary disabled:opacity-50"
+            >
+              {saving ? 'Kaydediliyor…' : 'Kaydet'}
+            </button>
+          </>
+        }
+      >
         <form
+          id="product-form"
           onSubmit={onSubmit}
-          className="grid gap-3 border border-border-muted bg-surface p-4 md:grid-cols-2"
+          className="grid gap-3 md:grid-cols-2"
         >
           <h3 className="md:col-span-2 mono text-xs uppercase tracking-widest text-muted">
             {form.id ? 'Ürün düzenle' : 'Yeni ürün'}
@@ -457,23 +639,23 @@ function ProductsPageInner() {
               className="mt-1 w-full border border-border-muted bg-background px-3 py-2 mono"
             />
           </label>
-          <label className="block text-sm md:col-span-2">
+          <div className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
               Açıklama
             </span>
-            <textarea
-              required
-              rows={10}
-              value={form.description}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, description: e.target.value }))
-              }
-              className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-            />
+            <div className="mt-1">
+              <RichTextEditor
+                value={form.description}
+                onChange={(html) =>
+                  setForm((f) => ({ ...f, description: html }))
+                }
+                minHeight="260px"
+              />
+            </div>
             <span className="mt-1 block text-xs text-muted">
-              HTML H2/p kullanılabilir (ör. “Formül 1 nasıl hazırlanır?”).
+              Zengin metin veya HTML görünümü ile düzenleyin.
             </span>
-          </label>
+          </div>
           <label className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
               Kısa açıklama
@@ -514,19 +696,176 @@ function ProductsPageInner() {
               placeholder="Boşsa kısa açıklama kullanılır"
             />
           </label>
-          <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">Fiyat</span>
-            <input
-              required
-              type="number"
-              step="0.01"
-              value={form.basePrice}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, basePrice: e.target.value }))
+          <div className="col-span-full space-y-2 rounded border border-border-muted p-3">
+            <p className="mono text-[10px] uppercase text-muted">
+              Fiyatlar (KDV dahil)
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {(
+                [
+                  ['TRY', 'basePrice', true],
+                  ['USD', 'priceUsd', false],
+                  ['EUR', 'priceEur', false],
+                  ['GBP', 'priceGbp', false],
+                ] as const
+              ).map(([code, field, required]) => (
+                <label key={code} className="block text-sm">
+                  <span className="mono text-[10px] uppercase text-muted">
+                    {code}
+                    {required ? ' *' : ''}
+                  </span>
+                  <input
+                    required={required}
+                    type="number"
+                    step="0.01"
+                    value={form[field]}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, [field]: e.target.value }))
+                    }
+                    className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                  />
+                </label>
+              ))}
+            </div>
+            {!form.priceUsd.trim() ||
+            !form.priceEur.trim() ||
+            !form.priceGbp.trim() ? (
+              <p className="text-xs text-amber-700">
+                USD, EUR veya GBP boş — yurtdışı ziyaretçilerde TRY fiyatına
+                düşülür.
+              </p>
+            ) : null}
+            <Checkbox
+              label="Fiyat KDV dahil"
+              checked={form.priceTaxIncluded}
+              onChange={(priceTaxIncluded) =>
+                setForm((f) => ({ ...f, priceTaxIncluded }))
               }
-              className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
             />
-          </label>
+            <p className="text-[11px] text-muted">
+              Varsayılan açık. Kapatırsanız fiyat net (KDV hariç) kabul edilir;
+              vitrin ve yasal metinlerde belirtin.
+            </p>
+          </div>
+          <div className="col-span-full space-y-3 rounded border border-border-muted p-3">
+            <p className="mono text-[10px] uppercase text-muted">
+              Çeviriler (TR ana alanlarda) — EN/DE/FR/ES zorunlu
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {LOCALE_TABS.map(({ key, label }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() =>
+                    setForm((f) => ({ ...f, translationTab: key }))
+                  }
+                  className={`border px-3 py-1 text-xs uppercase ${
+                    form.translationTab === key
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border-muted'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {(() => {
+              const tab = form.translationTab;
+              const row = form.translations[tab];
+              return (
+                <div className="grid gap-3">
+                  <label className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      Ad ({tab.toUpperCase()})
+                    </span>
+                    <input
+                      value={row.name}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          translations: {
+                            ...f.translations,
+                            [tab]: {
+                              ...f.translations[tab],
+                              name: e.target.value,
+                              slug:
+                                f.translations[tab].slug ||
+                                slugify(e.target.value),
+                            },
+                          },
+                        }))
+                      }
+                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                    />
+                  </label>
+                  <label className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      URL slug ({tab})
+                    </span>
+                    <input
+                      value={row.slug}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          translations: {
+                            ...f.translations,
+                            [tab]: {
+                              ...f.translations[tab],
+                              slug: e.target.value,
+                            },
+                          },
+                        }))
+                      }
+                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2 font-mono text-sm"
+                    />
+                  </label>
+                  <label className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      Kısa açıklama
+                    </span>
+                    <input
+                      value={row.shortDescription}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          translations: {
+                            ...f.translations,
+                            [tab]: {
+                              ...f.translations[tab],
+                              shortDescription: e.target.value,
+                            },
+                          },
+                        }))
+                      }
+                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                    />
+                  </label>
+                  <label className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      Açıklama
+                    </span>
+                    <textarea
+                      rows={4}
+                      value={row.description}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          translations: {
+                            ...f.translations,
+                            [tab]: {
+                              ...f.translations[tab],
+                              description: e.target.value,
+                            },
+                          },
+                        }))
+                      }
+                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                    />
+                  </label>
+                </div>
+              );
+            })()}
+          </div>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">Tür</span>
             <select
@@ -649,7 +988,9 @@ function ProductsPageInner() {
             />
           </label>
           <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">Menşei</span>
+            <span className="mono text-[10px] uppercase text-muted">
+              Üretim / menşei ülke
+            </span>
             <input
               value={form.originCountry}
               onChange={(e) =>
@@ -659,7 +1000,9 @@ function ProductsPageInner() {
             />
           </label>
           <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">Bölge</span>
+            <span className="mono text-[10px] uppercase text-muted">
+              Hedef kullanım bölgesi
+            </span>
             <input
               value={form.originRegion}
               onChange={(e) =>
@@ -669,18 +1012,22 @@ function ProductsPageInner() {
             />
           </label>
           <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">Rakım</span>
+            <span className="mono text-[10px] uppercase text-muted">
+              Porsiyon / servis
+            </span>
             <input
               value={form.altitude}
               onChange={(e) =>
                 setForm((f) => ({ ...f, altitude: e.target.value }))
               }
-              placeholder="örn. 1800-2200m"
+              placeholder="örn. 2 ölçek / gün"
               className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
             />
           </label>
           <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">İşlem</span>
+            <span className="mono text-[10px] uppercase text-muted">
+              Form / tip
+            </span>
             <input
               value={form.process}
               onChange={(e) => setForm((f) => ({ ...f, process: e.target.value }))}
@@ -688,7 +1035,9 @@ function ProductsPageInner() {
             />
           </label>
           <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">Çeşit</span>
+            <span className="mono text-[10px] uppercase text-muted">
+              İçerik vurgusu
+            </span>
             <input
               value={form.varietal}
               onChange={(e) => setForm((f) => ({ ...f, varietal: e.target.value }))}
@@ -696,7 +1045,9 @@ function ProductsPageInner() {
             />
           </label>
           <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">Batch ID</span>
+            <span className="mono text-[10px] uppercase text-muted">
+              Lot / parti no
+            </span>
             <input
               value={form.batchId}
               onChange={(e) => setForm((f) => ({ ...f, batchId: e.target.value }))}
@@ -713,7 +1064,7 @@ function ProductsPageInner() {
           </label>
           <label className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
-              Lezzet notları (virgülle)
+              Tat / lezzet seçenekleri (virgülle)
             </span>
             <input
               value={form.flavorNotes}
@@ -725,7 +1076,7 @@ function ProductsPageInner() {
           </label>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
-              Kullanım yöntemi
+              Kullanım önerisi — yöntem
             </span>
             <input
               value={form.brewMethod}
@@ -738,7 +1089,7 @@ function ProductsPageInner() {
           </label>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
-              Oran / miktar
+              Kullanım önerisi — oran / miktar
             </span>
             <input
               value={form.brewRatio}
@@ -751,7 +1102,7 @@ function ProductsPageInner() {
           </label>
           <label className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
-              Kullanım notu
+              Kullanım önerisi — not
             </span>
             <input
               value={form.brewNotes}
@@ -777,11 +1128,44 @@ function ProductsPageInner() {
 
           <div className="md:col-span-2">
             <MediaUpload
-              label="Ana görsel"
+              label="Ana görsel (TR)"
               value={form.imageUrl}
               onChange={(url) => setForm((f) => ({ ...f, imageUrl: url }))}
               folder="products"
             />
+            <div className="mt-3">
+              <Checkbox
+                label="Tüm dillerde ortak görsel"
+                checked={form.useSharedImage}
+                onChange={(useSharedImage) =>
+                  setForm((f) => ({ ...f, useSharedImage }))
+                }
+              />
+            </div>
+            {!form.useSharedImage ? (
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                {LOCALE_TABS.map(({ key, label }) => (
+                  <label key={key} className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      Görsel URL ({label})
+                    </span>
+                    <input
+                      value={form.imagesByLocale[key]}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          imagesByLocale: {
+                            ...f.imagesByLocale,
+                            [key]: e.target.value,
+                          },
+                        }))
+                      }
+                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                    />
+                  </label>
+                ))}
+              </div>
+            ) : null}
           </div>
           <div className="md:col-span-2">
             <GalleryMediaField
@@ -815,12 +1199,14 @@ function ProductsPageInner() {
               </button>
             </div>
             <p className="text-[11px] text-muted">
-              Her satır ayrı paket boyutu / stok kodudur (ör. 550g, 2’li set).
+              Her satır ayrı seçenektir. Grup anahtarı (ör. shake_flavor) ile
+              vitrinde &quot;Shake tadı&quot; gibi gruplanır; grup başlığı TR
+              etiket alanından gelir.
             </p>
             {form.variants.map((v, i) => (
               <div
                 key={v.id || i}
-                className="grid gap-2 border border-border-muted/60 p-2 md:grid-cols-3 lg:grid-cols-6"
+                className="grid gap-2 border border-border-muted/60 p-2 md:grid-cols-3 lg:grid-cols-8"
               >
                 <input
                   placeholder="Stok kodu (boş bırakılırsa otomatik)"
@@ -850,6 +1236,37 @@ function ProductsPageInner() {
                   className="border border-border-muted bg-background px-2 py-1.5 text-sm"
                 />
                 <input
+                  placeholder="Grup anahtarı"
+                  title="categoryKey — shake_flavor, size…"
+                  value={v.categoryKey}
+                  onChange={(e) =>
+                    setForm((f) => {
+                      const variants = [...f.variants];
+                      variants[i] = {
+                        ...variants[i],
+                        categoryKey: e.target.value,
+                      };
+                      return { ...f, variants };
+                    })
+                  }
+                  className="border border-border-muted bg-background px-2 py-1.5 text-sm mono"
+                />
+                <input
+                  placeholder="Grup başlığı (TR)"
+                  value={v.categoryLabel}
+                  onChange={(e) =>
+                    setForm((f) => {
+                      const variants = [...f.variants];
+                      variants[i] = {
+                        ...variants[i],
+                        categoryLabel: e.target.value,
+                      };
+                      return { ...f, variants };
+                    })
+                  }
+                  className="border border-border-muted bg-background px-2 py-1.5 text-sm md:col-span-2"
+                />
+                <input
                   placeholder="Fiyat"
                   value={v.price}
                   onChange={(e) =>
@@ -873,7 +1290,7 @@ function ProductsPageInner() {
                   }
                   className="border border-border-muted bg-background px-2 py-1.5 text-sm"
                 />
-                <div className="flex flex-col gap-2 md:col-span-3 lg:col-span-6 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col gap-2 md:col-span-3 lg:col-span-8 md:flex-row md:items-center md:justify-between">
                   <Checkbox
                     checked={v.isActive}
                     onChange={(isActive) =>
@@ -910,35 +1327,24 @@ function ProductsPageInner() {
             label="Öne çıkan"
             description="Ana sayfada vurgulanır"
           />
-          <div className="md:col-span-2 flex gap-2">
-            <button
-              type="submit"
-              disabled={saving}
-              className="btn-motion bg-accent px-4 py-2 text-sm text-white hover:bg-accent-hover disabled:opacity-50"
-            >
-              {saving ? 'Kaydediliyor…' : 'Kaydet'}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setEditing(false);
-                setForm(emptyForm());
-              }}
-              className="border border-border-muted px-4 py-2 text-sm text-muted"
-            >
-              İptal
-            </button>
-          </div>
         </form>
-      ) : null}
+      </AdminFormPanel>
 
       <DataTable
         rows={rows}
         rowKey={(r) => r.id}
         emptyMessage={loading ? 'Yükleniyor…' : 'Henüz ürün yok'}
         selectedRowKey={editing ? form.id || null : null}
+        highlightRowKey={!editing ? highlightRowKey : null}
         onRowClick={(r) => startEdit(r)}
         columns={[
+          {
+            key: 'thumb',
+            header: '',
+            render: (r) => (
+              <AdminListThumb src={r.imageUrl} alt={r.name} />
+            ),
+          },
           {
             key: 'name',
             header: 'Ürün',

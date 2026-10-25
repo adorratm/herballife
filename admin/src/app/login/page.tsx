@@ -39,7 +39,7 @@ function LoginInner() {
               Yönetim paneli
             </p>
             <h1 className="font-display text-xl font-bold text-foreground">
-              Herbal Ürünleri
+              Herbal Kapıda
             </h1>
           </div>
         </div>

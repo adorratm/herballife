@@ -13,6 +13,10 @@ export interface CreateShipmentInput {
   credentials: Record<string, string>;
   /** false ise credentials yokken mock oluşturma */
   allowMock?: boolean;
+  /** Manuel takip — API atlanır */
+  trackingNumber?: string;
+  trackingUrl?: string;
+  manualStatus?: ShipmentStatus;
 }
 
 export interface CreateShipmentResult {

@@ -94,7 +94,7 @@ yarn workspace @herbalife/api seed
 
 | Ne | Değer |
 |----|--------|
-| Distribütör | Emine Özberk (CMS `brand.*`) |
+| Marka | Herbal Kapıda (CMS `brand.*`) |
 | Demo müşteri | `demo@herbalurunleri.local` / `Demo1234!` |
 | Demo siparişler | `DEMO-2026-001`, `DEMO-2026-002` |
 | Wellness | Su / öğün / ölçüm + koç onay kuyruğu örnekleri |
@@ -105,7 +105,7 @@ yarn workspace @herbalife/api seed
 1. DNS + TLS yalnızca üç alt alan için (parent block’a dokunma)
 2. `docker compose -f docker-compose.prod.yml up -d` (veya mevcut deploy script)
 3. `yarn workspace @herbalife/api seed`
-4. Admin → Site Ayarları: marka adı, logo, Emine Özberk, telefon, WhatsApp
+4. Admin → Site Ayarları: marka adı, logo, Herbal Kapıda, telefon, WhatsApp
 5. Vitrin: ana sayfa → set → PDP → sepet → ödeme (mock) → teşekkür
 6. Hesabım → Beslenme takibi / ölçümler
 7. Admin → Koçluk: onay kuyruğu + toplu WhatsApp

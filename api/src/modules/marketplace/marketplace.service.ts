@@ -18,7 +18,11 @@ import { MarketplaceApiLog } from '@entities/marketplace-api-log.entity';
 import { OrderStatus } from '@entities/order.entity';
 import { Product } from '@entities/product.entity';
 import { ProductVariant } from '@entities/product-variant.entity';
-import { IMarketplaceAdapter } from '@modules/marketplace/adapters/marketplace.adapter';
+import {
+  assertMarketplaceOrdersAllowed,
+  hasMarketplaceCredentials,
+  IMarketplaceAdapter,
+} from '@modules/marketplace/adapters/marketplace.adapter';
 import {
   TrendyolAdapter,
   TrendyolGoMarketAdapter,
@@ -301,6 +305,22 @@ export class MarketplaceService {
       }
 
       if (mode === 'orders' || mode === 'all') {
+        assertMarketplaceOrdersAllowed(
+          account.credentials || {},
+          account.platform,
+        );
+        if (
+          (this.config.get<string>('nodeEnv') || process.env.NODE_ENV) ===
+            'production' &&
+          !hasMarketplaceCredentials(account.credentials || {})
+        ) {
+          this.logger.error(
+            `Marketplace order sync blocked: ${account.platform}/${account.storeName} — credentials missing in production`,
+          );
+          throw new BadRequestException(
+            'Canlı ortamda pazaryeri credentials olmadan sipariş senkronu yapılamaz.',
+          );
+        }
         const pulled = await adapter.pullOrders(account.credentials);
         let inserted = 0;
         let imported = 0;

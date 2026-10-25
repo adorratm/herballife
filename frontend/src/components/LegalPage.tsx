@@ -1,3 +1,4 @@
+import { getLocale, getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/Reveal";
 import { getLegalDocument } from "@/lib/api";
 import { getSiteSettings } from "@/lib/cms";
@@ -12,22 +13,26 @@ type Props = {
 };
 
 export async function LegalPage({ slug }: Props) {
-  const [doc, settings] = await Promise.all([
-    getLegalDocument(slug),
-    getSiteSettings(),
+  const locale = await getLocale();
+  const [doc, settings, t] = await Promise.all([
+    getLegalDocument(slug, { locale }),
+    getSiteSettings(locale),
+    getTranslations("legalPage"),
   ]);
 
   const seller = sellerFromSettings(settings);
-  const fallbackMap = buildLegalFallback(seller);
+  const fallbackMap = buildLegalFallback(seller, locale);
   const fallback = fallbackMap[slug] ?? {
     title: slug,
-    content: "Bu yasal metin yakında yayınlanacaktır.",
+    content: t("comingSoon"),
   };
 
   const title = doc?.title || fallback.title;
   const apiContent = doc?.content?.trim() || "";
   const isPlaceholder =
-    !apiContent || apiContent.includes("örnek içerik");
+    !apiContent ||
+    apiContent.includes("örnek içerik") ||
+    /sample content/i.test(apiContent);
   const rawContent = isPlaceholder ? fallback.content : apiContent;
   const content = applyLiveSellerContact(rawContent, seller);
 
@@ -40,7 +45,7 @@ export async function LegalPage({ slug }: Props) {
         <h1 className="font-display text-4xl leading-none md:text-5xl">{title}</h1>
         {doc?.version ? (
           <p className="mt-4 font-meta text-[11px] uppercase text-secondary">
-            Sürüm {doc.version}
+            {t("version", { version: doc.version })}
           </p>
         ) : null}
       </div>

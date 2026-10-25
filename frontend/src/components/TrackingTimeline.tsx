@@ -1,3 +1,7 @@
+"use client";
+
+import { useLocale, useTranslations } from "next-intl";
+
 type Event = {
   at: string;
   description: string;
@@ -9,11 +13,12 @@ type Props = {
 };
 
 export function TrackingTimeline({ events }: Props) {
+  const t = useTranslations("trackingTimeline");
+  const locale = useLocale();
+
   if (!events.length) {
     return (
-      <p className="font-meta text-xs uppercase text-secondary">
-        Henüz hareket kaydı yok.
-      </p>
+      <p className="font-meta text-xs uppercase text-secondary">{t("empty")}</p>
     );
   }
 
@@ -31,9 +36,9 @@ export function TrackingTimeline({ events }: Props) {
           />
           <p className="font-meta text-[10px] uppercase tracking-widest text-primary">
             {ev.at
-              ? new Date(ev.at).toLocaleString("tr-TR") === "Invalid Date"
+              ? new Date(ev.at).toLocaleString(locale) === "Invalid Date"
                 ? ev.at
-                : new Date(ev.at).toLocaleString("tr-TR")
+                : new Date(ev.at).toLocaleString(locale)
               : "—"}
           </p>
           <p className="mt-1 font-meta text-xs uppercase text-on-surface">

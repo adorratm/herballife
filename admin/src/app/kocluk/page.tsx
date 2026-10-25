@@ -12,7 +12,12 @@ type Meal = {
   photoUrl?: string | null;
   logDate: string;
   status: string;
-  user?: { email?: string; firstName?: string; lastName?: string; phone?: string };
+  user?: {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+  };
 };
 
 type Measurement = {
@@ -23,7 +28,12 @@ type Measurement = {
   hipCm?: number | null;
   note?: string | null;
   status: string;
-  user?: { email?: string; firstName?: string; lastName?: string; phone?: string };
+  user?: {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+  };
 };
 
 type Kpis = {
@@ -33,6 +43,18 @@ type Kpis = {
   activeClients: number;
 };
 
+const MEAL_LABELS: Record<string, string> = {
+  breakfast: 'Kahvaltı',
+  lunch: 'Öğle',
+  dinner: 'Akşam',
+  snack: 'Ara öğün',
+  other: 'Diğer',
+};
+
+function mealTypeLabel(code: string) {
+  return MEAL_LABELS[code] || code;
+}
+
 function userLabel(u?: {
   email?: string;
   firstName?: string;
@@ -41,6 +63,15 @@ function userLabel(u?: {
   if (!u) return '—';
   const name = [u.firstName, u.lastName].filter(Boolean).join(' ');
   return name || u.email || '—';
+}
+
+function formatDate(value: string) {
+  if (!value) return '—';
+  if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+    const [y, m, d] = value.slice(0, 10).split('-');
+    return `${d}.${m}.${y}`;
+  }
+  return value;
 }
 
 export default function CoachPage() {
@@ -55,6 +86,8 @@ export default function CoachPage() {
     | { kind: 'measurement'; row: Measurement }
     | null
   >(null);
+  const [coachNote, setCoachNote] = useState('');
+  const [deciding, setDeciding] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
   const [successText, setSuccessText] = useState('');
 
@@ -76,27 +109,38 @@ export default function CoachPage() {
       .finally(() => setLoading(false));
   }, [load]);
 
+  function openDetail(
+    item: { kind: 'meal'; row: Meal } | { kind: 'measurement'; row: Measurement },
+  ) {
+    setCoachNote('');
+    setDetail(item);
+  }
+
   async function decide(
     kind: 'meals' | 'measurements',
     id: string,
     status: 'approved' | 'rejected',
   ) {
     setError(null);
+    setDeciding(true);
     try {
       await api(`/wellness/coach/${kind}/${id}`, {
         method: 'PATCH',
-        body: { status },
+        body: { status, coachNote: coachNote.trim() || undefined },
       });
       setDetail(null);
+      setCoachNote('');
       setSuccessText(
         status === 'approved'
-          ? 'Kayıt başarıyla onaylandı. Danışan bilgilendirilebilir.'
-          : 'Kayıt reddedildi.',
+          ? 'Kayıt onaylandı. Danışan inbox (ve e-posta varsa) ile bilgilendirildi.'
+          : 'Kayıt reddedildi. Danışana geri bildirim gönderildi.',
       );
       setSuccessOpen(true);
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'İşlem başarısız');
+    } finally {
+      setDeciding(false);
     }
   }
 
@@ -105,12 +149,14 @@ export default function CoachPage() {
     !needle
       ? true
       : userLabel(m.user).toLowerCase().includes(needle) ||
-        (m.note || '').toLowerCase().includes(needle),
+        (m.note || '').toLowerCase().includes(needle) ||
+        mealTypeLabel(m.mealType).toLowerCase().includes(needle),
   );
   const measRows = measurements.filter((m) =>
     !needle
       ? true
-      : userLabel(m.user).toLowerCase().includes(needle),
+      : userLabel(m.user).toLowerCase().includes(needle) ||
+        (m.note || '').toLowerCase().includes(needle),
   );
 
   if (loading) return <p className="text-sm text-muted">Yükleniyor…</p>;
@@ -129,7 +175,7 @@ export default function CoachPage() {
         <div>
           <h2 className="text-xl font-semibold">Koçluk — Danışan takip & onay</h2>
           <p className="text-sm text-muted">
-            Öğün / ölçüm onayları ve toplu motivasyon mesajları.
+            Öğün fotoğrafı, ölçüm ve koç notu ile onay / red.
           </p>
         </div>
         <Link
@@ -163,13 +209,16 @@ export default function CoachPage() {
         ))}
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Danışan ara…"
-          className="w-full max-w-sm rounded-full border border-border-muted bg-background px-4 py-2 text-sm"
-        />
+      <div className="admin-toolbar items-end">
+        <label className="block min-w-48 flex-1 text-sm">
+          <span className="mono text-[10px] uppercase text-muted">Danışan ara</span>
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Ad, not, öğün türü…"
+            className="mt-1 w-full rounded-lg border border-border-muted bg-background px-3 py-2"
+          />
+        </label>
       </div>
 
       <Modal
@@ -198,16 +247,23 @@ export default function CoachPage() {
 
       <Modal
         open={Boolean(detail)}
-        onClose={() => setDetail(null)}
-        size="md"
+        onClose={() => {
+          if (!deciding) setDetail(null);
+        }}
+        size="lg"
         title={detail?.kind === 'meal' ? 'Öğün onayı' : 'Ölçüm onayı'}
-        description={detail ? userLabel(detail.row.user) : undefined}
+        description={
+          detail
+            ? `${userLabel(detail.row.user)}${detail.row.user?.email ? ` · ${detail.row.user.email}` : ''}`
+            : undefined
+        }
         footer={
           detail ? (
             <>
               <button
                 type="button"
-                className="admin-btn admin-btn-ghost border-danger/40 text-danger hover:border-danger hover:bg-danger/5 hover:text-danger"
+                disabled={deciding}
+                className="admin-btn admin-btn-ghost border-danger/40 text-danger hover:border-danger hover:bg-danger/5 hover:text-danger disabled:opacity-50"
                 onClick={() =>
                   void decide(
                     detail.kind === 'meal' ? 'meals' : 'measurements',
@@ -220,7 +276,8 @@ export default function CoachPage() {
               </button>
               <button
                 type="button"
-                className="admin-btn admin-btn-primary"
+                disabled={deciding}
+                className="admin-btn admin-btn-primary disabled:opacity-50"
                 onClick={() =>
                   void decide(
                     detail.kind === 'meal' ? 'meals' : 'measurements',
@@ -229,31 +286,108 @@ export default function CoachPage() {
                   )
                 }
               >
-                Onayla
+                {deciding ? 'İşleniyor…' : 'Onayla'}
               </button>
             </>
           ) : null
         }
       >
         {detail?.kind === 'meal' ? (
-          <div className="rounded-xl border border-border-muted bg-surface-high/60 p-3.5 text-sm">
-            <p>
-              <strong>{detail.row.mealType}</strong> · {detail.row.logDate}
-            </p>
-            <p className="mt-2 text-foreground/80">
-              {detail.row.note || 'Not yok'}
-            </p>
+          <div className="space-y-4">
+            <dl className="grid gap-2 rounded-xl border border-border-muted bg-surface-high/60 p-3.5 text-sm sm:grid-cols-2">
+              <div>
+                <dt className="text-xs uppercase text-muted">Öğün türü</dt>
+                <dd className="font-semibold">
+                  {mealTypeLabel(detail.row.mealType)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase text-muted">Tarih</dt>
+                <dd className="font-semibold">
+                  {formatDate(detail.row.logDate)}
+                </dd>
+              </div>
+              <div className="sm:col-span-2">
+                <dt className="text-xs uppercase text-muted">Danışan notu</dt>
+                <dd className="mt-1 text-foreground/85">
+                  {detail.row.note?.trim() || '—'}
+                </dd>
+              </div>
+            </dl>
+            {detail.row.photoUrl ? (
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase text-muted">
+                  Öğün fotoğrafı
+                </p>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={detail.row.photoUrl}
+                  alt="Öğün"
+                  className="max-h-80 w-full rounded-xl border border-border-muted object-contain bg-black/5"
+                />
+              </div>
+            ) : (
+              <p className="text-sm text-muted">Fotoğraf eklenmemiş.</p>
+            )}
+            <label className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                Koç notu (onay / red mesajında gider)
+              </span>
+              <textarea
+                rows={3}
+                value={coachNote}
+                onChange={(e) => setCoachNote(e.target.value)}
+                placeholder="Opsiyonel geri bildirim…"
+                className="mt-1 w-full rounded-lg border border-border-muted bg-background px-3 py-2"
+              />
+            </label>
           </div>
         ) : detail ? (
-          <div className="rounded-xl border border-border-muted bg-surface-high/60 p-3.5 text-sm">
-            <p className="text-muted">{detail.row.measuredAt}</p>
-            <p className="mt-2 text-base font-semibold">
-              {detail.row.weightKg ?? '—'} kg
-              {detail.row.waistCm != null ? ` · bel ${detail.row.waistCm}` : ''}
-            </p>
-            {detail.row.note ? (
-              <p className="mt-1 text-foreground/80">{detail.row.note}</p>
-            ) : null}
+          <div className="space-y-4">
+            <dl className="grid gap-3 rounded-xl border border-border-muted bg-surface-high/60 p-3.5 text-sm sm:grid-cols-2">
+              <div>
+                <dt className="text-xs uppercase text-muted">Ölçüm tarihi</dt>
+                <dd className="font-semibold">
+                  {formatDate(detail.row.measuredAt)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase text-muted">Kilo</dt>
+                <dd className="text-base font-semibold">
+                  {detail.row.weightKg != null ? `${detail.row.weightKg} kg` : '—'}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase text-muted">Bel</dt>
+                <dd className="font-semibold">
+                  {detail.row.waistCm != null ? `${detail.row.waistCm} cm` : '—'}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase text-muted">Kalça</dt>
+                <dd className="font-semibold">
+                  {detail.row.hipCm != null ? `${detail.row.hipCm} cm` : '—'}
+                </dd>
+              </div>
+              <div className="sm:col-span-2">
+                <dt className="text-xs uppercase text-muted">Not</dt>
+                <dd className="mt-1 text-foreground/85">
+                  {detail.row.note?.trim() || '—'}
+                </dd>
+              </div>
+            </dl>
+            <label className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                Koç notu (onay / red mesajında gider)
+              </span>
+              <textarea
+                rows={3}
+                value={coachNote}
+                onChange={(e) => setCoachNote(e.target.value)}
+                placeholder="Opsiyonel geri bildirim…"
+                className="mt-1 w-full rounded-lg border border-border-muted bg-background px-3 py-2"
+              />
+            </label>
           </div>
         ) : null}
       </Modal>
@@ -265,23 +399,39 @@ export default function CoachPage() {
             <button
               key={m.id}
               type="button"
-              onClick={() => setDetail({ kind: 'meal', row: m })}
+              onClick={() => openDetail({ kind: 'meal', row: m })}
               className="rounded-xl border border-border-muted bg-surface p-4 text-left transition hover:border-accent/50"
             >
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="font-semibold">{userLabel(m.user)}</p>
-                  <p className="text-xs text-muted">
-                    {m.mealType} · {m.logDate}
+              <div className="flex items-start gap-3">
+                {m.photoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={m.photoUrl}
+                    alt=""
+                    className="h-16 w-16 shrink-0 rounded-lg border border-border-muted object-cover"
+                  />
+                ) : (
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-dashed border-border-muted bg-surface-high text-[10px] text-muted">
+                    Foto yok
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="font-semibold">{userLabel(m.user)}</p>
+                      <p className="text-xs text-muted">
+                        {mealTypeLabel(m.mealType)} · {formatDate(m.logDate)}
+                      </p>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-accent/15 px-2 py-0.5 text-[10px] uppercase text-accent">
+                      bekliyor
+                    </span>
+                  </div>
+                  <p className="mt-2 line-clamp-2 text-sm text-muted">
+                    {m.note || 'Not yok'}
                   </p>
                 </div>
-                <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] uppercase text-accent">
-                  bekliyor
-                </span>
               </div>
-              <p className="mt-2 line-clamp-2 text-sm text-muted">
-                {m.note || 'Not yok'}
-              </p>
             </button>
           ))}
           {!mealRows.length ? (
@@ -297,21 +447,34 @@ export default function CoachPage() {
             <button
               key={m.id}
               type="button"
-              onClick={() => setDetail({ kind: 'measurement', row: m })}
+              onClick={() => openDetail({ kind: 'measurement', row: m })}
               className="rounded-xl border border-border-muted bg-surface p-4 text-left transition hover:border-accent/50"
             >
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <p className="font-semibold">{userLabel(m.user)}</p>
-                  <p className="text-xs text-muted">{m.measuredAt}</p>
+                  <p className="text-xs text-muted">
+                    {formatDate(m.measuredAt)}
+                  </p>
                 </div>
                 <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] uppercase text-accent">
                   bekliyor
                 </span>
               </div>
-              <p className="mt-2 text-sm font-semibold">
-                {m.weightKg ?? '—'} kg
+              <p className="mt-2 text-sm">
+                <span className="font-semibold">
+                  {m.weightKg != null ? `${m.weightKg} kg` : '—'}
+                </span>
+                {m.waistCm != null ? (
+                  <span className="text-muted"> · bel {m.waistCm} cm</span>
+                ) : null}
+                {m.hipCm != null ? (
+                  <span className="text-muted"> · kalça {m.hipCm} cm</span>
+                ) : null}
               </p>
+              {m.note ? (
+                <p className="mt-1 line-clamp-2 text-sm text-muted">{m.note}</p>
+              ) : null}
             </button>
           ))}
           {!measRows.length ? (

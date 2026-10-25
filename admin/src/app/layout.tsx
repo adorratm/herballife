@@ -21,7 +21,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Herbal Ürünleri Yönetim',
+  title: 'Herbal Kapıda Yönetim',
   description: 'Yönetim paneli',
 };
 

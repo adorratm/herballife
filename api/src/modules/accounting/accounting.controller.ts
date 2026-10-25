@@ -11,6 +11,7 @@ import {
   UploadedFile,
   UseInterceptors,
   BadRequestException,
+  GoneException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -27,7 +28,6 @@ import { PartiesService } from '@modules/accounting/parties.service';
 import { InvoicesService } from '@modules/accounting/invoices.service';
 import { CashService } from '@modules/accounting/cash.service';
 import { StockLedgerService } from '@modules/accounting/stock-ledger.service';
-import { OkcImportService } from '@modules/accounting/okc-import.service';
 import { ReportsService } from '@modules/accounting/reports.service';
 import { SyncService } from '@modules/accounting/sync.service';
 import { AccountingSettingsService } from '@modules/accounting/settings.service';
@@ -41,7 +41,6 @@ import {
   ConvertToInvoiceDto,
   CreatePartyDto,
   CreateStockMovementDto,
-  ImportOkcDto,
   InvoiceQueryDto,
   PartyQueryDto,
   ReportsQueryDto,
@@ -52,7 +51,6 @@ import {
   UpdateCashAccountDto,
   UpdateInvoiceDto,
   UpdatePartyDto,
-  AccountingQueryDto,
 } from '@modules/accounting/dto/accounting.dto';
 
 @ApiTags('accounting')
@@ -65,7 +63,6 @@ export class AccountingController {
     private readonly invoices: InvoicesService,
     private readonly cash: CashService,
     private readonly stock: StockLedgerService,
-    private readonly okc: OkcImportService,
     private readonly reports: ReportsService,
     private readonly sync: SyncService,
     private readonly settings: AccountingSettingsService,
@@ -245,13 +242,15 @@ export class AccountingController {
   }
 
   @Get('okc')
-  okcList(@Query() query: AccountingQueryDto) {
-    return this.okc.list(query);
+  @ApiOperation({ summary: 'Kaldırıldı — ÖKC modülü devre dışı' })
+  okcList() {
+    throw new GoneException('ÖKC modülü kaldırıldı');
   }
 
   @Post('okc/import')
-  okcImport(@Body() dto: ImportOkcDto) {
-    return this.okc.importRows(dto);
+  @ApiOperation({ summary: 'Kaldırıldı — ÖKC modülü devre dışı' })
+  okcImport() {
+    throw new GoneException('ÖKC modülü kaldırıldı');
   }
 
   @Get('reports/turnover')

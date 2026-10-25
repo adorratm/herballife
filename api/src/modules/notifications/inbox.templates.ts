@@ -236,6 +236,50 @@ export function opsAccessRequestedCopy(name: string, email: string): InboxCopy {
 export const OPS_ACCESS_REJECT_REASON =
   'Personel erişim talebiniz, başvuru şartlarının karşılanmaması nedeniyle onaylanmamıştır. Hesabınız müşteri olarak kullanılmaya devam eder; web mağazamızdan alışveriş yapabilirsiniz.';
 
+export function wellnessMealDecisionCopy(
+  approved: boolean,
+  coachNote?: string,
+): InboxCopy {
+  const note = coachNote?.trim();
+  return {
+    audience: InboxAudience.USER,
+    category: InboxCategory.ACCOUNT,
+    type: approved ? 'wellness_meal_approved' : 'wellness_meal_rejected',
+    title: approved ? 'Öğün kaydın onaylandı' : 'Öğün kaydın reddedildi',
+    body: approved
+      ? note
+        ? `Koçunuz öğününüzü onayladı: ${note}`
+        : 'Koçunuz öğün kaydınızı onayladı. Harika gidiyorsunuz!'
+      : note
+        ? `Öğün kaydı reddedildi: ${note}`
+        : 'Öğün kaydınız koçunuz tarafından reddedildi.',
+    href: '/hesabim/takip',
+  };
+}
+
+export function wellnessMeasurementDecisionCopy(
+  approved: boolean,
+  coachNote?: string,
+): InboxCopy {
+  const note = coachNote?.trim();
+  return {
+    audience: InboxAudience.USER,
+    category: InboxCategory.ACCOUNT,
+    type: approved
+      ? 'wellness_measurement_approved'
+      : 'wellness_measurement_rejected',
+    title: approved ? 'Ölçümün onaylandı' : 'Ölçümün reddedildi',
+    body: approved
+      ? note
+        ? `Koçunuz ölçümünüzü onayladı: ${note}`
+        : 'Koçunuz ölçüm kaydınızı onayladı.'
+      : note
+        ? `Ölçüm reddedildi: ${note}`
+        : 'Ölçüm kaydınız koçunuz tarafından reddedildi.',
+    href: '/hesabim/takip',
+  };
+}
+
 export function opsAccessDecisionCopy(approved: boolean): InboxCopy {
   if (approved) {
     return {

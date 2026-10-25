@@ -1,4 +1,7 @@
-import Link from "next/link";
+"use client";
+
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { Reveal } from "@/components/Reveal";
 import { FooterNavLinks } from "@/components/FooterNavLinks";
 import { PaymentCardLogos } from "@/components/PaymentCardLogos";
@@ -13,8 +16,21 @@ type Props = {
   settings?: SiteSettings;
 };
 
+const UTILITY_CHIPS = [
+  { href: "/siparis-sorgula", key: "orderLookup" as const },
+  { href: "/odeme-bildirimi", key: "paymentNotice" as const },
+  { href: "/banka-hesaplari", key: "bankAccounts" as const },
+  { href: "/hesabim/favoriler", key: "myFavorites" as const },
+];
+
 export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
-  const { brand, contact, footer, navigation, social, whatsapp } = settings;
+  const tFooter = useTranslations("footer");
+  const { brand, contact, footer, navigation, social, whatsapp, legal, membership } =
+    settings;
+  const distributorCode = brand.distributorCode?.trim();
+  const membershipUrl = membership?.ctaUrl?.trim() || "https://www.myherbalife.com";
+  const membershipLabel =
+    membership?.ctaLabel?.trim() || tFooter("membershipCta");
   const waPhone = resolveWhatsAppPhone({
     whatsappPhone: whatsapp.phone,
     contactPhone: contact.phone,
@@ -27,13 +43,13 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
         whatsapp.enabled && waPhone
           ? buildWhatsAppUrl(
               waPhone,
-              `Merhaba, ${brand.name} hakkında yazıyorum.`,
+              tFooter("whatsappPrefill", { brand: brand.name }),
             )
           : "",
       label: "WhatsApp",
     },
-    { href: social.googleMaps, label: "Harita" },
-    { href: social.googleReviewUrl, label: "Google Yorum" },
+    { href: social.googleMaps, label: tFooter("map") },
+    { href: social.googleReviewUrl, label: tFooter("googleReview") },
   ].filter((l) => l.href?.trim());
 
   return (
@@ -44,31 +60,25 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex items-start gap-3">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-bold text-on-primary">
-                  Onaylı
+                  {tFooter("approvedBadge")}
                 </span>
                 <div>
                   <p className="text-sm font-bold text-on-surface">
-                    Resmi Distribütör Güvencesi
+                    {tFooter("distributorTrustTitle")}
                   </p>
                   <p className="mt-1 max-w-xl text-xs leading-relaxed text-on-surface-variant">
-                    {brand.legalDisclaimer ||
-                      "Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir. Ürünler %100 orijinaldir."}
+                    {brand.legalDisclaimer || tFooter("legalDisclaimerFallback")}
                   </p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
-                {[
-                  { href: "/siparis-sorgula", label: "Sipariş sorgula" },
-                  { href: "/odeme-bildirimi", label: "Ödeme bildirimi" },
-                  { href: "/banka-hesaplari", label: "Banka hesapları" },
-                  { href: "/hesabim/favoriler", label: "Favorilerim" },
-                ].map((l) => (
+                {UTILITY_CHIPS.map((l) => (
                   <Link
                     key={l.href}
                     href={l.href}
                     className="rounded-full border border-outline-variant/40 bg-white px-3.5 py-1.5 text-xs font-semibold text-on-surface-variant transition-colors hover:border-primary hover:text-primary"
                   >
-                    {l.label}
+                    {tFooter(l.key)}
                   </Link>
                 ))}
               </div>
@@ -79,8 +89,13 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
 
       <div className="page-shell grid grid-cols-1 gap-10 py-12 md:grid-cols-12 md:gap-8 md:py-16">
         <Reveal className="md:col-span-5" variant="up">
-          <p className="font-display text-2xl font-bold text-primary">
+          <p className="flex flex-wrap items-center gap-2 font-display text-2xl font-bold text-primary">
             {brand.name}
+            {distributorCode ? (
+              <span className="rounded-full border border-primary/25 bg-primary-fixed px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wide text-primary">
+                ID {distributorCode}
+              </span>
+            ) : null}
           </p>
           <p className="mt-2 text-sm font-semibold text-on-surface">
             {brand.distributorName}
@@ -133,7 +148,7 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
           variant="up"
         >
           <span className="mb-1 text-xs font-bold uppercase tracking-wide text-on-surface-variant">
-            Navigasyon
+            {tFooter("navigation")}
           </span>
           <FooterNavLinks
             items={navigation.footerNav}
@@ -147,7 +162,7 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
           variant="up"
         >
           <span className="mb-1 text-xs font-bold uppercase tracking-wide text-on-surface-variant">
-            Yasal
+            {tFooter("legal")}
           </span>
           {navigation.footerLegal.map((item) => (
             <Link
@@ -163,6 +178,42 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
 
       <PaymentCardLogos />
 
+      <div className="border-t border-outline-variant bg-surface-container-low">
+        <div className="page-shell space-y-4 py-8">
+          {membershipUrl ? (
+            <div className="rounded-xl border border-outline-variant/50 bg-white p-4 md:p-5">
+              <a
+                href={membershipUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-bold text-primary hover:underline"
+              >
+                {membershipLabel} →
+              </a>
+              {membership?.disclaimer?.trim() ? (
+                <p className="mt-2 text-[11px] leading-relaxed text-on-surface-variant">
+                  {membership.disclaimer}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+          {legal?.supplementDisclaimer?.trim() ||
+          legal?.weightDisclaimer?.trim() ? (
+            <div className="space-y-2 text-[10px] leading-relaxed text-on-surface-variant/90">
+              {legal?.supplementDisclaimer?.trim() ? (
+                <p>{legal.supplementDisclaimer}</p>
+              ) : null}
+              {legal?.weightDisclaimer?.trim() ? (
+                <p>{legal.weightDisclaimer}</p>
+              ) : null}
+            </div>
+          ) : null}
+          <p className="text-xs text-on-surface-variant">
+            © {new Date().getFullYear()} {brand.name}
+            {footer.copyrightSuffix ? ` · ${footer.copyrightSuffix}` : ""}
+          </p>
+        </div>
+      </div>
     </footer>
   );
 }

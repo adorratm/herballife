@@ -7,6 +7,7 @@ import {
   PushProductResult,
   PulledOrder,
   SyncStockItem,
+  assertMarketplaceOrdersAllowed,
   hasMarketplaceCredentials,
 } from '@modules/marketplace/adapters/marketplace.adapter';
 import {
@@ -112,6 +113,7 @@ export class TrendyolGoMarketAdapter implements IMarketplaceAdapter {
   }
 
   async pullOrders(credentials: Record<string, string>) {
+    assertMarketplaceOrdersAllowed(credentials, 'Trendyol Go Market');
     if (!hasMarketplaceCredentials(credentials)) {
       return {
         orders: [

@@ -4,13 +4,13 @@ export type NavItem = { href: string; label: string };
 
 /** Üst ince şerit — sipariş/ödeme kısayolları (CMS menüde tekrarlanmaz) */
 export const UTILITY_LINKS: NavItem[] = [
-  { href: "/siparis-sorgula", label: "Sipariş Sorgula" },
-  { href: "/odeme-bildirimi", label: "Ödeme Bildirimi" },
-  { href: "/banka-hesaplari", label: "Banka Hesapları" },
-  { href: "/hesabim/favoriler", label: "Favorilerim" },
+  { href: "/siparis-sorgula", label: "Track order" },
+  { href: "/odeme-bildirimi", label: "Payment notification" },
+  { href: "/banka-hesaplari", label: "Bank accounts" },
+  { href: "/hesabim/favoriler", label: "My favorites" },
 ];
 
-/** Kategori menü öğeleri — görsel + kısa açıklama */
+/** Kategori menü öğeleri — görsel + kısa açıklama (SiteHeader home.categoryHub ile override) */
 export const CATEGORY_CHIPS: (NavItem & {
   accent?: boolean;
   image: string;
@@ -18,86 +18,96 @@ export const CATEGORY_CHIPS: (NavItem & {
 })[] = [
   {
     href: "/urunler/kategori/kilo-kontrolu",
-    label: "Kilo Kontrol",
-    blurb: "Formül ve program",
+    label: "Weight management",
+    blurb: "Formula and program",
     image: "/images/products/thermo-complete-90-tablet.png",
   },
   {
     href: "/urunler/kategori/icecekler",
-    label: "İçecekler",
-    blurb: "Aloe, çay, lif",
+    label: "Drinks",
+    blurb: "Aloe, tea, fiber",
     image: "/images/products/herbal-aloe-konsantre-icecek-473-ml.png",
   },
   {
     href: "/urunler/kategori/avantajli-setler",
-    label: "Setler",
-    blurb: "Karıştırıcı hediyeli",
+    label: "Bundles",
+    blurb: "Shaker gift included",
     image: "/images/products/2026-paket-1-shaker-hediyeli.png",
     accent: true,
   },
   {
     href: "/urunler/kategori/takviye-edici",
-    label: "Takviye",
-    blurb: "Vitamin ve mineral",
+    label: "Supplements",
+    blurb: "Vitamins and minerals",
     image:
       "/images/products/formul-2-vitamin-ve-mineral-kompleks-kadinlar-icin-60-tablet.png",
   },
   {
     href: "/urunler/kategori/sporcu-urunleri",
-    label: "Sporcu",
-    blurb: "Protein ve performans",
+    label: "Sports",
+    blurb: "Protein and performance",
     image: "/images/products/formul-1-shake.png",
   },
   {
     href: "/urunler/kategori/atistirmalik",
-    label: "Atıştırmalık",
-    blurb: "Pratik ara öğün",
+    label: "Snacks",
+    blurb: "Practical snacks",
     image: "/images/products/multi-fiber-multi-fiber-lifli-ve-aromali-icecek-tozu-elma-204-g.png",
   },
   {
     href: "/urunler/kategori/kisisel-bakim",
-    label: "Cilt Bakım",
-    blurb: "HL Skin serisi",
+    label: "Skin care",
+    blurb: "HL Skin series",
     image: "/images/products/hl-skin-yenileyici-jel-temizleyici-147-ml.png",
   },
   {
     href: "/urunler/kategori/tanitim-urunleri",
-    label: "Tanıtım",
-    blurb: "Başlangıç ürünleri",
+    label: "Samples",
+    blurb: "Starter products",
     image: "/images/products/shaker-tekli.jpg",
   },
 ];
 
-/** Masaüstü CMS menü için varsayılan (tekrarsız) */
+/** Masaüstü CMS menü için varsayılan (tekrarsız) — SiteHeader navLabel() ile locale */
 export const DEFAULT_HEADER_NAV: NavItem[] = [
-  { href: "/urunler", label: "Ürünler" },
-  { href: "/hakkimizda", label: "Hakkımızda" },
-  { href: "/blog", label: "Yazılar" },
-  { href: "/medya", label: "Medya" },
-  { href: "/sss", label: "SSS" },
-  { href: "/yorum", label: "Yorumlar" },
-  { href: "/iletisim", label: "İletişim" },
+  { href: "/urunler", label: "Products" },
+  { href: "/hakkimizda", label: "About" },
+  { href: "/blog", label: "Blog" },
+  { href: "/medya", label: "Media" },
+  { href: "/sss", label: "FAQ" },
+  { href: "/yorum", label: "Reviews" },
+  { href: "/iletisim", label: "Contact" },
 ];
 
 export const ACCOUNT_LINKS: NavItem[] = [
-  { href: "/hesabim", label: "Siparişlerim" },
-  { href: "/hesabim/favoriler", label: "Favorilerim" },
-  { href: "/hesabim/takip", label: "Beslenme Takibi" },
-  { href: "/hesabim/olcumler", label: "Ölçümlerim" },
-  { href: "/hesabim/rapor", label: "Gelişim Raporu" },
-  { href: "/hesabim/bildirimler", label: "Bildirimler" },
+  { href: "/hesabim", label: "My orders" },
+  { href: "/hesabim/favoriler", label: "My favorites" },
+  { href: "/hesabim/takip", label: "Nutrition tracking" },
+  { href: "/hesabim/olcumler", label: "My measurements" },
+  { href: "/hesabim/rapor", label: "Progress report" },
+  { href: "/hesabim/bildirimler", label: "Notifications" },
 ];
 
 export const SUPPORT_LINKS: NavItem[] = [
-  { href: "/siparis-sorgula", label: "Sipariş Sorgula" },
-  { href: "/takip", label: "Kargo Takip" },
-  { href: "/odeme-bildirimi", label: "Ödeme Bildirimi" },
-  { href: "/banka-hesaplari", label: "Banka Hesapları" },
-  { href: "/sss", label: "SSS" },
-  { href: "/yorum", label: "Google Yorum" },
+  { href: "/siparis-sorgula", label: "Track order" },
+  { href: "/takip", label: "Shipment tracking" },
+  { href: "/odeme-bildirimi", label: "Payment notification" },
+  { href: "/banka-hesaplari", label: "Bank accounts" },
+  { href: "/sss", label: "FAQ" },
+  { href: "/yorum", label: "Google review" },
 ];
 
-/** CMS header’dan utility ile çakışanları çıkar */
+/** Mobil hamburger — destek ve bilgi sayfaları */
+export const MOBILE_SUPPORT_LINKS: NavItem[] = [
+  { href: "/blog", label: "Blog" },
+  { href: "/kocluk", label: "Coaching" },
+  { href: "/medya", label: "Media" },
+  { href: "/iletisim", label: "Contact" },
+  { href: "/sss", label: "FAQ" },
+  { href: "/siparis-sorgula", label: "Track order" },
+];
+
+/** CMS header'dan utility ile çakışanları çıkar */
 export function dedupeHeaderNav(nav: NavItem[]): NavItem[] {
   const utilityHrefs = new Set(UTILITY_LINKS.map((l) => l.href));
   const categoryHrefs = new Set(CATEGORY_CHIPS.map((c) => c.href));

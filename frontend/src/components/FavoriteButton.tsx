@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type MouseEvent } from "react";
 import { loginPath } from "@/lib/auth";
@@ -21,6 +22,7 @@ export function FavoriteButton({
   size = "sm",
   stopPropagation = true,
 }: Props) {
+  const tAria = useTranslations("aria");
   const router = useRouter();
   const [active, setActive] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -61,7 +63,9 @@ export function FavoriteButton({
       type="button"
       onClick={onClick}
       disabled={busy}
-      aria-label={active ? "Favorilerden çıkar" : "Favorilere ekle"}
+      aria-label={
+        active ? tAria("removeFromFavorites") : tAria("addToFavorites")
+      }
       aria-pressed={active}
       className={`pressable inline-flex cursor-pointer items-center justify-center rounded-full border shadow-sm transition-all hover:scale-105 ${sizeClass} ${
         active

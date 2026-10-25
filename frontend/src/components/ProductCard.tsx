@@ -1,8 +1,18 @@
+"use client";
+
 import { AppImage as Image } from "@/components/AppImage";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { ProductBadgeStack } from "@/components/ProductBadgeStack";
 import { formatMoney, productImage } from "@/lib/format";
+import {
+  badgeHasSale,
+  computeProductBadges,
+  productDiscountPercent,
+  resolveProductCompareAt,
+} from "@/lib/product-badges";
 import type { Product } from "@/lib/types";
 
 type Props = {
@@ -27,34 +37,18 @@ export function ProductCard({
   size = "default",
   hideCart = false,
 }: Props) {
+  const t = useTranslations("product");
   const compact = size === "compact";
   const img = productImage(product.imageUrl, product.slug);
   const variant = product.variants?.[0];
   const price = product.salePrice ?? variant?.price ?? product.basePrice;
-  const compareAt =
-    product.compareAtPrice ??
-    (product.salePrice && product.basePrice !== product.salePrice
-      ? product.basePrice
-      : null);
-  const discount =
-    compareAt && Number(compareAt) > Number(price)
-      ? Math.round((1 - Number(price) / Number(compareAt)) * 100)
-      : null;
+  const compareAt = resolveProductCompareAt(product, price);
+  const discount = productDiscountPercent(price, compareAt);
+  const hasDiscount =
+    compareAt != null && Number(compareAt) > Number(price);
   const { score } = ratingFromSlug(product.slug);
-  const badgeLabel = product.badge?.trim() || null;
-  const nameHasGift = /hediye/i.test(product.name);
-  const isGifted =
-    !nameHasGift &&
-    (/hediye/i.test(badgeLabel || "") ||
-      product.category?.slug === "avantajli-setler");
-
-  const primaryBadge = discount
-    ? `−%${discount}`
-    : isGifted
-      ? "Hediyeli"
-      : badgeLabel && !/hediye/i.test(badgeLabel)
-        ? badgeLabel
-        : null;
+  const badges = computeProductBadges(product, { price, compareAt });
+  const saleInRibbon = badgeHasSale(badges);
 
   return (
     <article
@@ -62,37 +56,27 @@ export function ProductCard({
         compact ? "rounded-lg p-1.5" : "rounded-xl p-2.5"
       }`}
     >
-      {primaryBadge ? (
-        <span
-          className={`absolute z-10 rounded-full font-bold uppercase tracking-wide text-on-tertiary shadow-sm ${
-            compact
-              ? "left-1.5 top-1.5 px-1.5 py-0.5 text-[8px]"
-              : "left-2.5 top-2.5 px-2 py-0.5 text-[10px]"
-          } ${discount || !isGifted ? "bg-flash" : "bg-tertiary"} ${
-            discount ? "badge-live" : ""
-          }`}
-        >
-          {primaryBadge}
-        </span>
-      ) : null}
       <div className={`absolute z-10 ${compact ? "right-1.5 top-1.5" : "right-2.5 top-2.5"}`}>
         <FavoriteButton productId={product.id} size="sm" />
       </div>
       <Link href={`/urunler/${product.slug}`} className="flex flex-1 flex-col">
         <div
           className={`card-media-shine relative overflow-hidden rounded-lg ${
-            compact ? "mb-1.5 aspect-4/3" : "mb-2 aspect-square"
+            compact
+              ? "mb-1.5 aspect-square min-h-36"
+              : "mb-2 aspect-square min-h-44 sm:min-h-52"
           }`}
           style={{
             background:
               "radial-gradient(ellipse 70% 55% at 50% 40%, color-mix(in srgb, var(--primary-fixed) 90%, white), var(--surface-container-low))",
           }}
         >
+          <ProductBadgeStack badges={badges} compact={compact} onImage />
           <Image
             src={img}
             alt={product.name}
             fill
-            className="object-contain p-2.5 drop-shadow-[0_10px_18px_rgba(18,40,28,0.12)] transition-transform duration-500 ease-out group-hover:scale-[1.06]"
+            className="object-contain p-3 drop-shadow-[0_10px_18px_rgba(18,40,28,0.12)] transition-transform duration-500 ease-out group-hover:scale-[1.06]"
             sizes={compact ? "(max-width: 768px) 33vw, 15vw" : "(max-width: 768px) 45vw, 18vw"}
           />
         </div>
@@ -120,20 +104,33 @@ export function ProductCard({
           >
             {product.name}
           </h3>
-          <div className="mt-auto flex min-h-5 items-baseline gap-1.5 pt-1">
-            {compareAt && Number(compareAt) > Number(price) ? (
+          <div className="mt-auto flex min-h-5 flex-wrap items-baseline gap-1.5 pt-1">
+            {hasDiscount ? (
               <span className="text-[10px] text-outline line-through">
                 {formatMoney(compareAt, product.currency)}
               </span>
             ) : null}
             <span
               className={`font-bold text-primary ${
-                discount ? "price-live" : ""
+                hasDiscount ? "price-live" : ""
               } ${compact ? "text-xs" : "text-sm"}`}
             >
               {formatMoney(price, product.currency)}
             </span>
+            {hasDiscount &&
+            discount != null &&
+            discount > 0 &&
+            !saleInRibbon ? (
+              <span className="text-[10px] font-semibold text-[#b85c38]">
+                −%{discount}
+              </span>
+            ) : null}
           </div>
+          {hasDiscount && !compact ? (
+            <p className="mt-0.5 px-0.5 text-[10px] font-medium leading-snug text-on-surface-variant">
+              {t("bestPrice30Days")}
+            </p>
+          ) : null}
         </div>
       </Link>
       {!hideCart ? (
@@ -147,7 +144,7 @@ export function ProductCard({
             variantId={variant?.id}
             productName={product.name}
             price={Number(price)}
-            label="Sepete ekle"
+            label={t("addToCart")}
             goToCart={false}
             className={`btn-cta pressable w-full cursor-pointer text-xs ${compact ? "py-1.5" : "py-2"}`}
           />

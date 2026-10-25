@@ -29,10 +29,10 @@ const STATUS_LABELS: Record<string, string> = {
   returned: 'İade kargo',
 };
 
-const BRAND = 'Herbalife';
-const BRAND_EMAIL = 'info@herbalife.com.tr';
+const BRAND = 'Herbal Kapıda';
+const BRAND_EMAIL = 'info@herbalkapida.com';
 const BRAND_PHONE = '+90 541 214 79 63';
-const DEFAULT_SITE_URL = 'https://herbalife.com.tr';
+const DEFAULT_SITE_URL = 'https://herbalkapida.com';
 
 function isLoopbackHost(url: string): boolean {
   try {
@@ -73,7 +73,7 @@ export function resolveAdminUrl(config: ConfigService): string {
   const raw = (config.get<string>('adminUrl') || '').trim().replace(/\/$/, '');
   const nodeEnv =
     config.get<string>('nodeEnv') || process.env.NODE_ENV || 'development';
-  const defaultAdmin = 'https://admin.herbalife.com.tr';
+  const defaultAdmin = 'https://admin.herbalkapida.com';
   if (nodeEnv === 'production') {
     if (raw && !isLoopbackHost(raw)) return raw;
     return defaultAdmin;
@@ -126,6 +126,9 @@ function formatAddress(
 ): string {
   if (!addr) return '—';
   const lines = [
+    addr.companyTitle,
+    addr.taxNumber ? `VKN: ${addr.taxNumber}` : null,
+    addr.taxOffice ? `Vergi dairesi: ${addr.taxOffice}` : null,
     addr.fullName,
     addr.phone,
     addr.addressLine,
@@ -184,10 +187,26 @@ export function buildOrderDetailsHtml(
             .join(' · ');
           const border =
             idx === items.length - 1 ? 'none' : `1px solid ${C.line}`;
+          const lineItem = it as typeof it & {
+            imageUrl?: string | null;
+            product?: { imageUrl?: string | null } | null;
+          };
+          const imageUrl =
+            lineItem.imageUrl?.trim() ||
+            lineItem.product?.imageUrl?.trim() ||
+            '';
+          const thumb = imageUrl
+            ? `<img src="${escapeHtml(imageUrl)}" alt="" width="48" height="48" style="display:block;width:48px;height:48px;object-fit:cover;border:1px solid ${C.line};margin-right:12px;" />`
+            : '';
           return `<tr>
-            <td style="padding:12px 0;border-bottom:${border};font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.45;color:${C.soft};">
-              ${escapeHtml(name)}
-              <span style="display:inline-block;margin-left:8px;padding:2px 8px;border:1px solid ${C.line};font-size:11px;letter-spacing:0.06em;color:${C.muted};">×${it.quantity}</span>
+            <td style="padding:12px 0;border-bottom:${border};font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.45;color:${C.soft};vertical-align:top;">
+              <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+                ${thumb ? `<td style="vertical-align:top;">${thumb}</td>` : ''}
+                <td style="vertical-align:top;">
+                  ${escapeHtml(name)}
+                  <span style="display:inline-block;margin-left:8px;padding:2px 8px;border:1px solid ${C.line};font-size:11px;letter-spacing:0.06em;color:${C.muted};">×${it.quantity}</span>
+                </td>
+              </tr></table>
             </td>
             <td style="padding:12px 0;border-bottom:${border};font-family:Arial,Helvetica,sans-serif;font-size:14px;color:${C.cream};text-align:right;white-space:nowrap;vertical-align:top;">${escapeHtml(formatMoney(it.lineTotal, order.currency))}</td>
           </tr>`;
@@ -415,7 +434,7 @@ export function renderBrandedEmail(input: {
                 <a href="tel:+905553332211" style="color:${C.muted};text-decoration:none;">${BRAND_PHONE}</a>
               </p>
               <p style="margin:10px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6d5f52;">
-                <a href="${escapeHtml(site)}" style="color:#6d5f52;text-decoration:none;">herbalife.com.tr</a>
+                <a href="${escapeHtml(site)}" style="color:#6d5f52;text-decoration:none;">${escapeHtml(site.replace(/^https?:\/\//, ''))}</a>
               </p>
             </td>
           </tr>

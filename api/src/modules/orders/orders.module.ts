@@ -7,6 +7,7 @@ import { NotificationsModule } from '@modules/notifications/notifications.module
 import { CouponsModule } from '@modules/coupons/coupons.module';
 import { CatalogModule } from '@modules/catalog/catalog.module';
 import { MarketplaceModule } from '@modules/marketplace/marketplace.module';
+import { CartModule } from '@modules/cart/cart.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { MarketplaceModule } from '@modules/marketplace/marketplace.module';
     CouponsModule,
     CatalogModule,
     MarketplaceModule,
+    CartModule,
   ],
   controllers: [OrdersController, CheckoutController],
   providers: [OrdersService],

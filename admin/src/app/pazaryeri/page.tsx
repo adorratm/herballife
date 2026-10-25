@@ -429,7 +429,9 @@ export default function MarketplacePage() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted">
-          Trendyol · Trendyol Go Market · Hepsiburada · N11 — gerçek bağlantı (kimlik yoksa simülasyon)
+          Trendyol · Trendyol Go Market · Hepsiburada · N11 — canlı ortamda API
+          credentials zorunlu; kimlik yoksa sipariş senkronu başarısız olur (mock
+          sipariş üretilmez). Geliştirmede stok/sipariş simülasyonu açık kalabilir.
         </p>
         <button
           type="button"

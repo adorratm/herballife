@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsIn,
   IsInt,
+  IsObject,
   IsOptional,
   IsString,
   Max,
@@ -11,6 +12,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { SUPPORTED_LOCALES } from '@common/catalog/localization.types';
 
 export class CreateBlogPostDto {
   @ApiProperty()
@@ -37,6 +39,30 @@ export class CreateBlogPostDto {
   @IsString()
   @MaxLength(500)
   coverImageUrl?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsObject()
+  translations?: Record<
+    string,
+    {
+      title?: string;
+      excerpt?: string;
+      content?: string;
+      seoTitle?: string;
+      seoDescription?: string;
+    }
+  >;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsObject()
+  imagesByLocale?: Record<string, string>;
+
+  @ApiPropertyOptional({ default: true })
+  @IsOptional()
+  @IsBoolean()
+  useSharedImage?: boolean;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -94,6 +120,11 @@ export class CreateBlogPostDto {
 export class UpdateBlogPostDto extends PartialType(CreateBlogPostDto) {}
 
 export class BlogQueryDto {
+  @ApiPropertyOptional({ enum: SUPPORTED_LOCALES, default: 'tr' })
+  @IsOptional()
+  @IsIn(SUPPORTED_LOCALES)
+  locale?: string;
+
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()

@@ -3,6 +3,13 @@ export type ProductVariant = {
   sku: string;
   weightLabel: string;
   price: string | number;
+  categoryKey?: string | null;
+  translations?: Partial<
+    Record<
+      'tr' | 'en' | 'de' | 'fr' | 'es',
+      { name?: string; categoryLabel?: string }
+    >
+  > | null;
   stock: number;
   isActive?: boolean;
 };
@@ -33,9 +40,22 @@ export type Product = {
   batchId?: string | null;
   flavorNotes?: string[];
   imageUrl?: string | null;
+  imagesByLocale?: Partial<Record<'tr' | 'en' | 'de' | 'fr' | 'es', string>>;
+  useSharedImage?: boolean;
   gallery?: string[];
   badge?: string | null;
   basePrice: string | number;
+  prices?: Partial<Record<'TRY' | 'USD' | 'EUR' | 'GBP', number>>;
+  translations?: Record<
+    string,
+    {
+      name?: string;
+      slug?: string;
+      description?: string;
+      shortDescription?: string;
+    }
+  > | null;
+  priceTaxIncluded?: boolean;
   currency?: string;
   stock: number;
   isActive: boolean;
@@ -73,6 +93,7 @@ export type OrderItem = {
   quantity: number;
   unitPrice: string | number;
   lineTotal: string | number;
+  imageUrl?: string | null;
 };
 
 export type Shipment = {
@@ -164,6 +185,19 @@ export type BlogPost = {
   excerpt?: string | null;
   content: string;
   coverImageUrl?: string | null;
+  translations?: Record<
+    string,
+    {
+      title?: string;
+      slug?: string;
+      excerpt?: string;
+      content?: string;
+      seoTitle?: string;
+      seoDescription?: string;
+    }
+  > | null;
+  imagesByLocale?: Partial<Record<'tr' | 'en' | 'de' | 'fr' | 'es', string>>;
+  useSharedImage?: boolean;
   authorName?: string | null;
   tags?: string[];
   relatedProductSlugs?: string[];

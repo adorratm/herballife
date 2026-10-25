@@ -6,11 +6,22 @@ import {
 } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
-import { Campaign } from '@entities/campaign.entity';
+import {
+  Campaign,
+  type CampaignItemRule,
+  type CampaignRuleMode,
+} from '@entities/campaign.entity';
 import {
   CreateCampaignDto,
   UpdateCampaignDto,
 } from '@modules/campaigns/dto/campaigns.dto';
+import type { CampaignTranslations } from '@common/catalog/localization.types';
+import {
+  applyCampaignLocale,
+  assertImagesByLocaleWhenNotShared,
+  assertRequiredLocales,
+  normalizeLocale,
+} from '@common/catalog/localization.util';
 
 export type CampaignPriceInfo = {
   salePrice: string;
@@ -30,7 +41,26 @@ export class CampaignsService {
     return this.em.find(Campaign, { order: { createdAt: 'DESC' } });
   }
 
+  private validateCampaignI18n(
+    dto: Pick<
+      CreateCampaignDto,
+      'translations' | 'useSharedImage' | 'imageUrl' | 'imagesByLocale'
+    >,
+  ): void {
+    assertRequiredLocales(
+      dto.translations as CampaignTranslations | null | undefined,
+      ['name', 'headline'],
+      'Kampanya',
+    );
+    assertImagesByLocaleWhenNotShared(
+      dto.useSharedImage,
+      dto.imageUrl,
+      dto.imagesByLocale,
+    );
+  }
+
   async create(dto: CreateCampaignDto): Promise<Campaign> {
+    this.validateCampaignI18n(dto);
     const slug = this.slugify(dto.slug || dto.name);
     const existing = await this.em.findOne(Campaign, { where: { slug } });
     if (existing) {
@@ -40,9 +70,15 @@ export class CampaignsService {
       name: dto.name.trim(),
       slug,
       discountPercent: Number(dto.discountPercent).toFixed(2),
+      itemRules: this.normalizeItemRules(dto.itemRules),
+      ruleMode: dto.ruleMode ?? 'flat',
       badge: dto.badge?.trim() || null,
       theme: dto.theme?.trim() || 'default',
       headline: dto.headline?.trim() || null,
+      imageUrl: dto.imageUrl?.trim() || null,
+      translations: dto.translations ?? null,
+      imagesByLocale: dto.imagesByLocale ?? {},
+      useSharedImage: dto.useSharedImage !== false,
       productIds: dto.productIds || [],
       startsAt: dto.startsAt ? new Date(dto.startsAt) : null,
       endsAt: dto.endsAt ? new Date(dto.endsAt) : null,
@@ -54,6 +90,18 @@ export class CampaignsService {
   async update(id: string, dto: UpdateCampaignDto): Promise<Campaign> {
     const row = await this.em.findOne(Campaign, { where: { id } });
     if (!row) throw new NotFoundException('Kampanya bulunamadı');
+
+    this.validateCampaignI18n({
+      translations:
+        dto.translations !== undefined ? dto.translations : row.translations,
+      useSharedImage:
+        dto.useSharedImage !== undefined ? dto.useSharedImage : row.useSharedImage,
+      imageUrl: dto.imageUrl !== undefined ? dto.imageUrl : row.imageUrl,
+      imagesByLocale:
+        dto.imagesByLocale !== undefined
+          ? dto.imagesByLocale
+          : row.imagesByLocale,
+    });
 
     if (dto.name != null) row.name = dto.name.trim();
     if (dto.slug != null) {
@@ -67,6 +115,12 @@ export class CampaignsService {
     if (dto.discountPercent != null) {
       row.discountPercent = Number(dto.discountPercent).toFixed(2);
     }
+    if (dto.itemRules !== undefined) {
+      row.itemRules = this.normalizeItemRules(dto.itemRules);
+    }
+    if (dto.ruleMode !== undefined) {
+      row.ruleMode = dto.ruleMode;
+    }
     if (dto.badge !== undefined) {
       row.badge = dto.badge?.trim() || null;
     }
@@ -75,6 +129,18 @@ export class CampaignsService {
     }
     if (dto.headline !== undefined) {
       row.headline = dto.headline?.trim() || null;
+    }
+    if (dto.imageUrl !== undefined) {
+      row.imageUrl = dto.imageUrl?.trim() || null;
+    }
+    if (dto.translations !== undefined) {
+      row.translations = dto.translations ?? null;
+    }
+    if (dto.imagesByLocale !== undefined) {
+      row.imagesByLocale = dto.imagesByLocale ?? {};
+    }
+    if (dto.useSharedImage !== undefined) {
+      row.useSharedImage = dto.useSharedImage;
     }
     if (dto.productIds != null) row.productIds = dto.productIds;
     if (dto.startsAt !== undefined) {
@@ -95,17 +161,20 @@ export class CampaignsService {
   }
 
   /** Şu an geçerli kampanyalar (cache’siz; düşük hacim) */
-  async listActiveNow(): Promise<Campaign[]> {
+  async listActiveNow(locale?: string | null): Promise<Campaign[]> {
+    const loc = normalizeLocale(locale);
     const now = new Date();
     const rows = await this.em.find(Campaign, {
       where: { isActive: true },
       order: { discountPercent: 'DESC' },
     });
-    return rows.filter((c) => {
-      if (c.startsAt && c.startsAt.getTime() > now.getTime()) return false;
-      if (c.endsAt && c.endsAt.getTime() < now.getTime()) return false;
-      return true;
-    });
+    return rows
+      .filter((c) => {
+        if (c.startsAt && c.startsAt.getTime() > now.getTime()) return false;
+        if (c.endsAt && c.endsAt.getTime() < now.getTime()) return false;
+        return true;
+      })
+      .map((c) => applyCampaignLocale(c, loc));
   }
 
   /**
@@ -120,6 +189,45 @@ export class CampaignsService {
     return matches[0] || null;
   }
 
+  /** Sepetteki 1 tabanlı sıra için geçerli indirim yüzdesi */
+  effectiveDiscountPercent(
+    campaign: Campaign | null | undefined,
+    cartPosition: number,
+  ): number {
+    if (!campaign || cartPosition < 1) return 0;
+    const base = Number(campaign.discountPercent) || 0;
+    const mode: CampaignRuleMode = campaign.ruleMode || 'flat';
+    const rules = campaign.itemRules || [];
+    const rule = rules.find((r) => r.position === cartPosition);
+    const nth = rule ? Number(rule.discountPercent) : 0;
+
+    switch (mode) {
+      case 'nth_item':
+        return Math.min(90, Math.max(0, nth));
+      case 'both':
+        return Math.min(90, Math.max(0, base + nth));
+      default:
+        return Math.min(90, Math.max(0, base));
+    }
+  }
+
+  normalizeItemRules(
+    rules?: CampaignItemRule[] | null,
+  ): CampaignItemRule[] {
+    if (!rules?.length) return [];
+    const byPos = new Map<number, number>();
+    for (const r of rules) {
+      const pos = Math.floor(Number(r.position));
+      const pct = Number(r.discountPercent);
+      if (pos >= 1 && Number.isFinite(pct)) {
+        byPos.set(pos, Math.min(90, Math.max(0, pct)));
+      }
+    }
+    return [...byPos.entries()]
+      .sort((a, b) => a[0] - b[0])
+      .map(([position, discountPercent]) => ({ position, discountPercent }));
+  }
+
   applyPercent(price: string | number, percent: number): string {
     const n = Number(price);
     if (!Number.isFinite(n) || n <= 0) {
@@ -132,18 +240,21 @@ export class CampaignsService {
   async priceForProduct(
     productId: string,
     basePrice: string | number,
+    localeRaw?: string | null,
   ): Promise<CampaignPriceInfo | null> {
     const campaign = await this.resolveForProduct(productId);
     if (!campaign) return null;
-    const percent = Number(campaign.discountPercent);
+    const loc = normalizeLocale(localeRaw);
+    const localized = applyCampaignLocale(campaign, loc);
+    const percent = this.effectiveDiscountPercent(campaign, 1);
     return {
       compareAtPrice: Number(basePrice).toFixed(2),
       salePrice: this.applyPercent(basePrice, percent),
-      campaignName: campaign.name,
+      campaignName: localized.name,
       discountPercent: percent,
       campaignBadge: campaign.badge,
       campaignTheme: campaign.theme,
-      campaignHeadline: campaign.headline,
+      campaignHeadline: localized.headline,
     };
   }
 
@@ -183,6 +294,7 @@ export class CampaignsService {
     },
   >(
     product: T,
+    localeRaw?: string | null,
   ): Promise<
     T & {
       salePrice?: string | null;
@@ -193,7 +305,11 @@ export class CampaignsService {
       campaignHeadline?: string | null;
     }
   > {
-    const info = await this.priceForProduct(product.id, product.basePrice);
+    const info = await this.priceForProduct(
+      product.id,
+      product.basePrice,
+      localeRaw,
+    );
     const decorated = product as T & {
       salePrice?: string | null;
       compareAtPrice?: string | null;
@@ -221,6 +337,7 @@ export class CampaignsService {
     },
   >(
     products: T[],
+    localeRaw?: string | null,
   ): Promise<
     Array<
       T & {
@@ -233,7 +350,8 @@ export class CampaignsService {
       }
     >
   > {
-    const active = await this.listActiveNow();
+    const loc = normalizeLocale(localeRaw);
+    const active = await this.listActiveNow(loc);
     return products.map((product) => {
       const decorated = product as T & {
         salePrice?: string | null;
@@ -250,15 +368,16 @@ export class CampaignsService {
       if (!campaign) {
         return this.applyCampaignFields(decorated, null);
       }
-      const percent = Number(campaign.discountPercent);
+      const percent = this.effectiveDiscountPercent(campaign, 1);
+      const localized = applyCampaignLocale(campaign, loc);
       const info: CampaignPriceInfo = {
         salePrice: this.applyPercent(product.basePrice, percent),
         compareAtPrice: Number(product.basePrice).toFixed(2),
-        campaignName: campaign.name,
+        campaignName: localized.name,
         discountPercent: percent,
         campaignBadge: campaign.badge,
         campaignTheme: campaign.theme,
-        campaignHeadline: campaign.headline,
+        campaignHeadline: localized.headline,
       };
       this.applyCampaignFields(decorated, info);
       if (product.variants?.length) {

@@ -1,9 +1,11 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useTranslations } from "next-intl";
 import { subscribeNewsletter } from "@/lib/api";
 
 export function NewsletterForm() {
+  const t = useTranslations("newsletter");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "ok" | "err">("idle");
   const [loading, setLoading] = useState(false);
@@ -30,20 +32,20 @@ export function NewsletterForm() {
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="ornek@eposta.com"
+        placeholder={t("emailPlaceholder")}
         className="field-input grow text-primary"
       />
       <button type="submit" disabled={loading} className="btn-cta px-8 py-4 text-xs font-bold">
-        {loading ? "Gönderiliyor…" : "Abone Ol"}
+        {loading ? t("submitting") : t("submit")}
       </button>
       {status === "ok" ? (
         <p className="w-full font-meta text-[11px] uppercase text-primary md:absolute md:mt-20">
-          Kayıt alındı.
+          {t("success")}
         </p>
       ) : null}
       {status === "err" ? (
         <p className="w-full font-meta text-[11px] uppercase text-error md:absolute md:mt-20">
-          Abonelik şimdilik tamamlanamadı.
+          {t("error")}
         </p>
       ) : null}
     </form>

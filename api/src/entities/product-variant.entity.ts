@@ -2,6 +2,17 @@ import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '@entities/base.entity';
 import type { Product } from '@entities/product.entity';
 import { numericTransformer } from '@common/utils/numeric';
+import type { ProductPrices } from '@common/catalog/localization.types';
+
+export type VariantLocaleFields = {
+  name?: string;
+  /** Varyant grubu başlığı (örn. Shake tadı) */
+  categoryLabel?: string;
+};
+
+export type VariantTranslations = Partial<
+  Record<'tr' | 'en' | 'de' | 'fr' | 'es', VariantLocaleFields>
+>;
 
 @Entity('product_variants')
 export class ProductVariant extends BaseEntity {
@@ -27,8 +38,18 @@ export class ProductVariant extends BaseEntity {
   @Column({ name: 'weight_label', type: 'varchar', length: 40 })
   weightLabel!: string;
 
+  /** Varyant grubu (örn. shake_flavor) */
+  @Column({ name: 'category_key', type: 'varchar', length: 80, nullable: true })
+  categoryKey!: string | null;
+
+  @Column({ name: 'translations', type: 'jsonb', nullable: true })
+  translations!: VariantTranslations | null;
+
   @Column({ type: 'decimal', precision: 12, scale: 2 })
   price!: string;
+
+  @Column({ name: 'prices', type: 'jsonb', default: {} })
+  prices!: ProductPrices;
 
   @Column({
     name: 'stock',

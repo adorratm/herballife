@@ -3,7 +3,9 @@ import {
   IsArray,
   IsBoolean,
   IsDateString,
+  IsIn,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
@@ -11,9 +13,26 @@ import {
   MaxLength,
   Min,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
+
+export class CampaignItemRuleDto {
+  @ApiProperty({ example: 1, description: 'Sepetteki sıra (1 tabanlı)' })
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  @Max(999)
+  position!: number;
+
+  @ApiProperty({ example: 10, description: 'Bu sıradaki ürün için indirim %' })
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  @Max(90)
+  discountPercent!: number;
+}
 
 export class CreateCampaignDto {
   @ApiProperty()
@@ -34,6 +53,24 @@ export class CreateCampaignDto {
   @Min(1)
   @Max(90)
   discountPercent!: number;
+
+  @ApiPropertyOptional({
+    type: [CampaignItemRuleDto],
+    description: 'Sepette N. ürün (adet) için indirim kuralları',
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CampaignItemRuleDto)
+  itemRules?: CampaignItemRuleDto[];
+
+  @ApiPropertyOptional({
+    enum: ['flat', 'nth_item', 'both'],
+    default: 'flat',
+  })
+  @IsOptional()
+  @IsIn(['flat', 'nth_item', 'both'])
+  ruleMode?: 'flat' | 'nth_item' | 'both';
 
   @ApiPropertyOptional({ example: '11.11', description: 'Vitrin rozeti' })
   @IsOptional()
@@ -56,6 +93,26 @@ export class CreateCampaignDto {
   @IsString()
   @MaxLength(280)
   headline?: string;
+
+  @ApiPropertyOptional({ description: 'Flash banner görsel URL' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(512)
+  imageUrl?: string;
+
+  @ApiPropertyOptional({ description: 'en/de/fr/es kampanya metinleri' })
+  @IsOptional()
+  translations?: Record<string, { name?: string; headline?: string }>;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  imagesByLocale?: Record<string, string>;
+
+  @ApiPropertyOptional({ default: true })
+  @IsOptional()
+  @Transform(({ value }) => value === true || value === 'true')
+  @IsBoolean()
+  useSharedImage?: boolean;
 
   @ApiPropertyOptional({
     type: [String],

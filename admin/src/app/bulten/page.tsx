@@ -1,6 +1,12 @@
 'use client';
 
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import {
+  FormEvent,
+  Suspense,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import { asArray } from '@/lib/utils';
@@ -14,6 +20,10 @@ function NewsletterPageInner() {
   const [rows, setRows] = useState<NewsletterSubscriber[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [campaignSubject, setCampaignSubject] = useState('');
+  const [campaignHtml, setCampaignHtml] = useState('');
+  const [campaignBusy, setCampaignBusy] = useState(false);
+  const [campaignMsg, setCampaignMsg] = useState<string | null>(null);
 
   const visible = useMemo(() => {
     if (!filterQ) return rows;
@@ -47,8 +57,79 @@ function NewsletterPageInner() {
     };
   }, []);
 
+  async function sendCampaign(e: FormEvent) {
+    e.preventDefault();
+    setCampaignBusy(true);
+    setCampaignMsg(null);
+    setError(null);
+    try {
+      const res = await api<{ queued: number; campaignId: string }>(
+        '/newsletter/campaign',
+        {
+          method: 'POST',
+          body: {
+            subject: campaignSubject.trim(),
+            html: campaignHtml.trim(),
+          },
+        },
+      );
+      setCampaignMsg(
+        `${res.queued} aboneye e-posta kuyruğa alındı (kampanya ${res.campaignId.slice(0, 8)}…).`,
+      );
+      setCampaignSubject('');
+      setCampaignHtml('');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Kampanya gönderilemedi');
+    } finally {
+      setCampaignBusy(false);
+    }
+  }
+
   return (
     <div className="space-y-4">
+      <form
+        onSubmit={(e) => void sendCampaign(e)}
+        className="space-y-3 border border-border-muted bg-surface p-4"
+      >
+        <h2 className="mono text-xs uppercase tracking-widest text-muted">
+          Kampanya gönder
+        </h2>
+        <p className="text-sm text-muted">
+          Aktif abonelere BullMQ <code className="mono text-xs">email-marketing</code>{' '}
+          kuyruğu üzerinden gönderilir (gönderen: info@herbalkapida.com).
+        </p>
+        <label className="block text-sm">
+          <span className="mono text-[10px] uppercase text-muted">Konu</span>
+          <input
+            required
+            value={campaignSubject}
+            onChange={(e) => setCampaignSubject(e.target.value)}
+            className="mt-1 w-full border border-border-muted bg-background px-3 py-2 text-sm"
+          />
+        </label>
+        <label className="block text-sm">
+          <span className="mono text-[10px] uppercase text-muted">HTML gövde</span>
+          <textarea
+            required
+            rows={8}
+            value={campaignHtml}
+            onChange={(e) => setCampaignHtml(e.target.value)}
+            className="mt-1 w-full border border-border-muted bg-background px-3 py-2 font-mono text-xs"
+            placeholder="<p>Merhaba, yeni kampanyamız…</p>"
+          />
+        </label>
+        <button
+          type="submit"
+          disabled={campaignBusy}
+          className="border border-accent bg-accent px-4 py-2 text-sm text-white disabled:opacity-50"
+        >
+          {campaignBusy ? 'Kuyruğa alınıyor…' : 'Kampanyayı kuyruğa al'}
+        </button>
+        {campaignMsg ? (
+          <p className="text-sm text-success">{campaignMsg}</p>
+        ) : null}
+      </form>
+
       {error ? (
         <p className="border border-danger/40 bg-surface px-3 py-2 text-sm text-danger">
           {error}

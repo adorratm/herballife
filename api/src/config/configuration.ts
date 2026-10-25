@@ -93,8 +93,8 @@ export default () => ({
     clientIds: process.env.APPLE_CLIENT_ID || 'tr.herbalife.ops',
   },
   payment: {
-    /** paytr | iyzico — boşsa PayTR bilgileri varsa paytr, değilse iyzico */
-    provider: process.env.PAYMENT_PROVIDER || '',
+    /** Yalnızca PayTR */
+    provider: 'paytr' as const,
   },
   paytr: {
     merchantId: process.env.PAYTR_MERCHANT_ID || '',
@@ -116,11 +116,6 @@ export default () => ({
         ? process.env.PAYTR_ALLOW_MOCK === 'true'
         : process.env.PAYTR_ALLOW_MOCK !== 'false',
   },
-  iyzico: {
-    apiKey: process.env.IYZICO_API_KEY || '',
-    secretKey: process.env.IYZICO_SECRET_KEY || '',
-    baseUrl: process.env.IYZICO_BASE_URL || 'https://sandbox-api.iyzipay.com',
-  },
   aws: {
     region: process.env.AWS_REGION || 'eu-central-1',
     accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
@@ -132,7 +127,8 @@ export default () => ({
     url: resolveRedisUrl(),
   },
   mail: {
-    from: process.env.MAIL_FROM || 'Herbalife <info@herbalife.com.tr>',
+    from:
+      process.env.MAIL_FROM || 'Herbal Kapıda <info@herbalkapida.com>',
     host: process.env.MAIL_HOST || '',
     port: parseInt(process.env.MAIL_PORT || '587', 10),
     /** true = 465 SSL; false = 587 STARTTLS */
@@ -248,19 +244,5 @@ export default () => ({
     accessToken: process.env.INSTAGRAM_ACCESS_TOKEN || '',
     userId: process.env.INSTAGRAM_USER_ID || '',
     username: process.env.INSTAGRAM_USERNAME || 'herbalife',
-  },
-  einvoice: {
-    mock:
-      process.env.TURKCELL_ESIRKET_MOCK === 'true'
-        ? true
-        : process.env.TURKCELL_ESIRKET_MOCK === 'false'
-          ? false
-          : !process.env.TURKCELL_ESIRKET_API_KEY,
-    turkcell: {
-      apiKey: process.env.TURKCELL_ESIRKET_API_KEY || '',
-      baseUrl:
-        process.env.TURKCELL_ESIRKET_BASE_URL ||
-        'https://api.turkcellesirket.com',
-    },
   },
 });

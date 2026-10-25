@@ -1,6 +1,8 @@
 "use client";
 
-import { FormEvent, useEffect, useId, useRef, useState } from "react";
+import { FormEvent, useEffect, useId, useMemo, useRef, useState } from "react";
+import { MessageCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { readCookieConsent } from "@/lib/cookie-consent";
 import {
   FAB_BOTTOM_MOBILE,
@@ -10,7 +12,9 @@ import {
 import {
   DEFAULT_WHATSAPP_PHONE,
   DEFAULT_WHATSAPP_SETTINGS,
+  buildLocalizedWhatsAppSettings,
   buildWhatsAppUrl,
+  isDefaultWhatsAppPresets,
   type WhatsAppPreset,
 } from "@/lib/whatsapp";
 
@@ -22,6 +26,9 @@ type Props = {
   presets?: WhatsAppPreset[];
 };
 
+const POPUP_KEYS = ["popup0", "popup1", "popup2", "popup3", "popup4"] as const;
+const TITLE_KEYS = ["title0", "title1", "title2", "title3", "title4"] as const;
+
 function openWhatsApp(phone: string | null | undefined, text: string) {
   const url = buildWhatsAppUrl(phone, text);
   window.open(url, "_blank", "noopener,noreferrer");
@@ -30,18 +37,47 @@ function openWhatsApp(phone: string | null | undefined, text: string) {
 export function WhatsAppChat({
   enabled = true,
   phone = DEFAULT_WHATSAPP_PHONE,
-  brandName = "Herbalife",
+  brandName = "Herbal Kapıda",
   greeting = DEFAULT_WHATSAPP_SETTINGS.greeting,
   presets = DEFAULT_WHATSAPP_SETTINGS.presets,
 }: Props) {
+  const t = useTranslations("whatsapp");
+  const tForms = useTranslations("forms");
+  const popupMessages = useMemo(
+    () => POPUP_KEYS.map((key) => t(key)),
+    [t],
+  );
+  const titleRotation = useMemo(
+    () => TITLE_KEYS.map((key) => t(key)),
+    [t],
+  );
+  const localizedDefaults = useMemo(
+    () => buildLocalizedWhatsAppSettings(t),
+    [t],
+  );
+  const greetingText =
+    greeting === DEFAULT_WHATSAPP_SETTINGS.greeting
+      ? localizedDefaults.greeting
+      : greeting;
+  const activePresets = useMemo(() => {
+    if (!presets.length || isDefaultWhatsAppPresets(presets)) {
+      return localizedDefaults.presets;
+    }
+    return presets;
+  }, [presets, localizedDefaults.presets]);
+
   const [open, setOpen] = useState(false);
   const [liftForCookie, setLiftForCookie] = useState(false);
   const [custom, setCustom] = useState("");
+  const [popupIndex, setPopupIndex] = useState(0);
+  const [popupVisible, setPopupVisible] = useState(false);
   const expanded = useFabScrollExpand(enabled);
   const showLabel = expanded || open;
   const panelId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const stackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!expanded) setOpen(false);
@@ -61,6 +97,70 @@ export function WhatsAppChat({
   }, []);
 
   useEffect(() => {
+    if (open) setPopupVisible(false);
+  }, [open]);
+
+  useEffect(() => {
+    const show = popupVisible && !open;
+    function publish(heightPx: number) {
+      window.dispatchEvent(
+        new CustomEvent("herbalife:wa-popup", {
+          detail: { visible: show, heightPx: show ? heightPx : 0 },
+        }),
+      );
+    }
+    if (!show) {
+      publish(0);
+      return;
+    }
+    const el = popupRef.current;
+    if (!el) {
+      publish(72);
+      return;
+    }
+    publish(el.getBoundingClientRect().height);
+    const ro = new ResizeObserver((entries) => {
+      const h = entries[0]?.contentRect.height ?? el.getBoundingClientRect().height;
+      publish(h);
+    });
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      publish(0);
+    };
+  }, [popupVisible, open, popupIndex]);
+
+  useEffect(() => {
+    let popupTimer: ReturnType<typeof setInterval> | undefined;
+    let hideTimer: ReturnType<typeof setTimeout> | undefined;
+    const cycle = () => {
+      setPopupIndex((i) => (i + 1) % popupMessages.length);
+      setPopupVisible(true);
+      hideTimer = setTimeout(() => setPopupVisible(false), 4500);
+    };
+    const start = setTimeout(cycle, 5000);
+    popupTimer = setInterval(cycle, 12000);
+    return () => {
+      clearTimeout(start);
+      if (popupTimer) clearInterval(popupTimer);
+      if (hideTimer) clearTimeout(hideTimer);
+    };
+  }, [popupMessages.length]);
+
+  useEffect(() => {
+    const baseTitle = document.title;
+    let idx = 0;
+    const timer = setInterval(() => {
+      document.title = titleRotation[idx % titleRotation.length];
+      idx += 1;
+    }, 7000);
+    return () => {
+      clearInterval(timer);
+      document.title = baseTitle;
+    };
+  }, [titleRotation]);
+
+  useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
@@ -69,10 +169,10 @@ export function WhatsAppChat({
       }
     }
     function onPointer(e: MouseEvent) {
-      const t = e.target as Node;
+      const target = e.target as Node;
       if (
-        panelRef.current?.contains(t) ||
-        toggleRef.current?.contains(t)
+        panelRef.current?.contains(target) ||
+        toggleRef.current?.contains(target)
       ) {
         return;
       }
@@ -97,7 +197,7 @@ export function WhatsAppChat({
     e.preventDefault();
     const text =
       custom.trim() ||
-      `Merhaba, ${brandName} hakkında yazıyorum.`;
+      t("defaultCustomMessage", { brand: brandName });
     openWhatsApp(phone, text);
     setCustom("");
     setOpen(false);
@@ -106,49 +206,63 @@ export function WhatsAppChat({
   const bottomClass = liftForCookie
     ? `${FAB_BOTTOM_MOBILE_COOKIE} md:bottom-40`
     : `${FAB_BOTTOM_MOBILE} md:bottom-6`;
-  const list = presets.length
-    ? presets
-    : DEFAULT_WHATSAPP_SETTINGS.presets;
+  const list = activePresets;
 
   return (
     <div
+      ref={stackRef}
       className={`pointer-events-none fixed right-3 z-50 flex flex-col items-end gap-3 md:right-6 ${bottomClass}`}
     >
+      {!open && popupVisible ? (
+        <div
+          ref={popupRef}
+          className="pointer-events-none banner-enter max-w-[min(100vw-2rem,20rem)] rounded-2xl border border-[#25D366]/35 bg-surface-container-lowest px-4 py-3 shadow-lg"
+          role="status"
+        >
+          <p className="font-meta text-[10px] uppercase tracking-widest text-[#25D366]">
+            {t("label")}
+          </p>
+          <p className="mt-1 text-sm leading-snug text-on-surface">
+            {popupMessages[popupIndex]}
+          </p>
+        </div>
+      ) : null}
+
       {open ? (
         <div
           ref={panelRef}
           id={panelId}
           role="dialog"
           aria-modal="false"
-          aria-label="WhatsApp sohbet"
+          aria-label={t("dialogLabel")}
           className="pointer-events-auto banner-enter flex max-h-[min(52dvh,22rem)] w-[min(100vw-2rem,22rem)] flex-col overflow-hidden rounded-2xl border border-outline-variant/40 bg-surface-container-lowest shadow-[0_12px_40px_rgba(0,0,0,0.45)] sm:max-h-[min(70vh,28rem)]"
         >
           <div className="flex shrink-0 items-start justify-between gap-3 border-b border-outline-variant/25 bg-surface-container-low px-4 py-2.5 sm:py-3">
             <div>
               <p className="font-meta text-[10px] uppercase tracking-widest text-primary">
-                WhatsApp kanalı
+                {t("channelEyebrow")}
               </p>
               <p className="mt-1 font-display text-lg leading-none tracking-tight text-on-surface sm:text-xl">
-                Canlı destek
+                {t("liveSupport")}
               </p>
               <p className="mt-1.5 hidden font-meta text-[10px] uppercase leading-relaxed text-on-surface-variant sm:block">
-                Hazır soru seçin veya yazın · {phone}
+                {t("presetHint", { phone: phone || "" })}
               </p>
             </div>
             <button
               type="button"
               onClick={() => setOpen(false)}
               className="font-meta text-[10px] uppercase tracking-widest text-secondary hover:text-primary"
-              aria-label="Sohbeti kapat"
+              aria-label={t("closeChat")}
             >
-              Kapat
+              {t("close")}
             </button>
           </div>
 
           <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto overscroll-contain px-4 py-3 sm:space-y-3 sm:py-4">
             <div className="industrial-border bg-surface-container px-3 py-2 sm:py-3">
               <p className="font-meta text-[10px] uppercase leading-relaxed text-secondary sm:text-[11px]">
-                {greeting}
+                {greetingText}
               </p>
             </div>
 
@@ -171,18 +285,18 @@ export function WhatsAppChat({
               className="space-y-2 border-t border-outline-variant/20 pt-2.5 sm:pt-3"
             >
               <label className="field-label" htmlFor={`${panelId}-msg`}>
-                Kendi mesajınız
+                {t("customMessageLabel")}
               </label>
               <textarea
                 id={`${panelId}-msg`}
                 rows={2}
                 value={custom}
                 onChange={(e) => setCustom(e.target.value)}
-                placeholder="Mesajınızı yazın…"
+                placeholder={tForms("customMessage")}
                 className="field-input resize-none text-sm normal-case tracking-normal sm:resize-y"
               />
               <button type="submit" className="btn-cta w-full py-2.5 text-xs sm:py-3">
-                WhatsApp&apos;ta gönder
+                {t("sendOnWhatsapp")}
               </button>
             </form>
           </div>
@@ -192,28 +306,22 @@ export function WhatsAppChat({
       <button
         ref={toggleRef}
         type="button"
+        data-tour="whatsapp"
         aria-expanded={open}
         aria-controls={panelId}
-        aria-label={open ? "WhatsApp kapat" : "WhatsApp aç"}
+        aria-label={open ? t("closeFab") : t("openFab")}
         onClick={() => setOpen((v) => !v)}
-        className={`pointer-events-auto inline-flex h-[46px] items-center justify-center rounded-full border border-[#25D366]/40 bg-[#25D366] font-meta text-[11px] font-bold uppercase leading-none tracking-widest text-white shadow-[0_8px_24px_rgba(37,211,102,0.35)] transition-all duration-300 ease-out hover:bg-[#1ebe57] ${
-          showLabel ? "gap-2.5 px-4" : "w-[46px] gap-0 px-0"
+        className={`pointer-events-auto inline-flex h-11.5 items-center justify-center rounded-full border border-[#25D366]/40 bg-[#25D366] font-meta text-[11px] font-bold uppercase leading-none tracking-widest text-white shadow-[0_8px_24px_rgba(37,211,102,0.35)] transition-all duration-300 ease-out hover:bg-[#1ebe57] ${
+          showLabel ? "gap-2.5 px-4" : "w-11.5 gap-0 px-0"
         }`}
       >
-        <svg
-          viewBox="0 0 24 24"
-          className="h-5 w-5 shrink-0"
-          fill="currentColor"
-          aria-hidden
-        >
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-        </svg>
+        <MessageCircle className="h-5 w-5 shrink-0" strokeWidth={2.25} aria-hidden />
         <span
           className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
             showLabel ? "max-w-28 opacity-100" : "max-w-0 opacity-0"
           }`}
         >
-          {open ? "Kapat" : "WhatsApp"}
+          {open ? t("close") : t("label")}
         </span>
       </button>
     </div>

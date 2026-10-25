@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 function imageRemotePatterns() {
   const patterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
@@ -95,25 +98,26 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["@/components"],
   },
   async redirects() {
+    const locale = "/:locale(tr|en|de|fr|es)";
     return [
       {
-        source: "/favorilerim",
-        destination: "/hesabim/favoriler",
+        source: `${locale}/favorilerim`,
+        destination: `${locale}/hesabim/favoriler`,
         permanent: false,
       },
       {
-        source: "/siparisim-ne-durumda",
-        destination: "/siparis-sorgula",
+        source: `${locale}/siparisim-ne-durumda`,
+        destination: `${locale}/siparis-sorgula`,
         permanent: true,
       },
       {
-        source: "/sepetim",
-        destination: "/sepet",
+        source: `${locale}/sepetim`,
+        destination: `${locale}/sepet`,
         permanent: true,
       },
       {
-        source: "/giris-yap",
-        destination: "/giris",
+        source: `${locale}/giris-yap`,
+        destination: `${locale}/giris`,
         permanent: true,
       },
     ];
@@ -136,4 +140,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

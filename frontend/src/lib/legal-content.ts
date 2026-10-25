@@ -5,6 +5,10 @@
 
 import type { SiteSettings } from "@/lib/cms";
 import { DEFAULT_SETTINGS } from "@/lib/cms";
+import { buildLegalFallbackEn } from "@/lib/legal-content-en";
+import deFallback from "@/lib/legal-fallback/de.json";
+import esFallback from "@/lib/legal-fallback/es.json";
+import frFallback from "@/lib/legal-fallback/fr.json";
 
 export type LegalSeller = {
   name: string;
@@ -95,7 +99,36 @@ export function applyLiveSellerContact(
   return result;
 }
 
+type LegalDocMap = Record<string, { title: string; content: string }>;
+
+function hydrateLegalTemplates(
+  templates: LegalDocMap,
+  seller: LegalSeller,
+): LegalDocMap {
+  const out: LegalDocMap = {};
+  for (const [slug, doc] of Object.entries(templates)) {
+    out[slug] = {
+      title: applyLiveSellerContact(doc.title, seller),
+      content: applyLiveSellerContact(doc.content, seller),
+    };
+  }
+  return out;
+}
+
 export function buildLegalFallback(
+  seller: LegalSeller,
+  locale = "tr",
+): Record<string, { title: string; content: string }> {
+  const base = locale.split("-")[0];
+  if (base === "en") return buildLegalFallbackEn(seller);
+  if (base === "de") return hydrateLegalTemplates(deFallback, seller);
+  if (base === "fr") return hydrateLegalTemplates(frFallback, seller);
+  if (base === "es") return hydrateLegalTemplates(esFallback, seller);
+  if (base !== "tr") return buildLegalFallbackEn(seller);
+  return buildLegalFallbackTr(seller);
+}
+
+function buildLegalFallbackTr(
   seller: LegalSeller,
 ): Record<string, { title: string; content: string }> {
   return {

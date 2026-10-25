@@ -1,4 +1,10 @@
-import { orderStatusLabel, shipmentStatusLabel } from "@/lib/order-status";
+"use client";
+
+import { useTranslations } from "next-intl";
+import {
+  orderStatusLabel,
+  shipmentStatusLabel,
+} from "@/lib/order-status-i18n";
 
 type Props = {
   status: string;
@@ -6,10 +12,11 @@ type Props = {
 };
 
 export function StatusBadge({ status, kind = "order" }: Props) {
+  const t = useTranslations("orderStatus");
   const label =
     kind === "shipment"
-      ? shipmentStatusLabel(status)
-      : orderStatusLabel(status);
+      ? shipmentStatusLabel(status, t)
+      : orderStatusLabel(status, t);
 
   const tone =
     status === "delivered"

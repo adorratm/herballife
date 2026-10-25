@@ -19,7 +19,7 @@ function stripHtml(html: string) {
 
 export async function GET() {
   const [settings, posts] = await Promise.all([
-    getSiteSettings(),
+    getSiteSettings("tr"),
     getBlogPosts({ page: 1, limit: 50, sort: "publishedAt", order: "desc" }),
   ]);
 

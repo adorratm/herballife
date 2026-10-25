@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Reveal } from "@/components/Reveal";
 import { submitContact } from "@/lib/api";
 import type { SiteSettings } from "@/lib/cms";
@@ -24,6 +25,8 @@ export function ContactPageClient({
   title,
   subtitle,
 }: Props) {
+  const t = useTranslations("contactPage");
+  const tForms = useTranslations("forms");
   const [form, setForm] = useState({
     senderName: "",
     senderEmail: "",
@@ -63,17 +66,14 @@ export function ContactPageClient({
     contactPhone: contact.phone,
   });
   const waHref = waEnabled
-    ? buildWhatsAppUrl(
-        waPhone,
-        `Merhaba, ${brandName} iletişim sayfasından yazıyorum.`,
-      )
+    ? buildWhatsAppUrl(waPhone, t("waPrefill", { brand: brandName }))
     : undefined;
 
   return (
     <div className="bg-white pb-16">
       <header className="border-b border-outline-variant bg-[#f7f8f6]">
         <div className="page-shell page-hero border-0 bg-transparent">
-          <p className="page-kicker">İletişim</p>
+          <p className="page-kicker">{t("kicker")}</p>
           <h1 className="page-title">{title}</h1>
           {subtitle ? <p className="page-lead">{subtitle}</p> : null}
         </div>
@@ -101,7 +101,7 @@ export function ContactPageClient({
                 {contact.phone ? (
                   <li>
                     <span className="block text-xs font-semibold text-on-surface-variant">
-                      Telefon
+                      {t("phone")}
                     </span>
                     <a
                       href={telHref}
@@ -114,7 +114,7 @@ export function ContactPageClient({
                 {contact.email ? (
                   <li>
                     <span className="block text-xs font-semibold text-on-surface-variant">
-                      E-posta
+                      {t("email")}
                     </span>
                     <a
                       href={mailHref}
@@ -135,7 +135,7 @@ export function ContactPageClient({
                       rel="noopener noreferrer"
                       className="mt-0.5 inline-flex cursor-pointer font-semibold text-primary hover:underline"
                     >
-                      Hemen yaz
+                      {t("writeNow")}
                     </a>
                   </li>
                 ) : null}
@@ -147,7 +147,7 @@ export function ContactPageClient({
             <Reveal variant="left" delay={80}>
               <div className="rounded-2xl border border-outline-variant bg-surface-container-low p-6 md:p-8">
                 <p className="text-xs font-bold uppercase tracking-wide text-primary">
-                  Çalışma saatleri
+                  {t("hours")}
                 </p>
                 <p className="mt-3 text-sm leading-relaxed text-on-surface">
                   {contact.hours}
@@ -163,7 +163,7 @@ export function ContactPageClient({
               rel="noopener noreferrer"
               className="inline-flex cursor-pointer items-center justify-center rounded-full bg-[#25D366] px-5 py-3.5 text-sm font-bold text-white transition-colors hover:bg-[#1ebe57]"
             >
-              WhatsApp ile yaz
+              {t("writeWhatsapp")}
             </a>
           ) : null}
         </div>
@@ -174,14 +174,14 @@ export function ContactPageClient({
             className="rounded-2xl border border-outline-variant bg-white p-6 shadow-sm md:p-8"
           >
             <p className="text-xs font-bold uppercase tracking-wide text-primary">
-              Mesaj gönder
+              {t("sendMessage")}
             </p>
             <h2 className="mt-1 font-display text-xl font-bold text-on-surface">
-              Bize ulaşın
+              {t("reachUs")}
             </h2>
             <div className="mt-6 grid gap-4">
               <div>
-                <label className="field-label">Ad Soyad</label>
+                <label className="field-label">{tForms("fullName")}</label>
                 <input
                   required
                   className="field-input"
@@ -192,7 +192,7 @@ export function ContactPageClient({
                 />
               </div>
               <div>
-                <label className="field-label">E-posta</label>
+                <label className="field-label">{tForms("email")}</label>
                 <input
                   required
                   type="email"
@@ -204,7 +204,7 @@ export function ContactPageClient({
                 />
               </div>
               <div>
-                <label className="field-label">Konu</label>
+                <label className="field-label">{t("subject")}</label>
                 <select
                   className="field-input"
                   value={form.protocolType}
@@ -212,14 +212,14 @@ export function ContactPageClient({
                     setForm((f) => ({ ...f, protocolType: e.target.value }))
                   }
                 >
-                  <option value="general">Genel</option>
-                  <option value="coaching">Beslenme danışmanlığı</option>
-                  <option value="logistics">Sipariş / kargo</option>
-                  <option value="technical">Teknik</option>
+                  <option value="general">{t("subjectGeneral")}</option>
+                  <option value="coaching">{t("subjectCoaching")}</option>
+                  <option value="logistics">{t("subjectLogistics")}</option>
+                  <option value="technical">{t("subjectTechnical")}</option>
                 </select>
               </div>
               <div>
-                <label className="field-label">Mesaj</label>
+                <label className="field-label">{t("message")}</label>
                 <textarea
                   required
                   rows={5}
@@ -235,17 +235,13 @@ export function ContactPageClient({
                 disabled={loading}
                 className="btn-cta cursor-pointer py-3.5 text-sm disabled:opacity-60"
               >
-                {loading ? "Gönderiliyor…" : "Gönder"}
+                {loading ? t("sending") : t("send")}
               </button>
               {status === "ok" ? (
-                <p className="text-sm font-medium text-primary">
-                  Mesajınız alındı. En kısa sürede dönüş yapacağız.
-                </p>
+                <p className="text-sm font-medium text-primary">{t("success")}</p>
               ) : null}
               {status === "err" ? (
-                <p className="text-sm font-medium text-error">
-                  Gönderim başarısız. Lütfen daha sonra tekrar deneyin.
-                </p>
+                <p className="text-sm font-medium text-error">{t("error")}</p>
               ) : null}
             </div>
           </form>

@@ -98,3 +98,18 @@ export function hasMarketplaceCredentials(
     (v) => typeof v === 'string' && v.trim().length > 0,
   );
 }
+
+/** Production’da credentials yokken mock sipariş çekmeyi engelle */
+export function assertMarketplaceOrdersAllowed(
+  credentials: Record<string, string>,
+  platform: string,
+): void {
+  if (
+    (process.env.NODE_ENV || 'development') === 'production' &&
+    !hasMarketplaceCredentials(credentials)
+  ) {
+    throw new Error(
+      `${platform}: canlı ortamda pazaryeri API kimlik bilgileri zorunlu — mock sipariş üretilmez. Admin → Pazaryeri’nden credentials girin.`,
+    );
+  }
+}

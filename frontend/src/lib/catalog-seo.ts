@@ -6,12 +6,22 @@ export type BrewGuide = {
   notes?: string;
 };
 
-export const PRODUCT_KIND_LABELS: Record<string, string> = {
-  supplement: "Takviye / Formül",
-  beverage: "İçecek",
-  herbal_tea: "Bitki çayı",
-  tea: "Çay",
-  other: "Diğer",
+export const PRODUCT_KIND_KEYS = [
+  "supplement",
+  "beverage",
+  "herbal_tea",
+  "tea",
+  "other",
+] as const;
+
+export type ProductKindLabels = Record<string, string>;
+
+const ENGLISH_KIND_LABELS: ProductKindLabels = {
+  supplement: "Supplement / Formula",
+  beverage: "Beverage",
+  herbal_tea: "Herbal tea",
+  tea: "Tea",
+  other: "Other",
 };
 
 const GOOGLE_CATEGORY_SUPPLEMENT =
@@ -19,9 +29,12 @@ const GOOGLE_CATEGORY_SUPPLEMENT =
 const GOOGLE_CATEGORY_BEVERAGE =
   "Food, Beverages & Tobacco > Beverages";
 
-export function productKindLabel(kind?: string | null): string | null {
+export function productKindLabel(
+  kind?: string | null,
+  labels: ProductKindLabels = ENGLISH_KIND_LABELS,
+): string | null {
   if (!kind) return null;
-  return PRODUCT_KIND_LABELS[kind] || null;
+  return labels[kind] || labels.other || ENGLISH_KIND_LABELS.other;
 }
 
 export function looksLikeHtml(value: string): boolean {
@@ -40,15 +53,21 @@ export function googleProductCategory(kind?: string | null): string {
   }
 }
 
-export function merchantProductType(product: Product): string {
+export function merchantProductType(
+  product: Product,
+  labels?: { productsPrefix?: string; defaultType?: string; kinds?: ProductKindLabels },
+): string {
+  const productsPrefix = labels?.productsPrefix ?? "Products";
+  const defaultType = labels?.defaultType ?? `${productsPrefix} > Supplements`;
+  const kindLabels = labels?.kinds ?? ENGLISH_KIND_LABELS;
   const category = product.category?.name?.trim();
-  const kind = productKindLabel(product.kind);
+  const kind = productKindLabel(product.kind, kindLabels);
   if (category && kind && category !== kind) {
     return `${category} > ${kind}`;
   }
   if (category) return category;
-  if (kind) return `Ürünler > ${kind}`;
-  return "Ürünler > Takviye";
+  if (kind) return `${productsPrefix} > ${kind}`;
+  return defaultType;
 }
 
 export function productGtin(product: Product): string | null {

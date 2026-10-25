@@ -1,5 +1,6 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
 import { BaseEntity } from '@entities/base.entity';
+import type { CategoryTranslations } from '@common/catalog/localization.types';
 import type { Product } from '@entities/product.entity';
 
 @Entity('categories')
@@ -13,6 +14,9 @@ export class Category extends BaseEntity {
 
   @Column({ type: 'text', nullable: true })
   description!: string | null;
+
+  @Column({ name: 'translations', type: 'jsonb', nullable: true })
+  translations!: CategoryTranslations | null;
 
   @Column({ name: 'seo_title', type: 'varchar', length: 220, nullable: true })
   seoTitle!: string | null;

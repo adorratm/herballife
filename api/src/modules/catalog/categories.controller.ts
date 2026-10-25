@@ -6,10 +6,12 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CategoriesService } from '@modules/catalog/categories.service';
 import {
+  CatalogLocaleQueryDto,
   CreateCategoryDto,
   UpdateCategoryDto,
 } from '@modules/catalog/dto/catalog.dto';
@@ -25,8 +27,8 @@ export class CategoriesController {
   @Public()
   @Get()
   @ApiOperation({ summary: 'Aktif kategoriler' })
-  findAll() {
-    return this.categoriesService.findAllPublic();
+  findAll(@Query() query: CatalogLocaleQueryDto) {
+    return this.categoriesService.findAllPublic(query);
   }
 
   @ApiBearerAuth()
@@ -64,7 +66,10 @@ export class CategoriesController {
   @Public()
   @Get(':slug')
   @ApiOperation({ summary: 'Kategori detay (slug)' })
-  findBySlug(@Param('slug') slug: string) {
-    return this.categoriesService.findBySlug(slug);
+  findBySlug(
+    @Param('slug') slug: string,
+    @Query() query: CatalogLocaleQueryDto,
+  ) {
+    return this.categoriesService.findBySlug(slug, query);
   }
 }

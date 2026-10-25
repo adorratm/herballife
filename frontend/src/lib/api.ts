@@ -138,6 +138,8 @@ export async function getProductsPaged(
 ): Promise<Paginated<Product>> {
   try {
     const qs = toQuery({
+      locale: params?.locale,
+      currency: params?.currency,
       q: params?.q,
       categorySlug: params?.categorySlug,
       originCountry: params?.originCountry,
@@ -174,10 +176,16 @@ export async function getProductsPaged(
   }
 }
 
-export async function getCategories(): Promise<Category[]> {
+export async function getCategories(
+  params?: { locale?: string; currency?: string },
+): Promise<Category[]> {
   try {
+    const qs = toQuery({
+      locale: params?.locale,
+      currency: params?.currency,
+    });
     const data = await apiFetch<Category[] | { items: Category[] }>(
-      "/categories",
+      `/categories${qs}`,
       { next: { revalidate: 30 } },
     );
     return Array.isArray(data) ? data : data.items ?? [];
@@ -194,15 +202,19 @@ export type ActiveCampaign = {
   badge?: string | null;
   theme?: string | null;
   headline?: string | null;
+  imageUrl?: string | null;
   startsAt?: string | null;
   endsAt?: string | null;
   isActive: boolean;
 };
 
 /** Şu an geçerli flash / özel gün kampanyaları (en yüksek % önce) */
-export async function getActiveCampaigns(): Promise<ActiveCampaign[]> {
+export async function getActiveCampaigns(params?: {
+  locale?: string;
+}): Promise<ActiveCampaign[]> {
   try {
-    const data = await apiFetch<ActiveCampaign[]>("/campaigns/active", {
+    const qs = toQuery({ locale: params?.locale });
+    const data = await apiFetch<ActiveCampaign[]>(`/campaigns/active${qs}`, {
       next: { revalidate: 60 },
     });
     return Array.isArray(data) ? data : [];
@@ -213,10 +225,15 @@ export async function getActiveCampaigns(): Promise<ActiveCampaign[]> {
 
 export async function getCategoryBySlug(
   slug: string,
+  params?: { locale?: string; currency?: string },
 ): Promise<Category | null> {
   try {
+    const qs = toQuery({
+      locale: params?.locale,
+      currency: params?.currency,
+    });
     return await apiFetch<Category>(
-      `/categories/${encodeURIComponent(slug)}`,
+      `/categories/${encodeURIComponent(slug)}${qs}`,
       { next: { revalidate: 30 } },
     );
   } catch {
@@ -237,11 +254,21 @@ export async function globalSearch(
   }
 }
 
-export async function getProductBySlug(slug: string): Promise<Product | null> {
+export async function getProductBySlug(
+  slug: string,
+  params?: { locale?: string; currency?: string },
+): Promise<Product | null> {
   try {
-    return await apiFetch<Product>(`/products/${encodeURIComponent(slug)}`, {
-      cache: "no-store",
+    const qs = toQuery({
+      locale: params?.locale,
+      currency: params?.currency,
     });
+    return await apiFetch<Product>(
+      `/products/${encodeURIComponent(slug)}${qs}`,
+      {
+        cache: "no-store",
+      },
+    );
   } catch {
     return null;
   }
@@ -623,9 +650,13 @@ export async function trackShipment(code: string): Promise<TrackingResult | null
 
 export async function getLegalDocument(
   slug: string,
+  params?: { locale?: string },
 ): Promise<LegalDocument | null> {
   try {
-    return await apiFetch<LegalDocument>(`/legal/${encodeURIComponent(slug)}`);
+    const qs = toQuery({ locale: params?.locale });
+    return await apiFetch<LegalDocument>(
+      `/legal/${encodeURIComponent(slug)}${qs}`,
+    );
   } catch {
     return null;
   }
@@ -636,6 +667,7 @@ export async function getBlogPosts(
 ): Promise<Paginated<BlogPost>> {
   try {
     const qs = toQuery({
+      locale: params?.locale,
       q: params?.q,
       tag: params?.tag,
       categorySlug: params?.categorySlug,
@@ -670,9 +702,13 @@ export async function getBlogPosts(
 
 export async function getBlogPostBySlug(
   slug: string,
+  params?: { locale?: string },
 ): Promise<BlogPost | null> {
   try {
-    return await apiFetch<BlogPost>(`/blog/${encodeURIComponent(slug)}`);
+    const qs = toQuery({ locale: params?.locale });
+    return await apiFetch<BlogPost>(
+      `/blog/${encodeURIComponent(slug)}${qs}`,
+    );
   } catch {
     return null;
   }

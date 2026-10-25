@@ -51,6 +51,24 @@ export class CreateAddressDto {
   @IsOptional()
   @IsBoolean()
   isDefaultBilling?: boolean;
+
+  @ApiPropertyOptional({ description: 'Kurumsal fatura ünvanı' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  companyTitle?: string;
+
+  @ApiPropertyOptional({ description: 'Vergi kimlik no (VKN)' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(20)
+  taxNumber?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  taxOffice?: string;
 }
 
 export class UpdateAddressDto extends PartialType(CreateAddressDto) {}

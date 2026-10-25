@@ -6,6 +6,7 @@ import { api } from '@/lib/api';
 import { asArray, slugify } from '@/lib/utils';
 import { DataTable } from '@/components/DataTable';
 import type { LegalDocument } from '@/lib/types';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 type FormState = {
   id?: string;
@@ -274,18 +275,18 @@ function LegalPageInner() {
               />
             </label>
           </div>
-          <label className="block text-sm">
+          <div className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">İçerik</span>
-            <textarea
-              required
-              rows={14}
-              value={form.content}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, content: e.target.value }))
-              }
-              className="mt-1 w-full border border-border-muted bg-background px-3 py-2 font-mono text-sm"
-            />
-          </label>
+            <div className="mt-1">
+              <RichTextEditor
+                value={form.content}
+                onChange={(html) =>
+                  setForm((f) => ({ ...f, content: html }))
+                }
+                minHeight="320px"
+              />
+            </div>
+          </div>
           <div className="flex gap-2">
             <button
               type="submit"

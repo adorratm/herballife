@@ -45,3 +45,14 @@ export class NewsletterSubscribeDto {
   @MaxLength(80)
   source?: string;
 }
+
+export class SendNewsletterCampaignDto {
+  @ApiProperty({ example: 'Yeni kampanya — %15 indirim' })
+  @IsString()
+  @MaxLength(200)
+  subject!: string;
+
+  @ApiProperty({ description: 'HTML gövde (inline CSS önerilir)' })
+  @IsString()
+  html!: string;
+}

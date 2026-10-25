@@ -8,63 +8,114 @@ import { Modal } from '@/components/Modal';
 type BlastResult = {
   id: string;
   message: string;
+  templateName: string;
+  languageCode: string;
   recipientCount: number;
   sentCount: number;
   failedCount: number;
-  note?: string;
-  recipients: Array<{ name: string; phone: string; ok: boolean }>;
+  queued?: boolean;
+  recipients: Array<{
+    name: string;
+    phone: string;
+    ok: boolean;
+    error?: string;
+    messageId?: string;
+  }>;
 };
 
 type BlastRow = {
   id: string;
   message: string;
+  templateName?: string | null;
+  languageCode?: string | null;
   recipientCount: number;
   sentCount: number;
   failedCount: number;
   createdAt?: string;
 };
 
-const TEMPLATES = [
-  {
-    id: 'su',
-    label: 'Su hatırlatma',
-    text: 'Merhaba {Danışan Adı}! Bugün su hedefinizi tamamlamayı unutmayın — Emine Özberk',
-  },
+const PRESETS = [
   {
     id: 'motivasyon',
     label: 'Motivasyon',
-    text: 'Merhaba {Danışan Adı}! Bugün hedefinize bir adım daha yaklaştınız. Öğün düzeninizi sürdürün — Emine Özberk',
+    templateName: 'coach_motivation',
+    bodyParams: ['{{1}}'],
+  },
+  {
+    id: 'su',
+    label: 'Su hatırlatma',
+    templateName: 'coach_water_reminder',
+    bodyParams: ['{{1}}'],
   },
   {
     id: 'olcum',
     label: 'Ölçüm günü',
-    text: 'Merhaba {Danışan Adı}! Bu haftanın ölçümünü uygulamadan kaydetmeyi unutmayın — Emine Özberk',
+    templateName: 'coach_measurement_reminder',
+    bodyParams: ['{{1}}'],
   },
 ];
 
 export default function CoachWhatsappPage() {
-  const [message, setMessage] = useState(TEMPLATES[1].text);
+  const [templateName, setTemplateName] = useState(PRESETS[0].templateName);
+  const [languageCode, setLanguageCode] = useState('tr');
+  const [bodyParamsText, setBodyParamsText] = useState('{{1}}');
   const [result, setResult] = useState<BlastResult | null>(null);
   const [history, setHistory] = useState<BlastRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const [pollingId, setPollingId] = useState<string | null>(null);
 
   useEffect(() => {
     void api<BlastRow[]>('/wellness/coach/whatsapp-blasts')
       .then(setHistory)
       .catch(() => undefined);
-  }, [result]);
+  }, [result?.id]);
+
+  useEffect(() => {
+    if (!pollingId) return;
+    const timer = setInterval(() => {
+      void api<BlastResult>(`/wellness/coach/whatsapp-blasts/${pollingId}`)
+        .then((blast) => {
+          const done =
+            blast.sentCount + blast.failedCount >= blast.recipientCount;
+          setResult({
+            id: blast.id,
+            message: blast.message,
+            templateName: blast.templateName,
+            languageCode: blast.languageCode,
+            recipientCount: blast.recipientCount,
+            sentCount: blast.sentCount,
+            failedCount: blast.failedCount,
+            recipients: blast.recipients || [],
+          });
+          if (done) {
+            setPollingId(null);
+          }
+        })
+        .catch(() => setPollingId(null));
+    }, 1500);
+    return () => clearInterval(timer);
+  }, [pollingId]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setSending(true);
     setError(null);
     try {
+      const bodyParams = bodyParamsText
+        .split('\n')
+        .map((l) => l.trim())
+        .filter(Boolean);
       const res = await api<BlastResult>('/wellness/coach/whatsapp-blast', {
         method: 'POST',
-        body: { message },
+        body: {
+          templateName: templateName.trim(),
+          languageCode: languageCode.trim() || 'tr',
+          bodyParams: bodyParams.length ? bodyParams : ['{{1}}'],
+        },
       });
       setResult(res);
+      setPollingId(res.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Gönderim başarısız');
     } finally {
@@ -80,8 +131,9 @@ export default function CoachWhatsappPage() {
         </Link>
         <h2 className="mt-2 text-xl font-semibold">Toplu WhatsApp mesajı</h2>
         <p className="text-sm text-muted">
-          Sağlık takibi kaydı olan danışanlara motivasyon mesajı. Demo ortamında
-          gerçek API çağrısı yapılmaz; numarası olanlar “gönderildi” sayılır.
+          Meta Business onaylı şablonlar ile danışanlara gönderim.{' '}
+          <code className="text-xs">WHATSAPP_PROVIDER=meta</code> ve şablon
+          adını panelden girin. {'{{1}}'} danışan adı ile doldurulur.
         </p>
       </div>
 
@@ -91,15 +143,21 @@ export default function CoachWhatsappPage() {
         </p>
       ) : null}
 
-      <form onSubmit={onSubmit} className="space-y-4 rounded-xl border border-border-muted bg-surface p-5">
+      <form
+        onSubmit={onSubmit}
+        className="space-y-4 rounded-xl border border-border-muted bg-surface p-5"
+      >
         <div>
-          <p className="text-xs uppercase text-muted">Şablonlar</p>
+          <p className="text-xs uppercase text-muted">Şablon ön ayarları</p>
           <div className="mt-2 flex flex-wrap gap-2">
-            {TEMPLATES.map((t) => (
+            {PRESETS.map((t) => (
               <button
                 key={t.id}
                 type="button"
-                onClick={() => setMessage(t.text)}
+                onClick={() => {
+                  setTemplateName(t.templateName);
+                  setBodyParamsText(t.bodyParams.join('\n'));
+                }}
                 className="rounded-full border border-border-muted bg-background px-3 py-1.5 text-xs font-semibold hover:border-accent"
               >
                 {t.label}
@@ -108,22 +166,39 @@ export default function CoachWhatsappPage() {
           </div>
         </div>
         <label className="block text-sm">
-          <span className="text-xs uppercase text-muted">Mesaj</span>
-          <textarea
-            rows={5}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
+          <span className="text-xs uppercase text-muted">Meta şablon adı</span>
+          <input
+            value={templateName}
+            onChange={(e) => setTemplateName(e.target.value)}
             className="mt-1 w-full rounded-lg border border-border-muted bg-background px-3 py-2"
             required
           />
+        </label>
+        <label className="block text-sm">
+          <span className="text-xs uppercase text-muted">Dil kodu</span>
+          <input
+            value={languageCode}
+            onChange={(e) => setLanguageCode(e.target.value)}
+            placeholder="tr"
+            className="mt-1 w-full rounded-lg border border-border-muted bg-background px-3 py-2"
+            required
+          />
+        </label>
+        <label className="block text-sm">
+          <span className="text-xs uppercase text-muted">
+            Body parametreleri (satır başına bir değer)
+          </span>
+          <textarea
+            rows={3}
+            value={bodyParamsText}
+            onChange={(e) => setBodyParamsText(e.target.value)}
+            className="mt-1 w-full rounded-lg border border-border-muted bg-background px-3 py-2 font-mono text-sm"
+          />
           <span className="mt-1 block text-xs text-muted">
-            {'{Danışan Adı}'} alanı gönderimde otomatik doldurulabilir (demo).
+            İlk parametre için {'{{1}}'} kullanın — gönderimde danışan adı
+            yazılır.
           </span>
         </label>
-        <div className="rounded-xl bg-background p-3 text-sm">
-          <p className="text-xs uppercase text-muted">Önizleme</p>
-          <p className="mt-1 whitespace-pre-wrap">{message}</p>
-        </div>
         <button
           type="submit"
           disabled={sending}
@@ -132,25 +207,35 @@ export default function CoachWhatsappPage() {
           {sending ? (
             <>
               <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-              Gönderiliyor…
+              Kuyruğa alınıyor…
             </>
           ) : (
-            'WhatsApp ile gönder'
+            'WhatsApp kuyruğuna ekle'
           )}
         </button>
       </form>
 
       <Modal
         open={Boolean(result)}
-        onClose={() => setResult(null)}
+        onClose={() => {
+          setResult(null);
+          setPollingId(null);
+        }}
         size="lg"
         title="Gönderim raporu"
-        description={result?.note || 'Mesajlar iletildi'}
+        description={
+          pollingId
+            ? 'Mesajlar sırayla iletiliyor…'
+            : 'Gönderim tamamlandı'
+        }
         footer={
           <button
             type="button"
             className="admin-btn admin-btn-primary"
-            onClick={() => setResult(null)}
+            onClick={() => {
+              setResult(null);
+              setPollingId(null);
+            }}
           >
             Tamam
           </button>
@@ -162,7 +247,7 @@ export default function CoachWhatsappPage() {
               {[
                 { label: 'Alıcı', value: result.recipientCount },
                 { label: 'Başarılı', value: result.sentCount },
-                { label: 'Numarasız', value: result.failedCount },
+                { label: 'Başarısız', value: result.failedCount },
               ].map((s) => (
                 <div
                   key={s.label}
@@ -187,13 +272,16 @@ export default function CoachWhatsappPage() {
                       {' '}
                       · {r.phone || 'telefon yok'}
                     </span>
+                    {r.error ? (
+                      <span className="block text-xs text-danger">{r.error}</span>
+                    ) : null}
                   </span>
                   <span
                     className={`shrink-0 text-xs font-semibold ${
                       r.ok ? 'text-accent' : 'text-muted'
                     }`}
                   >
-                    {r.ok ? 'Tamam' : 'Atlandı'}
+                    {r.ok ? 'Gönderildi' : r.phone ? 'Bekliyor / hata' : 'Atlandı'}
                   </span>
                 </li>
               ))}
@@ -209,9 +297,13 @@ export default function CoachWhatsappPage() {
             key={h.id}
             className="rounded-xl border border-border-muted bg-surface px-4 py-3 text-sm"
           >
+            <p className="font-mono text-xs text-muted">
+              {h.templateName || '—'} · {h.languageCode || 'tr'}
+            </p>
             <p className="line-clamp-2">{h.message}</p>
             <p className="mt-1 text-xs text-muted">
-              {h.sentCount}/{h.recipientCount} · {h.createdAt || ''}
+              {h.sentCount}/{h.recipientCount} başarılı · {h.failedCount}{' '}
+              başarısız · {h.createdAt || ''}
             </p>
           </div>
         ))}

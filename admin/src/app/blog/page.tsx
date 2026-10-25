@@ -3,12 +3,68 @@
 import { FormEvent, Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
-import { asPaged, slugify } from '@/lib/utils';
+import { asArray, asPaged, slugify } from '@/lib/utils';
 import { DataTable } from '@/components/DataTable';
 import { MediaUpload } from '@/components/MediaUpload';
 import { Checkbox } from '@/components/Checkbox';
+import { AdminListThumb } from '@/components/AdminListThumb';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { AdminFormPanel } from '@/components/AdminFormPanel';
+import { RichTextEditor } from '@/components/RichTextEditor';
 import type { BlogPost } from '@/lib/types';
+
+type LocaleKey = 'en' | 'de' | 'fr' | 'es';
+
+type BlogLocaleFields = {
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  seoTitle: string;
+  seoDescription: string;
+};
+
+const LOCALE_TABS: { key: LocaleKey; label: string }[] = [
+  { key: 'en', label: 'EN' },
+  { key: 'de', label: 'DE' },
+  { key: 'fr', label: 'FR' },
+  { key: 'es', label: 'ES' },
+];
+
+const emptyBlogTranslations = (): Record<LocaleKey, BlogLocaleFields> => ({
+  en: {
+    title: '',
+    slug: '',
+    excerpt: '',
+    content: '',
+    seoTitle: '',
+    seoDescription: '',
+  },
+  de: {
+    title: '',
+    slug: '',
+    excerpt: '',
+    content: '',
+    seoTitle: '',
+    seoDescription: '',
+  },
+  fr: {
+    title: '',
+    slug: '',
+    excerpt: '',
+    content: '',
+    seoTitle: '',
+    seoDescription: '',
+  },
+  es: {
+    title: '',
+    slug: '',
+    excerpt: '',
+    content: '',
+    seoTitle: '',
+    seoDescription: '',
+  },
+});
 
 type FormState = {
   id?: string;
@@ -17,10 +73,14 @@ type FormState = {
   excerpt: string;
   content: string;
   coverImageUrl: string;
+  useSharedImage: boolean;
+  imagesByLocale: Record<LocaleKey, string>;
+  translationTab: LocaleKey;
+  translations: Record<LocaleKey, BlogLocaleFields>;
   authorName: string;
   tags: string;
-  relatedProductSlugs: string;
-  relatedCategorySlugs: string;
+  relatedProductSlugs: string[];
+  relatedCategorySlugs: string[];
   seoTitle: string;
   seoDescription: string;
   isPublished: boolean;
@@ -32,10 +92,14 @@ const emptyForm = (): FormState => ({
   excerpt: '',
   content: '',
   coverImageUrl: '',
+  useSharedImage: true,
+  imagesByLocale: { en: '', de: '', fr: '', es: '' },
+  translationTab: 'en',
+  translations: emptyBlogTranslations(),
   authorName: 'Herbalife',
   tags: '',
-  relatedProductSlugs: '',
-  relatedCategorySlugs: '',
+  relatedProductSlugs: [],
+  relatedCategorySlugs: [],
   seoTitle: '',
   seoDescription: '',
   isPublished: false,
@@ -54,6 +118,13 @@ function BlogAdminPageInner() {
   const [message, setMessage] = useState<string | null>(null);
   const [q, setQ] = useState(initialQ);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [highlightRowKey, setHighlightRowKey] = useState<string | null>(null);
+  const [productOptions, setProductOptions] = useState<
+    { slug: string; name: string }[]
+  >([]);
+  const [categoryOptions, setCategoryOptions] = useState<
+    { slug: string; name: string }[]
+  >([]);
 
   async function load(search = q) {
     setLoading(true);
@@ -82,6 +153,28 @@ function BlogAdminPageInner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialQ]);
 
+  useEffect(() => {
+    void Promise.all([
+      api<unknown>('/categories/admin/all').catch(() => []),
+      api<unknown>('/products/admin/all?limit=500').catch(() => []),
+    ]).then(([catsRaw, productsRaw]) => {
+      const cats = asArray<{ slug: string; name: string }>(catsRaw);
+      setCategoryOptions(
+        cats
+          .filter((c) => c.slug?.trim())
+          .map((c) => ({ slug: c.slug, name: c.name }))
+          .sort((a, b) => a.name.localeCompare(b.name, 'tr')),
+      );
+      const productsPage = asPaged<{ slug: string; name: string }>(productsRaw);
+      setProductOptions(
+        (productsPage.items || [])
+          .filter((p) => p.slug?.trim())
+          .map((p) => ({ slug: p.slug, name: p.name }))
+          .sort((a, b) => a.name.localeCompare(b.name, 'tr')),
+      );
+    });
+  }, []);
+
   function startCreate() {
     setForm(emptyForm());
     setEditing(true);
@@ -95,10 +188,33 @@ function BlogAdminPageInner() {
       excerpt: post.excerpt || '',
       content: post.content,
       coverImageUrl: post.coverImageUrl || '',
+      useSharedImage: post.useSharedImage !== false,
+      imagesByLocale: {
+        en: post.imagesByLocale?.en || '',
+        de: post.imagesByLocale?.de || '',
+        fr: post.imagesByLocale?.fr || '',
+        es: post.imagesByLocale?.es || '',
+      },
+      translationTab: 'en',
+      translations: (() => {
+        const tr = emptyBlogTranslations();
+        for (const { key } of LOCALE_TABS) {
+          const t = post.translations?.[key];
+          tr[key] = {
+            title: t?.title || '',
+            slug: t?.slug || '',
+            excerpt: t?.excerpt || '',
+            content: t?.content || '',
+            seoTitle: t?.seoTitle || '',
+            seoDescription: t?.seoDescription || '',
+          };
+        }
+        return tr;
+      })(),
       authorName: post.authorName || '',
       tags: (post.tags || []).join(', '),
-      relatedProductSlugs: (post.relatedProductSlugs || []).join(', '),
-      relatedCategorySlugs: (post.relatedCategorySlugs || []).join(', '),
+      relatedProductSlugs: post.relatedProductSlugs || [],
+      relatedCategorySlugs: post.relatedCategorySlugs || [],
       seoTitle: post.seoTitle || '',
       seoDescription: post.seoDescription || '',
       isPublished: post.isPublished,
@@ -111,35 +227,86 @@ function BlogAdminPageInner() {
     setSaving(true);
     setError(null);
     setMessage(null);
+    for (const { key, label } of LOCALE_TABS) {
+      const row = form.translations[key];
+      if (
+        !row.title.trim() ||
+        !row.slug.trim() ||
+        !row.excerpt.trim() ||
+        !row.content.trim()
+      ) {
+        setError(`${label}: başlık, slug, özet ve içerik zorunludur.`);
+        setSaving(false);
+        return;
+      }
+    }
+    if (!form.useSharedImage) {
+      for (const { key, label } of LOCALE_TABS) {
+        if (!form.imagesByLocale[key]?.trim()) {
+          setError(`${label} kapak görseli zorunludur.`);
+          setSaving(false);
+          return;
+        }
+      }
+      if (!form.coverImageUrl.trim()) {
+        setError('TR kapak görseli zorunludur.');
+        setSaving(false);
+        return;
+      }
+    }
+
+    const translations: Record<string, BlogLocaleFields> = {};
+    for (const { key } of LOCALE_TABS) {
+      const row = form.translations[key];
+      translations[key] = {
+        title: row.title.trim(),
+        slug: row.slug.trim() || slugify(row.title),
+        excerpt: row.excerpt.trim(),
+        content: row.content.trim(),
+        seoTitle: row.seoTitle.trim(),
+        seoDescription: row.seoDescription.trim(),
+      };
+    }
+
     const payload = {
       slug: form.slug || slugify(form.title),
       title: form.title,
       excerpt: form.excerpt || undefined,
       content: form.content,
       coverImageUrl: form.coverImageUrl || undefined,
+      translations,
+      useSharedImage: form.useSharedImage,
+      imagesByLocale: form.useSharedImage
+        ? {}
+        : {
+            en: form.imagesByLocale.en.trim(),
+            de: form.imagesByLocale.de.trim(),
+            fr: form.imagesByLocale.fr.trim(),
+            es: form.imagesByLocale.es.trim(),
+          },
       authorName: form.authorName || undefined,
       tags: form.tags
         .split(',')
         .map((t) => t.trim())
         .filter(Boolean),
-      relatedProductSlugs: form.relatedProductSlugs
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean),
-      relatedCategorySlugs: form.relatedCategorySlugs
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean),
+      relatedProductSlugs: form.relatedProductSlugs,
+      relatedCategorySlugs: form.relatedCategorySlugs,
       seoTitle: form.seoTitle || undefined,
       seoDescription: form.seoDescription || undefined,
       isPublished: form.isPublished,
     };
     try {
+      let savedId = form.id;
       if (form.id) {
         await api(`/blog/${form.id}`, { method: 'PATCH', body: payload });
       } else {
-        await api('/blog', { method: 'POST', body: payload });
+        const created = await api<{ id: string }>('/blog', {
+          method: 'POST',
+          body: payload,
+        });
+        savedId = created.id;
       }
+      setHighlightRowKey(savedId || null);
       setEditing(false);
       setForm(emptyForm());
       setMessage('Kaydedildi');
@@ -178,20 +345,23 @@ function BlogAdminPageInner() {
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') void load(q);
-          }}
-          placeholder="Ara…"
-          className="border border-border-muted bg-background px-3 py-2 text-sm"
-        />
+      <div className="admin-toolbar">
+        <label className="block min-w-48 flex-1 text-sm">
+          <span className="mono text-[10px] uppercase text-muted">Ara</span>
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') void load(q);
+            }}
+            placeholder="Başlık, slug…"
+            className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+          />
+        </label>
         <button
           type="button"
           onClick={() => void load(q)}
-          className="border border-border-muted px-3 py-2 text-sm"
+          className="admin-btn admin-btn-ghost"
         >
           Filtrele
         </button>
@@ -208,10 +378,40 @@ function BlogAdminPageInner() {
         </p>
       ) : null}
 
-      {editing ? (
+      <AdminFormPanel
+        open={editing}
+        onClose={() => {
+          setEditing(false);
+          setForm(emptyForm());
+        }}
+        title={form.id ? 'Yazı düzenle' : 'Yeni yazı'}
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                setEditing(false);
+                setForm(emptyForm());
+              }}
+              className="admin-btn admin-btn-ghost"
+            >
+              İptal
+            </button>
+            <button
+              type="submit"
+              form="blog-form"
+              disabled={saving}
+              className="admin-btn admin-btn-primary disabled:opacity-50"
+            >
+              {saving ? 'Kaydediliyor…' : 'Kaydet'}
+            </button>
+          </>
+        }
+      >
         <form
+          id="blog-form"
           onSubmit={onSubmit}
-          className="grid gap-3 border border-border-muted bg-surface p-4 md:grid-cols-2"
+          className="grid gap-3 md:grid-cols-2"
         >
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">Başlık</span>
@@ -252,29 +452,180 @@ function BlogAdminPageInner() {
               className="mt-1 w-full border border-border-muted bg-background px-3 py-2 text-sm"
             />
           </label>
-          <label className="block text-sm md:col-span-2">
+          <div className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
-              İçerik (HTML)
+              İçerik
             </span>
-            <textarea
-              required
-              rows={12}
-              value={form.content}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, content: e.target.value }))
-              }
-              className="mt-1 w-full border border-border-muted bg-background px-3 py-2 font-mono text-sm"
-            />
-          </label>
+            <div className="mt-1">
+              <RichTextEditor
+                value={form.content}
+                onChange={(html) =>
+                  setForm((f) => ({ ...f, content: html }))
+                }
+                minHeight="280px"
+              />
+            </div>
+          </div>
           <div className="md:col-span-2">
             <MediaUpload
-              label="Kapak görseli"
+              label="Kapak görseli (TR)"
               value={form.coverImageUrl}
               onChange={(url) =>
                 setForm((f) => ({ ...f, coverImageUrl: url }))
               }
               folder="blog"
             />
+            <div className="mt-3">
+              <Checkbox
+                label="Tüm dillerde ortak kapak görseli"
+                checked={form.useSharedImage}
+                onChange={(useSharedImage) =>
+                  setForm((f) => ({ ...f, useSharedImage }))
+                }
+              />
+            </div>
+            {!form.useSharedImage ? (
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                {LOCALE_TABS.map(({ key, label }) => (
+                  <label key={key} className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      Kapak URL ({label})
+                    </span>
+                    <input
+                      value={form.imagesByLocale[key]}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          imagesByLocale: {
+                            ...f.imagesByLocale,
+                            [key]: e.target.value,
+                          },
+                        }))
+                      }
+                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                    />
+                  </label>
+                ))}
+              </div>
+            ) : null}
+          </div>
+          <div className="md:col-span-2 space-y-3 rounded border border-border-muted p-3">
+            <p className="mono text-[10px] uppercase text-muted">
+              Çeviriler — EN/DE/FR/ES zorunlu
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {LOCALE_TABS.map(({ key, label }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() =>
+                    setForm((f) => ({ ...f, translationTab: key }))
+                  }
+                  className={`border px-3 py-1 text-xs uppercase ${
+                    form.translationTab === key
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border-muted'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {(() => {
+              const tab = form.translationTab;
+              const row = form.translations[tab];
+              return (
+                <div className="grid gap-3">
+                  <label className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      Başlık ({tab})
+                    </span>
+                    <input
+                      value={row.title}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          translations: {
+                            ...f.translations,
+                            [tab]: {
+                              ...f.translations[tab],
+                              title: e.target.value,
+                              slug:
+                                f.translations[tab].slug ||
+                                slugify(e.target.value),
+                            },
+                          },
+                        }))
+                      }
+                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                    />
+                  </label>
+                  <label className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      URL slug ({tab})
+                    </span>
+                    <input
+                      value={row.slug}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          translations: {
+                            ...f.translations,
+                            [tab]: {
+                              ...f.translations[tab],
+                              slug: e.target.value,
+                            },
+                          },
+                        }))
+                      }
+                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2 font-mono text-sm"
+                    />
+                  </label>
+                  <label className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      Özet ({tab})
+                    </span>
+                    <textarea
+                      rows={2}
+                      value={row.excerpt}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          translations: {
+                            ...f.translations,
+                            [tab]: {
+                              ...f.translations[tab],
+                              excerpt: e.target.value,
+                            },
+                          },
+                        }))
+                      }
+                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2 text-sm"
+                    />
+                  </label>
+                  <div className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      İçerik ({tab})
+                    </span>
+                    <div className="mt-1">
+                      <RichTextEditor
+                        value={row.content}
+                        onChange={(html) =>
+                          setForm((f) => ({
+                            ...f,
+                            translations: {
+                              ...f.translations,
+                              [tab]: { ...f.translations[tab], content: html },
+                            },
+                          }))
+                        }
+                        minHeight="220px"
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">Yazar</span>
@@ -298,44 +649,60 @@ function BlogAdminPageInner() {
               className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
             />
           </label>
-          <label className="block text-sm">
+          <div className="md:col-span-2 space-y-2">
             <span className="mono text-[10px] uppercase text-muted">
-              İlgili ürün slug’ları (virgülle)
+              İlgili ürünler
             </span>
-            <input
-              value={form.relatedProductSlugs}
-              onChange={(e) =>
-                setForm((f) => ({
-                  ...f,
-                  relatedProductSlugs: e.target.value,
-                }))
-              }
-              placeholder="formul-1-shake, 2026-paket-1-shaker-hediyeli"
-              className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-            />
-            <span className="mt-1 block text-xs text-muted">
+            <div className="max-h-48 overflow-auto rounded border border-border-muted p-3">
+              <div className="grid gap-2 sm:grid-cols-2">
+                {productOptions.map((p) => (
+                  <Checkbox
+                    key={p.slug}
+                    label={`${p.name} (${p.slug})`}
+                    checked={form.relatedProductSlugs.includes(p.slug)}
+                    onChange={(checked) =>
+                      setForm((f) => ({
+                        ...f,
+                        relatedProductSlugs: checked
+                          ? [...f.relatedProductSlugs, p.slug]
+                          : f.relatedProductSlugs.filter((s) => s !== p.slug),
+                      }))
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+            <span className="block text-xs text-muted">
               Yazı sonunda “İlgili ürünler” olarak gösterilir.
             </span>
-          </label>
-          <label className="block text-sm">
+          </div>
+          <div className="md:col-span-2 space-y-2">
             <span className="mono text-[10px] uppercase text-muted">
-              İlgili kategori slug’ları (virgülle)
+              İlgili kategoriler
             </span>
-            <input
-              value={form.relatedCategorySlugs}
-              onChange={(e) =>
-                setForm((f) => ({
-                  ...f,
-                  relatedCategorySlugs: e.target.value,
-                }))
-              }
-              placeholder="kilo-kontrolu, avantajli-setler"
-              className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-            />
-            <span className="mt-1 block text-xs text-muted">
+            <div className="max-h-40 overflow-auto rounded border border-border-muted p-3">
+              <div className="grid gap-2 sm:grid-cols-2">
+                {categoryOptions.map((c) => (
+                  <Checkbox
+                    key={c.slug}
+                    label={`${c.name} (${c.slug})`}
+                    checked={form.relatedCategorySlugs.includes(c.slug)}
+                    onChange={(checked) =>
+                      setForm((f) => ({
+                        ...f,
+                        relatedCategorySlugs: checked
+                          ? [...f.relatedCategorySlugs, c.slug]
+                          : f.relatedCategorySlugs.filter((s) => s !== c.slug),
+                      }))
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+            <span className="block text-xs text-muted">
               Yazıdan kategori sayfalarına köprü.
             </span>
-          </label>
+          </div>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
               Arama başlığı
@@ -370,35 +737,24 @@ function BlogAdminPageInner() {
               description="Sitede /blog altında görünür"
             />
           </div>
-          <div className="md:col-span-2 flex gap-2">
-            <button
-              type="submit"
-              disabled={saving}
-              className="btn-motion bg-accent px-4 py-2 text-sm text-white hover:bg-accent-hover disabled:opacity-50"
-            >
-              {saving ? 'Kaydediliyor…' : 'Kaydet'}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setEditing(false);
-                setForm(emptyForm());
-              }}
-              className="border border-border-muted px-4 py-2 text-sm text-muted"
-            >
-              İptal
-            </button>
-          </div>
         </form>
-      ) : null}
+      </AdminFormPanel>
 
       <DataTable
         rows={rows}
         rowKey={(r) => r.id}
         emptyMessage={loading ? 'Yükleniyor…' : 'Yazı yok'}
         selectedRowKey={editing ? form.id || null : null}
+        highlightRowKey={!editing ? highlightRowKey : null}
         onRowClick={(r) => startEdit(r)}
         columns={[
+          {
+            key: 'thumb',
+            header: '',
+            render: (r) => (
+              <AdminListThumb src={r.coverImageUrl} alt={r.title} />
+            ),
+          },
           {
             key: 'slug',
             header: 'Kısa ad',

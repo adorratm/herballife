@@ -15,6 +15,15 @@ export class CoachWhatsappBlast extends BaseEntity {
   @Column({ type: 'text' })
   message!: string;
 
+  @Column({ name: 'template_name', type: 'varchar', length: 120, nullable: true })
+  templateName!: string | null;
+
+  @Column({ name: 'language_code', type: 'varchar', length: 16, nullable: true })
+  languageCode!: string | null;
+
+  @Column({ name: 'body_params', type: 'jsonb', default: [] })
+  bodyParams!: string[];
+
   @Column({ name: 'recipient_count', type: 'int', default: 0 })
   recipientCount!: number;
 
@@ -24,12 +33,13 @@ export class CoachWhatsappBlast extends BaseEntity {
   @Column({ name: 'failed_count', type: 'int', default: 0 })
   failedCount!: number;
 
-  /** Demo: alıcı özeti */
   @Column({ name: 'recipients', type: 'jsonb', default: [] })
   recipients!: Array<{
     userId: string;
     phone: string;
     name: string;
     ok: boolean;
+    messageId?: string;
+    error?: string;
   }>;
 }

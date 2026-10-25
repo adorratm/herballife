@@ -36,10 +36,101 @@ type WhatsAppSettings = {
   presets: WhatsAppPresetRow[];
 };
 
+type AnalyticsSettings = {
+  ga4Id: string;
+  gtmId: string;
+  googleAdsId: string;
+  metaPixelId: string;
+  facebookPixelId: string;
+  yandexMetrikaId: string;
+  tiktokPixelId: string;
+};
+
+type ShippingSettings = {
+  defaultFee: string;
+  freeShippingOver: string;
+};
+
+const DEFAULT_ANALYTICS: AnalyticsSettings = {
+  ga4Id: '',
+  gtmId: '',
+  googleAdsId: '',
+  metaPixelId: '',
+  facebookPixelId: '',
+  yandexMetrikaId: '',
+  tiktokPixelId: '',
+};
+
+const DEFAULT_SHIPPING: ShippingSettings = {
+  defaultFee: '89.90',
+  freeShippingOver: '750',
+};
+
+const EXTRA_LOCALES = ['en', 'de', 'fr', 'es'] as const;
+type ExtraLocale = (typeof EXTRA_LOCALES)[number];
+
+type LocaleCopyFields = {
+  brandName: string;
+  brandSlogan: string;
+  brandTagline: string;
+  seoTitle: string;
+  seoDescription: string;
+  footerDescription: string;
+};
+
+function emptyLocaleCopy(): LocaleCopyFields {
+  return {
+    brandName: '',
+    brandSlogan: '',
+    brandTagline: '',
+    seoTitle: '',
+    seoDescription: '',
+    footerDescription: '',
+  };
+}
+
+function initialLocaleCopies(): Record<ExtraLocale, LocaleCopyFields> {
+  return {
+    en: emptyLocaleCopy(),
+    de: emptyLocaleCopy(),
+    fr: emptyLocaleCopy(),
+    es: emptyLocaleCopy(),
+  };
+}
+
+function readLocaleCopiesFromSettings(
+  map: Record<string, Record<string, unknown>>,
+): Record<ExtraLocale, LocaleCopyFields> {
+  const out = initialLocaleCopies();
+  for (const loc of EXTRA_LOCALES) {
+    const brand = map.brand?.translations as
+      | Record<string, Record<string, unknown>>
+      | undefined;
+    const seo = map.seo?.translations as
+      | Record<string, Record<string, unknown>>
+      | undefined;
+    const footer = map.footer?.translations as
+      | Record<string, Record<string, unknown>>
+      | undefined;
+    const b = brand?.[loc];
+    const s = seo?.[loc];
+    const f = footer?.[loc];
+    out[loc] = {
+      brandName: String(b?.name || ''),
+      brandSlogan: String(b?.slogan || ''),
+      brandTagline: String(b?.tagline || ''),
+      seoTitle: String(s?.title || ''),
+      seoDescription: String(s?.description || ''),
+      footerDescription: String(f?.description || ''),
+    };
+  }
+  return out;
+}
+
 const DEFAULT_WHATSAPP: WhatsAppSettings = {
   enabled: true,
   phone: '',
-  greeting: 'Merhaba — Emine Özberk. Size nasıl yardımcı olabiliriz?',
+  greeting: 'Merhaba — Herbal Kapıda. Size nasıl yardımcı olabiliriz?',
   presets: [
     {
       label: 'Sipariş durumu',
@@ -123,6 +214,7 @@ export default function SiteSettingsPage() {
     logoUrl: '',
     distributorName: '',
     distributorTitle: '',
+    distributorCode: '',
     legalDisclaimer: '',
   });
   const [contact, setContact] = useState({
@@ -158,6 +250,18 @@ export default function SiteSettingsPage() {
     footerNav: [],
     footerLegal: [],
   });
+  const [analytics, setAnalytics] = useState<AnalyticsSettings>({
+    ...DEFAULT_ANALYTICS,
+  });
+  const [shipping, setShipping] = useState<ShippingSettings>({
+    ...DEFAULT_SHIPPING,
+  });
+  const [copyLocale, setCopyLocale] = useState<ExtraLocale>('en');
+  const [localeCopies, setLocaleCopies] =
+    useState<Record<ExtraLocale, LocaleCopyFields>>(initialLocaleCopies);
+  const [storedTranslations, setStoredTranslations] = useState<
+    Record<string, Record<string, unknown>>
+  >({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -199,6 +303,37 @@ export default function SiteSettingsPage() {
             footerLegal: asNavLinks(nav.footerLegal),
           });
         }
+        if (map.analytics) {
+          const a = map.analytics as Record<string, unknown>;
+          setAnalytics({
+            ga4Id: String(a.ga4Id || ''),
+            gtmId: String(a.gtmId || ''),
+            googleAdsId: String(a.googleAdsId || ''),
+            metaPixelId: String(a.metaPixelId || ''),
+            facebookPixelId: String(a.facebookPixelId || ''),
+            yandexMetrikaId: String(a.yandexMetrikaId || ''),
+            tiktokPixelId: String(a.tiktokPixelId || ''),
+          });
+        }
+        if (map.shipping) {
+          const s = map.shipping as Record<string, unknown>;
+          setShipping({
+            defaultFee:
+              s.defaultFee != null
+                ? String(s.defaultFee)
+                : DEFAULT_SHIPPING.defaultFee,
+            freeShippingOver:
+              s.freeShippingOver != null
+                ? String(s.freeShippingOver)
+                : DEFAULT_SHIPPING.freeShippingOver,
+          });
+        }
+        setLocaleCopies(readLocaleCopiesFromSettings(map));
+        setStoredTranslations({
+          brand: (map.brand?.translations as Record<string, unknown>) || {},
+          seo: (map.seo?.translations as Record<string, unknown>) || {},
+          footer: (map.footer?.translations as Record<string, unknown>) || {},
+        });
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Ayarlar yüklenemedi');
       } finally {
@@ -221,11 +356,37 @@ export default function SiteSettingsPage() {
         }))
         .filter((p) => p.label && p.message);
 
+      const brandTranslations = { ...storedTranslations.brand };
+      const seoTranslations = { ...storedTranslations.seo };
+      const footerTranslations = { ...storedTranslations.footer };
+      for (const loc of EXTRA_LOCALES) {
+        const copy = localeCopies[loc];
+        brandTranslations[loc] = {
+          ...(brandTranslations[loc] as object),
+          name: copy.brandName.trim() || brand.name,
+          slogan: copy.brandSlogan.trim(),
+          tagline: copy.brandTagline.trim(),
+        };
+        seoTranslations[loc] = {
+          ...(seoTranslations[loc] as object),
+          title: copy.seoTitle.trim(),
+          description: copy.seoDescription.trim(),
+        };
+        footerTranslations[loc] = {
+          ...(footerTranslations[loc] as object),
+          description: copy.footerDescription.trim(),
+        };
+      }
+
       await api('/cms/admin/settings', {
         method: 'PATCH',
         body: {
           settings: [
-            { key: 'brand', value: brand, group: 'brand' },
+            {
+              key: 'brand',
+              value: { ...brand, translations: brandTranslations },
+              group: 'brand',
+            },
             { key: 'contact', value: contact, group: 'contact' },
             {
               key: 'seo',
@@ -235,6 +396,7 @@ export default function SiteSettingsPage() {
                   .split(',')
                   .map((k) => k.trim())
                   .filter(Boolean),
+                translations: seoTranslations,
               },
               group: 'seo',
             },
@@ -249,8 +411,33 @@ export default function SiteSettingsPage() {
               },
               group: 'whatsapp',
             },
-            { key: 'footer', value: footer, group: 'footer' },
+            {
+              key: 'footer',
+              value: { ...footer, translations: footerTranslations },
+              group: 'footer',
+            },
             { key: 'navigation', value: navigation, group: 'navigation' },
+            {
+              key: 'analytics',
+              value: {
+                ga4Id: analytics.ga4Id.trim(),
+                gtmId: analytics.gtmId.trim(),
+                googleAdsId: analytics.googleAdsId.trim(),
+                metaPixelId: analytics.metaPixelId.trim(),
+                facebookPixelId: analytics.facebookPixelId.trim(),
+                yandexMetrikaId: analytics.yandexMetrikaId.trim(),
+                tiktokPixelId: analytics.tiktokPixelId.trim(),
+              },
+              group: 'analytics',
+            },
+            {
+              key: 'shipping',
+              value: {
+                defaultFee: Number(shipping.defaultFee) || 89.9,
+                freeShippingOver: Number(shipping.freeShippingOver) || 0,
+              },
+              group: 'shipping',
+            },
           ],
         },
       });
@@ -265,7 +452,7 @@ export default function SiteSettingsPage() {
   if (loading) return <p className="text-sm text-muted">Yükleniyor…</p>;
 
   return (
-    <form onSubmit={onSubmit} className="max-w-3xl space-y-6">
+    <form onSubmit={onSubmit} className="max-w-6xl space-y-6">
       <div>
         <h2 className="admin-page-title text-xl">Site Ayarları</h2>
         <p className="admin-page-sub">
@@ -285,6 +472,7 @@ export default function SiteSettingsPage() {
         </p>
       ) : null}
 
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
         <legend className="px-2 text-xs font-bold uppercase tracking-wide text-muted">
           Marka
@@ -302,6 +490,7 @@ export default function SiteSettingsPage() {
             ['location', 'Konum'],
             ['distributorName', 'Distribütör adı'],
             ['distributorTitle', 'Distribütör ünvanı'],
+            ['distributorCode', 'Herbalife ID / distribütör kodu'],
           ] as const
         ).map(([key, label]) => (
           <label key={key} className="block text-sm">
@@ -337,6 +526,49 @@ export default function SiteSettingsPage() {
       </fieldset>
 
       <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+        <legend className="mono px-2 text-xs uppercase text-muted">SEO</legend>
+        <label className="block text-sm">
+          <span className="mono text-[10px] uppercase text-muted">
+            Sayfa başlığı
+          </span>
+          <input
+            value={seo.title}
+            onChange={(e) => setSeo((s) => ({ ...s, title: e.target.value }))}
+            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+          />
+        </label>
+        <label className="block text-sm">
+          <span className="mono text-[10px] uppercase text-muted">
+            Meta açıklama
+          </span>
+          <textarea
+            rows={3}
+            value={seo.description}
+            onChange={(e) =>
+              setSeo((s) => ({ ...s, description: e.target.value }))
+            }
+            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+          />
+        </label>
+        <label className="block text-sm">
+          <span className="mono text-[10px] uppercase text-muted">
+            Anahtar kelimeler (virgülle)
+          </span>
+          <input
+            value={seo.keywords}
+            onChange={(e) => setSeo((s) => ({ ...s, keywords: e.target.value }))}
+            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+          />
+        </label>
+        <MediaUpload
+          label="OG görseli (boşsa marka opengraph-image kullanılır)"
+          value={seo.ogImage}
+          onChange={(url) => setSeo((s) => ({ ...s, ogImage: url }))}
+          folder="seo"
+        />
+      </fieldset>
+
+      <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
         <legend className="mono px-2 text-xs uppercase text-muted">
           İletişim
         </legend>
@@ -357,6 +589,38 @@ export default function SiteSettingsPage() {
               value={contact[key]}
               onChange={(e) =>
                 setContact((s) => ({ ...s, [key]: e.target.value }))
+              }
+              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+            />
+          </label>
+        ))}
+      </fieldset>
+
+      <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+        <legend className="mono px-2 text-xs uppercase text-muted">
+          Sosyal / sameAs
+        </legend>
+        <p className="text-xs text-muted">
+          Dolu URL&apos;ler schema.org sameAs ve footer&apos;da görünür. Maps
+          profil bağlantısı (işletme hazır olunca) yerel arama için önemlidir. Google
+          yorum URL&apos;si /yorum sayfası ve QR için kullanılır.
+        </p>
+        {(
+          [
+            ['instagram', 'Instagram bağlantısı'],
+            ['facebook', 'Facebook bağlantısı'],
+            ['googleMaps', 'Google Maps / GBP URL'],
+            ['googleReviewUrl', 'Google yorum bağlantısı'],
+          ] as const
+        ).map(([key, label]) => (
+          <label key={key} className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">{label}</span>
+            <input
+              type="url"
+              placeholder="https://"
+              value={social[key]}
+              onChange={(e) =>
+                setSocial((s) => ({ ...s, [key]: e.target.value }))
               }
               className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
             />
@@ -417,78 +681,105 @@ export default function SiteSettingsPage() {
 
       <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
         <legend className="mono px-2 text-xs uppercase text-muted">
-          Sosyal / sameAs
+          Kargo varsayılanları
         </legend>
         <p className="text-xs text-muted">
-          Dolu URL&apos;ler schema.org sameAs ve footer&apos;da görünür. Maps
-          profil bağlantısı (işletme hazır olunca) yerel arama için önemlidir. Google
-          yorum URL&apos;si /yorum sayfası ve QR için kullanılır.
+          Sipariş hesaplamasında kullanılır. Sağlayıcı kartındaki ücret boşsa
+          varsayılan kargo ücreti uygulanır. Ücretsiz kargo eşiği 0 ise kapalıdır.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              Varsayılan kargo ücreti (TRY)
+            </span>
+            <input
+              type="number"
+              min={0}
+              step="0.01"
+              value={shipping.defaultFee}
+              onChange={(e) =>
+                setShipping((s) => ({ ...s, defaultFee: e.target.value }))
+              }
+              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              Ücretsiz kargo eşiği (TRY)
+            </span>
+            <input
+              type="number"
+              min={0}
+              step="1"
+              value={shipping.freeShippingOver}
+              onChange={(e) =>
+                setShipping((s) => ({
+                  ...s,
+                  freeShippingOver: e.target.value,
+                }))
+              }
+              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+            />
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+        <legend className="mono px-2 text-xs uppercase text-muted">
+          Analitik & piksel
+        </legend>
+        <p className="text-xs text-muted">
+          Boş bırakılan alanlar için sunucu / NEXT_PUBLIC env değerleri kullanılır.
+          GTM doluysa gtag doğrudan yüklenmez (GTM içinden yönetin).
         </p>
         {(
           [
-            ['instagram', 'Instagram bağlantısı'],
-            ['facebook', 'Facebook bağlantısı'],
-            ['googleMaps', 'Google Maps / GBP URL'],
-            ['googleReviewUrl', 'Google yorum bağlantısı'],
+            ['ga4Id', 'Google Analytics 4 (G-…)'],
+            ['gtmId', 'Google Tag Manager'],
+            ['googleAdsId', 'Google Ads dönüşüm'],
+            ['metaPixelId', 'Meta Pixel'],
+            ['facebookPixelId', 'Facebook Pixel (Meta ile aynı olabilir)'],
+            ['yandexMetrikaId', 'Yandex Metrika'],
+            ['tiktokPixelId', 'TikTok Pixel'],
           ] as const
         ).map(([key, label]) => (
           <label key={key} className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">{label}</span>
             <input
-              type="url"
-              placeholder="https://"
-              value={social[key]}
+              value={analytics[key]}
               onChange={(e) =>
-                setSocial((s) => ({ ...s, [key]: e.target.value }))
+                setAnalytics((s) => ({ ...s, [key]: e.target.value }))
               }
-              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              placeholder="Boş = env"
+              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2 mono text-sm"
             />
           </label>
         ))}
       </fieldset>
 
-      <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="mono px-2 text-xs uppercase text-muted">SEO</legend>
-        <label className="block text-sm">
-          <span className="mono text-[10px] uppercase text-muted">
-            Sayfa başlığı
-          </span>
-          <input
-            value={seo.title}
-            onChange={(e) => setSeo((s) => ({ ...s, title: e.target.value }))}
-            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-          />
-        </label>
-        <label className="block text-sm">
-          <span className="mono text-[10px] uppercase text-muted">
-            Meta açıklama
-          </span>
-          <textarea
-            rows={3}
-            value={seo.description}
-            onChange={(e) =>
-              setSeo((s) => ({ ...s, description: e.target.value }))
-            }
-            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-          />
-        </label>
-        <label className="block text-sm">
-          <span className="mono text-[10px] uppercase text-muted">
-            Anahtar kelimeler (virgülle)
-          </span>
-          <input
-            value={seo.keywords}
-            onChange={(e) => setSeo((s) => ({ ...s, keywords: e.target.value }))}
-            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-          />
-        </label>
-        <MediaUpload
-          label="OG görseli (boşsa marka opengraph-image kullanılır)"
-          value={seo.ogImage}
-          onChange={(url) => setSeo((s) => ({ ...s, ogImage: url }))}
-          folder="seo"
+      <fieldset className="space-y-6 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+        <legend className="px-2 text-xs font-bold uppercase tracking-wide text-muted">
+          Navigasyon
+        </legend>
+        <LinkListEditor
+          label="Header menü"
+          links={navigation.header}
+          onChange={(header) => setNavigation((n) => ({ ...n, header }))}
+        />
+        <LinkListEditor
+          label="Alt bilgi menüsü"
+          links={navigation.footerNav}
+          onChange={(footerNav) => setNavigation((n) => ({ ...n, footerNav }))}
+        />
+        <LinkListEditor
+          label="Alt bilgi yasal bağlantılar"
+          links={navigation.footerLegal}
+          onChange={(footerLegal) =>
+            setNavigation((n) => ({ ...n, footerLegal }))
+          }
         />
       </fieldset>
+      </div>
 
       <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
         <legend className="mono px-2 text-xs uppercase text-muted">
@@ -519,27 +810,77 @@ export default function SiteSettingsPage() {
         </label>
       </fieldset>
 
-      <fieldset className="space-y-6 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="px-2 text-xs font-bold uppercase tracking-wide text-muted">
-          Navigasyon
+      <fieldset className="col-span-full space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+        <legend className="mono px-2 text-xs uppercase text-muted">
+          Çeviriler (EN / DE / FR / ES)
         </legend>
-        <LinkListEditor
-          label="Header menü"
-          links={navigation.header}
-          onChange={(header) => setNavigation((n) => ({ ...n, header }))}
-        />
-        <LinkListEditor
-          label="Alt bilgi menüsü"
-          links={navigation.footerNav}
-          onChange={(footerNav) => setNavigation((n) => ({ ...n, footerNav }))}
-        />
-        <LinkListEditor
-          label="Alt bilgi yasal bağlantılar"
-          links={navigation.footerLegal}
-          onChange={(footerLegal) =>
-            setNavigation((n) => ({ ...n, footerLegal }))
-          }
-        />
+        <p className="text-xs text-muted">
+          Türkçe alanlar yukarıdaki formlarda kalır. Diğer diller için marka,
+          SEO ve footer metinlerini buradan düzenleyin. Navigasyon ve tam UI
+          ağacı seed ile güncellenir.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {EXTRA_LOCALES.map((loc) => (
+            <button
+              key={loc}
+              type="button"
+              onClick={() => setCopyLocale(loc)}
+              className={`rounded-lg px-3 py-1.5 text-xs font-semibold uppercase ${
+                copyLocale === loc
+                  ? 'bg-accent text-white'
+                  : 'border border-border-muted bg-surface-high text-muted'
+              }`}
+            >
+              {loc}
+            </button>
+          ))}
+        </div>
+        {(
+          [
+            ['brandName', 'Marka adı'],
+            ['brandSlogan', 'Slogan'],
+            ['brandTagline', 'Tagline'],
+            ['seoTitle', 'SEO başlığı'],
+            ['seoDescription', 'SEO açıklama'],
+            ['footerDescription', 'Footer açıklama'],
+          ] as const
+        ).map(([key, label]) => (
+          <label key={key} className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              {label} ({copyLocale})
+            </span>
+            {key === 'seoDescription' || key === 'footerDescription' ? (
+              <textarea
+                rows={3}
+                value={localeCopies[copyLocale][key]}
+                onChange={(e) =>
+                  setLocaleCopies((prev) => ({
+                    ...prev,
+                    [copyLocale]: {
+                      ...prev[copyLocale],
+                      [key]: e.target.value,
+                    },
+                  }))
+                }
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              />
+            ) : (
+              <input
+                value={localeCopies[copyLocale][key]}
+                onChange={(e) =>
+                  setLocaleCopies((prev) => ({
+                    ...prev,
+                    [copyLocale]: {
+                      ...prev[copyLocale],
+                      [key]: e.target.value,
+                    },
+                  }))
+                }
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              />
+            )}
+          </label>
+        ))}
       </fieldset>
 
       <button

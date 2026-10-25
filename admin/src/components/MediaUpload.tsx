@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { uploadMedia } from '@/lib/api';
 import { ImageDropZone } from '@/components/ImageDropZone';
+import { MediaLibraryPicker } from '@/components/MediaLibraryPicker';
 
 type Props = {
   value?: string;
@@ -19,6 +20,7 @@ export function MediaUpload({
 }: Props) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   async function handleFiles(files: File[]) {
     const file = files[0];
@@ -37,7 +39,16 @@ export function MediaUpload({
 
   return (
     <div className="space-y-2">
-      <span className="mono text-[10px] uppercase text-muted">{label}</span>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="mono text-[10px] uppercase text-muted">{label}</span>
+        <button
+          type="button"
+          onClick={() => setPickerOpen(true)}
+          className="text-xs text-accent hover:underline"
+        >
+          Medyadan seç
+        </button>
+      </div>
       <div className="flex flex-wrap items-stretch gap-3">
         {value ? (
           <div className="relative shrink-0">
@@ -71,6 +82,15 @@ export function MediaUpload({
         </div>
       </div>
       {error ? <p className="text-xs text-danger">{error}</p> : null}
+
+      <MediaLibraryPicker
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        selectedUrls={value ? [value] : []}
+        onApply={(urls) => {
+          if (urls[0]) onChange(urls[0]);
+        }}
+      />
     </div>
   );
 }

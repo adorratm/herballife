@@ -5,6 +5,7 @@ import {
   CreateContactMessageDto,
   MarkContactReadDto,
   NewsletterSubscribeDto,
+  SendNewsletterCampaignDto,
 } from '@modules/contact/dto/contact.dto';
 import { Public } from '@common/decorators/public.decorator';
 import { Roles } from '@common/decorators/roles.decorator';
@@ -74,5 +75,13 @@ export class ContactController {
   @ApiOperation({ summary: 'Admin: bülten aboneleri' })
   listSubscribers() {
     return this.contactService.listSubscribers();
+  }
+
+  @Roles(...OPS_ROLES)
+  @Post('newsletter/campaign')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Admin: bülten kampanya e-postası kuyruğa al' })
+  sendCampaign(@Body() dto: SendNewsletterCampaignDto) {
+    return this.contactService.enqueueNewsletterCampaign(dto);
   }
 }

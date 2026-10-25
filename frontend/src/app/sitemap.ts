@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
-import { getBlogSlugs, getCategories } from "@/lib/api";
+import { locales } from "@/i18n/routing";
+import { getBlogSlugs } from "@/lib/api";
+import { getCategories } from "@/lib/catalog.server";
 import { fetchAllCatalogProducts } from "@/lib/catalog-feed";
 import { categoryCatalogPath } from "@/lib/catalog-paths";
 import { productImage } from "@/lib/format";
@@ -18,8 +20,7 @@ const STATIC_ROUTES: {
   { path: "/medya", changeFrequency: "weekly", priority: 0.75 },
   { path: "/iletisim", changeFrequency: "monthly", priority: 0.7 },
   { path: "/yorum", changeFrequency: "monthly", priority: 0.55 },
-  { path: "/hesabim/takip", changeFrequency: "weekly", priority: 0.65 },
-  { path: "/hesabim/olcumler", changeFrequency: "weekly", priority: 0.65 },
+  { path: "/kocluk", changeFrequency: "monthly", priority: 0.7 },
   { path: "/kvkk", changeFrequency: "yearly", priority: 0.3 },
   { path: "/gizlilik", changeFrequency: "yearly", priority: 0.3 },
   { path: "/cerez-politikasi", changeFrequency: "yearly", priority: 0.3 },
@@ -52,18 +53,30 @@ function absoluteHttpUrl(value: unknown): string | null {
   }
 }
 
-function staticEntries(now: Date): MetadataRoute.Sitemap {
-  return STATIC_ROUTES.map((route) => ({
-    url: `${SITE_URL}${route.path}`,
-    lastModified: now,
-    changeFrequency: route.changeFrequency,
-    priority: route.priority,
+function withLocales(
+  path: string,
+  meta: Omit<MetadataRoute.Sitemap[number], "url">,
+): MetadataRoute.Sitemap {
+  return locales.map((locale) => ({
+    url: `${SITE_URL}/${locale}${path}`,
+    ...meta,
+    alternates: {
+      languages: Object.fromEntries(
+        locales.map((l) => [l, `${SITE_URL}/${l}${path}`]),
+      ),
+    },
   }));
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const staticOnly = staticEntries(now);
+  const entries: MetadataRoute.Sitemap = STATIC_ROUTES.flatMap((route) =>
+    withLocales(route.path, {
+      lastModified: now,
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
+    }),
+  );
 
   try {
     const [products, blogSlugs, categories] = await Promise.all([
@@ -72,66 +85,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       getCategories().catch(() => []),
     ]);
 
-    const categoryEntries: MetadataRoute.Sitemap = (categories || []).flatMap(
-      (cat) => {
-        if (!cat?.slug) return [];
-        return [
-          {
-            url: `${SITE_URL}${categoryCatalogPath(cat.slug)}`,
-            lastModified: safeDate(cat.updatedAt) ?? now,
-            changeFrequency: "weekly" as const,
-            priority: 0.75,
-          },
-        ];
-      },
-    );
+    for (const cat of categories || []) {
+      if (!cat?.slug) continue;
+      const path = categoryCatalogPath(cat.slug);
+      entries.push(
+        ...withLocales(path, {
+          lastModified: safeDate(cat.updatedAt) || now,
+          changeFrequency: "weekly",
+          priority: 0.75,
+        }),
+      );
+    }
 
-    const productEntries: MetadataRoute.Sitemap = (products || []).flatMap(
-      (product) => {
-        if (!product?.slug) return [];
-        const images = [
-          productImage(product.imageUrl, product.slug),
-          ...(product.gallery || []),
-        ]
-          .map(absoluteHttpUrl)
-          .filter((url): url is string => Boolean(url))
-          .filter((url, i, arr) => arr.indexOf(url) === i);
+    for (const p of products || []) {
+      if (!p?.slug) continue;
+      const img = absoluteHttpUrl(productImage(p.imageUrl, p.slug));
+      entries.push(
+        ...withLocales(`/urunler/${p.slug}`, {
+          lastModified: safeDate(p.updatedAt) || now,
+          changeFrequency: "weekly",
+          priority: 0.8,
+          ...(img
+            ? { images: [img] }
+            : {}),
+        }),
+      );
+    }
 
-        return [
-          {
-            url: `${SITE_URL}/urunler/${product.slug}`,
-            lastModified: safeDate(product.updatedAt) ?? now,
-            changeFrequency: "weekly" as const,
-            priority: 0.8,
-            ...(images.length ? { images } : {}),
-          },
-        ];
-      },
-    );
-
-    const blogEntries: MetadataRoute.Sitemap = (blogSlugs || []).flatMap(
-      (post) => {
-        if (!post?.slug) return [];
-        return [
-          {
-            url: `${SITE_URL}/blog/${post.slug}`,
-            lastModified:
-              safeDate(post.updatedAt) ?? safeDate(post.publishedAt) ?? now,
-            changeFrequency: "monthly" as const,
-            priority: 0.75,
-          },
-        ];
-      },
-    );
-
-    return [
-      ...staticOnly,
-      ...categoryEntries,
-      ...productEntries,
-      ...blogEntries,
-    ];
-  } catch (err) {
-    console.error("[sitemap] falling back to static routes", err);
-    return staticOnly;
+    for (const slug of blogSlugs || []) {
+      if (!slug) continue;
+      entries.push(
+        ...withLocales(`/blog/${slug}`, {
+          lastModified: now,
+          changeFrequency: "weekly",
+          priority: 0.7,
+        }),
+      );
+    }
+  } catch {
+    /* static only */
   }
+
+  return entries;
 }

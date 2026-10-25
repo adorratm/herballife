@@ -732,6 +732,171 @@ select:disabled {
   animation: badge-pulse 2.4s var(--motion-ease) infinite;
 }
 
+/* Ürün rozetleri — zarif, marka yeşili / soft accent */
+.product-badge-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  padding: 0.28rem 0.55rem;
+  border: 1px solid transparent;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 2px rgba(18, 40, 28, 0.06);
+}
+
+.product-badge-chip--sale {
+  background: color-mix(in srgb, #d4846a 88%, white);
+  color: #5c2e1a;
+  border-color: color-mix(in srgb, #c45c26 22%, transparent);
+}
+
+.product-badge-chip--new {
+  background: color-mix(in srgb, #6db896 22%, white);
+  color: color-mix(in srgb, #1b4332 85%, black);
+  border-color: color-mix(in srgb, #52a882 35%, transparent);
+}
+
+.product-badge-chip--bestseller {
+  background: color-mix(in srgb, #1b4332 88%, white);
+  color: #e8f5e9;
+  border-color: color-mix(in srgb, #081c15 20%, transparent);
+}
+
+.product-badge-chip--gift {
+  background: color-mix(in srgb, var(--tertiary) 18%, white);
+  color: color-mix(in srgb, var(--tertiary) 75%, #1a1a1a);
+  border-color: color-mix(in srgb, var(--tertiary) 32%, transparent);
+}
+
+.product-badge-chip--custom {
+  background: color-mix(in srgb, var(--surface-container) 90%, white);
+  color: var(--on-surface);
+  border-color: color-mix(in srgb, var(--outline-variant) 70%, transparent);
+}
+
+.product-badge-pill {
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  padding: 0.22rem 0.55rem;
+  border: 1px solid transparent;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 3px rgba(18, 40, 28, 0.08);
+}
+
+.product-badge-pill--compact {
+  font-size: 0.5625rem;
+  padding: 0.18rem 0.45rem;
+}
+
+.product-badge-ribbon {
+  padding: 0.28rem 0.55rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #5c2e1a;
+  background: color-mix(in srgb, #e8a88a 75%, white);
+  border: 1px solid color-mix(in srgb, #c45c26 25%, transparent);
+  border-radius: 0.4rem;
+  box-shadow: 0 2px 8px rgba(18, 40, 28, 0.1);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0.35rem 100%, 0 calc(100% - 0.35rem));
+}
+
+.product-badge-ribbon--compact {
+  font-size: 0.5625rem;
+  padding: 0.2rem 0.45rem;
+}
+
+/* Dil / para birimi dropdown */
+.locale-dd__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--outline-variant) 80%, transparent);
+  background: color-mix(in srgb, var(--surface) 92%, white);
+  padding: 0.28rem 0.55rem 0.28rem 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--on-surface);
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.locale-dd__trigger:hover {
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--outline-variant));
+  background: white;
+  box-shadow: 0 2px 10px rgba(18, 40, 28, 0.08);
+}
+.locale-dd__flag {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+.locale-dd__symbol {
+  display: inline-flex;
+  min-width: 1rem;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.locale-dd__code {
+  letter-spacing: 0.04em;
+}
+.locale-dd__menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.35rem);
+  z-index: 80;
+  min-width: 11.5rem;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  border-radius: 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--outline-variant) 75%, transparent);
+  background: color-mix(in srgb, white 94%, var(--surface));
+  box-shadow: 0 16px 40px -18px rgba(18, 40, 28, 0.35);
+  backdrop-filter: blur(12px);
+}
+.locale-dd__item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 0.55rem;
+  padding: 0.45rem 0.55rem;
+  text-align: left;
+  font-size: 0.8125rem;
+  color: var(--on-surface);
+  transition: background 0.12s ease;
+}
+.locale-dd__item:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--primary-fixed) 55%, white);
+}
+.locale-dd__item.is-active {
+  background: color-mix(in srgb, var(--primary) 12%, white);
+  font-weight: 650;
+}
+.locale-dd__item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.locale-dd__label {
+  flex: 1;
+  min-width: 0;
+}
+.locale-dd__code-muted {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--on-surface-variant);
+  opacity: 0.85;
+}
+
 @keyframes cta-breathe {
   0%,
   100% {
@@ -938,6 +1103,236 @@ select:disabled {
   .card-motion:hover,
   .panel-motion:hover,
   .pressable:active {
+    transform: none !important;
+  }
+}
+
+.site-tour-highlight {
+  outline: 3px solid var(--primary);
+  outline-offset: 4px;
+  border-radius: 0.75rem;
+  transition: outline-color 0.2s ease;
+}
+
+/* ==========================================================
+   Editorial surfaces — home / hakkimizda / blog
+   ========================================================== */
+.display-xl {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: clamp(3.5rem, 10vw, 8.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+}
+.display-lg {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.25rem, 5.2vw, 4.25rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.display-md {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+}
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Marka yeşili — düz renk değil, katmanlı gradient atmosferi */
+.forest {
+  color: #fff;
+  background:
+    linear-gradient(160deg, #0a2f1f 0%, #0f4a30 52%, #157a4c 135%);
+}
+.hero-forest {
+  color: #fff;
+  background:
+    radial-gradient(
+      circle 36rem at 74% 54%,
+      #17694a 0,
+      #17694a 99.4%,
+      transparent 100%
+    ),
+    linear-gradient(160deg, #0a2f1f 0%, #0f4a30 52%, #157a4c 135%);
+}
+@media (max-width: 1023px) {
+  .hero-forest {
+    background:
+      radial-gradient(
+        circle 20rem at 50% 78%,
+        #17694a 0,
+        #17694a 99.4%,
+        transparent 100%
+      ),
+      linear-gradient(160deg, #0a2f1f 0%, #0f4a30 52%, #157a4c 135%);
+  }
+}
+.mint-wash {
+  background: linear-gradient(180deg, var(--surface-container-low) 0%, #ffffff 100%);
+}
+
+/* Butonlar — pill değil, sakin köşe; nefes/parlama animasyonu yok */
+.btn-brand,
+.btn-brand-light,
+.btn-outline-light,
+.btn-outline-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.6rem;
+  border-radius: 0.5rem;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.1;
+  transition:
+    background var(--motion-fast) ease,
+    color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    transform var(--motion-fast) ease;
+}
+.btn-brand {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+.btn-brand:hover {
+  background: var(--primary-container);
+  transform: translate3d(0, -1px, 0);
+}
+.btn-brand-light {
+  background: #fff;
+  color: #0a2f1f;
+}
+.btn-brand-light:hover {
+  background: var(--primary-fixed);
+  transform: translate3d(0, -1px, 0);
+}
+.btn-outline-light {
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+}
+.btn-outline-light:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+.btn-outline-dark {
+  color: var(--on-surface);
+  border: 1.5px solid var(--outline-variant);
+}
+.btn-outline-dark:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Ok kayan metin linki */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.link-arrow svg {
+  transition: transform 220ms var(--motion-ease);
+}
+.link-arrow:hover svg,
+.group:hover .link-arrow svg {
+  transform: translate3d(3px, 0, 0);
+}
+
+/* Hero ürün görseli girişi (3 hareketten biri) */
+@keyframes media-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+.hero-media {
+  animation: media-in 0.9s var(--motion-ease) 160ms both;
+}
+
+/* Blog / hikaye okuma tipografisi */
+.prose-editorial {
+  font-size: 1.125rem;
+  line-height: 1.85;
+  color: var(--on-surface-variant);
+}
+.prose-editorial > * + * {
+  margin-top: 1.4em;
+}
+.prose-editorial h2 {
+  margin-top: 2.2em;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--on-surface);
+}
+.prose-editorial h3 {
+  margin-top: 1.9em;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--on-surface);
+}
+.prose-editorial strong {
+  color: var(--on-surface);
+}
+.prose-editorial a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-editorial ul,
+.prose-editorial ol {
+  padding-left: 1.4rem;
+}
+.prose-editorial ul {
+  list-style: disc;
+}
+.prose-editorial ol {
+  list-style: decimal;
+}
+.prose-editorial li + li {
+  margin-top: 0.5em;
+}
+.prose-editorial blockquote {
+  border-left: 3px solid var(--primary);
+  padding-left: 1.25rem;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--on-surface);
+}
+.prose-editorial img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-media {
+    animation: none !important;
+  }
+  .btn-brand:hover,
+  .btn-brand-light:hover,
+  .link-arrow:hover svg,
+  .group:hover .link-arrow svg {
     transform: none !important;
   }
 }

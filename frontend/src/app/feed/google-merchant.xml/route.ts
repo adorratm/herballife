@@ -81,7 +81,7 @@ ${opts.additional}
 
 export async function GET() {
   const [settings, products] = await Promise.all([
-    getSiteSettings(),
+    getSiteSettings("tr"),
     fetchAllCatalogProducts(),
   ]);
   const brand = escapeXml(settings.brand.name);

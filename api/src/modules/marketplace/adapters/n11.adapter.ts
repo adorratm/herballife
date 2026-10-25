@@ -7,6 +7,7 @@ import {
   PushProductResult,
   PulledOrder,
   SyncStockItem,
+  assertMarketplaceOrdersAllowed,
   hasMarketplaceCredentials,
 } from '@modules/marketplace/adapters/marketplace.adapter';
 import {
@@ -93,6 +94,7 @@ export class N11Adapter implements IMarketplaceAdapter {
   }
 
   async pullOrders(credentials: Record<string, string>) {
+    assertMarketplaceOrdersAllowed(credentials, 'N11');
     if (!hasMarketplaceCredentials(credentials)) {
       return {
         orders: [

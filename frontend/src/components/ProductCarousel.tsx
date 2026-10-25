@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import type { Product } from "@/lib/types";
@@ -18,6 +19,7 @@ export function ProductCarousel({
   className = "",
   intervalMs = 4200,
 }: Props) {
+  const tAria = useTranslations("aria");
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
@@ -84,7 +86,7 @@ export function ProductCarousel({
       {canPrev ? (
         <button
           type="button"
-          aria-label="Önceki ürünler"
+          aria-label={tAria("previousProducts")}
           onClick={() => scrollByDir(-1)}
           className="absolute -left-1 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-outline-variant bg-white text-xl font-bold text-on-surface shadow-md transition-colors hover:bg-primary hover:text-on-primary md:flex"
         >
@@ -94,7 +96,7 @@ export function ProductCarousel({
       {canNext ? (
         <button
           type="button"
-          aria-label="Sonraki ürünler"
+          aria-label={tAria("nextProducts")}
           onClick={() => scrollByDir(1)}
           className="absolute -right-1 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-outline-variant bg-white text-xl font-bold text-on-surface shadow-md transition-colors hover:bg-primary hover:text-on-primary md:flex"
         >

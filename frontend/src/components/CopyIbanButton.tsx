@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 type Props = {
@@ -8,6 +9,7 @@ type Props = {
 };
 
 export function CopyIbanButton({ iban, className = "" }: Props) {
+  const t = useTranslations("copyIban");
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -26,7 +28,7 @@ export function CopyIbanButton({ iban, className = "" }: Props) {
       onClick={copy}
       className={`pressable btn-ghost inline-flex items-center gap-2 px-4 py-2 text-xs${className ? ` ${className}` : ""}`}
     >
-      {copied ? "Kopyalandı ✓" : "IBAN kopyala"}
+      {copied ? t("copied") : t("copy")}
     </button>
   );
 }

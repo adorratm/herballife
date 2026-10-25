@@ -35,8 +35,6 @@ const TITLES: Record<string, string> = {
   '/muhasebe-ayarlari': 'Muhasebe ayarları',
   '/kullanicilar': 'Kullanıcılar',
   '/fisler': 'Fişler',
-  '/faturalar': 'Faturalar',
-  '/okc': 'ÖKC',
 };
 
 function resolveTitle(pathname: string): string {

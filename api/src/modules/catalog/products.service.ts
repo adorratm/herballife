@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
+import type { ProductTranslations } from '@common/catalog/localization.types';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { Product } from '@entities/product.entity';
@@ -18,6 +19,14 @@ import { paginateResult, PaginatedResult } from '@common/utils/pagination';
 import { LowStockService } from '@modules/catalog/low-stock.service';
 import { CampaignsService } from '@modules/campaigns/campaigns.service';
 import { sortByWeightLabel } from '@common/utils/weight-sort';
+import {
+  assertImagesByLocaleWhenNotShared,
+  assertRequiredLocales,
+  ensureProductPrices,
+  localizeProductForCatalog,
+  normalizeCurrency,
+  normalizeLocale,
+} from '@common/catalog/localization.util';
 
 /** Seed / varsayılan kategori slug → ürün kind eşlemesi */
 const CATEGORY_SLUG_KIND: Record<string, string> = {
@@ -42,11 +51,16 @@ export class ProductsService {
   async findAllPublic(
     query: ProductQueryDto = {},
   ): Promise<PaginatedResult<Product>> {
+    const locale = normalizeLocale(query.locale);
+    const currency = normalizeCurrency(query.currency, locale);
     const result = await this.queryProducts({
       ...query,
       includeInactive: false,
     });
-    result.items = await this.campaigns.decorateProducts(result.items);
+    result.items = result.items.map((p) =>
+      localizeProductForCatalog(p, locale, currency),
+    );
+    result.items = await this.campaigns.decorateProducts(result.items, locale);
     return result;
   }
 
@@ -167,16 +181,37 @@ export class ProductsService {
     return paginateResult(items, total, page, limit);
   }
 
-  async findBySlug(slug: string): Promise<Product> {
-    const product = await this.em.findOne(Product, {
-      where: { slug, isActive: true },
-      relations: { category: true, variants: true },
-    });
+  async findBySlug(
+    slug: string,
+    query: Pick<ProductQueryDto, 'locale' | 'currency'> = {},
+  ): Promise<Product> {
+    const locale = normalizeLocale(query.locale);
+    const currency = normalizeCurrency(query.currency, locale);
+    const normalized = slug.trim().toLowerCase();
+    let product: Product | null;
+    if (locale === 'tr') {
+      product = await this.em.findOne(Product, {
+        where: { slug: normalized, isActive: true },
+        relations: { category: true, variants: true },
+      });
+    } else {
+      product = await this.em
+        .createQueryBuilder(Product, 'p')
+        .leftJoinAndSelect('p.category', 'category')
+        .leftJoinAndSelect('p.variants', 'variants')
+        .where('p.is_active = true')
+        .andWhere(
+          `(p.slug = :slug OR p.translations -> :locale ->> 'slug' = :slug)`,
+          { slug: normalized, locale },
+        )
+        .getOne();
+    }
     if (!product) {
       throw new NotFoundException('Ürün bulunamadı');
     }
     this.sortProductVariants(product);
-    return await this.campaigns.decorateProduct(product);
+    const localized = localizeProductForCatalog(product, locale, currency);
+    return await this.campaigns.decorateProduct(localized, locale);
   }
 
   async findById(id: string): Promise<Product> {
@@ -191,7 +226,26 @@ export class ProductsService {
     return product;
   }
 
+  private validateProductI18n(
+    dto: Pick<
+      CreateProductDto,
+      'translations' | 'useSharedImage' | 'imageUrl' | 'imagesByLocale'
+    >,
+  ): void {
+    assertRequiredLocales(
+      dto.translations as ProductTranslations | null | undefined,
+      ['name', 'description', 'slug'],
+      'Ürün',
+    );
+    assertImagesByLocaleWhenNotShared(
+      dto.useSharedImage,
+      dto.imageUrl,
+      dto.imagesByLocale,
+    );
+  }
+
   async create(dto: CreateProductDto): Promise<Product> {
+    this.validateProductI18n(dto);
     const exists = await this.em.findOne(Product, {
       where: { slug: dto.slug },
     });
@@ -228,9 +282,17 @@ export class ProductsService {
       batchId: productFields.batchId ?? null,
       flavorNotes: productFields.flavorNotes ?? [],
       imageUrl: productFields.imageUrl ?? null,
+      imagesByLocale: productFields.imagesByLocale ?? {},
+      useSharedImage: productFields.useSharedImage !== false,
       gallery: productFields.gallery ?? [],
       badge: productFields.badge ?? null,
       basePrice: productFields.basePrice,
+      prices: ensureProductPrices(
+        productFields.basePrice,
+        productFields.prices,
+      ),
+      translations: productFields.translations ?? null,
+      priceTaxIncluded: productFields.priceTaxIncluded ?? true,
       currency: productFields.currency ?? 'TRY',
       stock: productFields.stock ?? 0,
       isActive: productFields.isActive ?? true,
@@ -266,6 +328,20 @@ export class ProductsService {
 
   async update(id: string, dto: UpdateProductDto): Promise<Product> {
     const product = await this.findById(id);
+    this.validateProductI18n({
+      translations:
+        dto.translations !== undefined ? dto.translations : product.translations,
+      useSharedImage:
+        dto.useSharedImage !== undefined
+          ? dto.useSharedImage
+          : product.useSharedImage,
+      imageUrl:
+        dto.imageUrl !== undefined ? dto.imageUrl : product.imageUrl,
+      imagesByLocale:
+        dto.imagesByLocale !== undefined
+          ? dto.imagesByLocale
+          : product.imagesByLocale,
+    });
     if (dto.slug && dto.slug !== product.slug) {
       const exists = await this.em.findOne(Product, {
         where: { slug: dto.slug },
@@ -274,7 +350,15 @@ export class ProductsService {
         throw new ConflictException('Bu slug zaten kullanılıyor');
       }
     }
-    const { variants, categoryId, kind, ...rest } = dto;
+    const {
+      variants,
+      categoryId,
+      kind,
+      prices: _prices,
+      translations: _translations,
+      priceTaxIncluded: _priceTaxIncluded,
+      ...rest
+    } = dto;
 
     // category ilişkisi yüklüyken yalnız categoryId atamak TypeORM'de FK'yi
     // güncellemez; ilişkiyi açıkça set etmek gerekir.
@@ -302,6 +386,27 @@ export class ProductsService {
 
     if (kind !== undefined) {
       product.kind = kind;
+    }
+
+    if (dto.prices !== undefined) {
+      product.prices = ensureProductPrices(
+        dto.basePrice ?? product.basePrice,
+        dto.prices,
+      );
+    } else if (dto.basePrice !== undefined) {
+      product.prices = ensureProductPrices(dto.basePrice, product.prices);
+    }
+    if (dto.translations !== undefined) {
+      product.translations = dto.translations ?? null;
+    }
+    if (dto.imagesByLocale !== undefined) {
+      product.imagesByLocale = dto.imagesByLocale ?? {};
+    }
+    if (dto.useSharedImage !== undefined) {
+      product.useSharedImage = dto.useSharedImage;
+    }
+    if (dto.priceTaxIncluded !== undefined) {
+      product.priceTaxIncluded = dto.priceTaxIncluded;
     }
 
     Object.assign(product, {
@@ -375,6 +480,16 @@ export class ProductsService {
         current.sku = v.sku;
         current.weightLabel = v.weightLabel;
         current.price = v.price;
+        current.prices =
+          v.prices != null
+            ? ensureProductPrices(v.price, v.prices)
+            : ensureProductPrices(v.price, current.prices);
+        current.categoryKey =
+          v.categoryKey !== undefined
+            ? v.categoryKey?.trim() || null
+            : current.categoryKey;
+        current.translations =
+          v.translations !== undefined ? v.translations ?? null : current.translations;
         current.stock = v.stock ?? current.stock;
         current.isActive = v.isActive ?? true;
         if (v.barcode !== undefined) current.barcode = v.barcode || null;
@@ -387,6 +502,9 @@ export class ProductsService {
             sku: v.sku,
             weightLabel: v.weightLabel,
             price: v.price,
+            prices: ensureProductPrices(v.price, v.prices),
+            categoryKey: v.categoryKey?.trim() || null,
+            translations: v.translations ?? null,
             stock: v.stock ?? 0,
             isActive: v.isActive ?? true,
             barcode: v.barcode || null,

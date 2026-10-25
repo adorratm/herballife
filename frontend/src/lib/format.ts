@@ -49,3 +49,38 @@ export function productImage(url: string | null | undefined, seed = "product") {
   }
   return localProductFallback(seed);
 }
+
+const BLOG_PLACEHOLDER_IMAGES = [
+  "/images/blog-placeholder.svg",
+  "/images/blog-placeholder-2.svg",
+  "/images/blog-placeholder-3.svg",
+] as const;
+
+function blogPlaceholderForSeed(seed: string): string {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i += 1) {
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  return BLOG_PLACEHOLDER_IMAGES[hash % BLOG_PLACEHOLDER_IMAGES.length];
+}
+
+/** Blog kapak — ürün stok görseline düşmez (öne çıkan yazı bozuk görünmesin). */
+export function blogCoverImage(
+  url: string | null | undefined,
+  slug?: string | null,
+) {
+  const trimmed = (url || "").trim();
+  if (
+    trimmed &&
+    (trimmed.startsWith("/images/") ||
+      trimmed.startsWith("http://") ||
+      trimmed.startsWith("https://")) &&
+    !trimmed.includes("unsplash.com") &&
+    !/\/stock\/(hero|ethos|workshop|blog|og|product-\d+)\.jpg/i.test(trimmed) &&
+    !/herbalurunleri\.com\/upload/i.test(trimmed)
+  ) {
+    return trimmed;
+  }
+  const seed = (slug || "blog").trim() || "blog";
+  return blogPlaceholderForSeed(seed);
+}

@@ -10,7 +10,6 @@ import { NewsletterSubscriber } from '@entities/newsletter-subscriber.entity';
 import { LegalDocument } from '@entities/legal-document.entity';
 import { BlogPost } from '@entities/blog-post.entity';
 import { Party } from '@entities/party.entity';
-import { Invoice } from '@entities/invoice.entity';
 import { Coupon } from '@entities/coupon.entity';
 import { Campaign } from '@entities/campaign.entity';
 import { User, UserRole } from '@entities/user.entity';
@@ -20,7 +19,6 @@ import { ShippingProviderConfig } from '@entities/shipping-provider-config.entit
 import { MarketplaceAccount } from '@entities/marketplace-account.entity';
 import { MarketplaceOrder } from '@entities/marketplace-order.entity';
 import { CashAccount } from '@entities/cash-account.entity';
-import { OkcSale } from '@entities/okc-sale.entity';
 
 export type SearchHit = {
   type: string;
@@ -108,23 +106,11 @@ const OPS_PAGES: PageShortcut[] = [
     href: '/cari',
     screen: 'Parties',
   },
-  {
-    keywords: ['fatura', 'invoice'],
-    title: 'Faturalar',
-    href: '/faturalar',
-    screen: 'Invoices',
-  },
   { keywords: ['stok'], title: 'Stok', href: '/stok', screen: 'Products' },
   {
     keywords: ['kasa', 'banka'],
     title: 'Kasa / Banka',
     href: '/kasa',
-    screen: 'Cash',
-  },
-  {
-    keywords: ['okc', 'ökc', 'pos'],
-    title: 'ÖKC Import',
-    href: '/okc',
     screen: 'Cash',
   },
   {
@@ -691,14 +677,12 @@ export class SearchService {
       messages,
       newsletter,
       parties,
-      invoices,
       coupons,
       campaigns,
       customers,
       returns,
       reviews,
       cashAccounts,
-      okcSales,
       staffRequests,
       shipping,
     ] = await Promise.all([
@@ -749,16 +733,6 @@ export class SearchService {
         .take(per)
         .getMany(),
       this.em
-        .createQueryBuilder(Invoice, 'inv')
-        .leftJoinAndSelect('inv.party', 'party')
-        .where(
-          `(inv.invoiceNumber ILIKE :like OR COALESCE(party.title,'') ILIKE :like)`,
-          { like },
-        )
-        .orderBy('inv.createdAt', 'DESC')
-        .take(per)
-        .getMany(),
-      this.em
         .createQueryBuilder(Coupon, 'cp')
         .where(`(cp.code ILIKE :like OR COALESCE(cp.title,'') ILIKE :like)`, {
           like,
@@ -805,15 +779,6 @@ export class SearchService {
         .where(`(ca.name ILIKE :like OR CAST(ca.kind AS text) ILIKE :like)`, {
           like,
         })
-        .take(per)
-        .getMany(),
-      this.em
-        .createQueryBuilder(OkcSale, 'ok')
-        .where(
-          `(ok.externalKey ILIKE :like OR COALESCE(ok.receiptNo,'') ILIKE :like OR COALESCE(ok.zNo,'') ILIKE :like OR COALESCE(ok.description,'') ILIKE :like)`,
-          { like },
-        )
-        .orderBy('ok.saleDate', 'DESC')
         .take(per)
         .getMany(),
       this.em
@@ -896,18 +861,6 @@ export class SearchService {
       })),
     );
     push(
-      'invoices',
-      'Faturalar',
-      invoices.map((i) => ({
-        type: 'invoice',
-        id: i.id,
-        title: i.invoiceNumber,
-        subtitle: [i.party?.title, i.status].filter(Boolean).join(' · '),
-        href: '/faturalar',
-        screen: 'Invoices',
-      })),
-    );
-    push(
       'cash',
       'Kasa',
       cashAccounts.map((c) => ({
@@ -916,20 +869,6 @@ export class SearchService {
         title: c.name,
         subtitle: c.kind,
         href: '/kasa',
-        screen: 'Cash',
-      })),
-    );
-    push(
-      'okc',
-      'ÖKC',
-      okcSales.map((s) => ({
-        type: 'okc',
-        id: s.id,
-        title: s.receiptNo || s.externalKey,
-        subtitle: [s.saleDate, s.zNo, `₺${s.total}`]
-          .filter(Boolean)
-          .join(' · '),
-        href: '/okc',
         screen: 'Cash',
       })),
     );

@@ -47,4 +47,31 @@ export class Address extends BaseEntity {
   /** Varsayılan fatura adresi */
   @Column({ name: 'is_default_billing', type: 'boolean', default: false })
   isDefaultBilling!: boolean;
+
+  /** Kurumsal fatura — ünvan */
+  @Column({
+    name: 'company_title',
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  companyTitle!: string | null;
+
+  /** Kurumsal fatura — VKN */
+  @Column({
+    name: 'tax_number',
+    type: 'varchar',
+    length: 20,
+    nullable: true,
+  })
+  taxNumber!: string | null;
+
+  /** Kurumsal fatura — vergi dairesi */
+  @Column({
+    name: 'tax_office',
+    type: 'varchar',
+    length: 120,
+    nullable: true,
+  })
+  taxOffice!: string | null;
 }

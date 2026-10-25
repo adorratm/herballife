@@ -5,17 +5,47 @@ import { api } from '@/lib/api';
 import { asArray, asPaged } from '@/lib/utils';
 import { DataTable } from '@/components/DataTable';
 import { Checkbox } from '@/components/Checkbox';
+import { AdminListThumb } from '@/components/AdminListThumb';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { GalleryMediaField } from '@/components/GalleryMediaField';
 import type { Product } from '@/lib/types';
+
+type ItemRule = { position: number; discountPercent: number };
+
+type RuleMode = 'flat' | 'nth_item' | 'both';
+
+type LocaleKey = 'en' | 'de' | 'fr' | 'es';
+
+type CampaignLocaleFields = { name: string; headline: string };
+
+const LOCALE_TABS: { key: LocaleKey; label: string }[] = [
+  { key: 'en', label: 'EN' },
+  { key: 'de', label: 'DE' },
+  { key: 'fr', label: 'FR' },
+  { key: 'es', label: 'ES' },
+];
+
+const emptyCampaignTranslations = (): Record<LocaleKey, CampaignLocaleFields> => ({
+  en: { name: '', headline: '' },
+  de: { name: '', headline: '' },
+  fr: { name: '', headline: '' },
+  es: { name: '', headline: '' },
+});
 
 type Campaign = {
   id: string;
   name: string;
   slug: string;
   discountPercent: string | number;
+  itemRules?: ItemRule[];
+  ruleMode?: RuleMode;
   badge?: string | null;
   theme?: string | null;
   headline?: string | null;
+  imageUrl?: string | null;
+  translations?: Record<string, CampaignLocaleFields> | null;
+  imagesByLocale?: Partial<Record<LocaleKey, string>>;
+  useSharedImage?: boolean;
   productIds: string[];
   startsAt?: string | null;
   endsAt?: string | null;
@@ -27,9 +57,16 @@ type FormState = {
   name: string;
   slug: string;
   discountPercent: string;
+  itemRules: ItemRule[];
+  ruleMode: RuleMode;
   badge: string;
   theme: string;
   headline: string;
+  imageUrl: string;
+  useSharedImage: boolean;
+  imagesByLocale: Record<LocaleKey, string>;
+  translationTab: LocaleKey;
+  translations: Record<LocaleKey, CampaignLocaleFields>;
   productIds: string[];
   startsAt: string;
   endsAt: string;
@@ -145,14 +182,27 @@ const emptyForm = (): FormState => ({
   name: '',
   slug: '',
   discountPercent: '15',
+  itemRules: [],
+  ruleMode: 'flat',
   badge: '',
   theme: 'default',
   headline: '',
+  imageUrl: '',
+  useSharedImage: true,
+  imagesByLocale: { en: '', de: '', fr: '', es: '' },
+  translationTab: 'en',
+  translations: emptyCampaignTranslations(),
   productIds: [],
   startsAt: '',
   endsAt: '',
   isActive: true,
 });
+
+const RULE_MODES: { value: RuleMode; label: string }[] = [
+  { value: 'flat', label: 'Sabit % (tüm ürünler)' },
+  { value: 'nth_item', label: 'Sadece sıra kuralları (N. ürün %)' },
+  { value: 'both', label: 'Sabit % + sıra kuralları' },
+];
 
 function toLocalInput(iso: string | null | undefined): string {
   if (!iso) return '';
@@ -280,9 +330,33 @@ export default function CampaignsPage() {
       name: row.name,
       slug: row.slug,
       discountPercent: String(row.discountPercent),
+      itemRules: [...(row.itemRules || [])].sort(
+        (a, b) => a.position - b.position,
+      ),
+      ruleMode: row.ruleMode || 'flat',
       badge: row.badge || '',
       theme: row.theme || 'default',
       headline: row.headline || '',
+      imageUrl: row.imageUrl || '',
+      useSharedImage: row.useSharedImage !== false,
+      imagesByLocale: {
+        en: row.imagesByLocale?.en || '',
+        de: row.imagesByLocale?.de || '',
+        fr: row.imagesByLocale?.fr || '',
+        es: row.imagesByLocale?.es || '',
+      },
+      translationTab: 'en',
+      translations: (() => {
+        const tr = emptyCampaignTranslations();
+        for (const { key } of LOCALE_TABS) {
+          const t = row.translations?.[key];
+          tr[key] = {
+            name: t?.name || '',
+            headline: t?.headline || '',
+          };
+        }
+        return tr;
+      })(),
       productIds: [...(row.productIds || [])],
       startsAt: toLocalInput(row.startsAt),
       endsAt: toLocalInput(row.endsAt),
@@ -323,13 +397,68 @@ export default function CampaignsPage() {
     setError(null);
     setMessage(null);
     try {
+      for (const { key, label } of LOCALE_TABS) {
+        const row = form.translations[key];
+        if (!row.name.trim() || !row.headline.trim()) {
+          setError(`${label}: kampanya adı ve vitrin metni zorunludur.`);
+          setSaving(false);
+          return;
+        }
+      }
+      if (!form.useSharedImage) {
+        for (const { key, label } of LOCALE_TABS) {
+          if (!form.imagesByLocale[key]?.trim()) {
+            setError(`${label} banner görseli zorunludur.`);
+            setSaving(false);
+            return;
+          }
+        }
+        if (!form.imageUrl.trim()) {
+          setError('TR banner görseli zorunludur.');
+          setSaving(false);
+          return;
+        }
+      }
+
+      const translations: Record<string, CampaignLocaleFields> = {};
+      for (const { key } of LOCALE_TABS) {
+        const row = form.translations[key];
+        translations[key] = {
+          name: row.name.trim(),
+          headline: row.headline.trim(),
+        };
+      }
+
       const body = {
         name: form.name.trim(),
         slug: form.slug.trim() || undefined,
         discountPercent: Number(form.discountPercent),
+        itemRules: form.itemRules
+          .map((r) => ({
+            position: Number(r.position),
+            discountPercent: Number(r.discountPercent),
+          }))
+          .filter(
+            (r) =>
+              r.position >= 1 &&
+              Number.isFinite(r.discountPercent) &&
+              r.discountPercent >= 0,
+          ),
+        ruleMode: form.ruleMode,
         badge: form.badge.trim() || undefined,
         theme: form.theme || 'default',
         headline: form.headline.trim() || undefined,
+        imageUrl: form.imageUrl.trim() || undefined,
+        translations,
+        useSharedImage: form.useSharedImage,
+        imagesByLocale: form.useSharedImage
+          ? {}
+          : {
+              en: form.imagesByLocale.en.trim(),
+              de: form.imagesByLocale.de.trim(),
+              fr: form.imagesByLocale.fr.trim(),
+              es: form.imagesByLocale.es.trim(),
+            },
         productIds: form.productIds,
         startsAt: form.startsAt
           ? new Date(form.startsAt).toISOString()
@@ -442,7 +571,7 @@ export default function CampaignsPage() {
               />
             </label>
             <label className="text-sm">
-              İndirim %
+              Temel indirim %
               <input
                 required
                 type="number"
@@ -455,6 +584,126 @@ export default function CampaignsPage() {
                 className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
               />
             </label>
+            <label className="text-sm">
+              İndirim modu
+              <select
+                value={form.ruleMode}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    ruleMode: e.target.value as RuleMode,
+                  }))
+                }
+                className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+              >
+                {RULE_MODES.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="md:col-span-2 space-y-2 rounded border border-dashed border-border-muted p-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm font-medium">
+                  Sepet sırası indirimleri (1. ürün, 2. ürün…)
+                </p>
+                <button
+                  type="button"
+                  className="text-xs font-semibold text-accent hover:underline"
+                  onClick={() =>
+                    setForm((f) => {
+                      const nextPos =
+                        f.itemRules.reduce(
+                          (m, r) => Math.max(m, r.position),
+                          0,
+                        ) + 1;
+                      return {
+                        ...f,
+                        itemRules: [
+                          ...f.itemRules,
+                          { position: nextPos, discountPercent: 10 },
+                        ],
+                      };
+                    })
+                  }
+                >
+                  + Kural ekle
+                </button>
+              </div>
+              <p className="text-xs text-muted">
+                Sepetteki her adet ayrı sıra sayılır (1 tabanlı). Mod
+                &quot;sadece sıra&quot; ise yalnız buradaki yüzdeler uygulanır;
+                &quot;both&quot; modunda temel % ile toplanır (max 90).
+              </p>
+              {form.itemRules.length === 0 ? (
+                <p className="text-xs text-muted">Henüz sıra kuralı yok.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {form.itemRules.map((rule, idx) => (
+                      <li
+                        key={`rule-${idx}`}
+                        className="flex flex-wrap items-end gap-2"
+                      >
+                        <label className="text-xs">
+                          {rule.position}. ürün %
+                          <input
+                            type="number"
+                            min={1}
+                            max={999}
+                            value={rule.position}
+                            onChange={(e) =>
+                              setForm((f) => {
+                                const next = [...f.itemRules];
+                                next[idx] = {
+                                  ...next[idx],
+                                  position: Number(e.target.value),
+                                };
+                                return { ...f, itemRules: next };
+                              })
+                            }
+                            className="mt-1 w-20 border border-border-muted bg-background px-2 py-1"
+                          />
+                        </label>
+                        <label className="text-xs">
+                          İndirim
+                          <input
+                            type="number"
+                            min={0}
+                            max={90}
+                            value={rule.discountPercent}
+                            onChange={(e) =>
+                              setForm((f) => {
+                                const next = [...f.itemRules];
+                                next[idx] = {
+                                  ...next[idx],
+                                  discountPercent: Number(e.target.value),
+                                };
+                                return { ...f, itemRules: next };
+                              })
+                            }
+                            className="mt-1 w-20 border border-border-muted bg-background px-2 py-1"
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          className="mb-0.5 text-xs text-danger hover:underline"
+                          onClick={() =>
+                            setForm((f) => ({
+                              ...f,
+                              itemRules: f.itemRules.filter(
+                                (_, i) => i !== idx,
+                              ),
+                            }))
+                          }
+                        >
+                          Kaldır
+                        </button>
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </div>
             <label className="text-sm">
               Rozet (vitrin)
               <input
@@ -493,6 +742,114 @@ export default function CampaignsPage() {
                 className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
               />
             </label>
+            <div className="md:col-span-2 space-y-1">
+              <GalleryMediaField
+                label="Kampanya görseli (flash banner)"
+                folder="campaigns"
+                urls={form.imageUrl ? [form.imageUrl] : []}
+                onChange={(urls) =>
+                  setForm((f) => ({ ...f, imageUrl: urls[0] || '' }))
+                }
+              />
+              <p className="text-[11px] text-muted">
+                Ana sayfa flash şeridinde görünür; tek görsel yeterli.
+              </p>
+              <Checkbox
+                label="Tüm dillerde ortak görsel"
+                checked={form.useSharedImage}
+                onChange={(useSharedImage) =>
+                  setForm((f) => ({ ...f, useSharedImage }))
+                }
+              />
+              {!form.useSharedImage ? (
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  {LOCALE_TABS.map(({ key, label }) => (
+                    <label key={key} className="block text-sm">
+                      <span className="text-xs text-muted">Banner ({label})</span>
+                      <input
+                        value={form.imagesByLocale[key]}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            imagesByLocale: {
+                              ...f.imagesByLocale,
+                              [key]: e.target.value,
+                            },
+                          }))
+                        }
+                        className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                      />
+                    </label>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+            <div className="md:col-span-2 space-y-3 rounded border border-border-muted p-3">
+              <p className="mono text-[10px] uppercase text-muted">
+                Çeviriler (TR ana alanlarda) — EN/DE/FR/ES zorunlu
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {LOCALE_TABS.map(({ key, label }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() =>
+                      setForm((f) => ({ ...f, translationTab: key }))
+                    }
+                    className={`border px-3 py-1 text-xs uppercase ${
+                      form.translationTab === key
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border-muted'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              {(() => {
+                const tab = form.translationTab;
+                const row = form.translations[tab];
+                return (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <label className="block text-sm">
+                      <span className="text-xs text-muted">Ad ({tab})</span>
+                      <input
+                        value={row.name}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            translations: {
+                              ...f.translations,
+                              [tab]: { ...f.translations[tab], name: e.target.value },
+                            },
+                          }))
+                        }
+                        className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                      />
+                    </label>
+                    <label className="block text-sm sm:col-span-2">
+                      <span className="text-xs text-muted">Vitrin metni ({tab})</span>
+                      <input
+                        value={row.headline}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            translations: {
+                              ...f.translations,
+                              [tab]: {
+                                ...f.translations[tab],
+                                headline: e.target.value,
+                              },
+                            },
+                          }))
+                        }
+                        className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                      />
+                    </label>
+                  </div>
+                );
+              })()}
+            </div>
             <label className="text-sm">
               Başlangıç
               <input
@@ -641,6 +998,13 @@ export default function CampaignsPage() {
         <DataTable
           rowKey={(r) => r.id}
           columns={[
+            {
+              key: 'thumb',
+              header: '',
+              render: (r) => (
+                <AdminListThumb src={r.imageUrl} alt={r.name} size={48} />
+              ),
+            },
             {
               key: 'name',
               header: 'Ad',

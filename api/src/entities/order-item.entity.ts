@@ -46,4 +46,7 @@ export class OrderItem extends BaseEntity {
 
   @Column({ name: 'line_total', type: 'decimal', precision: 12, scale: 2 })
   lineTotal!: string;
+
+  @Column({ name: 'image_url', type: 'varchar', length: 500, nullable: true })
+  imageUrl!: string | null;
 }

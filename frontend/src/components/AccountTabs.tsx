@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export type AccountTabId =
   | "siparisler"
@@ -14,16 +15,23 @@ export type AccountTabId =
 
 const TABS: {
   id: AccountTabId;
-  label: string;
+  labelKey:
+    | "tabOrders"
+    | "nutritionTracking"
+    | "progressReport"
+    | "tabAddresses"
+    | "tabAccount"
+    | "favorites"
+    | "notifications";
   href: string;
 }[] = [
-  { id: "siparisler", label: "Siparişler", href: "/hesabim?sekme=siparisler" },
-  { id: "takip", label: "Beslenme Takibi", href: "/hesabim/takip" },
-  { id: "rapor", label: "Gelişim Raporu", href: "/hesabim/rapor" },
-  { id: "adresler", label: "Adresler", href: "/hesabim?sekme=adresler" },
-  { id: "hesap", label: "Hesap", href: "/hesabim?sekme=hesap" },
-  { id: "favoriler", label: "Favoriler", href: "/hesabim/favoriler" },
-  { id: "bildirimler", label: "Bildirimler", href: "/hesabim/bildirimler" },
+  { id: "siparisler", labelKey: "tabOrders", href: "/hesabim?sekme=siparisler" },
+  { id: "takip", labelKey: "nutritionTracking", href: "/hesabim/takip" },
+  { id: "rapor", labelKey: "progressReport", href: "/hesabim/rapor" },
+  { id: "adresler", labelKey: "tabAddresses", href: "/hesabim?sekme=adresler" },
+  { id: "hesap", labelKey: "tabAccount", href: "/hesabim?sekme=hesap" },
+  { id: "favoriler", labelKey: "favorites", href: "/hesabim/favoriler" },
+  { id: "bildirimler", labelKey: "notifications", href: "/hesabim/bildirimler" },
 ];
 
 export function resolveAccountTab(
@@ -45,10 +53,19 @@ export function resolveAccountTab(
 }
 
 function TabNav({ current }: { current: AccountTabId }) {
+  const tAccount = useTranslations("account");
+  const tNav = useTranslations("nav");
+  const tTabs = useTranslations("accountTabs");
+
+  function tabLabel(key: (typeof TABS)[number]["labelKey"]): string {
+    if (key === "favorites" || key === "notifications") return tNav(key);
+    return tAccount(key);
+  }
+
   return (
     <nav
       className="mt-6 flex gap-0.5 overflow-x-auto overscroll-x-contain border-b border-outline-variant/30 pb-px [-ms-overflow-style:none] scrollbar-none sm:mt-8 sm:gap-1 [&::-webkit-scrollbar]:hidden"
-      aria-label="Hesap bölümleri"
+      aria-label={tTabs("ariaLabel")}
       role="tablist"
     >
       {TABS.map((tab) => {
@@ -65,7 +82,7 @@ function TabNav({ current }: { current: AccountTabId }) {
                 : "border-transparent text-secondary hover:border-outline-variant/50 hover:text-on-surface"
             }`}
           >
-            {tab.label}
+            {tabLabel(tab.labelKey)}
           </Link>
         );
       })}

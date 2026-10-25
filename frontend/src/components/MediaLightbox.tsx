@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useCallback } from "react";
 import { AppImage as Image } from "@/components/AppImage";
 import { galleryCaption, galleryImageUrl, type GalleryItem } from "@/lib/gallery";
@@ -17,6 +18,8 @@ type Props = {
 };
 
 export function MediaLightbox({ items, index, onClose, onIndexChange }: Props) {
+  const tAria = useTranslations("aria");
+  const tc = useTranslations("common");
   const item = items[index];
   const total = items.length;
 
@@ -54,12 +57,12 @@ export function MediaLightbox({ items, index, onClose, onIndexChange }: Props) {
       className="media-lightbox fixed inset-0 z-100 flex flex-col bg-deep-carbon/95"
       role="dialog"
       aria-modal="true"
-      aria-label="Galeri görünümü"
+      aria-label={tAria("galleryView")}
     >
       <button
         type="button"
         className="absolute inset-0 cursor-default"
-        aria-label="Kapat"
+        aria-label={tc("close")}
         onClick={onClose}
       />
 
@@ -83,7 +86,7 @@ export function MediaLightbox({ items, index, onClose, onIndexChange }: Props) {
             onClick={onClose}
             className="border border-outline-variant/50 px-3 py-2 font-meta text-[10px] uppercase tracking-widest text-on-surface transition hover:border-primary hover:text-primary"
           >
-            Kapat
+            {tc("close")}
           </button>
         </div>
       </header>
@@ -97,7 +100,7 @@ export function MediaLightbox({ items, index, onClose, onIndexChange }: Props) {
               go(-1);
             }}
             className="absolute left-2 top-1/2 z-20 -translate-y-1/2 border border-outline-variant/40 bg-background/70 px-3 py-4 font-meta text-sm text-on-surface transition hover:border-primary hover:text-primary md:left-6"
-            aria-label="Önceki"
+            aria-label={tAria("previous")}
           >
             ‹
           </button>
@@ -121,7 +124,7 @@ export function MediaLightbox({ items, index, onClose, onIndexChange }: Props) {
             <div className="relative max-h-[min(78vh,900px)] w-[min(92vw,1100px)]">
               <Image
                 src={preview}
-                alt={caption || "Galeri görseli"}
+                alt={caption || tAria("galleryImage")}
                 width={1600}
                 height={1200}
                 className="max-h-[min(78vh,900px)] w-full object-contain"
@@ -145,7 +148,7 @@ export function MediaLightbox({ items, index, onClose, onIndexChange }: Props) {
               go(1);
             }}
             className="absolute right-2 top-1/2 z-20 -translate-y-1/2 border border-outline-variant/40 bg-background/70 px-3 py-4 font-meta text-sm text-on-surface transition hover:border-primary hover:text-primary md:right-6"
-            aria-label="Sonraki"
+            aria-label={tAria("next")}
           >
             ›
           </button>

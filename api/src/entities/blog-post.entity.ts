@@ -1,5 +1,9 @@
 import { Column, Entity, Index } from 'typeorm';
 import { BaseEntity } from '@entities/base.entity';
+import type {
+  BlogTranslations,
+  ImagesByLocale,
+} from '@common/catalog/localization.types';
 
 @Entity('blog_posts')
 export class BlogPost extends BaseEntity {
@@ -23,6 +27,15 @@ export class BlogPost extends BaseEntity {
     nullable: true,
   })
   coverImageUrl!: string | null;
+
+  @Column({ name: 'translations', type: 'jsonb', nullable: true })
+  translations!: BlogTranslations | null;
+
+  @Column({ name: 'images_by_locale', type: 'jsonb', default: {} })
+  imagesByLocale!: ImagesByLocale;
+
+  @Column({ name: 'use_shared_image', type: 'boolean', default: true })
+  useSharedImage!: boolean;
 
   @Column({ name: 'author_name', type: 'varchar', length: 120, nullable: true })
   authorName!: string | null;

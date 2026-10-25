@@ -18,7 +18,7 @@ export class Payment extends BaseEntity {
   @Column({ name: 'order_id', type: 'uuid' })
   orderId!: string;
 
-  @Column({ name: 'provider', type: 'varchar', length: 40, default: 'iyzico' })
+  @Column({ name: 'provider', type: 'varchar', length: 40, default: 'paytr' })
   provider!: string;
 
   @Column({

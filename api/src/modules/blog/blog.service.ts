@@ -12,12 +12,38 @@ import {
   UpdateBlogPostDto,
 } from '@modules/blog/dto/blog.dto';
 import { PaginatedResult, paginateResult } from '@common/utils/pagination';
+import type { BlogTranslations } from '@common/catalog/localization.types';
+import {
+  applyBlogLocale,
+  assertImagesByLocaleWhenNotShared,
+  assertRequiredLocales,
+  normalizeLocale,
+} from '@common/catalog/localization.util';
 
 @Injectable()
 export class BlogService {
   constructor(@InjectEntityManager() private readonly em: EntityManager) {}
 
+  private validateBlogI18n(
+    dto: Pick<
+      CreateBlogPostDto,
+      'translations' | 'useSharedImage' | 'coverImageUrl' | 'imagesByLocale'
+    >,
+  ): void {
+    assertRequiredLocales(
+      dto.translations as BlogTranslations | null | undefined,
+      ['title', 'excerpt', 'content', 'slug'],
+      'Blog',
+    );
+    assertImagesByLocaleWhenNotShared(
+      dto.useSharedImage,
+      dto.coverImageUrl,
+      dto.imagesByLocale,
+    );
+  }
+
   async query(query: BlogQueryDto): Promise<PaginatedResult<BlogPost>> {
+    const locale = normalizeLocale(query.locale);
     const page = query.page ?? 1;
     const limit = query.limit ?? 12;
     const sort = query.sort ?? 'publishedAt';
@@ -63,17 +89,40 @@ export class BlogService {
       .take(limit)
       .getMany();
 
-    return paginateResult(items, total, page, limit);
+    const localized = items.map((p) => applyBlogLocale(p, locale));
+    return paginateResult(localized, total, page, limit);
   }
 
-  async getBySlug(slug: string, includeDraft = false): Promise<BlogPost> {
-    const post = await this.em.findOne(BlogPost, {
-      where: includeDraft ? { slug } : { slug, isPublished: true },
-    });
+  async getBySlug(
+    slug: string,
+    includeDraft = false,
+    localeRaw?: string | null,
+  ): Promise<BlogPost> {
+    const locale = normalizeLocale(localeRaw);
+    const normalized = slug.trim().toLowerCase();
+    let post: BlogPost | null;
+    if (locale === 'tr') {
+      post = await this.em.findOne(BlogPost, {
+        where: includeDraft
+          ? { slug: normalized }
+          : { slug: normalized, isPublished: true },
+      });
+    } else {
+      const qb = this.em.createQueryBuilder(BlogPost, 'p');
+      if (!includeDraft) {
+        qb.andWhere('p.is_published = true');
+      }
+      post = await qb
+        .andWhere(
+          `(p.slug = :slug OR p.translations -> :locale ->> 'slug' = :slug)`,
+          { slug: normalized, locale },
+        )
+        .getOne();
+    }
     if (!post) {
       throw new NotFoundException('Blog yazısı bulunamadı');
     }
-    return post;
+    return applyBlogLocale(post, locale);
   }
 
   async getById(id: string): Promise<BlogPost> {
@@ -85,6 +134,7 @@ export class BlogService {
   }
 
   async create(dto: CreateBlogPostDto): Promise<BlogPost> {
+    this.validateBlogI18n(dto);
     const existing = await this.em.findOne(BlogPost, {
       where: { slug: dto.slug },
     });
@@ -98,6 +148,9 @@ export class BlogService {
       excerpt: dto.excerpt ?? null,
       content: dto.content,
       coverImageUrl: dto.coverImageUrl ?? null,
+      translations: dto.translations ?? null,
+      imagesByLocale: dto.imagesByLocale ?? {},
+      useSharedImage: dto.useSharedImage !== false,
       authorName: dto.authorName ?? null,
       tags: dto.tags ?? [],
       relatedProductSlugs: normalizeSlugs(dto.relatedProductSlugs),
@@ -113,6 +166,23 @@ export class BlogService {
 
   async update(id: string, dto: UpdateBlogPostDto): Promise<BlogPost> {
     const post = await this.getById(id);
+
+    this.validateBlogI18n({
+      translations:
+        dto.translations !== undefined ? dto.translations : post.translations,
+      useSharedImage:
+        dto.useSharedImage !== undefined
+          ? dto.useSharedImage
+          : post.useSharedImage,
+      coverImageUrl:
+        dto.coverImageUrl !== undefined
+          ? dto.coverImageUrl
+          : post.coverImageUrl,
+      imagesByLocale:
+        dto.imagesByLocale !== undefined
+          ? dto.imagesByLocale
+          : post.imagesByLocale,
+    });
 
     if (dto.slug && dto.slug !== post.slug) {
       const existing = await this.em.findOne(BlogPost, {
@@ -131,6 +201,16 @@ export class BlogService {
         dto.coverImageUrl === undefined
           ? post.coverImageUrl
           : dto.coverImageUrl || null,
+      translations:
+        dto.translations === undefined ? post.translations : dto.translations,
+      imagesByLocale:
+        dto.imagesByLocale === undefined
+          ? post.imagesByLocale
+          : dto.imagesByLocale ?? {},
+      useSharedImage:
+        dto.useSharedImage === undefined
+          ? post.useSharedImage
+          : dto.useSharedImage,
       authorName:
         dto.authorName === undefined ? post.authorName : dto.authorName || null,
       seoTitle:

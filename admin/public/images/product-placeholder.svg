@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+  <rect width="120" height="120" rx="16" fill="#eef5f0"/>
+  <rect x="8" y="8" width="104" height="104" rx="12" stroke="#c5d9cc" stroke-width="2" stroke-dasharray="6 4"/>
+  <path d="M60 34c-8 0-14 6-14 14 0 10 14 26 14 26s14-16 14-26c0-8-6-14-14-14z" fill="#2d6a4f" opacity="0.85"/>
+  <path d="M44 78h32v8H44z" fill="#40916c" opacity="0.5" rx="2"/>
+  <text x="60" y="102" text-anchor="middle" fill="#52796f" font-family="system-ui,sans-serif" font-size="9" font-weight="600">ÜRÜN</text>
+</svg>

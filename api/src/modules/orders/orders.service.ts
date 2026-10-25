@@ -20,6 +20,7 @@ import {
   ReturnRequestStatus,
   ReturnRequestType,
 } from '@entities/return-request.entity';
+import { formatOrderVariantLabel } from '@common/catalog/variant-label.util';
 import {
   CreateOrderDto,
   CreateReturnRequestDto,
@@ -33,6 +34,7 @@ import { NotificationsService } from '@modules/notifications/notifications.servi
 import { statusLabel } from '@modules/notifications/notification.templates';
 import { CouponsService } from '@modules/coupons/coupons.service';
 import { InventoryService } from '@modules/catalog/inventory.service';
+import { CartService } from '@modules/cart/cart.service';
 import { PaytrService } from '@modules/payments/paytr.service';
 import { MarketplaceService } from '@modules/marketplace/marketplace.service';
 import { isStorePickup } from '@common/constants/shipping';
@@ -60,6 +62,7 @@ export class OrdersService {
     private readonly inventory: InventoryService,
     private readonly paytr: PaytrService,
     private readonly marketplace: MarketplaceService,
+    private readonly cartService: CartService,
   ) {}
 
   async createFromCart(
@@ -89,6 +92,8 @@ export class OrdersService {
     if (!cart?.items?.length) {
       throw new BadRequestException('Sepet boş');
     }
+
+    await this.cartService.refreshCampaignPricing(cart);
 
     await this.inventory.assertCartStock(cart.items);
 
@@ -171,10 +176,11 @@ export class OrdersService {
           productId: item.productId,
           variantId: item.variantId,
           productName: item.product?.name || 'Ürün',
-          variantLabel: item.variant?.weightLabel ?? null,
+          variantLabel: formatOrderVariantLabel(item.variant) ?? null,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
           lineTotal: (Number(item.unitPrice) * item.quantity).toFixed(2),
+          imageUrl: item.product?.imageUrl?.trim() || null,
         }),
       );
       await tx.save(orderItems);
@@ -706,6 +712,36 @@ export class OrdersService {
     return `${prefix}${String(seq).padStart(4, '0')}`;
   }
 
+  private async shippingPolicyFromSite(): Promise<{
+    defaultFee: number;
+    freeOver: number;
+  }> {
+    const envDefault =
+      this.config.get<number>('shipping.defaultFee') ?? 89.9;
+    const envFree = this.config.get<number>('shipping.freeOver') || 0;
+    const row = await this.em.findOne(SiteSetting, {
+      where: { key: 'shipping' },
+    });
+    const val = (row?.value || {}) as {
+      defaultFee?: number | string;
+      freeShippingOver?: number | string;
+    };
+    const defaultFeeRaw = val.defaultFee;
+    const freeRaw = val.freeShippingOver;
+    const defaultFee =
+      defaultFeeRaw != null && String(defaultFeeRaw).trim()
+        ? Number(defaultFeeRaw)
+        : envDefault;
+    const freeOver =
+      freeRaw != null && String(freeRaw).trim()
+        ? Number(freeRaw)
+        : envFree;
+    return {
+      defaultFee: Number.isFinite(defaultFee) ? defaultFee : envDefault,
+      freeOver: Number.isFinite(freeOver) ? freeOver : envFree,
+    };
+  }
+
   private async resolveShippingFee(
     providerCode: string | undefined | null,
     subtotal: number,
@@ -714,12 +750,10 @@ export class OrdersService {
       return 0;
     }
 
-    const freeOver = this.config.get<number>('shipping.freeOver') || 0;
+    const { defaultFee, freeOver } = await this.shippingPolicyFromSite();
     if (freeOver > 0 && subtotal >= freeOver) {
       return 0;
     }
-
-    const defaultFee = this.config.get<number>('shipping.defaultFee') ?? 89.9;
     if (!providerCode) return defaultFee;
 
     const codes = Object.values(ShippingProviderCode) as string[];

@@ -1,18 +1,18 @@
-import Script from "next/script";
+"use client";
 
-const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID?.trim() || "";
-const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID?.trim() || "";
-const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID?.trim() || "";
+import Script from "next/script";
+import { useAnalyticsIds } from "@/lib/analytics-ids";
 
 /**
  * Google Ads / GA4 gtag — Consent Mode v2.
- * Etiket her zaman yüklenir (Google doğrulaması için); çerezler onaydan önce denied.
- * GTM kullanılıyorsa gtag burada atlanır (GTM içinden yönetin).
+ * Kimlikler CMS analytics ayarlarından (client) + env yedek.
  */
 export function GoogleConsentTags() {
-  if (GTM_ID) return null;
+  const { ga4Id, gtmId, googleAdsId } = useAnalyticsIds();
 
-  const gtagId = GOOGLE_ADS_ID || GA4_ID;
+  if (gtmId) return null;
+
+  const gtagId = googleAdsId || ga4Id;
   if (!gtagId) return null;
 
   return (
@@ -36,8 +36,8 @@ export function GoogleConsentTags() {
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        ${GA4_ID ? `gtag('config', '${GA4_ID}', { anonymize_ip: true });` : ""}
-        ${GOOGLE_ADS_ID ? `gtag('config', '${GOOGLE_ADS_ID}');` : ""}
+        ${ga4Id ? `gtag('config', '${ga4Id}', { anonymize_ip: true });` : ""}
+        ${googleAdsId ? `gtag('config', '${googleAdsId}');` : ""}
       `}</Script>
     </>
   );

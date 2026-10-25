@@ -11,6 +11,7 @@ import { Product } from '@entities/product.entity';
 import { ProductVariant } from '@entities/product-variant.entity';
 import { AddCartItemDto, UpdateCartItemDto } from '@modules/cart/dto/cart.dto';
 import { CampaignsService } from '@modules/campaigns/campaigns.service';
+import { Campaign } from '@entities/campaign.entity';
 
 const CART_RELATIONS = {
   items: { product: true, variant: true },
@@ -137,6 +138,7 @@ export class CartService {
 
   async getCart(userId?: string | null, sessionId?: string | null) {
     const cart = await this.getOrCreateCart(userId, sessionId);
+    await this.refreshCampaignPricing(cart);
     return this.withTotals(cart);
   }
 
@@ -230,6 +232,56 @@ export class CartService {
 
     await this.touchCart(cart);
     return this.getCart(userId, sessionId);
+  }
+
+  /**
+   * Sepetteki adet sırasına göre nth-item kampanya kurallarını uygular.
+   * Kalemlerde tek unitPrice olduğu için birim fiyatlar ağırlıklı ortalama ile birleştirilir.
+   */
+  async refreshCampaignPricing(cart: Cart): Promise<void> {
+    const items = [...(cart.items || [])].sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
+    if (!items.length) return;
+
+    const active = await this.campaigns.listActiveNow();
+    const campaignForProduct = (productId: string): Campaign | null =>
+      active.find(
+        (c) => !c.productIds?.length || c.productIds.includes(productId),
+      ) || null;
+
+    let position = 0;
+    const updates: Array<{ item: CartItem; unitPrice: string }> = [];
+
+    for (const item of items) {
+      const base =
+        item.variant?.price ??
+        item.product?.basePrice ??
+        item.unitPrice;
+      const unitTotals: number[] = [];
+
+      for (let u = 0; u < item.quantity; u++) {
+        position += 1;
+        const campaign = campaignForProduct(item.productId);
+        const percent = this.campaigns.effectiveDiscountPercent(
+          campaign,
+          position,
+        );
+        unitTotals.push(Number(this.campaigns.applyPercent(base, percent)));
+      }
+
+      const lineTotal = unitTotals.reduce((s, n) => s + n, 0);
+      const avg = (lineTotal / item.quantity).toFixed(2);
+      if (avg !== Number(item.unitPrice).toFixed(2)) {
+        updates.push({ item, unitPrice: avg });
+      }
+    }
+
+    for (const { item, unitPrice } of updates) {
+      item.unitPrice = unitPrice;
+      await this.em.save(item);
+    }
   }
 
   async updateItem(

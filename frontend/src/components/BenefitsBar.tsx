@@ -1,52 +1,19 @@
+import {
+  BadgeCheck,
+  Clock,
+  Lock,
+  MessageCircle,
+  RotateCcw,
+  Truck,
+  type LucideIcon,
+} from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/Reveal";
-import { freeShippingThreshold } from "@/lib/shipping";
+import type { SiteSettings } from "@/lib/cms";
 import { formatMoney } from "@/lib/format";
+import { freeShippingThreshold } from "@/lib/shipping";
 
-function buildBenefits() {
-  const threshold = freeShippingThreshold();
-  const shipping =
-    threshold > 0
-      ? {
-          title: `${formatMoney(threshold)} üzeri ücretsiz kargo`,
-          subtitle: "Türkiye geneli",
-          tone: "sage" as const,
-          icon: "🚚",
-        }
-      : {
-          title: "Hızlı kargo",
-          subtitle: "1–3 iş günü sevk",
-          tone: "sage" as const,
-          icon: "🚚",
-        };
-
-  return [
-    shipping,
-    {
-      title: "PayTR güvenli ödeme",
-      subtitle: "256 bit SSL",
-      tone: "blush" as const,
-      icon: "🔒",
-    },
-    {
-      title: "14 gün iade",
-      subtitle: "Cayma hakkı",
-      tone: "sage" as const,
-      icon: "↩️",
-    },
-    {
-      title: "Orijinal ürün",
-      subtitle: "Bağımsız distribütör",
-      tone: "blush" as const,
-      icon: "✓",
-    },
-    {
-      title: "WhatsApp koç desteği",
-      subtitle: "Birebir takip",
-      tone: "mint" as const,
-      icon: "💬",
-    },
-  ];
-}
+type SitePromises = NonNullable<SiteSettings["promises"]>;
 
 const TONE_CLASS = {
   sage: "bg-primary-fixed text-primary border border-primary/15",
@@ -57,22 +24,92 @@ const TONE_CLASS = {
 type Props = {
   className?: string;
   phone?: string;
+  promises?: SitePromises;
 };
 
-export function BenefitsBar({ className = "", phone: _phone }: Props) {
-  const benefits = buildBenefits();
+export async function BenefitsBar({
+  className = "",
+  phone: _phone,
+  promises,
+}: Props) {
+  const t = await getTranslations("benefits");
+  const threshold = freeShippingThreshold();
+  const returnDays = promises?.returnDays ?? 14;
+  const sameDay =
+    promises?.sameDayShipping !== false &&
+    (promises?.sameDayCutoff?.trim() || "13:00");
+
+  const shipping = sameDay
+    ? {
+        title: t("sameDayTitle", { cutoff: sameDay }),
+        subtitle: t("sameDaySubtitle"),
+        tone: "sage" as const,
+        Icon: Clock,
+      }
+    : threshold > 0
+      ? {
+          title: t("freeShippingTitle", {
+            amount: formatMoney(threshold),
+          }),
+          subtitle: t("freeShippingSubtitle"),
+          tone: "sage" as const,
+          Icon: Truck,
+        }
+      : {
+          title: t("fastShippingTitle"),
+          subtitle: t("fastShippingSubtitle"),
+          tone: "sage" as const,
+          Icon: Truck,
+        };
+
+  const benefits: Array<{
+    title: string;
+    subtitle: string;
+    tone: "sage" | "blush" | "mint";
+    Icon: LucideIcon;
+  }> = [
+    shipping,
+    {
+      title: t("securePayTitle"),
+      subtitle: t("securePaySubtitle"),
+      tone: "blush",
+      Icon: Lock,
+    },
+    {
+      title: t("returnTitle", { days: returnDays }),
+      subtitle: t("returnSubtitle"),
+      tone: "sage",
+      Icon: RotateCcw,
+    },
+    {
+      title: t("originalTitle"),
+      subtitle: t("originalSubtitle"),
+      tone: "blush",
+      Icon: BadgeCheck,
+    },
+  ];
+
+  if (promises?.freeCoaching !== false) {
+    benefits.push({
+      title: t("coachingTitle"),
+      subtitle: t("coachingSubtitle"),
+      tone: "mint",
+      Icon: MessageCircle,
+    });
+  }
+
   return (
     <div
       className={`lift-safe grid grid-cols-2 items-stretch gap-2.5 sm:gap-3 md:grid-cols-5 md:gap-4${className ? ` ${className}` : ""}`}
     >
       {benefits.map((b, i) => (
         <Reveal key={b.title} delay={i * 55} variant="scale">
-          <div className="card-motion panel-motion flex h-full min-h-[4.75rem] items-center gap-3 rounded-xl bg-surface-container-lowest p-3 shadow-sm sm:p-4">
+          <div className="card-motion panel-motion flex h-full min-h-19 items-center gap-3 rounded-xl bg-surface-container-lowest p-3 shadow-sm sm:p-4">
             <span
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg ${TONE_CLASS[b.tone]}`}
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${TONE_CLASS[b.tone]}`}
               aria-hidden
             >
-              {b.icon}
+              <b.Icon className="h-5 w-5" strokeWidth={2} />
             </span>
             <div className="flex min-w-0 flex-1 flex-col justify-center">
               <p className="line-clamp-2 min-h-[2.5em] text-sm font-bold leading-snug text-on-surface">

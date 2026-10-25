@@ -73,9 +73,7 @@ export const ADMIN_NAV_GROUPS: NavGroup[] = [
       { href: '/kasa', label: 'Kasa' },
       { href: '/cari', label: 'Cari' },
       { href: '/fisler', label: 'Fişler' },
-      { href: '/faturalar', label: 'Faturalar' },
       { href: '/stok', label: 'Stok defteri' },
-      { href: '/okc', label: 'ÖKC' },
       { href: '/muhasebe', label: 'Muhasebe cirosu' },
       {
         href: '/muhasebe-ayarlari',
@@ -219,9 +217,9 @@ function BrandBlock() {
         </span>
         <div className="min-w-0">
           <p className="truncate font-display text-base font-bold text-foreground">
-            Herbal Ürünleri
+            Herbal Kapıda
           </p>
-          <p className="text-xs font-medium text-accent">Yönetici · Emine Özberk</p>
+          <p className="text-xs font-medium text-accent">Yönetim paneli</p>
         </div>
       </div>
     </div>

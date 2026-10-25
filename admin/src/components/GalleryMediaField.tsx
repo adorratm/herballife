@@ -1,16 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { api, uploadMedia } from '@/lib/api';
+import { useState } from 'react';
+import { uploadMedia } from '@/lib/api';
 import { ImageDropZone } from '@/components/ImageDropZone';
-import { Modal } from '@/components/Modal';
-
-type MediaAsset = {
-  id: string;
-  filename: string;
-  url: string;
-  mimeType?: string;
-};
+import { MediaLibraryPicker } from '@/components/MediaLibraryPicker';
 
 type Props = {
   urls: string[];
@@ -28,23 +21,7 @@ export function GalleryMediaField({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [library, setLibrary] = useState<MediaAsset[]>([]);
-  const [loadingLibrary, setLoadingLibrary] = useState(false);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [manualUrl, setManualUrl] = useState('');
-
-  useEffect(() => {
-    if (!pickerOpen) return;
-    setSelected(new Set(urls));
-    setLoadingLibrary(true);
-    setError(null);
-    void api<MediaAsset[]>('/cms/admin/media')
-      .then((data) => setLibrary(Array.isArray(data) ? data : []))
-      .catch((e) =>
-        setError(e instanceof Error ? e.message : 'Medya listesi alınamadı'),
-      )
-      .finally(() => setLoadingLibrary(false));
-  }, [pickerOpen, urls]);
 
   function addUrls(next: string[]) {
     const merged = [...urls];
@@ -86,32 +63,19 @@ export function GalleryMediaField({
     }
   }
 
-  function toggleSelect(url: string) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(url)) next.delete(url);
-      else next.add(url);
-      return next;
-    });
-  }
-
-  function applyPicker() {
-    const fromLib = library
-      .filter((a) => selected.has(a.url))
-      .map((a) => a.url);
-    const ordered = [
-      ...urls.filter((u) => selected.has(u)),
-      ...fromLib.filter((u) => !urls.includes(u)),
-    ];
-    onChange(ordered);
-    setPickerOpen(false);
-  }
-
   function addManual() {
     const url = manualUrl.trim();
     if (!url) return;
     addUrls([url]);
     setManualUrl('');
+  }
+
+  function applyPicker(selected: string[]) {
+    const ordered = [
+      ...urls.filter((u) => selected.includes(u)),
+      ...selected.filter((u) => !urls.includes(u)),
+    ];
+    onChange(ordered);
   }
 
   return (
@@ -195,70 +159,13 @@ export function GalleryMediaField({
 
       {error ? <p className="text-xs text-danger">{error}</p> : null}
 
-      <Modal
+      <MediaLibraryPicker
         open={pickerOpen}
         onClose={() => setPickerOpen(false)}
-        size="xl"
-        title="Medya kütüphanesi"
-        description={`${selected.size} seçili · çoklu seçim`}
-        footer={
-          <>
-            <button
-              type="button"
-              onClick={() => setPickerOpen(false)}
-              className="admin-btn admin-btn-ghost"
-            >
-              Vazgeç
-            </button>
-            <button
-              type="button"
-              onClick={applyPicker}
-              className="admin-btn admin-btn-primary"
-            >
-              Seçimi uygula ({selected.size})
-            </button>
-          </>
-        }
-      >
-        {loadingLibrary ? (
-          <p className="text-sm text-muted">Yükleniyor…</p>
-        ) : library.length === 0 ? (
-          <p className="text-sm text-muted">
-            Kütüphanede görsel yok. Önce yükleyin.
-          </p>
-        ) : (
-          <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 md:grid-cols-5">
-            {library.map((asset) => {
-              const active = selected.has(asset.url);
-              return (
-                <li key={asset.id}>
-                  <button
-                    type="button"
-                    onClick={() => toggleSelect(asset.url)}
-                    className={`relative w-full overflow-hidden rounded-xl border transition ${
-                      active
-                        ? 'border-accent ring-2 ring-accent/30'
-                        : 'border-border-muted hover:border-accent/50'
-                    }`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={asset.url}
-                      alt={asset.filename}
-                      className="aspect-square w-full object-cover"
-                    />
-                    {active ? (
-                      <span className="absolute right-1.5 top-1.5 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-white">
-                        ✓
-                      </span>
-                    ) : null}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </Modal>
+        multiple
+        selectedUrls={urls}
+        onApply={applyPicker}
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { AppImage as Image } from "@/components/AppImage";
 import { MediaLightbox } from "@/components/MediaLightbox";
@@ -32,6 +33,7 @@ function MediaTile({
   linkTarget?: "_blank";
   onOpen: (index: number) => void;
 }) {
+  const t = useTranslations("gallery");
   const href =
     mode === "link"
       ? item.permalink || (item.source === "instagram" ? item.mediaUrl : null)
@@ -56,7 +58,7 @@ function MediaTile({
       ) : null}
       {mode === "lightbox" ? (
         <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/40 px-2.5 py-0.5 font-meta text-[9px] uppercase tracking-widest text-white opacity-0 transition group-hover:opacity-100">
-          Büyüt
+          {t("enlarge")}
         </span>
       ) : null}
       {caption ? (
@@ -94,17 +96,19 @@ function MediaTile({
 export function MediaGallerySection({
   items,
   profileUrl,
-  emptyMessage = "Henüz içerik yok.",
+  emptyMessage,
   mode = "link",
   linkTarget = "_blank",
 }: Props) {
+  const t = useTranslations("gallery");
+  const resolvedEmpty = emptyMessage ?? t("emptyDefault");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   if (!items.length) {
     return (
       <Reveal>
         <p className="font-meta text-xs uppercase tracking-widest text-secondary">
-          {emptyMessage}
+          {resolvedEmpty}
           {profileUrl ? (
             <>
               {" "}

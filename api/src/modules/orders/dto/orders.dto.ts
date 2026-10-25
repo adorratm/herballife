@@ -78,6 +78,27 @@ export class AddressPayloadDto {
   @Transform(trimString)
   @IsString()
   postalCode!: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Transform(trimString)
+  @IsString()
+  @MaxLength(200)
+  companyTitle?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Transform(trimString)
+  @IsString()
+  @MaxLength(20)
+  taxNumber?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Transform(trimString)
+  @IsString()
+  @MaxLength(120)
+  taxOffice?: string;
 }
 
 export class CreateOrderDto {

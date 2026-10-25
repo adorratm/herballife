@@ -6,7 +6,6 @@ import {
   InvoiceDirection,
   InvoiceStatus,
 } from '@entities/invoice.entity';
-import { OkcSale } from '@entities/okc-sale.entity';
 import { CashEntry, CashEntryType } from '@entities/cash-entry.entity';
 import { Order, OrderStatus } from '@entities/order.entity';
 import { Party } from '@entities/party.entity';
@@ -29,11 +28,6 @@ export class ReportsService {
       .andWhere('i.issue_date BETWEEN :from AND :to', { from, to })
       .getMany();
 
-    const okc = await this.em
-      .createQueryBuilder(OkcSale, 's')
-      .where('s.sale_date BETWEEN :from AND :to', { from, to })
-      .getMany();
-
     const web = await this.em
       .createQueryBuilder(Order, 'o')
       .leftJoinAndSelect('o.payment', 'p')
@@ -50,10 +44,7 @@ export class ReportsService {
       .getMany();
 
     const webPaytr = web.filter(
-      (o) =>
-        !o.payment?.provider ||
-        o.payment.provider === 'paytr' ||
-        o.payment.provider === 'iyzico',
+      (o) => !o.payment?.provider || o.payment.provider === 'paytr',
     );
 
     /** Manuel kasa girişi (ÖKC/PayTR eşlemesi çift sayılmasın). */
@@ -69,10 +60,6 @@ export class ReportsService {
       (s, i) => s + parseMoney(i.taxAmount),
       0,
     );
-    const okcTotal = okc.reduce((s, i) => s + parseMoney(i.total), 0);
-    const okcVat = okc.reduce((s, i) => s + parseMoney(i.taxAmount), 0);
-    const okcCash = okc.reduce((s, i) => s + parseMoney(i.cashAmount), 0);
-    const okcCard = okc.reduce((s, i) => s + parseMoney(i.cardAmount), 0);
     const webTotal = web.reduce((s, i) => s + parseMoney(i.total), 0);
     const webPaytrTotal = webPaytr.reduce((s, i) => s + parseMoney(i.total), 0);
     const cashTotal = cashRegister.reduce(
@@ -91,14 +78,14 @@ export class ReportsService {
         vat: money(invoiceVat),
       },
       okc: {
-        count: okc.length,
-        total: money(okcTotal),
-        vat: money(okcVat),
-        cash: money(okcCash),
-        card: money(okcCard),
+        count: 0,
+        total: money(0),
+        vat: money(0),
+        cash: money(0),
+        card: money(0),
       },
       cashRegister: { count: cashRegister.length, total: money(cashTotal) },
-      combined: money(invoiceTotal + okcTotal + cashTotal),
+      combined: money(invoiceTotal + cashTotal),
     };
   }
 

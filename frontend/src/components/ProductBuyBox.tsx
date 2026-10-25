@@ -1,10 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { formatMoney } from "@/lib/format";
+import {
+  computeProductBadges,
+  productDiscountPercent,
+  resolveProductCompareAt,
+} from "@/lib/product-badges";
 import { sortByWeightLabel } from "@/lib/weight-sort";
+import { groupProductVariants } from "@/lib/variant-groups";
 import type { Product, ProductVariant } from "@/lib/types";
 import {
   DEFAULT_WHATSAPP_PHONE,
@@ -21,19 +28,34 @@ type Props = {
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-const DEFAULT_SHAKERS = ["Parlak yeşil", "Pembe", "Siyah", "Beyaz"];
+const SHAKER_KEYS = [
+  "shakerGreen",
+  "shakerPink",
+  "shakerBlack",
+  "shakerWhite",
+] as const;
 
 export function ProductBuyBox({
   product,
   whatsappEnabled = true,
   whatsappPhone = DEFAULT_WHATSAPP_PHONE,
 }: Props) {
+  const t = useTranslations("product");
+  const shakers = useMemo(
+    () => SHAKER_KEYS.map((key) => t(key)),
+    [t],
+  );
   const variants = useMemo(
     () =>
       sortByWeightLabel(
         (product.variants || []).filter((v) => v.isActive !== false),
       ),
     [product.variants],
+  );
+
+  const variantGroups = useMemo(
+    () => groupProductVariants(variants),
+    [variants],
   );
 
   const aromas = useMemo(
@@ -49,7 +71,7 @@ export function ProductBuyBox({
     variants[0]?.id ?? null,
   );
   const [aroma, setAroma] = useState<string>(aromas[0] || "");
-  const [shaker, setShaker] = useState(DEFAULT_SHAKERS[0]);
+  const [shaker, setShaker] = useState("");
 
   useEffect(() => {
     if (
@@ -66,38 +88,78 @@ export function ProductBuyBox({
     }
   }, [aromas, aroma]);
 
+  useEffect(() => {
+    if (shakers.length && !shakers.includes(shaker)) {
+      setShaker(shakers[0]);
+    }
+  }, [shakers, shaker]);
+
   const selected: ProductVariant | undefined =
     variants.find((v) => v.id === variantId) || variants[0];
 
   const displayPrice =
     selected?.price ?? product.salePrice ?? product.basePrice;
+  const variantCompare = (
+    selected as ProductVariant & { compareAtPrice?: string }
+  )?.compareAtPrice;
   const compareAt =
-    (selected as ProductVariant & { compareAtPrice?: string })
-      ?.compareAtPrice ?? product.compareAtPrice;
+    variantCompare ?? resolveProductCompareAt(product, displayPrice);
   const hasDeal =
     compareAt != null && Number(compareAt) > Number(displayPrice);
+  const discountPct = productDiscountPercent(displayPrice, compareAt);
   const stock = selected != null ? selected.stock : product.stock;
   const outOfStock = stock <= 0;
+
+  const badgeChips = useMemo(
+    () =>
+      computeProductBadges(product, {
+        price: displayPrice,
+        compareAt,
+      }),
+    [product, displayPrice, compareAt],
+  );
 
   return (
     <div className="space-y-6">
       {product.campaignName ? (
         <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-          Kampanya · {product.campaignName}
+          {t("campaign")} · {product.campaignName}
         </p>
       ) : null}
 
-      {product.badge ? (
-        <span className="badge-discount inline-flex">{product.badge}</span>
+      {badgeChips.length > 0 ? (
+        <div className="relative flex min-h-0 flex-wrap gap-2">
+          {badgeChips.map((b) => (
+            <span
+              key={b.label}
+              className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ${
+                b.tone === "sale"
+                  ? "badge-discount badge-live text-base! px-3! py-1.5!"
+                  : "bg-surface-container-high text-on-surface"
+              }`}
+            >
+              {b.label}
+            </span>
+          ))}
+        </div>
       ) : null}
 
-      {variants.length > 0 ? (
-        <div>
+      {hasDeal && discountPct != null ? (
+        <p className="rounded-xl bg-flash-soft px-4 py-3 text-sm font-semibold text-on-surface">
+          <span className="font-display text-2xl text-flash">%{discountPct}</span>
+          <span className="ml-2 text-on-surface-variant">
+            {t("discount")} — {t("bestPrice30Days")}
+          </span>
+        </p>
+      ) : null}
+
+      {variantGroups.map((group) => (
+        <div key={group.key}>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
-            Paket / boy
+            {group.label}
           </p>
           <div className="flex flex-wrap gap-2">
-            {variants.map((v) => {
+            {group.variants.map((v) => {
               const active = (selected?.id || variantId) === v.id;
               return (
                 <button
@@ -111,18 +173,18 @@ export function ProductBuyBox({
                   }`}
                 >
                   {v.weightLabel}
-                  {v.stock <= 0 ? " · Yok" : ""}
+                  {v.stock <= 0 ? t("variantOut") : ""}
                 </button>
               );
             })}
           </div>
         </div>
-      ) : null}
+      ))}
 
       {aromas.length > 0 ? (
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
-            Aroma
+            {t("flavorNotes")}
           </p>
           <div className="flex flex-wrap gap-2">
             {aromas.map((a) => (
@@ -146,10 +208,10 @@ export function ProductBuyBox({
       {showShaker ? (
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
-            Karıştırıcı rengi
+            {t("shakerColor")}
           </p>
           <div className="flex flex-wrap gap-2">
-            {DEFAULT_SHAKERS.map((s) => (
+            {shakers.map((s) => (
               <button
                 key={s}
                 type="button"
@@ -170,7 +232,12 @@ export function ProductBuyBox({
       <div className="flex items-end justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase text-on-surface-variant">
-            Fiyat
+            {t("price")}
+            {product.priceTaxIncluded !== false ? (
+              <span className="ml-1.5 font-normal normal-case text-on-surface-variant/80">
+                {t("vatIncluded")}
+              </span>
+            ) : null}
           </p>
           <div className="flex flex-wrap items-baseline gap-3">
             <p
@@ -185,23 +252,23 @@ export function ProductBuyBox({
                 {formatMoney(compareAt, product.currency)}
               </p>
             ) : null}
+            {hasDeal && discountPct != null ? (
+              <span className="badge-discount text-sm!">−%{discountPct}</span>
+            ) : null}
           </div>
           {hasDeal ? (
-            <p className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold text-flash">
-              <span className="badge-discount px-2! py-0.5! text-[10px]!">
-                Fırsat
-              </span>
-              İndirimli fiyat
+            <p className="mt-1 text-[11px] font-medium text-on-surface-variant">
+              {t("bestPrice30Days")}
             </p>
           ) : null}
           <p className="mt-1 text-xs text-on-surface-variant">
-            Stok {outOfStock ? "yok" : stock}
+            {t("stock")} {outOfStock ? t("stockNone") : stock}
             {aroma ? ` · ${aroma}` : ""}
             {showShaker ? ` · ${shaker}` : ""}
           </p>
           {!outOfStock && stock > 0 && stock <= 8 ? (
             <p className="mt-1.5 text-xs font-semibold text-flash">
-              Son {stock} adet — stok sınırlı
+              {t("lowStock", { count: stock })}
             </p>
           ) : null}
         </div>
@@ -215,7 +282,7 @@ export function ProductBuyBox({
             disabled={outOfStock}
             productName={product.name}
             price={Number(displayPrice)}
-            label={outOfStock ? "Stokta yok" : "Sepete Ekle"}
+            label={outOfStock ? t("outOfStock") : t("addToCart")}
             goToCart={false}
             className="btn-cta pressable w-full cursor-pointer py-4 text-base font-bold tracking-wide disabled:cursor-not-allowed disabled:opacity-50"
           />
@@ -223,25 +290,31 @@ export function ProductBuyBox({
         <FavoriteButton productId={product.id} size="lg" />
       </div>
 
-      <ul className="grid grid-cols-1 gap-2 rounded-xl bg-surface-container-low px-3.5 py-3 text-xs text-on-surface-variant sm:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-2 rounded-xl bg-surface-container-low px-3.5 py-3 text-xs text-on-surface-variant sm:grid-cols-2">
         <li className="flex items-center gap-1.5">
           <span className="font-bold text-primary" aria-hidden>
             ✓
           </span>
-          14 gün cayma hakkı
+          {t("trustOriginal")}
         </li>
         <li className="flex items-center gap-1.5">
           <span className="font-bold text-primary" aria-hidden>
             ✓
           </span>
-          PayTR güvenli ödeme
+          {t("trustPaytr")}
         </li>
         <li className="flex items-center gap-1.5">
           <span className="font-bold text-primary" aria-hidden>
             ✓
           </span>
-          Orijinal ürün
+          {t("trustReturn")}
         </li>
+        {hasDeal ? (
+          <li className="flex items-center gap-1.5 font-semibold text-flash sm:col-span-2">
+            <span aria-hidden>★</span>
+            {t("bestPrice30Days")}
+          </li>
+        ) : null}
       </ul>
 
       {whatsappEnabled ? (
@@ -257,7 +330,7 @@ export function ProductBuyBox({
           rel="noopener noreferrer"
           className="btn-ghost flex w-full items-center justify-center px-4 py-3 text-xs"
         >
-          WhatsApp ile danış — ortalama yanıt 1 saatten kısa
+          {t("whatsappConsult")}
         </a>
       ) : null}
     </div>

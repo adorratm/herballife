@@ -7,8 +7,26 @@ export type SendWhatsAppInput = {
   body: string;
 };
 
+export type WhatsAppTemplateComponent = {
+  type: 'body' | 'header' | 'button';
+  sub_type?: string;
+  index?: string;
+  parameters: Array<
+    | { type: 'text'; text: string }
+    | { type: 'image'; image: { link: string } }
+  >;
+};
+
+export type SendWhatsAppTemplateInput = {
+  to: string;
+  templateName: string;
+  languageCode: string;
+  components?: WhatsAppTemplateComponent[];
+};
+
 export interface IWhatsAppProvider {
   send(input: SendWhatsAppInput): Promise<{ id?: string }>;
+  sendTemplate(input: SendWhatsAppTemplateInput): Promise<{ id?: string }>;
 }
 
 @Injectable()
@@ -25,6 +43,16 @@ export class ConsoleWhatsAppProvider implements IWhatsAppProvider {
     );
     return { id: `console-wa-${Date.now()}` };
   }
+
+  async sendTemplate(
+    input: SendWhatsAppTemplateInput,
+  ): Promise<{ id?: string }> {
+    const to = normalizePhoneE164(input.to) || input.to;
+    this.logger.log(
+      `[console-whatsapp-template] to=${to} template=${input.templateName} lang=${input.languageCode} components=${JSON.stringify(input.components || [])}`,
+    );
+    return { id: `console-wa-tpl-${Date.now()}` };
+  }
 }
 
 /**
@@ -39,18 +67,13 @@ export class MetaWhatsAppProvider implements IWhatsAppProvider {
 
   constructor(private readonly config: ConfigService) {}
 
-  async send(input: SendWhatsAppInput): Promise<{ id?: string }> {
+  private async postMessage(body: Record<string, unknown>) {
     const token = this.config.get<string>('whatsapp.metaToken');
     const phoneNumberId = this.config.get<string>('whatsapp.metaPhoneNumberId');
     if (!token || !phoneNumberId) {
       throw new Error(
         'Meta WhatsApp credentials eksik (META_WA_TOKEN / META_WA_PHONE_NUMBER_ID)',
       );
-    }
-
-    const e164 = normalizePhoneE164(input.to);
-    if (!e164) {
-      throw new Error(`Geçersiz WhatsApp numarası: ${input.to}`);
     }
 
     const res = await fetch(
@@ -61,12 +84,7 @@ export class MetaWhatsAppProvider implements IWhatsAppProvider {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          messaging_product: 'whatsapp',
-          to: e164.replace(/\D/g, ''),
-          type: 'text',
-          text: { body: input.body, preview_url: false },
-        }),
+        body: JSON.stringify(body),
       },
     );
 
@@ -81,8 +99,50 @@ export class MetaWhatsAppProvider implements IWhatsAppProvider {
       );
     }
 
-    const id = data.messages?.[0]?.id;
+    return data.messages?.[0]?.id;
+  }
+
+  async send(input: SendWhatsAppInput): Promise<{ id?: string }> {
+    const e164 = normalizePhoneE164(input.to);
+    if (!e164) {
+      throw new Error(`Geçersiz WhatsApp numarası: ${input.to}`);
+    }
+
+    const id = await this.postMessage({
+      messaging_product: 'whatsapp',
+      to: e164.replace(/\D/g, ''),
+      type: 'text',
+      text: { body: input.body, preview_url: false },
+    });
+
     this.logger.log(`Meta WhatsApp sent: ${id}`);
+    return { id };
+  }
+
+  async sendTemplate(
+    input: SendWhatsAppTemplateInput,
+  ): Promise<{ id?: string }> {
+    const e164 = normalizePhoneE164(input.to);
+    if (!e164) {
+      throw new Error(`Geçersiz WhatsApp numarası: ${input.to}`);
+    }
+
+    const template: Record<string, unknown> = {
+      name: input.templateName,
+      language: { code: input.languageCode },
+    };
+    if (input.components?.length) {
+      template.components = input.components;
+    }
+
+    const id = await this.postMessage({
+      messaging_product: 'whatsapp',
+      to: e164.replace(/\D/g, ''),
+      type: 'template',
+      template,
+    });
+
+    this.logger.log(`Meta WhatsApp template sent: ${id}`);
     return { id };
   }
 }
@@ -109,5 +169,9 @@ export class WhatsAppProviderRouter implements IWhatsAppProvider {
 
   send(input: SendWhatsAppInput) {
     return this.provider.send(input);
+  }
+
+  sendTemplate(input: SendWhatsAppTemplateInput) {
+    return this.provider.sendTemplate(input);
   }
 }

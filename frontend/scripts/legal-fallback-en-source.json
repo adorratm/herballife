@@ -1,0 +1,38 @@
+{
+  "kvkk": {
+    "title": "KVKK Privacy Notice",
+    "content": "{{seller.name}} processes personal data under Turkish Law No. 6698 on the Protection of Personal Data (KVKK). Data is used only as needed for orders, delivery, customer support, payments, and legal obligations.\n\nData controller: {{seller.name}}\nAddress: {{seller.address}}\nContact: {{seller.email}} · {{seller.phone}}\n\nYour rights: Under KVKK Art. 11 you may request access, correction, deletion, restriction, objection, and lodge a complaint. Send requests to {{seller.email}}."
+  },
+  "cerez-politikasi": {
+    "title": "Cookie Policy",
+    "content": "This Cookie Policy explains how {{seller.name}} uses cookies on {{seller.website}}, in line with KVKK and applicable rules.\n\n1. What are cookies?\nSmall text files stored by your browser to keep sessions, carts, security, and measure performance.\n\n2. Types we use\na) Strictly necessary: core site functions (session, cart, security, language).\nb) Functional: remember preferences.\nc) Analytics / performance: anonymous or pseudonymous usage stats; no marketing profiling without consent.\nd) Payment / security: PayTR and similar providers may set their own security cookies for 3D Secure and fraud prevention.\n\n3. Managing cookies\nYou can delete or block cookies in browser settings. Blocking required cookies may break cart, login, and checkout.\n\n4. Third parties\nCarriers, PayTR, email/SMS, analytics, and hosting partners may use cookies only as needed to provide the service.\n\n6. Contact\nCookie and KVKK requests: {{seller.email}}"
+  },
+  "mesafeli-satis": {
+    "title": "Distance Sales Agreement",
+    "content": "This Distance Sales Agreement is concluded under Turkish Consumer Protection Law No. 6502 between the seller below and the buyer placing an order online.\n\nSeller: {{seller.name}}\nAddress: {{seller.address}}\nPhone: {{seller.phone}}\nEmail: {{seller.email}}\nWeb: {{seller.website}}\nTax office / No: {{seller.taxOffice}} / {{seller.taxNumber}}\nMERSİS: {{seller.mersis}}\n\nSubject: Sale and delivery of products ordered on the website at the price shown in the order summary.\n\nPayment: Card payments via PayTR; card data is not stored on our servers.\n\nWithdrawal: 14 days from delivery without giving a reason (exceptions under the Regulation).\n\nSeller: {{seller.name}}"
+  },
+  "on-bilgilendirme": {
+    "title": "Pre-contract Information Form",
+    "content": "Under Turkish Law No. 6502, the following information is provided before you order.\n\nSELLER\n{{seller.name}}\n{{seller.address}}\nTel: {{seller.phone}} · Email: {{seller.email}}\nTax: {{seller.taxOffice}} / {{seller.taxNumber}}\n\nTOTAL PRICE\nProduct price, discounts, shipping, and taxes are shown as the total before payment.\n\nPAYMENT\nSecure card payment via PayTR.\n\nWITHDRAWAL\n14 days from delivery; exceptions are listed in the Distance Sales Agreement and Returns Policy.\n\nCOMPLAINTS\n{{seller.email}} · {{seller.phone}}."
+  },
+  "iptal-iade": {
+    "title": "Cancellation & Returns Policy",
+    "content": "{{seller.name}} follows Turkish consumer law and the Distance Contracts Regulation.\n\n1. Order cancellation\nBefore payment or before shipment, email {{seller.email}} to cancel.\n\n2. Withdrawal (14 days)\nFrom delivery date, withdraw without reason via {{seller.email}}.\n\n3. Non-returnable items\nOpened food/supplements where hygiene prevents resale; personalized goods; used or damaged items (except defects).\n\n5. Refunds\nWithin 14 days after we receive and inspect the return, to the original payment method.\n\n7. Contact\n{{seller.name}} · {{seller.address}}\n{{seller.email}} · {{seller.phone}}"
+  },
+  "musteri-memnuniyeti": {
+    "title": "Customer Satisfaction Policy",
+    "content": "{{seller.name}} commits to quality, transparency, and fast support for original Herbalife products.\n\nSupport:\nEmail: {{seller.email}}\nPhone: {{seller.phone}}\nHours: {{seller.hours}}\n\nComplaints: Send your order number; initial response within 3 business days."
+  },
+  "guvenli-alisveris": {
+    "title": "Secure Shopping",
+    "content": "Shopping at {{seller.name}} is protected by technical, legal, and operational measures.\n\n1. PayTR payments\nCard payments via PayTR. Card numbers are not stored on our servers. SSL/TLS encryption; 3D Secure supported.\n\n3. Personal data\nOrder and delivery data processed under KVKK.\n\n7. Support\nSecurity concerns: {{seller.email}}"
+  },
+  "aydinlatma-metni": {
+    "title": "Privacy Notice (KVKK Art. 10)",
+    "content": "Under KVKK Art. 10, {{seller.name}} informs you about processing of personal data:\n\n1. Controller\n{{seller.name}}\n{{seller.address}}\n{{seller.email}} · {{seller.phone}}\n\n7. Your rights (KVKK Art. 11)\nAccess, rectification, erasure, restriction, object, claim damages. Apply: {{seller.email}}"
+  },
+  "gizlilik": {
+    "title": "Privacy Policy",
+    "content": "{{seller.name}} respects your privacy. This policy explains how we collect, use, and protect data from visitors, members, and customers.\n\n3. Sharing\nOnly with partners needed to fulfil the service (PayTR, carriers) and authorities when required. We do not sell your data.\n\n7. Contact\n{{seller.email}} · {{seller.phone}}\n{{seller.address}}"
+  }
+}

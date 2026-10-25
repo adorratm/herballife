@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { FormEvent, useEffect, useState } from "react";
 import { createReview, getProductReviews } from "@/lib/api";
 import { getToken } from "@/lib/auth";
@@ -18,6 +19,11 @@ export function ProductReviews({
   ratingAvg: initialAvg,
   ratingCount: initialCount,
 }: Props) {
+  const t = useTranslations("productReviews");
+  const tp = useTranslations("product");
+  const tc = useTranslations("common");
+  const tAria = useTranslations("aria");
+  const locale = useLocale();
   const [data, setData] = useState<ProductReviewsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +62,7 @@ export function ProductReviews({
     setMessage(null);
     const token = getToken();
     if (!token) {
-      setError("Yorum yazmak için giriş yapın.");
+      setError(t("loginRequired"));
       return;
     }
     setSubmitting(true);
@@ -71,10 +77,10 @@ export function ProductReviews({
         token,
       );
       setForm({ rating: 5, title: "", body: "" });
-      setMessage("Yorumunuz incelemeye gönderildi.");
+      setMessage(t("submitted"));
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Yorum gönderilemedi");
+      setError(err instanceof Error ? err.message : t("submitFailed"));
     } finally {
       setSubmitting(false);
     }
@@ -84,19 +90,14 @@ export function ProductReviews({
     <section className="cv-auto page-shell border-b border-outline-variant/20 py-section">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
         <div className="lg:col-span-4">
-          <h2 className="mb-4 font-display text-4xl uppercase">Yorumlar</h2>
+          <h2 className="mb-4 font-display text-4xl uppercase">{tp("reviews")}</h2>
           <p className="font-meta text-sm uppercase tracking-widest text-primary">
-            {count > 0 ? (
-              <>
-                {avg.toFixed(1)} / 5 · {count} değerlendirme
-              </>
-            ) : (
-              "Henüz değerlendirme yok"
-            )}
+            {count > 0
+              ? t("ratingSummary", { avg: avg.toFixed(1), count })
+              : t("noRatings")}
           </p>
           <p className="mt-4 max-w-sm font-sans text-base leading-relaxed text-on-surface-variant">
-            Satın aldığınız ürünü deneyimledikten sonra puan ve yorum
-            bırakabilirsiniz. Yorumlar yayınlanmadan önce incelenir.
+            {t("hint")}
           </p>
         </div>
 
@@ -105,9 +106,9 @@ export function ProductReviews({
             onSubmit={onSubmit}
             className="border border-outline-variant/30 bg-surface-container-low p-6"
           >
-            <h3 className="mb-4 font-display text-2xl">Yorum yaz</h3>
+            <h3 className="mb-4 font-display text-2xl">{t("writeTitle")}</h3>
             <div className="mb-4">
-              <label className="field-label">Puan</label>
+              <label className="field-label">{t("ratingLabel")}</label>
               <div className="mt-2 flex gap-2">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <button
@@ -119,7 +120,7 @@ export function ProductReviews({
                         ? "border-primary bg-primary text-on-primary"
                         : "border-outline-variant/40 text-secondary"
                     }`}
-                    aria-label={`${n} yıldız`}
+                    aria-label={tAria("starRating", { n })}
                   >
                     {n}
                   </button>
@@ -127,7 +128,7 @@ export function ProductReviews({
               </div>
             </div>
             <div className="mb-4">
-              <label className="field-label">Başlık (ops.)</label>
+              <label className="field-label">{t("titleOptional")}</label>
               <input
                 value={form.title}
                 onChange={(e) =>
@@ -138,7 +139,7 @@ export function ProductReviews({
               />
             </div>
             <div className="mb-4">
-              <label className="field-label">Yorum</label>
+              <label className="field-label">{t("bodyLabel")}</label>
               <textarea
                 required
                 minLength={10}
@@ -165,22 +166,22 @@ export function ProductReviews({
               disabled={submitting}
               className="btn-cta px-8 py-3 text-xs disabled:opacity-50"
             >
-              {submitting ? "Gönderiliyor…" : "Gönder"}
+              {submitting ? t("submitting") : t("submit")}
             </button>
           </form>
 
           <div className="space-y-6">
             {loading ? (
               <p className="font-meta text-xs uppercase text-secondary">
-                Yükleniyor…
+                {tc("loading")}
               </p>
             ) : items.length === 0 ? (
               <p className="font-meta text-xs uppercase text-secondary">
-                Henüz yayınlanmış yorum yok.
+                {t("noPublished")}
               </p>
             ) : (
               items.map((review) => (
-                <ReviewCard key={review.id} review={review} />
+                <ReviewCard key={review.id} review={review} locale={locale} />
               ))
             )}
           </div>
@@ -190,7 +191,14 @@ export function ProductReviews({
   );
 }
 
-function ReviewCard({ review }: { review: ProductReview }) {
+function ReviewCard({
+  review,
+  locale,
+}: {
+  review: ProductReview;
+  locale: string;
+}) {
+  const t = useTranslations("productReviews");
   return (
     <article className="border-b border-outline-variant/20 pb-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -205,9 +213,9 @@ function ReviewCard({ review }: { review: ProductReview }) {
         </div>
         <div className="text-right font-meta text-[10px] uppercase text-secondary">
           <p>{review.authorName}</p>
-          {review.isVerifiedPurchase ? <p>Doğrulanmış alım</p> : null}
+          {review.isVerifiedPurchase ? <p>{t("verifiedPurchase")}</p> : null}
           {review.createdAt ? (
-            <p>{new Date(review.createdAt).toLocaleDateString("tr-TR")}</p>
+            <p>{new Date(review.createdAt).toLocaleDateString(locale)}</p>
           ) : null}
         </div>
       </div>

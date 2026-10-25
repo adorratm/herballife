@@ -13,6 +13,8 @@ type DataTableProps<T> = {
   onRowClick?: (row: T) => void;
   /** Düzenlenen / seçili satır — tabloda vurgulanır */
   selectedRowKey?: string | null;
+  /** Son kaydedilen satır — odak halkası */
+  highlightRowKey?: string | null;
 };
 
 export function DataTable<T>({
@@ -22,6 +24,7 @@ export function DataTable<T>({
   emptyMessage = 'Kayıt yok',
   onRowClick,
   selectedRowKey = null,
+  highlightRowKey = null,
 }: DataTableProps<T>) {
   if (!rows.length) {
     return (
@@ -51,6 +54,9 @@ export function DataTable<T>({
             {rows.map((row) => {
               const key = rowKey(row);
               const selected = Boolean(selectedRowKey && selectedRowKey === key);
+              const highlighted = Boolean(
+                highlightRowKey && highlightRowKey === key,
+              );
               const clickable = Boolean(onRowClick);
               return (
                 <tr
@@ -75,7 +81,9 @@ export function DataTable<T>({
                     'row-motion',
                     selected
                       ? 'bg-accent/10 ring-1 ring-inset ring-accent/40'
-                      : '',
+                      : highlighted
+                        ? 'bg-accent/8 ring-2 ring-inset ring-accent/55'
+                        : '',
                     clickable ? 'cursor-pointer' : '',
                   ]
                     .filter(Boolean)

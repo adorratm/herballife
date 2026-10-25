@@ -1,9 +1,11 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { formatMoney } from "@/lib/format";
 import { freeShippingThreshold } from "@/lib/shipping";
 
 export function FreeShippingBanner({ subtotal }: { subtotal: number }) {
+  const t = useTranslations("freeShippingBanner");
   const threshold = freeShippingThreshold();
   if (threshold <= 0) return null;
 
@@ -19,16 +21,13 @@ export function FreeShippingBanner({ subtotal }: { subtotal: number }) {
           </div>
           <div>
             <p className="text-sm font-semibold text-on-surface">
-              Tebrikler! Sepetiniz kargo ücretsiz barajına ulaştı
+              {t("reachedTitle")}
             </p>
-            <p className="text-xs text-on-surface-variant">
-              Türkiye&apos;nin her yerine sigortalı ve ücretsiz kargo ile
-              sevk edilecektir.
-            </p>
+            <p className="text-xs text-on-surface-variant">{t("reachedBody")}</p>
           </div>
         </div>
         <span className="hidden shrink-0 rounded-full bg-surface-container-lowest px-3 py-1 text-[11px] font-bold text-primary shadow-sm sm:inline-flex">
-          Kargo Bedava
+          {t("badge")}
         </span>
       </div>
     );
@@ -37,8 +36,7 @@ export function FreeShippingBanner({ subtotal }: { subtotal: number }) {
   return (
     <div className="rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-4 shadow-sm">
       <p className="text-sm text-on-surface">
-        Ücretsiz kargoya{" "}
-        <strong className="text-primary">{formatMoney(remaining)}</strong> kaldı
+        {t("remaining", { amount: formatMoney(remaining) })}
       </p>
       <div className="mt-2 h-2 overflow-hidden rounded-full bg-surface-container">
         <div

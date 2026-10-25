@@ -7,9 +7,7 @@ import {
   readCookieConsent,
   type CookieConsent,
 } from "@/lib/cookie-consent";
-
-const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID?.trim() || "";
-const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim() || "";
+import { useAnalyticsIds } from "@/lib/analytics-ids";
 
 function applyGtagConsent(consent: CookieConsent | null) {
   if (typeof window === "undefined") return;
@@ -27,10 +25,11 @@ function applyGtagConsent(consent: CookieConsent | null) {
 }
 
 /**
- * GTM (analitik onayı) + Meta Pixel (pazarlama onayı).
- * Google Ads / GA4: GoogleConsentTags + Consent Mode; burada yalnızca consent update.
+ * GTM (analitik) + Meta / FB / TikTok / Yandex (pazarlama onayı).
  */
 export function AnalyticsScripts() {
+  const ids = useAnalyticsIds();
+  const metaOrFb = ids.metaPixelId || ids.facebookPixelId;
   const [consent, setConsent] = useState<CookieConsent | null>(null);
 
   useEffect(() => {
@@ -48,17 +47,18 @@ export function AnalyticsScripts() {
     return () => window.removeEventListener(COOKIE_CONSENT_EVENT, onConsent);
   }, []);
 
-  // gtag henüz yüklenmemiş olabilir — kısa süre sonra tekrar dene
   useEffect(() => {
     if (!consent) return;
     const t = window.setTimeout(() => applyGtagConsent(consent), 600);
     return () => window.clearTimeout(t);
   }, [consent]);
 
-  const loadGtm = !!consent?.analytics && !!GTM_ID;
-  const loadMeta = !!consent?.marketing && !!META_PIXEL_ID;
+  const loadGtm = !!consent?.analytics && !!ids.gtmId;
+  const loadMeta = !!consent?.marketing && !!metaOrFb;
+  const loadTiktok = !!consent?.marketing && !!ids.tiktokPixelId;
+  const loadYandex = !!consent?.analytics && !!ids.yandexMetrikaId;
 
-  if (!loadGtm && !loadMeta) return null;
+  if (!loadGtm && !loadMeta && !loadTiktok && !loadYandex) return null;
 
   return (
     <>
@@ -68,7 +68,7 @@ export function AnalyticsScripts() {
           new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
           j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','${GTM_ID}');
+          })(window,document,'script','dataLayer','${ids.gtmId}');
         `}</Script>
       ) : null}
 
@@ -82,8 +82,33 @@ export function AnalyticsScripts() {
           t.src=v;s=b.getElementsByTagName(e)[0];
           s.parentNode.insertBefore(t,s)}(window, document,'script',
           'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', '${META_PIXEL_ID}');
+          fbq('init', '${metaOrFb}');
           fbq('track', 'PageView');
+        `}</Script>
+      ) : null}
+
+      {loadTiktok ? (
+        <Script id="tiktok-pixel" strategy="afterInteractive">{`
+          !function (w, d, t) {
+            w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
+            ttq.load('${ids.tiktokPixelId}');
+            ttq.page();
+          }(window, document, 'ttq');
+        `}</Script>
+      ) : null}
+
+      {loadYandex ? (
+        <Script id="yandex-metrika" strategy="afterInteractive">{`
+          (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+          m[i].l=1*new Date();
+          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+          (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+          ym(${JSON.stringify(ids.yandexMetrikaId)}, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true
+          });
         `}</Script>
       ) : null}
     </>

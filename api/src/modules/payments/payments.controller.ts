@@ -11,12 +11,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
-import { IyzicoService } from '@modules/payments/iyzico.service';
 import { PaytrService } from '@modules/payments/paytr.service';
 import { PaymentsService } from '@modules/payments/payments.service';
 import {
   InitializePaymentDto,
-  PaymentCallbackDto,
   RetryPaymentDto,
 } from '@modules/payments/dto/payments.dto';
 import { Public } from '@common/decorators/public.decorator';
@@ -28,14 +26,13 @@ import { User } from '@entities/user.entity';
 export class PaymentsController {
   constructor(
     private readonly paymentsService: PaymentsService,
-    private readonly iyzicoService: IyzicoService,
     private readonly paytrService: PaytrService,
     private readonly config: ConfigService,
   ) {}
 
   @Post('initialize')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Ödeme başlat (PayTR / iyzico)' })
+  @ApiOperation({ summary: 'Ödeme başlat (PayTR)' })
   initialize(
     @Body() dto: InitializePaymentDto,
     @Headers('x-forwarded-for') forwardedFor?: string,
@@ -69,45 +66,6 @@ export class PaymentsController {
   @ApiOperation({ summary: 'Aktif ödeme sağlayıcısı' })
   provider() {
     return { provider: this.paymentsService.activeProvider() };
-  }
-
-  @Public()
-  @Get('callback')
-  @Post('callback')
-  @ApiOperation({
-    summary: 'iyzico ödeme callback — tarayıcıyı sonuç sayfasına yönlendirir',
-  })
-  async callback(
-    @Res() res: Response,
-    @Body() body: PaymentCallbackDto,
-    @Query() query: PaymentCallbackDto,
-  ) {
-    const dto: PaymentCallbackDto = {
-      token: body?.token || query?.token,
-      conversationId: body?.conversationId || query?.conversationId,
-      paymentId: body?.paymentId || query?.paymentId,
-      status: body?.status || query?.status,
-    };
-
-    const frontend = (
-      this.config.get<string>('frontendUrl') || 'http://localhost:3000'
-    ).replace(/\/$/, '');
-
-    try {
-      const result = await this.iyzicoService.handleCallback(dto);
-      const qs = new URLSearchParams();
-      if (result.orderId) qs.set('orderId', result.orderId);
-      if (result.orderNumber) qs.set('orderNumber', result.orderNumber);
-
-      if (result.success) {
-        return res.redirect(302, `${frontend}/odeme/basarili?${qs}`);
-      }
-      return res.redirect(302, `${frontend}/odeme/basarisiz?${qs}`);
-    } catch (err) {
-      const reason = err instanceof Error ? err.message : 'Ödeme doğrulanamadı';
-      const qs = new URLSearchParams({ reason });
-      return res.redirect(302, `${frontend}/odeme/basarisiz?${qs}`);
-    }
   }
 
   @Public()

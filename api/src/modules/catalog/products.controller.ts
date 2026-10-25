@@ -79,7 +79,7 @@ export class ProductsController {
   @Public()
   @Get(':slug')
   @ApiOperation({ summary: 'Ürün detay (slug)' })
-  findBySlug(@Param('slug') slug: string) {
-    return this.productsService.findBySlug(slug);
+  findBySlug(@Param('slug') slug: string, @Query() query: ProductQueryDto) {
+    return this.productsService.findBySlug(slug, query);
   }
 }

@@ -10,11 +10,12 @@ import { EntityManager } from 'typeorm';
 import { Request, Response, NextFunction } from 'express';
 import {
   QUEUE_ABANDONED_CART,
-  QUEUE_EINVOICE,
   QUEUE_LOW_STOCK,
   QUEUE_MARKETPLACE_SYNC,
   QUEUE_NOTIFICATIONS,
   QUEUE_SHIPPING_POLL,
+  QUEUE_WHATSAPP_BLAST,
+  QUEUE_EMAIL_MARKETING,
 } from '@modules/queues/queue.constants';
 import { NotificationsModule } from '@modules/notifications/notifications.module';
 import { NotificationsProcessor } from '@modules/notifications/notifications.processor';
@@ -114,7 +115,8 @@ function createBullBoardAuth(
       { name: QUEUE_ABANDONED_CART },
       { name: QUEUE_MARKETPLACE_SYNC },
       { name: QUEUE_LOW_STOCK },
-      { name: QUEUE_EINVOICE },
+      { name: QUEUE_WHATSAPP_BLAST },
+      { name: QUEUE_EMAIL_MARKETING },
     ),
     BullBoardModule.forRootAsync({
       imports: [ConfigModule, JwtModule],
@@ -150,7 +152,11 @@ function createBullBoardAuth(
       adapter: BullMQAdapter,
     }),
     BullBoardModule.forFeature({
-      name: QUEUE_EINVOICE,
+      name: QUEUE_WHATSAPP_BLAST,
+      adapter: BullMQAdapter,
+    }),
+    BullBoardModule.forFeature({
+      name: QUEUE_EMAIL_MARKETING,
       adapter: BullMQAdapter,
     }),
     NotificationsModule,

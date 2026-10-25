@@ -2,21 +2,22 @@
 
 export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
   brand: {
-    name: 'Herbal Ürünleri',
+    name: 'Herbal Kapıda',
     slogan: 'Daha sağlıklı, daha mutlu bir yaşam',
     tagline:
       'Bağımsız distribütör rehberliğinde orijinal Herbalife ürünleri ve kişiselleştirilmiş beslenme desteği.',
     established: '2024’ten beri',
     location: 'Türkiye',
     logoUrl: '',
-    distributorName: 'Emine Özberk',
+    distributorName: 'Herbal Kapıda',
     distributorTitle: 'Bağımsız Distribütör',
+    distributorCode: '',
     legalDisclaimer:
       'Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir. Herbalife Nutrition resmi sitesi değildir. Ürünler orijinal Herbalife ürünleridir.',
   },
   contact: {
     address: 'Türkiye — [Yayın öncesi gerçek adres]',
-    email: 'info@ornek.com',
+    email: 'info@herbalkapida.com',
     phone: '+90 500 000 00 00',
     hours:
       'Pzt — Paz / 09:00 — 20:00 · DEMO: Admin → Site Ayarları’ndan telefon, e-posta ve WhatsApp’ı güncelleyin',
@@ -25,17 +26,17 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     longitude: '',
   },
   seo: {
-    title: 'Herbal Ürünleri | Orijinal Herbalife Ürünleri',
+    title: 'Herbal Kapıda | Orijinal Herbalife Ürünleri',
     description:
-      'Orijinal Herbalife ürünleri, avantajlı setler ve kişiselleştirilmiş beslenme danışmanlığı. Bağımsız distribütör Emine Özberk.',
+      'Orijinal Herbalife ürünleri, avantajlı setler ve kişiselleştirilmiş beslenme danışmanlığı. Bağımsız distribütör Herbal Kapıda — herbalkapida.com.',
     keywords: [
+      'Herbal Kapıda',
       'Herbalife',
       'Formül 1',
       'kilo kontrolü',
       'protein shake',
       'avantajlı setler',
       'beslenme',
-      'Emine Özberk',
     ],
     ogImage: '',
   },
@@ -43,6 +44,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     header: [
       { href: '/urunler', label: 'Ürünler' },
       { href: '/hakkimizda', label: 'Hakkımızda' },
+      { href: '/kocluk', label: 'Koçluk' },
       { href: '/blog', label: 'Yazılar' },
       { href: '/medya', label: 'Medya' },
       { href: '/sss', label: 'SSS' },
@@ -89,7 +91,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
   whatsapp: {
     enabled: true,
     phone: '',
-    greeting: 'Merhaba — Emine Özberk. Size nasıl yardımcı olabiliriz?',
+    greeting: 'Merhaba — Herbal Kapıda. Size nasıl yardımcı olabiliriz?',
     presets: [
       {
         label: 'Sipariş durumu',
@@ -117,8 +119,52 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
   },
   footer: {
     description:
-      'Bağımsız distribütör Emine Özberk ile orijinal Herbalife ürünleri ve birebir beslenme desteği.',
+      'Herbal Kapıda ile orijinal Herbalife ürünleri, avantajlı setler ve birebir beslenme desteği.',
     copyrightSuffix: 'Bağımsız Distribütör',
+  },
+  localization: {
+    defaultLocale: 'tr',
+    enabledLocales: ['tr', 'en', 'de', 'fr', 'es'],
+    defaultCurrency: 'TRY',
+    currencies: ['TRY', 'USD', 'EUR', 'GBP'],
+    currencyByLocale: {
+      tr: 'TRY',
+      en: 'USD',
+      de: 'EUR',
+      fr: 'EUR',
+      es: 'EUR',
+    },
+  },
+  analytics: {
+    ga4Id: '',
+    gtmId: '',
+    googleAdsId: '',
+    metaPixelId: '',
+    facebookPixelId: '',
+    yandexMetrikaId: '',
+    tiktokPixelId: '',
+  },
+  shipping: {
+    defaultFee: 89.9,
+    freeShippingOver: 750,
+  },
+  promises: {
+    sameDayCutoff: '13:00',
+    sameDayShipping: true,
+    freeCoaching: true,
+    returnDays: 30,
+  },
+  legal: {
+    supplementDisclaimer:
+      'Bu ürünler gıda takviyesidir; hastalıkların teşhis, tedavi veya önlenmesi amacıyla kullanılmaz. Dengeli ve çeşitli beslenme ile sağlıklı yaşam tarzı önemlidir. Hamileler, emzirenler ve kronik rahatsızlığı olanlar kullanmadan önce hekimine danışmalıdır.',
+    weightDisclaimer:
+      'Kilo kontrolü ve vücut kompozisyonu sonuçları kişiden kişiye değişir; tek başına ürün kullanımı yeterli değildir. Kalori alımı, fiziksel aktivite ve düzenli takip birlikte değerlendirilmelidir. Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir.',
+  },
+  membership: {
+    ctaLabel: 'Resmi Herbalife üyeliği',
+    ctaUrl: 'https://www.myherbalife.com',
+    disclaimer:
+      'Herbalife Nutrition distribütörü olmak için kayıt yalnızca resmi myHerbalife platformu üzerinden yapılır. Bu site bağımsız bir distribütör sitesidir.',
   },
 };
 
@@ -199,7 +245,7 @@ export const DEFAULT_HOME_SECTIONS: Array<{
       imageUrl: '',
       title: 'Hakkımızda',
       seoDescription:
-        'Bağımsız Herbalife distribütörü Emine Özberk ile orijinal ürünler ve kişiselleştirilmiş beslenme desteği.',
+        'Herbal Kapıda — bağımsız Herbalife distribütörü ile orijinal ürünler ve kişiselleştirilmiş beslenme desteği.',
     },
     sortOrder: 1,
     isPublished: true,
@@ -212,7 +258,7 @@ export const DEFAULT_HOME_SECTIONS: Array<{
       titleLine1: 'Sağlıklı yaşam',
       titleLine2: 'yanınızda',
       paragraphs: [
-        'Bağımsız distribütör Emine Özberk olarak orijinal Herbalife ürünlerini, avantajlı paketleri ve birebir beslenme danışmanlığını bir arada sunuyoruz.',
+        'Herbal Kapıda olarak orijinal Herbalife ürünlerini, avantajlı paketleri ve birebir beslenme danışmanlığını bir arada sunuyoruz.',
         'Amacımız hedefinize uygun program, sürdürülebilir alışkanlıklar ve güvenilir ürün erişimi sağlamaktır.',
         'Ürün seçimi veya wellness takibi için WhatsApp ve iletişim kanallarımızdan bize ulaşabilirsiniz.',
       ],
@@ -234,6 +280,64 @@ export const DEFAULT_HOME_SECTIONS: Array<{
         'Sürdürülebilir sonuçlar; doğru ürün, düzenli takip ve kişisel rehberlikle gelir.',
       linkLabel: 'Yazıları oku →',
       linkHref: '/blog',
+    },
+    sortOrder: 3,
+    isPublished: true,
+  },
+  {
+    page: 'coaching',
+    sectionKey: 'hero',
+    title: 'Koçluk hero',
+    content: {
+      eyebrow: 'Beslenme danışmanlığı',
+      headline: 'Kişisel koçluk ve sürdürülebilir takip',
+      body: 'Hedeflerinize uygun beslenme planı, öğün onayı ve ölçüm takibi — bağımsız distribütör rehberliğinde.',
+      imageUrl: '',
+      whatsappPresetLabel: 'Beslenme takibi',
+    },
+    sortOrder: 1,
+    isPublished: true,
+  },
+  {
+    page: 'coaching',
+    sectionKey: 'body',
+    title: 'Koçluk içerik',
+    content: {
+      titleLine1: 'Programınız',
+      titleLine2: 'sizinle birlikte',
+      paragraphs: [
+        'Formül 1 ve takviye seçiminden günlük öğün düzenine kadar kişiselleştirilmiş bir yol haritası sunuyoruz.',
+        'Hesabınızdaki Beslenme Takibi ile öğün fotoğrafı ve ölçümlerinizi paylaşın; koçunuz onaylayıp geri bildirim verir.',
+        'WhatsApp hattımızdan hızlı soru-cevap ve motivasyon desteği alabilirsiniz.',
+      ],
+    },
+    sortOrder: 2,
+    isPublished: true,
+  },
+  {
+    page: 'coaching',
+    sectionKey: 'steps',
+    title: 'Koçluk adımları',
+    content: {
+      title: 'Nasıl işler?',
+      items: [
+        {
+          title: 'Hedef belirleme',
+          body: 'Kilo kontrolü, enerji veya spor performansı — hedefinize göre ürün ve program önerisi.',
+        },
+        {
+          title: 'Günlük takip',
+          body: 'Su, öğün ve ölçüm kayıtlarınızı uygulama üzerinden iletin.',
+        },
+        {
+          title: 'Koç onayı',
+          body: 'Kayıtlarınız incelenir; onay veya düzeltme notu ile geri bildirim alırsınız.',
+        },
+        {
+          title: 'Sürekli destek',
+          body: 'WhatsApp ve periyodik kontrol ile programınız güncellenir.',
+        },
+      ],
     },
     sortOrder: 3,
     isPublished: true,

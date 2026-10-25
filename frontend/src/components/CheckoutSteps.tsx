@@ -1,14 +1,19 @@
-import Link from "next/link";
+"use client";
+
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 type Step = 1 | 2 | 3;
 
-const STEPS: { n: Step; label: string; href?: string }[] = [
-  { n: 1, label: "Sepetim", href: "/sepet" },
-  { n: 2, label: "Teslimat", href: "/odeme" },
-  { n: 3, label: "Güvenli Ödeme" },
-];
-
 export function CheckoutSteps({ active }: { active: Step }) {
+  const t = useTranslations("checkout");
+
+  const STEPS: { n: Step; label: string; href?: string }[] = [
+    { n: 1, label: t("stepCart"), href: "/sepet" },
+    { n: 2, label: t("stepDelivery"), href: "/odeme" },
+    { n: 3, label: t("stepPayment") },
+  ];
+
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-full bg-surface-container-lowest px-4 py-2.5 text-xs font-semibold shadow-sm sm:gap-3">
       {STEPS.map((step, i) => {

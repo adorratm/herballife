@@ -1,5 +1,4 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { IyzicoService } from '@modules/payments/iyzico.service';
 import { PaytrService } from '@modules/payments/paytr.service';
 import { PaymentsService } from '@modules/payments/payments.service';
 import { PaymentFulfillmentService } from '@modules/payments/payment-fulfillment.service';
@@ -19,12 +18,7 @@ import { AccountingModule } from '@modules/accounting/accounting.module';
     forwardRef(() => AccountingModule),
   ],
   controllers: [PaymentsController],
-  providers: [
-    PaymentFulfillmentService,
-    IyzicoService,
-    PaytrService,
-    PaymentsService,
-  ],
-  exports: [PaymentsService, IyzicoService, PaytrService],
+  providers: [PaymentFulfillmentService, PaytrService, PaymentsService],
+  exports: [PaymentsService, PaytrService],
 })
 export class PaymentsModule {}

@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -23,6 +24,10 @@ export function NotificationBell({
 }: {
   listHref?: string;
 }) {
+  const t = useTranslations("notificationsBell");
+  const tNav = useTranslations("nav");
+  const tInbox = useTranslations("notificationsPage");
+  const tAria = useTranslations("aria");
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [unread, setUnread] = useState(0);
@@ -97,7 +102,7 @@ export function NotificationBell({
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="relative text-primary transition-opacity hover:opacity-80"
-        aria-label="Bildirimler"
+        aria-label={tAria("notifications")}
       >
         <BellIcon />
         {unread > 0 ? (
@@ -110,7 +115,7 @@ export function NotificationBell({
         <div className="absolute right-0 z-70 mt-3 w-[min(100vw-2rem,20rem)] overflow-hidden rounded-2xl border border-outline-variant/40 bg-white p-3 shadow-2xl">
           <div className="mb-2 flex items-center justify-between px-1">
             <p className="font-meta text-[10px] uppercase tracking-widest text-secondary">
-              Bildirimler
+              {tNav("notifications")}
             </p>
             {unread > 0 ? (
               <button
@@ -118,13 +123,13 @@ export function NotificationBell({
                 onClick={() => void readAll()}
                 className="rounded-full px-2 py-0.5 font-meta text-[10px] uppercase text-primary hover:bg-primary-fixed"
               >
-                Tümünü oku
+                {t("markAllRead")}
               </button>
             ) : null}
           </div>
           {!items.length ? (
             <p className="py-4 font-meta text-[11px] uppercase text-secondary">
-              Bildirim yok
+              {tInbox("empty")}
             </p>
           ) : (
             <ul className="max-h-80 space-y-1.5 overflow-auto">
@@ -155,7 +160,7 @@ export function NotificationBell({
             onClick={() => setOpen(false)}
             className="mt-2 block rounded-xl border-t border-outline-variant/30 pt-2.5 text-center font-meta text-[10px] uppercase tracking-widest text-primary hover:bg-surface-container-low"
           >
-            Tümü ve ayarlar
+            {t("allAndSettings")}
           </Link>
         </div>
       ) : null}

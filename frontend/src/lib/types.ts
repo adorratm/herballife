@@ -6,6 +6,13 @@ export type ProductVariant = {
   price: string;
   /** Kampanya varsa orijinal fiyat (API decorate) */
   compareAtPrice?: string | null;
+  categoryKey?: string | null;
+  translations?: Partial<
+    Record<
+      "tr" | "en" | "de" | "fr" | "es",
+      { name?: string; categoryLabel?: string }
+    >
+  > | null;
   barcode?: string | null;
   stock: number;
   isActive: boolean;
@@ -38,6 +45,8 @@ export type Product = {
   campaignTheme?: string | null;
   campaignHeadline?: string | null;
   currency: string;
+  /** Mağaza fiyatı KDV dahil mi (varsayılan true) */
+  priceTaxIncluded?: boolean;
   stock: number;
   isActive: boolean;
   isFeatured: boolean;
@@ -90,6 +99,8 @@ export type Paginated<T> = {
 };
 
 export type ProductQuery = {
+  locale?: string;
+  currency?: string;
   q?: string;
   categorySlug?: string;
   originCountry?: string;
@@ -122,6 +133,7 @@ export type Category = {
   description: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
+  productCount?: number;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -181,6 +193,7 @@ export type OrderItem = {
   quantity: number;
   unitPrice: string;
   lineTotal: string;
+  imageUrl?: string | null;
 };
 
 export type Order = {
@@ -237,6 +250,9 @@ export type Address = {
   postalCode: string;
   isDefaultShipping: boolean;
   isDefaultBilling: boolean;
+  companyTitle?: string | null;
+  taxNumber?: string | null;
+  taxOffice?: string | null;
 };
 
 export type AddressPayload = {
@@ -250,6 +266,9 @@ export type AddressPayload = {
   postalCode: string;
   isDefaultShipping?: boolean;
   isDefaultBilling?: boolean;
+  companyTitle?: string;
+  taxNumber?: string;
+  taxOffice?: string;
 };
 
 export type Shipment = {
@@ -299,6 +318,7 @@ export type BlogPost = {
 };
 
 export type BlogQuery = {
+  locale?: string;
   q?: string;
   tag?: string;
   categorySlug?: string;
@@ -329,6 +349,9 @@ export type CheckoutPayload = {
     neighborhood?: string;
     addressLine: string;
     postalCode: string;
+    companyTitle?: string;
+    taxNumber?: string;
+    taxOffice?: string;
   };
   shippingProvider: string;
   couponCode?: string;

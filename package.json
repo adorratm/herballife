@@ -15,6 +15,7 @@
     "build:api": "yarn workspace @herbalife/api build",
     "build:frontend": "yarn workspace @herbalife/frontend build",
     "build:admin": "yarn workspace @herbalife/admin build",
+    "seed": "yarn workspace @herbalife/api seed",
     "migration:run": "yarn workspace @herbalife/api migration:run",
     "migration:generate": "yarn workspace @herbalife/api migration:generate",
     "lint": "yarn workspaces foreach -Apt run lint",

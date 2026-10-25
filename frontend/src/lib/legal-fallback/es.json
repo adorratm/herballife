@@ -1,0 +1,38 @@
+{
+  "kvkk": {
+    "title": "KVKK Aviso de Privacidad",
+    "content": "{{seller.name}} procesa datos personales según la Ley turca N° 6698 sobre Protección de Datos Personales (KVKK). Los datos se utilizan únicamente cuando son necesarios para pedidos, entregas, atención al cliente, pagos y obligaciones legales.\n\nResponsable del tratamiento: {{seller.name}}\nDirección: {{seller.address}}\nContacto: {{seller.email}} · {{seller.phone}}\n\nSus derechos: Según KVKK art. 11 podrá solicitar acceso, rectificación, supresión, restricción, oposición y presentar reclamación. Envíe solicitudes a {{seller.email}}."
+  },
+  "cerez-politikasi": {
+    "title": "Política de cookies",
+    "content": "Esta Política de cookies explica cómo {{seller.name}} utiliza cookies en {{seller.website}}, de acuerdo con KVKK y las reglas aplicables.\n\n1. ¿Qué son las cookies?\nPequeños archivos de texto almacenados por su navegador para mantener sesiones, carritos, seguridad y medir el rendimiento.\n\n2. Tipos que utilizamos\na) Estrictamente necesario: funciones principales del sitio (sesión, carrito, seguridad, idioma).\nb) Funcional: recordar preferencias.\nc) Análisis/rendimiento: estadísticas de uso anónimas o seudónimas; No se permiten perfiles de marketing sin consentimiento.\nd) Pago/seguridad: PayTR y proveedores similares pueden establecer sus propias cookies de seguridad para 3D Secure y la prevención de fraude.\n\n3. Gestión de cookies\nPuede eliminar o bloquear las cookies en la configuración del navegador. El bloqueo de las cookies requeridas puede dañar el carrito, el inicio de sesión y el pago.\n\n4. Terceros\nLos operadores, PayTR, correo electrónico/SMS, análisis y socios de alojamiento pueden utilizar cookies solo según sea necesario para proporcionar el servicio.\n\n6. Contacto\nSolicitudes de cookies y KVKK: {{seller.email}}"
+  },
+  "mesafeli-satis": {
+    "title": "Acuerdo de venta a distancia",
+    "content": "Este Acuerdo de Venta a Distancia se concluye según la Ley de Protección al Consumidor de Turquía N° 6502 entre el vendedor a continuación y el comprador que realiza un pedido en línea.\n\nVendedor: {{seller.name}}\nDirección: {{seller.address}}\nTeléfono: {{seller.phone}}\nCorreo electrónico: {{seller.email}}\nWeb: {{seller.website}}\nOficina de impuestos / No: {{seller.taxOffice}} / {{seller.taxNumber}}\nMERSİS: {{seller.mersis}}\n\nAsunto: Venta y entrega de productos pedidos en el sitio web al precio indicado en el resumen del pedido.\n\nPago: Pagos con tarjeta vía PayTR; Los datos de la tarjeta no se almacenan en nuestros servidores.\n\nRetiro: 14 días desde la entrega sin indicación del motivo (excepciones según el Reglamento).\n\nVendedor: {{seller.name}}"
+  },
+  "on-bilgilendirme": {
+    "title": "Formulario de información previa al contrato",
+    "content": "Según la Ley turca n.º 6502, se proporciona la siguiente información antes de realizar el pedido.\n\nVENDEDOR\n{{seller.name}}\n{{seller.address}}\nTel: {{seller.phone}} · Correo electrónico: {{seller.email}}\nImpuesto: {{seller.taxOffice}} / {{seller.taxNumber}}\n\nPRECIO TOTAL\nEl precio del producto, los descuentos, el envío y los impuestos se muestran como el total antes del pago.\n\nPAGO\nPago seguro con tarjeta a través de PayTR.\n\nRETIRO\n14 días desde la entrega; Las excepciones se enumeran en el Acuerdo de ventas a distancia y la Política de devoluciones.\n\nQUEJAS\n{{seller.email}} · {{seller.phone}}."
+  },
+  "iptal-iade": {
+    "title": "Política de cancelación y devoluciones",
+    "content": "{{seller.name}} sigue la ley turca del consumidor y el Reglamento de contratos a distancia.\n\n1. Cancelación del pedido\nAntes del pago o antes del envío, envíe un correo electrónico a {{seller.email}} para cancelar.\n\n2. Retiro (14 días)\nA partir de la fecha de entrega, retirar sin motivo a través de {{seller.email}}.\n\n3. Artículos no retornables\nAlimentos/suplementos abiertos donde la higiene impide la reventa; productos personalizados; Artículos usados ​​o dañados (excepto defectos).\n\n5. Reembolsos\nDentro de los 14 días posteriores a la recepción e inspección de la devolución, al método de pago original.\n\n7. Contacto\n{{seller.name}} · {{seller.address}}\n{{seller.email}} · {{seller.phone}}"
+  },
+  "musteri-memnuniyeti": {
+    "title": "Política de satisfacción del cliente",
+    "content": "{{seller.name}} se compromete con la calidad, la transparencia y el soporte rápido para los productos originales Herbalife.\n\nSoporte:\nCorreo electrónico: {{seller.email}}\nTeléfono: {{seller.phone}}\nHorario: {{seller.hours}}\n\nQuejas: Envíe su número de pedido; respuesta inicial dentro de los 3 días hábiles."
+  },
+  "guvenli-alisveris": {
+    "title": "Compras Seguras",
+    "content": "Las compras en {{seller.name}} están protegidas por medidas técnicas, legales y operativas.\n\n1. Pagos PayTR\nPagos con tarjeta vía PayTR. Los números de tarjetas no se almacenan en nuestros servidores. cifrado SSL/TLS; Compatible con 3D Secure.\n\n3. Datos personales\nDatos de pedido y entrega procesados bajo KVKK.\n\n7. Apoyo\nPreocupaciones de seguridad: {{seller.email}}"
+  },
+  "aydinlatma-metni": {
+    "title": "Aviso de Privacidad (KVKK Art. 10)",
+    "content": "Según KVKK art. 10, {{seller.name}} le informa sobre el tratamiento de datos personales:\n\n1. Controlador\n{{seller.name}}\n{{seller.address}}\n{{seller.email}} · {{seller.phone}}\n\n7. Tus derechos (KVKK Art. 11)\nAcceso, rectificación, supresión, limitación, oposición, reclamación de daños y perjuicios. Aplicar: {{seller.email}}"
+  },
+  "gizlilik": {
+    "title": "política de privacidad",
+    "content": "{{seller.name}} respeta su privacidad. Esta política explica cómo recopilamos, utilizamos y protegemos los datos de visitantes, miembros y clientes.\n\n3. Compartir\nSólo con los socios necesarios para cumplir con el servicio (PayTR, transportistas) y autoridades cuando sea necesario. No vendemos tus datos.\n\n7. Contacto\n{{seller.email}} · {{seller.phone}}\n{{seller.address}}"
+  }
+}

@@ -10,6 +10,7 @@ import { MarketplaceOrder } from '@entities/marketplace-order.entity';
 import { Order, OrderStatus } from '@entities/order.entity';
 import { OrderItem } from '@entities/order-item.entity';
 import { Payment, PaymentStatus } from '@entities/payment.entity';
+import { formatOrderVariantLabel } from '@common/catalog/variant-label.util';
 import { InventoryService } from '@modules/catalog/inventory.service';
 
 type ParsedLine = {
@@ -136,7 +137,8 @@ export class MarketplaceOrderImportService {
             productId: match?.productId ?? null,
             variantId: match?.variantId ?? null,
             productName: line.name || match?.product?.name || 'Ürün',
-            variantLabel: match?.variant?.weightLabel ?? null,
+            variantLabel:
+              formatOrderVariantLabel(match?.variant ?? null) ?? null,
             quantity: line.quantity,
             unitPrice: line.unitPrice.toFixed(2),
             lineTotal: line.lineTotal.toFixed(2),

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CampaignsService } from '@modules/campaigns/campaigns.service';
@@ -25,8 +26,8 @@ export class CampaignsController {
   @Public()
   @Get('active')
   @ApiOperation({ summary: 'Aktif flash kampanyalar' })
-  listActive() {
-    return this.campaigns.listActiveNow();
+  listActive(@Query('locale') locale?: string) {
+    return this.campaigns.listActiveNow(locale);
   }
 
   @Roles(...OPS_ROLES)

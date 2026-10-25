@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { emitCartToast } from "@/components/CartToast";
 import { ApiError } from "@/lib/api";
 import { trackAddToCart } from "@/lib/analytics";
@@ -23,7 +24,7 @@ type Props = {
 export function AddToCartButton({
   productId,
   variantId,
-  label = "Sepete Ekle",
+  label,
   className,
   disabled = false,
   productName,
@@ -32,6 +33,8 @@ export function AddToCartButton({
   onAdded,
 }: Props) {
   const router = useRouter();
+  const tProduct = useTranslations("product");
+  const defaultLabel = label ?? tProduct("addToCart");
   const [loading, setLoading] = useState(false);
   const [added, setAdded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +65,7 @@ export function AddToCartButton({
       setError(
         err instanceof ApiError
           ? err.message
-          : "Sepete eklenemedi. Sunucu bağlantısını kontrol edin.",
+          : tProduct("addError"),
       );
     } finally {
       setLoading(false);
@@ -84,7 +87,11 @@ export function AddToCartButton({
           added ? " is-added" : ""
         }`}
       >
-        {loading ? "Ekleniyor…" : added ? "Sepete eklendi ✓" : label}
+        {loading
+          ? tProduct("adding")
+          : added
+            ? tProduct("addedCheck")
+            : defaultLabel}
       </button>
       {error ? (
         <p className="mt-3 font-meta text-[10px] uppercase text-error">{error}</p>

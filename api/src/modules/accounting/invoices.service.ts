@@ -219,11 +219,7 @@ export class InvoicesService {
       invoice.status = InvoiceStatus.SENT;
     }
     await this.em.save(invoice);
-    const saved = await this.findOne(id);
-    if (result.accepted) {
-      await this.invoiceEmail.tryAutoSendAfterGib(saved.id);
-    }
-    return saved;
+    return this.findOne(id);
   }
 
   async cancel(id: string): Promise<Invoice> {

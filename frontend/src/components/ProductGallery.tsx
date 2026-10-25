@@ -1,6 +1,7 @@
 "use client";
 
 import { AppImage as Image } from "@/components/AppImage";
+import { useTranslations } from "next-intl";
 import {
   useCallback,
   useEffect,
@@ -16,6 +17,9 @@ type Props = {
 };
 
 export function ProductGallery({ images, alt, badge }: Props) {
+  const t = useTranslations("gallery");
+  const tAria = useTranslations("aria");
+  const tc = useTranslations("common");
   const list = images.length ? images : [];
   const [active, setActive] = useState(0);
   const [lightbox, setLightbox] = useState(false);
@@ -66,7 +70,7 @@ export function ProductGallery({ images, alt, badge }: Props) {
   if (!current) {
     return (
       <div className="product-stage flex aspect-square items-center justify-center rounded-2xl bg-surface-container-low lg:aspect-auto lg:min-h-128">
-        <p className="text-sm text-on-surface-variant">Görsel yok</p>
+        <p className="text-sm text-on-surface-variant">{t("noImage")}</p>
       </div>
     );
   }
@@ -77,10 +81,10 @@ export function ProductGallery({ images, alt, badge }: Props) {
         <div
           role="button"
           tabIndex={0}
-          aria-label={`${alt} — büyüt`}
+          aria-label={tAria("enlargeImage", { alt })}
           onClick={() => setLightbox(true)}
           onKeyDown={onStageKey}
-          className="product-stage group relative flex min-h-72 flex-1 cursor-zoom-in items-center justify-center overflow-hidden rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:min-h-88 lg:min-h-112"
+          className="product-stage group relative flex min-h-80 flex-1 cursor-zoom-in items-center justify-center overflow-hidden rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:min-h-96 lg:min-h-112 xl:min-h-128"
         >
           <div className="product-stage-glow" aria-hidden />
           <div className="product-stage-ring" aria-hidden />
@@ -95,7 +99,7 @@ export function ProductGallery({ images, alt, badge }: Props) {
             <>
               <button
                 type="button"
-                aria-label="Önceki görsel"
+                aria-label={tAria("previousImage")}
                 onClick={(e) => {
                   e.stopPropagation();
                   go(-1);
@@ -106,7 +110,7 @@ export function ProductGallery({ images, alt, badge }: Props) {
               </button>
               <button
                 type="button"
-                aria-label="Sonraki görsel"
+                aria-label={tAria("nextImage")}
                 onClick={(e) => {
                   e.stopPropagation();
                   go(1);
@@ -133,7 +137,7 @@ export function ProductGallery({ images, alt, badge }: Props) {
           </div>
 
           <span className="absolute bottom-4 right-4 z-10 rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-semibold text-on-surface-variant opacity-0 shadow-sm backdrop-blur-sm transition-opacity group-hover:opacity-100">
-            Büyüt
+            {t("enlarge")}
           </span>
 
           {total > 1 ? (
@@ -151,10 +155,10 @@ export function ProductGallery({ images, alt, badge }: Props) {
                 <button
                   key={`${src}-${i}`}
                   type="button"
-                  aria-label={`Görsel ${i + 1}`}
+                  aria-label={tAria("imageN", { n: i + 1 })}
                   aria-current={selected}
                   onClick={() => setActive(i)}
-                  className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white transition-all sm:h-18 sm:w-18 ${
+                  className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border-2 bg-white transition-all sm:h-22 sm:w-22 ${
                     selected
                       ? "border-primary shadow-[0_0_0_3px_color-mix(in_srgb,var(--primary)_18%,transparent)]"
                       : "border-outline-variant/35 hover:border-primary/50"
@@ -180,12 +184,12 @@ export function ProductGallery({ images, alt, badge }: Props) {
               className="fixed inset-0 z-100 flex flex-col bg-[#0c1410]/92 backdrop-blur-sm"
               role="dialog"
               aria-modal="true"
-              aria-label="Ürün görseli"
+              aria-label={tAria("productImage")}
             >
               <button
                 type="button"
                 className="absolute inset-0 cursor-default"
-                aria-label="Kapat"
+                aria-label={tc("close")}
                 onClick={() => setLightbox(false)}
               />
               <header className="relative z-10 flex items-center justify-between px-4 py-3 md:px-8">
@@ -197,7 +201,7 @@ export function ProductGallery({ images, alt, badge }: Props) {
                   onClick={() => setLightbox(false)}
                   className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white hover:bg-white/20"
                 >
-                  Kapat
+                  {tc("close")}
                 </button>
               </header>
               <div className="relative z-10 flex flex-1 items-center justify-center px-4 pb-10 md:px-12">
@@ -205,7 +209,7 @@ export function ProductGallery({ images, alt, badge }: Props) {
                   <>
                     <button
                       type="button"
-                      aria-label="Önceki"
+                      aria-label={tAria("previous")}
                       onClick={() => go(-1)}
                       className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-white/10 text-xl text-white hover:bg-white/20 md:left-8"
                     >
@@ -213,7 +217,7 @@ export function ProductGallery({ images, alt, badge }: Props) {
                     </button>
                     <button
                       type="button"
-                      aria-label="Sonraki"
+                      aria-label={tAria("next")}
                       onClick={() => go(1)}
                       className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-white/10 text-xl text-white hover:bg-white/20 md:right-8"
                     >

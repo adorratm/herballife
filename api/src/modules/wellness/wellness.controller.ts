@@ -159,18 +159,27 @@ export class WellnessController {
   @Post('coach/whatsapp-blast')
   blast(
     @CurrentUser() user: User,
-    @Body() body: { message: string; userIds?: string[] },
+    @Body()
+    body: {
+      templateName: string;
+      languageCode?: string;
+      bodyParams?: string[];
+      message?: string;
+      userIds?: string[];
+    },
   ) {
-    return this.wellness.createWhatsappBlast(
-      user.id,
-      body.message,
-      body.userIds,
-    );
+    return this.wellness.createWhatsappBlast(user.id, body);
   }
 
   @Roles(...OPS_ROLES)
   @Get('coach/whatsapp-blasts')
   listBlasts() {
     return this.wellness.listBlasts();
+  }
+
+  @Roles(...OPS_ROLES)
+  @Get('coach/whatsapp-blasts/:id')
+  getBlast(@Param('id') id: string) {
+    return this.wellness.getBlast(id);
   }
 }

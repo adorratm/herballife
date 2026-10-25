@@ -14,35 +14,77 @@ export type WhatsAppSettings = {
   presets: WhatsAppPreset[];
 };
 
+export type WhatsAppTranslator = (key: string) => string;
+
+/** English-neutral CMS / merge fallback; UI should prefer buildLocalizedWhatsAppSettings(t). */
 export const DEFAULT_WHATSAPP_SETTINGS: WhatsAppSettings = {
   enabled: true,
   phone: "",
-  greeting: "Merhaba — Emine Özberk. Size nasıl yardımcı olabiliriz?",
+  greeting: "Hello — how can we help you today?",
   presets: [
     {
-      label: "Sipariş durumu",
-      message: "Merhaba, sipariş durumum hakkında bilgi almak istiyorum.",
+      label: "Order status",
+      message: "Hello, I would like an update on my order status.",
     },
     {
-      label: "Ürün danışmanlığı",
+      label: "Product advice",
       message:
-        "Merhaba, hedeflerime uygun ürün / paket önerisi alabilir miyim?",
+        "Hello, can you suggest products / bundles for my goals?",
     },
     {
-      label: "Beslenme takibi",
-      message: "Merhaba, beslenme ve takip programı hakkında yazıyorum.",
+      label: "Nutrition tracking",
+      message: "Hello, I have a question about nutrition tracking.",
     },
     {
-      label: "Kargo & teslimat",
+      label: "Shipping & delivery",
       message:
-        "Merhaba, kargo süresi ve teslimat seçenekleri hakkında yazıyorum.",
+        "Hello, I have a question about shipping times and delivery options.",
     },
     {
-      label: "Başka bir konu",
-      message: "Merhaba, yazıyorum.",
+      label: "Something else",
+      message: "Hello, I'm writing to you.",
     },
   ],
 };
+
+export function buildLocalizedWhatsAppSettings(
+  t: WhatsAppTranslator,
+): WhatsAppSettings {
+  return {
+    enabled: true,
+    phone: "",
+    greeting: t("defaultGreeting"),
+    presets: [
+      {
+        label: t("presetOrderStatusLabel"),
+        message: t("presetOrderStatusMessage"),
+      },
+      {
+        label: t("presetProductLabel"),
+        message: t("presetProductMessage"),
+      },
+      {
+        label: t("presetTrackingLabel"),
+        message: t("presetTrackingMessage"),
+      },
+      {
+        label: t("presetShippingLabel"),
+        message: t("presetShippingMessage"),
+      },
+      {
+        label: t("presetOtherLabel"),
+        message: t("presetOtherMessage"),
+      },
+    ],
+  };
+}
+
+export function isDefaultWhatsAppPresets(presets: WhatsAppPreset[]): boolean {
+  if (presets.length !== DEFAULT_WHATSAPP_SETTINGS.presets.length) return false;
+  return presets.every(
+    (p, i) => p.message === DEFAULT_WHATSAPP_SETTINGS.presets[i]?.message,
+  );
+}
 
 export function normalizeWhatsAppPresets(value: unknown): WhatsAppPreset[] {
   if (!Array.isArray(value)) return DEFAULT_WHATSAPP_SETTINGS.presets;
@@ -108,6 +150,6 @@ export function productWhatsAppMessage(
   productUrl: string,
   brandName?: string,
 ): string {
-  const brand = brandName || "mağaza";
-  return `Merhaba, ${brand} üzerinden "${productName}" ürünü hakkında bilgi almak istiyorum.\n${productUrl}`;
+  const brand = brandName || "store";
+  return `Hello, I would like information about "${productName}" on ${brand}.\n${productUrl}`;
 }

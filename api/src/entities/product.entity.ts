@@ -10,6 +10,11 @@ import { BaseEntity } from '@entities/base.entity';
 import type { Category } from '@entities/category.entity';
 import type { ProductVariant } from '@entities/product-variant.entity';
 import { numericTransformer } from '@common/utils/numeric';
+import type {
+  ImagesByLocale,
+  ProductPrices,
+  ProductTranslations,
+} from '@common/catalog/localization.types';
 
 @Entity('products')
 export class Product extends BaseEntity {
@@ -37,6 +42,7 @@ export class Product extends BaseEntity {
   @Column({ name: 'seo_description', type: 'text', nullable: true })
   seoDescription!: string | null;
 
+  /** Üretim / menşei ülke (UI); eski kahve menşei alanı */
   @Column({
     name: 'origin_country',
     type: 'varchar',
@@ -45,6 +51,7 @@ export class Product extends BaseEntity {
   })
   originCountry!: string | null;
 
+  /** Hedef kullanım bölgesi (UI) */
   @Column({
     name: 'origin_region',
     type: 'varchar',
@@ -53,23 +60,34 @@ export class Product extends BaseEntity {
   })
   originRegion!: string | null;
 
+  /** Porsiyon / servis (UI); DB sütunu: altitude */
   @Column({ name: 'altitude', type: 'varchar', length: 80, nullable: true })
   altitude!: string | null;
 
+  /** Form / tip (UI); eski işlem alanı */
   @Column({ name: 'process', type: 'varchar', length: 80, nullable: true })
   process!: string | null;
 
+  /** İçerik vurgusu (UI); eski çeşit alanı */
   @Column({ name: 'varietal', type: 'varchar', length: 120, nullable: true })
   varietal!: string | null;
 
+  /** Herbalife lot / parti numarası */
   @Column({ name: 'batch_id', type: 'varchar', length: 80, nullable: true })
   batchId!: string | null;
 
+  /** Tat / lezzet seçenekleri veya aroma listesi */
   @Column({ name: 'flavor_notes', type: 'text', array: true, default: '{}' })
   flavorNotes!: string[];
 
   @Column({ name: 'image_url', type: 'varchar', length: 500, nullable: true })
   imageUrl!: string | null;
+
+  @Column({ name: 'images_by_locale', type: 'jsonb', default: {} })
+  imagesByLocale!: ImagesByLocale;
+
+  @Column({ name: 'use_shared_image', type: 'boolean', default: true })
+  useSharedImage!: boolean;
 
   @Column({ name: 'gallery', type: 'text', array: true, default: '{}' })
   gallery!: string[];
@@ -116,8 +134,20 @@ export class Product extends BaseEntity {
   @Column({ name: 'base_price', type: 'decimal', precision: 12, scale: 2 })
   basePrice!: string;
 
+  /** Para birimi başına liste fiyatları (TRY zorunlu; boşsa basePrice TRY sayılır) */
+  @Column({ name: 'prices', type: 'jsonb', default: {} })
+  prices!: ProductPrices;
+
   @Column({ name: 'currency', type: 'varchar', length: 3, default: 'TRY' })
   currency!: string;
+
+  /** TR ana sütunlarda; en/de/fr/es çevirileri */
+  @Column({ name: 'translations', type: 'jsonb', nullable: true })
+  translations!: ProductTranslations | null;
+
+  /** Liste fiyatı KDV dahil mi */
+  @Column({ name: 'price_tax_included', type: 'boolean', default: true })
+  priceTaxIncluded!: boolean;
 
   @Column({
     name: 'stock',

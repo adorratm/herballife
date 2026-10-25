@@ -17,6 +17,18 @@ export class CreateShipmentDto {
   @ApiProperty({ enum: ShippingProviderCode })
   @IsEnum(ShippingProviderCode)
   provider!: ShippingProviderCode;
+
+  @ApiPropertyOptional({
+    description: 'Manuel DHL takip kodu — API atlanır',
+  })
+  @IsOptional()
+  @IsString()
+  trackingNumber?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  trackingUrl?: string;
 }
 
 export class TrackShipmentDto {

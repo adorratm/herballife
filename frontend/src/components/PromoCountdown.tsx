@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 type Parts = { days: number; hours: number; mins: number; secs: number };
@@ -51,14 +52,18 @@ const THEME_BADGE: Record<string, string> = {
 
 export function PromoCountdown({
   endsAt,
-  title = "Özel Avantaj Kampanyası",
-  badge = "FIRSAT",
-  body = "Seçili setlerde hediye avantajı ve ücretsiz kargo.",
+  title,
+  badge,
+  body,
   couponCode = "SAGLIK2026",
   theme = "default",
 }: Props) {
+  const t = useTranslations("promo");
+  const resolvedTitle = title ?? t("defaultTitle");
+  const resolvedBadge = badge ?? t("defaultBadge");
+  const resolvedBody = body ?? t("defaultBody");
+
   const end = useMemo(() => resolveEnd(endsAt), [endsAt]);
-  /** SSR’de sabit placeholder — Date.now() hydration mismatch önler */
   const [parts, setParts] = useState<Parts | null>(null);
 
   useEffect(() => {
@@ -71,11 +76,11 @@ export function PromoCountdown({
   }, [end]);
 
   const cells: { label: string; value: string; accent?: boolean }[] = [
-    { label: "Gün", value: parts ? pad(parts.days) : "--" },
-    { label: "Saat", value: parts ? pad(parts.hours) : "--" },
-    { label: "Dakika", value: parts ? pad(parts.mins) : "--" },
+    { label: t("day"), value: parts ? pad(parts.days) : "--" },
+    { label: t("hour"), value: parts ? pad(parts.hours) : "--" },
+    { label: t("minute"), value: parts ? pad(parts.mins) : "--" },
     {
-      label: "Saniye",
+      label: t("second"),
       value: parts ? pad(parts.secs) : "--",
       accent: true,
     },
@@ -91,13 +96,15 @@ export function PromoCountdown({
                 THEME_BADGE[theme || "default"] || THEME_BADGE.default
               }`}
             >
-              {badge}
+              {resolvedBadge}
             </span>
             <span className="font-display text-xl font-bold text-on-surface md:text-2xl">
-              {title}
+              {resolvedTitle}
             </span>
           </div>
-          <p className="mt-2 text-sm font-medium text-on-surface-variant">{body}</p>
+          <p className="mt-2 text-sm font-medium text-on-surface-variant">
+            {resolvedBody}
+          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2" aria-live="polite">
@@ -127,7 +134,7 @@ export function PromoCountdown({
         {couponCode.trim() ? (
           <div className="flex items-center gap-2 rounded-xl border border-dashed border-flash/40 bg-flash-soft px-4 py-2.5">
             <span className="text-xs font-medium text-on-surface-variant">
-              Kupon
+              {t("coupon")}
             </span>
             <span className="font-display text-base font-bold tracking-widest text-flash">
               {couponCode}
@@ -139,8 +146,8 @@ export function PromoCountdown({
   );
 }
 
-/** Üst şerit için kompakt günün fırsatı sayacı */
 export function DealStripCountdown({ endsAt }: { endsAt?: string | null }) {
+  const t = useTranslations("promo");
   const end = useMemo(() => resolveEnd(endsAt), [endsAt]);
   const [parts, setParts] = useState<Parts | null>(null);
 
@@ -155,7 +162,7 @@ export function DealStripCountdown({ endsAt }: { endsAt?: string | null }) {
 
   return (
     <span className="inline-flex items-center gap-2 rounded-full bg-flash px-3 py-1 text-xs font-bold text-white">
-      <span>Fırsat</span>
+      <span>{t("dealStrip")}</span>
       <strong className="tabular-nums tracking-wide">
         {parts
           ? `${pad(parts.hours)}:${pad(parts.mins)}:${pad(parts.secs)}`

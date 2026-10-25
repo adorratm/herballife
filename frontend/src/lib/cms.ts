@@ -18,6 +18,7 @@ export type SiteSettings = {
     logoUrl: string;
     distributorName: string;
     distributorTitle: string;
+    distributorCode: string;
     legalDisclaimer: string;
   };
   contact: {
@@ -51,6 +52,41 @@ export type SiteSettings = {
     description: string;
     copyrightSuffix: string;
   };
+  localization?: {
+    defaultLocale?: string;
+    enabledLocales?: string[];
+    defaultCurrency?: string;
+    currencies?: string[];
+    currencyByLocale?: Record<string, string>;
+  };
+  shipping?: {
+    defaultFee?: number;
+    freeShippingOver?: number;
+  };
+  promises?: {
+    sameDayCutoff?: string;
+    sameDayShipping?: boolean;
+    freeCoaching?: boolean;
+    returnDays?: number;
+  };
+  legal?: {
+    supplementDisclaimer?: string;
+    weightDisclaimer?: string;
+  };
+  membership?: {
+    ctaLabel?: string;
+    ctaUrl?: string;
+    disclaimer?: string;
+  };
+  analytics?: {
+    ga4Id?: string;
+    gtmId?: string;
+    googleAdsId?: string;
+    metaPixelId?: string;
+    facebookPixelId?: string;
+    yandexMetrikaId?: string;
+    tiktokPixelId?: string;
+  };
 };
 
 export type ContentSection = {
@@ -63,53 +99,59 @@ export type ContentSection = {
   isPublished: boolean;
 };
 
+/**
+ * Last-resort fallback when `/cms/settings` fails. Callers pass `locale` to the API;
+ * localized copy normally comes from CMS. Keep English-neutral here so non-`tr`
+ * routes do not show Turkish chrome when the API is down.
+ */
 export const DEFAULT_SETTINGS: SiteSettings = {
   brand: {
-    name: "Herbal Ürünleri",
-    slogan: "Daha sağlıklı, daha mutlu bir yaşam",
+    name: "Herbal Kapıda",
+    slogan: "A healthier, happier life",
     tagline:
-      "Bağımsız distribütör rehberliğinde orijinal Herbalife ürünleri ve kişiselleştirilmiş beslenme desteği.",
-    established: "2024’ten beri",
-    location: "Türkiye",
+      "Original Herbalife products and personalized nutrition support with an independent distributor.",
+    established: "Since 2024",
+    location: "Turkey",
     logoUrl: "",
-    distributorName: "Emine Özberk",
-    distributorTitle: "Bağımsız Distribütör",
+    distributorName: "Herbal Kapıda",
+    distributorTitle: "Independent Distributor",
+    distributorCode: "",
     legalDisclaimer:
-      "Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir. Herbalife Nutrition resmi sitesi değildir. Ürünler orijinal Herbalife ürünleridir.",
+      "This site belongs to an independent Herbalife Nutrition distributor. It is not the official Herbalife Nutrition website. Products are original Herbalife products.",
   },
   contact: {
-    address: "Türkiye",
-    email: "info@ornek.com",
+    address: "Turkey",
+    email: "info@herbalkapida.com",
     phone: "+90 500 000 00 00",
-    hours: "Pzt — Paz / 09:00 — 20:00",
-    locationLabel: "Türkiye",
+    hours: "Mon — Sun / 09:00 — 20:00",
+    locationLabel: "Turkey",
     latitude: "",
     longitude: "",
   },
   seo: {
-    title: "Herbal Ürünleri | Orijinal Herbalife Ürünleri",
+    title: "Herbal Kapıda | Original Herbalife Products",
     description:
-      "Orijinal Herbalife ürünleri, avantajlı setler ve kişiselleştirilmiş beslenme danışmanlığı. Bağımsız distribütör Emine Özberk.",
+      "Original Herbalife products, value bundles, and personalized nutrition coaching. Independent distributor Herbal Kapıda — herbalkapida.com.",
     keywords: [
+      "Herbal Kapıda",
       "Herbalife",
-      "Formül 1",
-      "kilo kontrolü",
-      "protein içeceği",
-      "avantajlı setler",
-      "beslenme",
-      "Emine Özberk",
+      "Formula 1",
+      "weight management",
+      "protein shake",
+      "bundles",
+      "nutrition",
     ],
     ogImage: stockImage("og"),
   },
   navigation: {
     header: [
-      { href: "/urunler", label: "Ürünler" },
-      { href: "/hakkimizda", label: "Hakkımızda" },
-      { href: "/blog", label: "Yazılar" },
-      { href: "/medya", label: "Medya" },
-      { href: "/sss", label: "SSS" },
-      { href: "/yorum", label: "Yorumlar" },
-      { href: "/iletisim", label: "İletişim" },
+      { href: "/urunler", label: "Products" },
+      { href: "/hakkimizda", label: "About" },
+      { href: "/blog", label: "Articles" },
+      { href: "/medya", label: "Media" },
+      { href: "/sss", label: "FAQ" },
+      { href: "/yorum", label: "Reviews" },
+      { href: "/iletisim", label: "Contact" },
     ],
     footerNav: [
       { href: "/urunler", label: "Ürünler" },
@@ -154,8 +196,26 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   },
   footer: {
     description:
-      "Bağımsız distribütör Emine Özberk ile orijinal Herbalife ürünleri ve birebir beslenme desteği.",
+      "Herbal Kapıda ile orijinal Herbalife ürünleri, avantajlı setler ve birebir beslenme desteği.",
     copyrightSuffix: "Bağımsız Distribütör",
+  },
+  promises: {
+    sameDayCutoff: "13:00",
+    sameDayShipping: true,
+    freeCoaching: true,
+    returnDays: 30,
+  },
+  legal: {
+    supplementDisclaimer:
+      "Bu ürünler gıda takviyesidir; hastalıkların teşhis, tedavi veya önlenmesi amacıyla kullanılmaz. Dengeli ve çeşitli beslenme ile sağlıklı yaşam tarzı önemlidir. Hamileler, emzirenler ve kronik rahatsızlığı olanlar kullanmadan önce hekimine danışmalıdır.",
+    weightDisclaimer:
+      "Kilo kontrolü ve vücut kompozisyonu sonuçları kişiden kişiye değişir; tek başına ürün kullanımı yeterli değildir. Kalori alımı, fiziksel aktivite ve düzenli takip birlikte değerlendirilmelidir. Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir.",
+  },
+  membership: {
+    ctaLabel: "Resmi Herbalife üyeliği",
+    ctaUrl: "https://www.myherbalife.com",
+    disclaimer:
+      "Herbalife Nutrition distribütörü olmak için kayıt yalnızca resmi myHerbalife platformu üzerinden yapılır. Bu site bağımsız bir distribütör sitesidir.",
   },
 };
 
@@ -183,14 +243,32 @@ function mergeSettings(
     social: { ...DEFAULT_SETTINGS.social, ...(raw.social as object) },
     whatsapp: mergeWhatsAppSettings(raw.whatsapp),
     footer: { ...DEFAULT_SETTINGS.footer, ...(raw.footer as object) },
+    promises: {
+      ...DEFAULT_SETTINGS.promises,
+      ...(raw.promises as SiteSettings["promises"]),
+    },
+    legal: {
+      ...DEFAULT_SETTINGS.legal,
+      ...(raw.legal as SiteSettings["legal"]),
+    },
+    membership: {
+      ...DEFAULT_SETTINGS.membership,
+      ...(raw.membership as SiteSettings["membership"]),
+    },
+    localization: raw.localization as SiteSettings["localization"],
+    shipping: raw.shipping as SiteSettings["shipping"],
+    analytics: raw.analytics as SiteSettings["analytics"],
   };
 }
 
-export async function getSiteSettings(): Promise<SiteSettings> {
+export async function getSiteSettings(locale = "tr"): Promise<SiteSettings> {
   try {
-    const res = await fetch(`${getApiBase()}/cms/settings`, {
-      next: { revalidate: CMS_REVALIDATE },
-    });
+    const res = await fetch(
+      `${getApiBase()}/cms/settings?locale=${encodeURIComponent(locale)}`,
+      {
+        next: { revalidate: CMS_REVALIDATE, tags: [`cms-settings-${locale}`] },
+      },
+    );
     if (!res.ok) return DEFAULT_SETTINGS;
     const data = (await res.json()) as Record<string, Record<string, unknown>>;
     return mergeSettings(data);
@@ -201,11 +279,14 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
 export async function getContentSections(
   page: string,
+  locale = "tr",
 ): Promise<ContentSection[]> {
   try {
     const res = await fetch(
-      `${getApiBase()}/cms/sections?page=${encodeURIComponent(page)}`,
-      { next: { revalidate: CMS_REVALIDATE } },
+      `${getApiBase()}/cms/sections?page=${encodeURIComponent(page)}&locale=${encodeURIComponent(locale)}`,
+      {
+        next: { revalidate: CMS_REVALIDATE, tags: [`cms-sections-${page}-${locale}`] },
+      },
     );
     if (!res.ok) return [];
     return (await res.json()) as ContentSection[];

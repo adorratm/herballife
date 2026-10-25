@@ -41,15 +41,25 @@ export class CmsController {
   @Public()
   @Get('settings')
   @ApiOperation({ summary: 'Yayımlanmış site ayarları' })
-  getPublicSettings() {
-    return this.cmsService.getPublicSettings();
+  getPublicSettings(@Query('locale') locale?: string) {
+    return this.cmsService.getPublicSettings(locale);
+  }
+
+  @Public()
+  @Get('ui-messages')
+  @ApiOperation({ summary: 'next-intl UI mesaj ağacı (locale)' })
+  getUiMessages(@Query('locale') locale?: string) {
+    return this.cmsService.getUiMessages(locale);
   }
 
   @Public()
   @Get('sections')
   @ApiOperation({ summary: 'Yayımlanmış içerik bölümleri' })
-  getPublicSections(@Query('page') page?: string) {
-    return this.cmsService.getPublicSections(page);
+  getPublicSections(
+    @Query('page') page?: string,
+    @Query('locale') locale?: string,
+  ) {
+    return this.cmsService.getPublicSections(page, locale);
   }
 
   @ApiBearerAuth()

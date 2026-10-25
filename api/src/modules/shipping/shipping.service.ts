@@ -34,6 +34,10 @@ import {
   statusLabel,
 } from '@modules/notifications/notification.templates';
 import { ConfigService } from '@nestjs/config';
+import {
+  DHL_TRACKING_BASE,
+  hasDhlCredentials,
+} from '@modules/shipping/adapters/dhl.adapter';
 
 @Injectable()
 export class ShippingService {
@@ -99,6 +103,7 @@ export class ShippingService {
     const adapter = this.getAdapter(dto.provider);
     const allowMock = this.config.get<boolean>('shipping.allowMock') === true;
 
+    const manualCode = dto.trackingNumber?.trim();
     const result = await adapter.createShipment({
       orderId: order.id,
       orderNumber: order.orderNumber,
@@ -107,6 +112,9 @@ export class ShippingService {
       address: order.shippingAddress,
       credentials,
       allowMock,
+      trackingNumber: manualCode,
+      trackingUrl: dto.trackingUrl,
+      manualStatus: manualCode ? ShipmentStatus.IN_TRANSIT : undefined,
     });
 
     const shipment = this.em.create(Shipment, {
@@ -162,12 +170,6 @@ export class ShippingService {
     const config = await this.em.findOne(ShippingProviderConfig, {
       where: { provider: dto.provider },
     });
-    const adapter = this.getAdapter(dto.provider);
-    const result = await adapter.trackShipment(
-      dto.trackingNumber,
-      config?.credentials || {},
-    );
-
     const shipment = await this.em.findOne(Shipment, {
       where: {
         provider: dto.provider,
@@ -175,6 +177,41 @@ export class ShippingService {
       },
       relations: { order: true },
     });
+
+    const credentials = config?.credentials || {};
+    const adapter = this.getAdapter(dto.provider);
+    const useDbOnly =
+      dto.provider === ShippingProviderCode.DHL &&
+      !hasDhlCredentials(credentials);
+
+    let result = await adapter.trackShipment(
+      dto.trackingNumber,
+      credentials,
+    );
+
+    if (useDbOnly && shipment) {
+      const trackingUrl =
+        shipment.trackingUrl ||
+        `${DHL_TRACKING_BASE}${encodeURIComponent(dto.trackingNumber)}`;
+      result = {
+        ...result,
+        status: shipment.status,
+        events: [
+          {
+            date: shipment.updatedAt.toISOString(),
+            description: `Kayıtlı durum: ${statusLabel(shipment.status)}`,
+          },
+        ],
+        rawResponse: {
+          ...(result.rawResponse || {}),
+          dbStatus: shipment.status,
+        },
+      };
+      if (!shipment.trackingUrl) {
+        shipment.trackingUrl = trackingUrl;
+        await this.em.save(shipment);
+      }
+    }
 
     const previousStatus = shipment?.status;
     const mappedEvents = this.mapEvents(result.events);
@@ -227,11 +264,17 @@ export class ShippingService {
       });
     }
 
+    const publicTrackingUrl =
+      shipment?.trackingUrl ||
+      (dto.provider === ShippingProviderCode.DHL
+        ? `${DHL_TRACKING_BASE}${encodeURIComponent(dto.trackingNumber)}`
+        : undefined);
+
     return {
       ...result,
       code: dto.trackingNumber,
       provider: dto.provider,
-      trackingUrl: shipment?.trackingUrl,
+      trackingUrl: publicTrackingUrl,
       events: mappedEvents,
       order: shipment?.order
         ? {
@@ -263,8 +306,13 @@ export class ShippingService {
       where: { isEnabled: true },
       order: { displayName: 'ASC' },
     });
+    const active = configs.filter(
+      (c) =>
+        c.provider === ShippingProviderCode.DHL ||
+        c.settings?.explicitlyEnabled === true,
+    );
     const feeDefault = '89.90';
-    return configs.map((c) => ({
+    return active.map((c) => ({
       id: c.provider,
       code: c.provider,
       name: c.displayName,

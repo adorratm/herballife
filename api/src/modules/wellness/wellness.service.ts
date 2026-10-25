@@ -3,6 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager, In } from 'typeorm';
 import { User } from '@entities/user.entity';
@@ -13,10 +15,26 @@ import {
 } from '@entities/wellness-meal-log.entity';
 import { WellnessMeasurement } from '@entities/wellness-measurement.entity';
 import { CoachWhatsappBlast } from '@entities/coach-whatsapp-blast.entity';
+import { InboxService } from '@modules/notifications/inbox.service';
+import { EmailProvider } from '@modules/notifications/providers/email.provider';
+import {
+  wellnessMealDecisionCopy,
+  wellnessMeasurementDecisionCopy,
+} from '@modules/notifications/inbox.templates';
+import {
+  QUEUE_WHATSAPP_BLAST,
+  WhatsappBlastJobPayload,
+} from '@modules/queues/queue.constants';
 
 @Injectable()
 export class WellnessService {
-  constructor(@InjectEntityManager() private readonly em: EntityManager) {}
+  constructor(
+    @InjectEntityManager() private readonly em: EntityManager,
+    @InjectQueue(QUEUE_WHATSAPP_BLAST)
+    private readonly whatsappBlastQueue: Queue<WhatsappBlastJobPayload>,
+    private readonly inbox: InboxService,
+    private readonly email: EmailProvider,
+  ) {}
 
   private today(): string {
     return new Date().toISOString().slice(0, 10);
@@ -147,7 +165,12 @@ export class WellnessService {
     if (!row) throw new NotFoundException('Öğün kaydı yok');
     row.status = status;
     row.coachNote = coachNote || null;
-    return this.em.save(row);
+    const saved = await this.em.save(row);
+    const approved = status === WellnessApprovalStatus.APPROVED;
+    const copy = wellnessMealDecisionCopy(approved, coachNote);
+    void this.inbox.notifyUser(row.userId, copy);
+    void this.maybeEmailWellnessDecision(row.userId, copy.title, copy.body);
+    return saved;
   }
 
   async decideMeasurement(
@@ -159,7 +182,32 @@ export class WellnessService {
     if (!row) throw new NotFoundException('Ölçüm kaydı yok');
     row.status = status;
     row.coachNote = coachNote || null;
-    return this.em.save(row);
+    const saved = await this.em.save(row);
+    const approved = status === WellnessApprovalStatus.APPROVED;
+    const copy = wellnessMeasurementDecisionCopy(approved, coachNote);
+    void this.inbox.notifyUser(row.userId, copy);
+    void this.maybeEmailWellnessDecision(row.userId, copy.title, copy.body);
+    return saved;
+  }
+
+  private async maybeEmailWellnessDecision(
+    userId: string,
+    subject: string,
+    body: string,
+  ) {
+    const user = await this.em.findOne(User, { where: { id: userId } });
+    const to = user?.email?.trim();
+    if (!to) return;
+    try {
+      await this.email.send({
+        to,
+        subject,
+        text: body,
+        html: `<p>${body.replace(/\n/g, '<br/>')}</p>`,
+      });
+    } catch {
+      /* e-posta opsiyonel */
+    }
   }
 
   async coachKpis() {
@@ -214,15 +262,29 @@ export class WellnessService {
 
   async createWhatsappBlast(
     createdById: string,
-    message: string,
-    userIds?: string[],
+    input: {
+      templateName: string;
+      languageCode?: string;
+      bodyParams?: string[];
+      message?: string;
+      userIds?: string[];
+    },
   ) {
-    const text = message.trim();
-    if (!text) throw new BadRequestException('Mesaj boş olamaz');
+    const templateName = input.templateName?.trim();
+    if (!templateName) {
+      throw new BadRequestException('Meta şablon adı gerekli');
+    }
+    const languageCode = (input.languageCode || 'tr').trim();
+    const bodyParams = input.bodyParams?.length
+      ? input.bodyParams
+      : ['{{1}}'];
+    const message =
+      input.message?.trim() ||
+      `template:${templateName} (${languageCode})`;
 
     let users: User[];
-    if (userIds?.length) {
-      users = await this.em.find(User, { where: { id: In(userIds) } });
+    if (input.userIds?.length) {
+      users = await this.em.find(User, { where: { id: In(input.userIds) } });
     } else {
       users = await this.listClients(100);
     }
@@ -235,30 +297,43 @@ export class WellnessService {
         userId: u.id,
         phone,
         name,
-        ok: Boolean(phone),
+        ok: false,
       };
     });
 
-    const sentCount = recipients.filter((r) => r.ok).length;
-    const failedCount = recipients.length - sentCount;
-
     const blast = this.em.create(CoachWhatsappBlast, {
       createdById,
-      message: text,
+      message,
+      templateName,
+      languageCode,
+      bodyParams,
       recipientCount: recipients.length,
-      sentCount,
-      failedCount,
+      sentCount: 0,
+      failedCount: 0,
       recipients,
     });
     await this.em.save(blast);
 
+    await this.whatsappBlastQueue.add(
+      'blast',
+      { blastId: blast.id },
+      {
+        attempts: 2,
+        backoff: { type: 'fixed', delay: 5000 },
+        removeOnComplete: 50,
+        removeOnFail: 100,
+      },
+    );
+
     return {
       id: blast.id,
-      message: text,
+      message,
+      templateName,
+      languageCode,
       recipientCount: recipients.length,
-      sentCount,
-      failedCount,
-      note: 'Demo: gerçek WhatsApp API çağrısı yapılmadı; numara olan alıcılar “gönderildi” sayılır.',
+      sentCount: 0,
+      failedCount: 0,
+      queued: true,
       recipients,
     };
   }
@@ -268,5 +343,13 @@ export class WellnessService {
       order: { createdAt: 'DESC' },
       take: limit,
     });
+  }
+
+  async getBlast(id: string) {
+    const blast = await this.em.findOne(CoachWhatsappBlast, {
+      where: { id },
+    });
+    if (!blast) throw new NotFoundException('Gönderim kaydı yok');
+    return blast;
   }
 }

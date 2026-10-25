@@ -15,6 +15,10 @@ import {
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import {
+  SUPPORTED_CURRENCIES,
+  SUPPORTED_LOCALES,
+} from '@common/catalog/localization.types';
 
 export class ProductVariantDto {
   @ApiPropertyOptional()
@@ -35,6 +39,24 @@ export class ProductVariantDto {
   @ApiProperty()
   @IsString()
   price!: string;
+
+  @ApiPropertyOptional({
+    description: 'Para birimi başına fiyat (TRY, USD, EUR, GBP)',
+  })
+  @IsOptional()
+  @IsObject()
+  prices?: Record<string, number>;
+
+  @ApiPropertyOptional({ example: 'shake_flavor' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(80)
+  categoryKey?: string;
+
+  @ApiPropertyOptional({ description: 'en/de/fr/es etiket çevirileri' })
+  @IsOptional()
+  @IsObject()
+  translations?: Record<string, { name?: string }>;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -58,6 +80,18 @@ export class ProductVariantDto {
   @IsString()
   @MaxLength(10)
   expiresAt?: string;
+}
+
+export class CatalogLocaleQueryDto {
+  @ApiPropertyOptional({ enum: SUPPORTED_LOCALES, default: 'tr' })
+  @IsOptional()
+  @IsIn(SUPPORTED_LOCALES)
+  locale?: string;
+
+  @ApiPropertyOptional({ enum: SUPPORTED_CURRENCIES })
+  @IsOptional()
+  @IsIn(SUPPORTED_CURRENCIES)
+  currency?: string;
 }
 
 export class CreateCategoryDto {
@@ -96,6 +130,11 @@ export class CreateCategoryDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsObject()
+  translations?: Record<string, { name?: string; description?: string }>;
 }
 
 export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {}
@@ -172,6 +211,16 @@ export class CreateProductDto {
   @IsString()
   imageUrl?: string;
 
+  @ApiPropertyOptional({ description: 'Dil başına vitrin görseli' })
+  @IsOptional()
+  @IsObject()
+  imagesByLocale?: Record<string, string>;
+
+  @ApiPropertyOptional({ default: true })
+  @IsOptional()
+  @IsBoolean()
+  useSharedImage?: boolean;
+
   @ApiPropertyOptional()
   @IsOptional()
   @IsArray()
@@ -186,6 +235,24 @@ export class CreateProductDto {
   @ApiProperty()
   @IsString()
   basePrice!: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsObject()
+  prices?: Record<string, number>;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsObject()
+  translations?: Record<
+    string,
+    { name?: string; description?: string; shortDescription?: string }
+  >;
+
+  @ApiPropertyOptional({ default: true })
+  @IsOptional()
+  @IsBoolean()
+  priceTaxIncluded?: boolean;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -318,7 +385,7 @@ export class CreateProductDto {
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
 
-export class ProductQueryDto {
+export class ProductQueryDto extends CatalogLocaleQueryDto {
   @ApiPropertyOptional({ description: 'Metin arama' })
   @IsOptional()
   @IsString()

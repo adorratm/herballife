@@ -1,16 +1,22 @@
-const ITEMS = [
-  "%100 Orijinal Ürün",
-  "Ücretsiz Kargo",
-  "Birebir Koç Takibi",
-  "Güvenli Ödeme",
-  "Hızlı Teslimat",
-  "WhatsApp Destek",
-  "Avantajlı Setler",
-  "Karıştırıcı hediyesi",
-];
+"use client";
+
+import { useTranslations } from "next-intl";
+
+const ITEM_KEYS = [
+  "item0",
+  "item1",
+  "item2",
+  "item3",
+  "item4",
+  "item5",
+  "item6",
+  "item7",
+] as const;
 
 export function TrustMarquee() {
-  const loop = [...ITEMS, ...ITEMS];
+  const t = useTranslations("trustMarquee");
+  const items = ITEM_KEYS.map((key) => t(key));
+  const loop = [...items, ...items];
   return (
     <div className="overflow-hidden rounded-full border border-[#ebece8] bg-surface-container-lowest/90 py-2.5 shadow-sm backdrop-blur-sm">
       <div className="marquee-track gap-8 px-4" aria-hidden>
@@ -24,9 +30,7 @@ export function TrustMarquee() {
           </span>
         ))}
       </div>
-      <span className="sr-only">
-        Orijinal ürün, ücretsiz kargo, koç takibi ve güvenli ödeme güvenceleri.
-      </span>
+      <span className="sr-only">{t("srOnly")}</span>
     </div>
   );
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -16,7 +17,7 @@ import {
   ACCOUNT_LINKS,
   CATEGORY_CHIPS,
   DEFAULT_HEADER_NAV,
-  SUPPORT_LINKS,
+  MOBILE_SUPPORT_LINKS,
   UTILITY_LINKS,
   dedupeHeaderNav,
 } from "@/lib/site-nav";
@@ -25,6 +26,7 @@ import {
   subscribeWishlist,
 } from "@/lib/wishlist";
 import { freeShippingThreshold } from "@/lib/shipping";
+import { LocaleCurrencyControls } from "@/components/LocaleCurrencyControls";
 import { formatMoney } from "@/lib/format";
 
 type Props = {
@@ -37,6 +39,8 @@ function linkActive(pathname: string, href: string) {
 }
 
 export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
+  const tHeader = useTranslations("header");
+  const tNav = useTranslations("nav");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
@@ -52,9 +56,34 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
       : DEFAULT_HEADER_NAV,
   );
   const brand = settings.brand;
+  const logoText = brand.logoUrl
+    ? brand.name
+    : brand.name?.trim() || "Herbal Kapıda";
   const phone = settings.contact.phone;
   const catActive = pathname.startsWith("/urunler");
   const pageLinks = nav.filter((item) => item.href !== "/urunler");
+
+  /** CMS Türkçe etiketleri locale mesajlarıyla değiştir (TR dışı dilde TR menü kalmasın) */
+  function navLabel(href: string, fallback: string): string {
+    const map: Record<string, string> = {
+      "/urunler": tNav("products"),
+      "/hakkimizda": tNav("about"),
+      "/blog": tNav("blog"),
+      "/medya": tNav("media"),
+      "/sss": tNav("faq"),
+      "/yorum": tNav("reviews"),
+      "/iletisim": tNav("contact"),
+      "/sepet": tNav("cart"),
+      "/hesabim": tNav("account"),
+      "/hesabim/favoriler": tNav("favorites"),
+      "/giris": tNav("login"),
+      "/siparis-sorgula": tHeader("orderLookup"),
+      "/odeme-bildirimi": tHeader("paymentNotice"),
+      "/banka-hesaplari": tHeader("bankAccounts"),
+      "/kocluk": tNav("coaching"),
+    };
+    return map[href] || fallback;
+  }
 
   function openCats() {
     if (catCloseTimer.current) clearTimeout(catCloseTimer.current);
@@ -125,11 +154,11 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
             className="mobile-menu fixed inset-0 z-90 lg:hidden"
             role="dialog"
             aria-modal="true"
-            aria-label="Mobil menü"
+            aria-label={tHeader("mobileMenu")}
           >
             <button
               type="button"
-              aria-label="Kapat"
+              aria-label={tHeader("close")}
               className="mobile-menu-backdrop absolute inset-0 bg-on-surface/50"
               onClick={() => setOpen(false)}
             />
@@ -146,7 +175,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                 </div>
                 <button
                   type="button"
-                  aria-label="Menüyü kapat"
+                  aria-label={tHeader("closeMenu")}
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-container-low text-on-surface"
                   onClick={() => setOpen(false)}
                 >
@@ -154,18 +183,33 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                 </button>
               </div>
 
+              <div className="shrink-0 border-b border-outline-variant px-4 py-4">
+                <LocaleCurrencyControls />
+              </div>
+
+              {phone ? (
+                <div className="shrink-0 border-b border-outline-variant px-4 py-3">
+                  <a
+                    href={`tel:${phone.replace(/\s/g, "")}`}
+                    className="flex w-full items-center justify-center rounded-xl bg-primary px-4 py-3 text-sm font-bold text-on-primary"
+                  >
+                    {tHeader("call")} · {phone}
+                  </a>
+                </div>
+              ) : null}
+
               <div className="flex-1 overflow-auto px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
                 <section className="mb-5">
                   <div className="mb-2 flex items-center justify-between px-1">
                     <p className="text-xs font-bold uppercase tracking-wide text-primary">
-                      Kategoriler
+                      {tHeader("categories")}
                     </p>
                     <Link
                       href="/urunler"
                       onClick={() => setOpen(false)}
                       className="text-xs font-bold text-primary"
                     >
-                      Tümü
+                      {tHeader("allCategories")}
                     </Link>
                   </div>
                   <div className="grid grid-cols-2 gap-2.5">
@@ -194,7 +238,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                             />
                             {chip.accent ? (
                               <span className="absolute left-2 top-2 rounded-full bg-flash px-2 py-0.5 text-[10px] font-bold text-white">
-                                Fırsat
+                                {tHeader("dealBadge")}
                               </span>
                             ) : null}
                           </div>
@@ -224,7 +268,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
 
                 <section className="mb-5">
                   <p className="mb-2 px-1 text-xs font-bold uppercase tracking-wide text-on-surface-variant">
-                    Sayfalar
+                    {tHeader("pages")}
                   </p>
                   <nav className="flex flex-col overflow-hidden rounded-xl border border-outline-variant">
                     {nav.map((item, i) => (
@@ -240,7 +284,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                             : "text-on-surface"
                         }`}
                       >
-                        {item.label}
+                        {navLabel(item.href, item.label)}
                       </Link>
                     ))}
                   </nav>
@@ -248,10 +292,10 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
 
                 <section className="mb-5">
                   <p className="mb-2 px-1 text-xs font-bold uppercase tracking-wide text-on-surface-variant">
-                    Sipariş
+                    {tHeader("support")}
                   </p>
                   <nav className="flex flex-col overflow-hidden rounded-xl border border-outline-variant">
-                    {SUPPORT_LINKS.slice(0, 4).map((item, i) => (
+                    {MOBILE_SUPPORT_LINKS.map((item, i) => (
                       <Link
                         key={`m-sup-${item.href}`}
                         href={item.href}
@@ -260,7 +304,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                           i > 0 ? "border-t border-outline-variant" : ""
                         }`}
                       >
-                        {item.label}
+                        {navLabel(item.href, item.label)}
                       </Link>
                     ))}
                   </nav>
@@ -268,7 +312,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
 
                 <section className="mb-2">
                   <p className="mb-2 px-1 text-xs font-bold uppercase tracking-wide text-on-surface-variant">
-                    Hesap
+                    {tHeader("accountSection")}
                   </p>
                   <nav className="flex flex-col overflow-hidden rounded-xl border border-outline-variant">
                     {ACCOUNT_LINKS.map((item, i) => (
@@ -280,20 +324,12 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                           i > 0 ? "border-t border-outline-variant" : ""
                         }`}
                       >
-                        {item.label}
+                        {navLabel(item.href, item.label)}
                       </Link>
                     ))}
                   </nav>
                 </section>
 
-                {phone ? (
-                  <a
-                    href={`tel:${phone.replace(/\s/g, "")}`}
-                    className="mt-4 flex items-center justify-center rounded-xl bg-primary px-4 py-3.5 text-sm font-bold text-on-primary"
-                  >
-                    Ara · {phone}
-                  </a>
-                ) : null}
               </div>
             </div>
           </div>,
@@ -308,10 +344,13 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
           <div className="page-shell flex items-center justify-between gap-4 py-2 text-[13px]">
             <p className="font-semibold text-on-primary">
               {freeShippingThreshold() > 0
-                ? `${formatMoney(freeShippingThreshold())} üzeri ücretsiz kargo · PayTR güvenli ödeme`
-                : "Hızlı kargo · PayTR güvenli ödeme"}
+                ? tHeader("freeShippingBanner", {
+                    amount: formatMoney(freeShippingThreshold()),
+                  })
+                : tHeader("shippingBannerShort")}
             </p>
             <div className="flex items-center gap-4">
+              <LocaleCurrencyControls />
               <DealStripCountdown />
               {phone ? (
                 <a
@@ -331,7 +370,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                   }
                   className="font-medium text-on-primary/85 hover:text-on-primary"
                 >
-                  {item.label}
+                  {navLabel(item.href, item.label)}
                 </Link>
               ))}
             </div>
@@ -346,19 +385,26 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
             {brand.logoUrl ? (
               <Image
                 src={brand.logoUrl}
-                alt={brand.name}
+                alt={logoText}
                 width={44}
                 height={44}
                 className="h-10 w-10 shrink-0 rounded-xl object-cover ring-2 ring-primary/15 sm:h-11 sm:w-11"
               />
             ) : (
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-base font-bold text-on-primary sm:h-11 sm:w-11 sm:text-lg">
-                {brand.name.slice(0, 1)}
+              <span className="flex h-10 min-w-10 shrink-0 items-center justify-center rounded-xl bg-primary px-2 text-[11px] font-bold leading-tight text-on-primary sm:h-11 sm:min-w-11 sm:px-2.5 sm:text-xs">
+                {logoText}
               </span>
             )}
             <span className="min-w-0">
-              <span className="block truncate font-display text-base font-bold tracking-tight text-on-surface sm:text-lg xl:text-xl">
-                {brand.name}
+              <span className="flex min-w-0 items-center gap-1.5">
+                <span className="truncate font-display text-base font-bold tracking-tight text-on-surface sm:text-lg xl:text-xl">
+                  {logoText}
+                </span>
+                {brand.distributorCode?.trim() ? (
+                  <span className="shrink-0 rounded-full border border-primary/25 bg-primary-fixed px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-wide text-primary sm:text-[10px]">
+                    ID {brand.distributorCode.trim()}
+                  </span>
+                ) : null}
               </span>
               <span className="mt-0.5 block truncate text-[11px] font-medium text-on-surface-variant sm:text-xs">
                 {brand.distributorName}
@@ -384,7 +430,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                     : "text-on-surface hover:text-primary"
                 }`}
               >
-                Ürünler
+                {tNav("products")}
                 <ChevronIcon open={catOpen} />
               </button>
               {(catActive || catOpen) && (
@@ -400,17 +446,17 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                     <div className="flex items-center justify-between gap-2 border-b border-outline-variant bg-surface-container-low px-3 py-2.5 xl:gap-3 xl:px-5 xl:py-3.5">
                       <div className="min-w-0">
                         <p className="hidden text-[10px] font-bold uppercase tracking-wide text-primary xl:block">
-                          Katalog
+                          {tHeader("catalog")}
                         </p>
                         <p className="truncate text-sm font-bold text-on-surface xl:text-base">
-                          Kategoriler
+                          {tHeader("categories")}
                         </p>
                       </div>
                       <Link
                         href="/urunler"
                         className="shrink-0 cursor-pointer rounded-full border border-primary bg-primary px-2.5 py-1.5 text-[11px] font-bold text-on-primary transition-colors hover:bg-primary-container xl:px-3.5 xl:py-2 xl:text-sm"
                       >
-                        Tüm ürünler →
+                        {tHeader("allProducts")}
                       </Link>
                     </div>
                     <div className="grid grid-cols-4 gap-1.5 p-2 xl:gap-3 xl:p-4 2xl:gap-3.5 2xl:p-5">
@@ -438,7 +484,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                               />
                               {chip.accent ? (
                                 <span className="absolute left-2 top-2 rounded-full bg-flash px-1.5 py-0.5 text-[8px] font-bold uppercase text-white xl:px-2 xl:text-[10px]">
-                                  Hediyeli
+                                  {tHeader("giftBadge")}
                                 </span>
                               ) : null}
                             </div>
@@ -483,7 +529,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                       : "text-on-surface hover:text-primary"
                   }`}
                 >
-                  {item.label}
+                  {navLabel(item.href, item.label)}
                   {active ? (
                     <span
                       className="absolute inset-x-1 -bottom-0.5 h-0.5 rounded-full bg-primary xl:inset-x-2.5"
@@ -496,7 +542,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
           </nav>
 
           <div className="flex shrink-0 items-center justify-self-end gap-0.5 sm:gap-1">
-            <div className="w-auto 2xl:w-52">
+            <div className="w-auto 2xl:w-52" data-tour="search">
               <SiteSearch />
             </div>
 
@@ -509,8 +555,8 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
             <Link
               href={favoritesHref}
               className="relative hidden h-10 w-10 items-center justify-center rounded-full text-on-surface hover:bg-surface-container-low md:flex"
-              aria-label="Favorilerim"
-              title="Favorilerim"
+              aria-label={tNav("favorites")}
+              title={tNav("favorites")}
             >
               <HeartIcon />
               {favCount > 0 ? (
@@ -522,11 +568,14 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
 
             <Link
               href="/sepet"
+              data-tour="cart"
               className="relative flex h-10 w-10 items-center justify-center rounded-full text-on-surface hover:bg-surface-container-low 2xl:w-auto 2xl:gap-2 2xl:px-3"
-              aria-label="Sepet"
+              aria-label={tNav("cart")}
             >
               <CartIcon />
-              <span className="hidden text-sm font-medium 2xl:inline">Sepet</span>
+              <span className="hidden text-sm font-medium 2xl:inline">
+                {tNav("cart")}
+              </span>
               {count > 0 ? (
                 <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-on-primary 2xl:static 2xl:h-5 2xl:min-w-5 2xl:px-1.5 2xl:text-[11px]">
                   {count > 99 ? "99+" : count}
@@ -536,15 +585,20 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
 
             <Link
               href={accountHref}
+              data-tour="account"
               className="hidden h-9 items-center rounded-full border border-outline-variant px-3 text-xs font-medium text-on-surface transition-colors hover:border-primary hover:text-primary lg:inline-flex xl:h-10 xl:px-3.5 xl:text-sm"
             >
-              {authed ? "Hesabım" : "Giriş"}
+              {authed ? tNav("account") : tNav("login")}
             </Link>
+
+            <div className="lg:hidden">
+              <LocaleCurrencyControls compact />
+            </div>
 
             <button
               type="button"
               className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-on-primary lg:hidden"
-              aria-label="Menüyü aç"
+              aria-label={tHeader("openMenu")}
               aria-expanded={open}
               onClick={() => setOpen(true)}
             >

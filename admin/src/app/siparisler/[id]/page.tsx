@@ -43,6 +43,8 @@ export default function OrderDetailPage() {
   >([]);
   const [status, setStatus] = useState<OrderStatus>('pending_payment');
   const [provider, setProvider] = useState('');
+  const [trackingNumber, setTrackingNumber] = useState('');
+  const [trackingUrl, setTrackingUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [shipping, setShipping] = useState(false);
@@ -89,7 +91,9 @@ export default function OrderDetailPage() {
         (p) => p.isEnabled,
       );
       setProviders(list);
-      if (list[0]) setProvider(list[0].provider);
+      const preferred =
+        list.find((p) => p.provider === 'dhl') ?? list[0];
+      if (preferred) setProvider(preferred.provider);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Sipariş yüklenemedi');
     } finally {
@@ -134,13 +138,25 @@ export default function OrderDetailPage() {
     setMessage(null);
     setError(null);
     try {
+      const shipmentBody: {
+        provider: string;
+        orderId?: string;
+        trackingNumber?: string;
+        trackingUrl?: string;
+      } = { provider };
+      const code = trackingNumber.trim();
+      if (code) {
+        shipmentBody.trackingNumber = code;
+        const url = trackingUrl.trim();
+        if (url) shipmentBody.trackingUrl = url;
+      }
       await api(`/orders/${id}/shipments`, {
         method: 'POST',
-        body: { provider },
+        body: shipmentBody,
       }).catch(() =>
         api('/shipping/shipments', {
           method: 'POST',
-          body: { orderId: id, provider },
+          body: { orderId: id, ...shipmentBody },
         }),
       );
       setMessage('Kargo oluşturuldu');
@@ -528,6 +544,24 @@ export default function OrderDetailPage() {
                   ))
                 )}
               </select>
+              <label className="block text-xs">
+                <span className="text-muted">Manuel DHL takip kodu (opsiyonel)</span>
+                <input
+                  value={trackingNumber}
+                  onChange={(e) => setTrackingNumber(e.target.value)}
+                  placeholder="API yokken zorunlu"
+                  className="mt-1 w-full border border-border-muted bg-background px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="block text-xs">
+                <span className="text-muted">Takip URL (opsiyonel)</span>
+                <input
+                  value={trackingUrl}
+                  onChange={(e) => setTrackingUrl(e.target.value)}
+                  placeholder="Boş bırakılırsa DHL varsayılan link"
+                  className="mt-1 w-full border border-border-muted bg-background px-3 py-2 text-sm"
+                />
+              </label>
               <button
                 type="submit"
                 disabled={shipping || !provider}
@@ -558,13 +592,23 @@ export default function OrderDetailPage() {
                   key={item.id}
                   className="flex justify-between gap-4 px-4 py-3 text-sm"
                 >
-                  <div>
+                  <div className="flex min-w-0 gap-3">
+                    {item.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={item.imageUrl}
+                        alt=""
+                        className="h-12 w-12 shrink-0 border border-border-muted object-cover"
+                      />
+                    ) : null}
+                    <div className="min-w-0">
                     <p>
                       {item.productName} × {item.quantity}
                     </p>
                     {item.variantLabel ? (
                       <p className="text-xs text-muted">{item.variantLabel}</p>
                     ) : null}
+                    </div>
                   </div>
                   <span className="mono">
                     {formatMoney(item.lineTotal, currency)}

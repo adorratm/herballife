@@ -4,26 +4,52 @@ import { EntityManager } from 'typeorm';
 import { SiteSetting } from '@entities/site-setting.entity';
 import { ContentSection } from '@entities/content-section.entity';
 import {
+  mergeCmsSettingPreserveTranslations,
+  normalizeLocale,
+  resolveLocalizedRecord,
+} from '@common/catalog/localization.util';
+import type { LocaleCode } from '@common/catalog/localization.types';
+import {
   BulkSiteSettingsDto,
   CreateContentSectionDto,
   UpdateContentSectionDto,
 } from '@modules/cms/dto/cms.dto';
 
+const PRIVATE_SETTING_KEYS = new Set(['wholesale_catalog', 'ui_messages']);
+
 @Injectable()
 export class CmsService {
   constructor(@InjectEntityManager() private readonly em: EntityManager) {}
 
-  async getPublicSettings(): Promise<Record<string, Record<string, unknown>>> {
+  async getPublicSettings(
+    localeRaw?: string | null,
+  ): Promise<Record<string, Record<string, unknown>>> {
+    const locale = normalizeLocale(localeRaw);
     const rows = await this.em.find(SiteSetting, {
       order: { key: 'ASC' },
     });
-    // Gizli / dahili anahtarlar public CMS yanıtına düşmesin
-    const privateKeys = new Set(['wholesale_catalog']);
     return Object.fromEntries(
       rows
-        .filter((row) => !privateKeys.has(row.key))
-        .map((row) => [row.key, row.value]),
+        .filter((row) => !PRIVATE_SETTING_KEYS.has(row.key))
+        .map((row) => {
+          const value = row.value as Record<string, unknown>;
+          return [row.key, resolveLocalizedRecord(value, locale)];
+        }),
     );
+  }
+
+  async getUiMessages(localeRaw?: string | null): Promise<Record<string, unknown>> {
+    const locale = normalizeLocale(localeRaw);
+    const row = await this.em.findOne(SiteSetting, {
+      where: { key: 'ui_messages' },
+    });
+    if (!row?.value || typeof row.value !== 'object') {
+      return {};
+    }
+    const root = row.value as {
+      locales?: Partial<Record<LocaleCode, Record<string, unknown>>>;
+    };
+    return root.locales?.[locale] ?? root.locales?.tr ?? {};
   }
 
   async listSettingsAdmin(): Promise<SiteSetting[]> {
@@ -44,7 +70,10 @@ export class CmsService {
           description: item.description ?? null,
         });
       } else {
-        row.value = item.value;
+        row.value = mergeCmsSettingPreserveTranslations(
+          row.value as Record<string, unknown>,
+          item.value as Record<string, unknown>,
+        );
         row.group = item.group ?? row.group;
         row.description = item.description ?? row.description;
       }
@@ -53,7 +82,11 @@ export class CmsService {
     return saved;
   }
 
-  async getPublicSections(page?: string): Promise<ContentSection[]> {
+  async getPublicSections(
+    page?: string,
+    localeRaw?: string | null,
+  ): Promise<ContentSection[]> {
+    const locale = normalizeLocale(localeRaw);
     const qb = this.em
       .createQueryBuilder(ContentSection, 's')
       .where('s.is_published = :published', { published: true })
@@ -64,7 +97,22 @@ export class CmsService {
       qb.andWhere('s.page = :page', { page });
     }
 
-    return qb.getMany();
+    const sections = await qb.getMany();
+    return sections.map((section) => {
+      const rawContent = section.content as Record<string, unknown>;
+      const translations = rawContent.translations as
+        | Partial<Record<LocaleCode, Record<string, unknown>>>
+        | undefined;
+      let title = section.title;
+      if (locale !== 'tr') {
+        const block = translations?.[locale];
+        if (block && typeof block.sectionTitle === 'string') {
+          title = block.sectionTitle;
+        }
+      }
+      const content = resolveLocalizedRecord(rawContent, locale);
+      return { ...section, title, content };
+    });
   }
 
   async listSectionsAdmin(page?: string): Promise<ContentSection[]> {

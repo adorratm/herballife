@@ -157,6 +157,9 @@ export function trackPurchase(order: {
   orderNumber?: string | null;
   value?: number;
   currency?: string;
+  ga4Id?: string;
+  gtmId?: string;
+  googleAdsId?: string;
 }) {
   if (typeof window === "undefined") return;
   const key = `herbalife_purchase_tracked_${order.id}`;
@@ -181,6 +184,9 @@ export function trackPurchase(order: {
       value,
       currency,
     },
+    ...(order.ga4Id ? { ga4_measurement_id: order.ga4Id } : {}),
+    ...(order.gtmId ? { gtm_container_id: order.gtmId } : {}),
+    ...(order.googleAdsId ? { google_ads_id: order.googleAdsId } : {}),
   });
 
   if (typeof window.fbq === "function") {

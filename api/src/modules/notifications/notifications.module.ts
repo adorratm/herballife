@@ -42,8 +42,10 @@ import { ExpoPushService } from '@modules/notifications/expo-push.service';
   exports: [
     NotificationsService,
     InboxService,
+    EmailProvider,
     BullModule,
     InvoiceEmailService,
+    WhatsAppProviderRouter,
   ],
 })
 export class NotificationsModule {}

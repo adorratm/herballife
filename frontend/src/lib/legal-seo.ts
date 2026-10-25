@@ -1,69 +1,39 @@
 import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getSiteSettings } from "@/lib/cms";
 import { buildPageMetadata } from "@/lib/seo";
 
-const LEGAL_META: Record<
-  string,
-  { title: string; description: string }
-> = {
-  gizlilik: {
-    title: "Gizlilik Politikası",
-    description:
-      "Herbalife gizlilik politikası — kişisel verilerinizin korunması hakkında bilgilendirme.",
-  },
-  kvkk: {
-    title: "KVKK",
-    description:
-      "6698 sayılı KVKK kapsamında Herbalife veri işleme bilgilendirmesi.",
-  },
-  "cerez-politikasi": {
-    title: "Çerez Politikası",
-    description:
-      "Herbalife web sitesinde kullanılan çerezler hakkında bilgilendirme.",
-  },
-  "mesafeli-satis": {
-    title: "Mesafeli Satış Sözleşmesi",
-    description:
-      "Çevrimiçi siparişler için mesafeli satış sözleşmesi metni.",
-  },
-  "on-bilgilendirme": {
-    title: "Ön Bilgilendirme Formu",
-    description:
-      "Mesafeli satış öncesi tüketici ön bilgilendirme formu.",
-  },
-  "iptal-iade": {
-    title: "İptal ve İade",
-    description:
-      "Sipariş iptal, cayma hakkı ve iade koşulları.",
-  },
-  "musteri-memnuniyeti": {
-    title: "Müşteri Memnuniyeti",
-    description:
-      "Herbalife müşteri memnuniyeti politikası ve destek süreci.",
-  },
-  "guvenli-alisveris": {
-    title: "Güvenli Alışveriş",
-    description:
-      "PayTR ile güvenli ödeme, SSL ve kişisel veri koruma bilgilendirmesi.",
-  },
-  "aydinlatma-metni": {
-    title: "Aydınlatma Metni",
-    description:
-      "Kişisel verilerin işlenmesine ilişkin aydınlatma metni.",
-  },
-};
+const LEGAL_SLUGS = [
+  "gizlilik",
+  "kvkk",
+  "cerez-politikasi",
+  "mesafeli-satis",
+  "on-bilgilendirme",
+  "iptal-iade",
+  "musteri-memnuniyeti",
+  "guvenli-alisveris",
+  "aydinlatma-metni",
+] as const;
 
 export async function legalMetadata(slug: string): Promise<Metadata> {
-  const settings = await getSiteSettings();
-  const meta = LEGAL_META[slug] || {
-    title: slug,
-    description: settings.seo.description,
-  };
+  const locale = await getLocale();
+  const [settings, t] = await Promise.all([
+    getSiteSettings(locale),
+    getTranslations("legalSeo"),
+  ]);
+  const known = (LEGAL_SLUGS as readonly string[]).includes(slug);
+  const title = known
+    ? t(`${slug}.title` as "gizlilik.title")
+    : slug;
+  const description = known
+    ? t(`${slug}.description` as "gizlilik.description")
+    : settings.seo.description;
   return buildPageMetadata({
-    title: meta.title,
-    description: meta.description,
+    title,
+    description,
     path: `/${slug}`,
     settings,
-    keywords: ["yasal", "KVKK", meta.title],
+    locale,
+    keywords: [t("keywords"), title],
   });
 }

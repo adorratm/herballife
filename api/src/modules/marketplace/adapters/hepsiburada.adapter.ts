@@ -9,6 +9,7 @@ import {
   PushProductResult,
   PulledOrder,
   SyncStockItem,
+  assertMarketplaceOrdersAllowed,
   hasMarketplaceCredentials,
 } from '@modules/marketplace/adapters/marketplace.adapter';
 import {
@@ -136,6 +137,7 @@ export class HepsiburadaAdapter implements IMarketplaceAdapter {
   }
 
   async pullOrders(credentials: Record<string, string>) {
+    assertMarketplaceOrdersAllowed(credentials, 'Hepsiburada');
     if (!hasMarketplaceCredentials(credentials)) {
       return {
         orders: [

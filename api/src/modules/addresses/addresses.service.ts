@@ -66,6 +66,9 @@ export class AddressesService {
         postalCode: dto.postalCode,
         isDefaultShipping: makeShipping,
         isDefaultBilling: makeBilling,
+        companyTitle: dto.companyTitle?.trim() || null,
+        taxNumber: dto.taxNumber?.trim() || null,
+        taxOffice: dto.taxOffice?.trim() || null,
       });
       return tx.save(address);
     });
@@ -97,6 +100,15 @@ export class AddressesService {
         address.addressLine = dto.addressLine;
       }
       if (dto.postalCode !== undefined) address.postalCode = dto.postalCode;
+      if (dto.companyTitle !== undefined) {
+        address.companyTitle = dto.companyTitle?.trim() || null;
+      }
+      if (dto.taxNumber !== undefined) {
+        address.taxNumber = dto.taxNumber?.trim() || null;
+      }
+      if (dto.taxOffice !== undefined) {
+        address.taxOffice = dto.taxOffice?.trim() || null;
+      }
 
       if (dto.isDefaultShipping === true) {
         await tx.update(

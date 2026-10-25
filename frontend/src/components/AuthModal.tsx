@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { oauthUrl } from "@/lib/api";
 import { loginPath, rememberAuthNext, safeNextPath } from "@/lib/auth";
@@ -22,6 +23,7 @@ export function AuthShell({
   title,
   nextPath,
 }: Props) {
+  const t = useTranslations("auth");
   const isLogin = mode === "login";
   const next = safeNextPath(nextPath, "/hesabim");
   const registerHref =
@@ -34,13 +36,13 @@ export function AuthShell({
     <div className="page-shell mx-auto max-w-xl py-16 md:py-24">
       <div className="page-enter">
         <div className="mb-2 font-meta text-xs uppercase tracking-widest text-primary">
-          {isLogin ? "Oturum açma" : "Hesap oluşturma"}
+          {isLogin ? t("loginEyebrow") : t("registerEyebrow")}
         </div>
         <h1 className="font-display text-4xl leading-none md:text-5xl">
-          {title || (isLogin ? "Giriş" : "Kayıt")}
+          {title || (isLogin ? t("loginTitle") : t("registerTitle"))}
         </h1>
         <p className="mt-4 font-meta text-xs uppercase tracking-widest text-secondary">
-          E-posta ile devam edin veya Google ile bağlanın.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -58,16 +60,16 @@ export function AuthShell({
         <p className="mt-8 font-meta text-[11px] uppercase text-secondary">
           {isLogin ? (
             <>
-              Hesabınız yok mu?{" "}
+              {t("noAccount")}{" "}
               <Link href={registerHref} className="text-primary underline">
-                Kayıt ol
+                {t("registerLink")}
               </Link>
             </>
           ) : (
             <>
-              Zaten üye misiniz?{" "}
+              {t("hasAccount")}{" "}
               <Link href={loginHref} className="text-primary underline">
-                Giriş yap
+                {t("loginLink")}
               </Link>
             </>
           )}
@@ -78,19 +80,20 @@ export function AuthShell({
 }
 
 export function OAuthLinks({ nextPath }: { nextPath?: string }) {
+  const t = useTranslations("auth");
   const next = safeNextPath(nextPath, "/hesabim");
 
   return (
     <div className="mt-8 border-t border-outline-variant/20 pt-8">
       <p className="mb-4 font-meta text-[10px] uppercase tracking-widest text-on-surface-variant">
-        Sosyal giriş
+        {t("socialLogin")}
       </p>
       <a
         href={oauthUrl("google")}
         onClick={() => rememberAuthNext(next)}
         className="oauth-chip block border border-outline-variant/40 px-4 py-3 text-center font-meta text-[11px] uppercase tracking-widest text-secondary hover:border-primary hover:text-primary"
       >
-        Google ile devam et
+        {t("googleContinue")}
       </a>
     </div>
   );

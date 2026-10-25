@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import {
   FAB_BOTTOM_MOBILE,
@@ -9,6 +10,7 @@ import {
 
 /** Mobil: solda — WhatsApp ile aynı boy/yükseklik; scroll ile küçülür-büyür */
 export function HomeStickyCta() {
+  const t = useTranslations("aria");
   const pathname = usePathname();
   const onHome = pathname === "/";
   const expanded = useFabScrollExpand(onHome);
@@ -19,9 +21,9 @@ export function HomeStickyCta() {
     <div className={`fixed left-3 z-40 md:hidden ${FAB_BOTTOM_MOBILE}`}>
       <Link
         href="/urunler/kategori/avantajli-setler"
-        aria-label="Paketleri incele"
-        className={`pointer-events-auto inline-flex h-[46px] items-center justify-center rounded-full border border-primary/40 bg-primary font-meta text-[11px] font-bold uppercase leading-none tracking-widest text-on-primary shadow-[0_8px_24px_rgba(21,122,76,0.35)] transition-all duration-300 ease-out hover:bg-primary-container ${
-          expanded ? "gap-2.5 px-4" : "w-[46px] px-0"
+        aria-label={t("browsePackages")}
+        className={`pointer-events-auto inline-flex h-11.5 items-center justify-center rounded-full border border-primary/40 bg-primary font-meta text-[11px] font-bold uppercase leading-none tracking-widest text-on-primary shadow-[0_8px_24px_rgba(21,122,76,0.35)] transition-all duration-300 ease-out hover:bg-primary-container ${
+          expanded ? "gap-2.5 px-4" : "w-11.5 px-0"
         }`}
       >
         <svg
@@ -45,7 +47,7 @@ export function HomeStickyCta() {
             expanded ? "max-w-40 opacity-100" : "max-w-0 opacity-0"
           }`}
         >
-          Paketleri incele
+          {t("browsePackages")}
         </span>
       </Link>
     </div>

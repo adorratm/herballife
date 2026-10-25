@@ -3,7 +3,8 @@ export const QUEUE_SHIPPING_POLL = 'shipping-poll';
 export const QUEUE_ABANDONED_CART = 'abandoned-cart';
 export const QUEUE_MARKETPLACE_SYNC = 'marketplace-sync';
 export const QUEUE_LOW_STOCK = 'low-stock';
-export const QUEUE_EINVOICE = 'einvoice';
+export const QUEUE_WHATSAPP_BLAST = 'whatsapp-blast';
+export const QUEUE_EMAIL_MARKETING = 'email-marketing';
 
 export type NotificationChannelName = 'email' | 'whatsapp' | 'sms';
 
@@ -35,4 +36,15 @@ export type MarketplaceSyncJobPayload = {
 
 export type LowStockJobPayload = {
   reason?: string;
+};
+
+export type WhatsappBlastJobPayload = {
+  blastId: string;
+};
+
+export type EmailMarketingJobPayload = {
+  to: string;
+  subject: string;
+  html: string;
+  campaignId?: string;
 };

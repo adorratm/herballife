@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 
 export type HeroSlide = {
@@ -17,6 +18,8 @@ type Props = {
 };
 
 export function HomeHeroSlider({ slides, intervalMs = 5200 }: Props) {
+  const t = useTranslations("aria");
+  const tCta = useTranslations("homeHeroSlider");
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const total = slides.length;
@@ -68,7 +71,7 @@ export function HomeHeroSlider({ slides, intervalMs = 5200 }: Props) {
           <>
             <button
               type="button"
-              aria-label="Önceki"
+              aria-label={t("previous")}
               onClick={() => go(index - 1)}
               className="absolute left-2 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-outline-variant bg-white text-lg font-bold text-on-surface shadow-sm transition-colors hover:bg-primary hover:text-on-primary"
             >
@@ -76,7 +79,7 @@ export function HomeHeroSlider({ slides, intervalMs = 5200 }: Props) {
             </button>
             <button
               type="button"
-              aria-label="Sonraki"
+              aria-label={t("next")}
               onClick={() => go(index + 1)}
               className="absolute right-2 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-outline-variant bg-white text-lg font-bold text-on-surface shadow-sm transition-colors hover:bg-primary hover:text-on-primary"
             >
@@ -102,7 +105,7 @@ export function HomeHeroSlider({ slides, intervalMs = 5200 }: Props) {
                 <button
                   key={i}
                   type="button"
-                  aria-label={`Slayt ${i + 1}`}
+                  aria-label={t("imageN", { n: i + 1 })}
                   aria-current={i === index}
                   onClick={() => go(i)}
                   className={`h-1.5 cursor-pointer transition-all ${
@@ -118,7 +121,7 @@ export function HomeHeroSlider({ slides, intervalMs = 5200 }: Props) {
             href={slide.href}
             className="inline-flex cursor-pointer bg-primary px-3.5 py-2 text-xs font-bold text-on-primary hover:bg-primary-container rounded-full"
           >
-            İncele →
+            {tCta("inspect")}
           </Link>
         </div>
       </div>

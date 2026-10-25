@@ -10,6 +10,7 @@ import {
   HepsijetAdapter,
   TrendyolExpressAdapter,
 } from '@modules/shipping/adapters/providers';
+import { DhlApiAdapter } from '@modules/shipping/adapters/dhl.adapter';
 import { NotificationsModule } from '@modules/notifications/notifications.module';
 import { TrackingModule } from '@modules/tracking/tracking.module';
 
@@ -20,6 +21,7 @@ import { TrackingModule } from '@modules/tracking/tracking.module';
     ShippingService,
     YurticiAdapter,
     KolayGelsinAdapter,
+    DhlApiAdapter,
     DhlAdapter,
     SuratAdapter,
     PttAdapter,

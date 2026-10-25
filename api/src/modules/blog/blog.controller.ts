@@ -81,7 +81,7 @@ export class BlogController {
   @Public()
   @Get(':slug')
   @ApiOperation({ summary: 'Yayımlanmış blog yazısı (slug)' })
-  getBySlug(@Param('slug') slug: string) {
-    return this.blogService.getBySlug(slug, false);
+  getBySlug(@Param('slug') slug: string, @Query('locale') locale?: string) {
+    return this.blogService.getBySlug(slug, false, locale);
   }
 }

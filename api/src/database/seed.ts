@@ -34,6 +34,8 @@ import {
 import { LEGAL_DEFAULTS } from '@database/legal-defaults';
 import { apiStockImage } from '../common/stock-images';
 import { herbalProductImage } from '@database/herbal-product-images';
+import { migrateI18nContent } from '@database/migrate-i18n-content';
+import { migrateCmsI18n } from '@database/migrate-cms-i18n';
 
 config({ path: join(process.cwd(), '..', '.env') });
 config();
@@ -633,7 +635,7 @@ async function seed() {
       content: `<p>Formül 1, programınıza göre öğün yerine geçen protein shake olarak kullanılır. Shaker’a önce sıvı, sonra toz ekleyin; 20–30 sn çalkalayın.</p>
 <p>Süt veya bitkisel içecek tercih edebilirsiniz. Hedefinize uygun porsiyon için koçunuzla görüşün.</p>`,
       coverImageUrl: apiStockImage('product-1'),
-      authorName: 'Emine Özberk',
+      authorName: 'Herbal Kapıda',
       tags: ['Formül 1', 'beslenme'],
       seoTitle: 'Formül 1 Shake Nasıl Hazırlanır?',
       seoDescription:
@@ -649,7 +651,7 @@ async function seed() {
       content: `<p>Yeterli su, enerji ve tokluk hissini destekler. Hesabım → Beslenme Takibi üzerinden gün boyu bardak/ml kaydı ekleyebilirsiniz.</p>
 <p>Koçunuz onay kuyruğundan öğün ve ölçümlerinizi görür; motivasyon mesajları WhatsApp ile iletilebilir.</p>`,
       coverImageUrl: apiStockImage('blog'),
-      authorName: 'Emine Özberk',
+      authorName: 'Herbal Kapıda',
       tags: ['su', 'takip', 'wellness'],
       seoTitle: 'Günlük Su Tüketimi | Beslenme Takibi',
       seoDescription:
@@ -663,9 +665,9 @@ async function seed() {
       excerpt:
         'Hedef, hediye içeriği ve program süresi — set seçiminde üç temel.',
       content: `<p>Başlangıç paketleri shaker ve Formül ürünlerini bir arada sunar. Kilo yönetimi, spor veya genel wellness hedefinize göre kategori seçin.</p>
-<p>WhatsApp’tan ürün danışmanlığı alabilirsiniz — bağımsız distribütör Emine Özberk.</p>`,
+<p>WhatsApp’tan ürün danışmanlığı alabilirsiniz — Herbal Kapıda.</p>`,
       coverImageUrl: apiStockImage('product-2'),
-      authorName: 'Emine Özberk',
+      authorName: 'Herbal Kapıda',
       tags: ['setler', 'rehber'],
       seoTitle: 'Avantajlı Set Seçim Rehberi',
       seoDescription:
@@ -681,7 +683,7 @@ async function seed() {
       content: `<p>Sabah acele edenler için Formül 1 shake, kahvaltıyı hızlandırır. Shaker’ı gece önceden hazır tutmak, alışkanlığı kolaylaştırır.</p>
 <p>Yanına meyve veya az yağlı süt ekleyerek doygunluğu artırabilirsiniz. Programınızı koçunuzla kişiselleştirin.</p>`,
       coverImageUrl: apiStockImage('product-1'),
-      authorName: 'Emine Özberk',
+      authorName: 'Herbal Kapıda',
       tags: ['rutin', 'Formül 1', 'kahvaltı'],
       seoTitle: 'Sabah Rutininde Protein Shake',
       seoDescription:
@@ -697,11 +699,11 @@ async function seed() {
       content: `<p>Ödeme onayından sonra siparişler genelde 1–3 iş günü içinde kargoya verilir. Takip kodunu bildirim ve hesabınızdan görebilirsiniz.</p>
 <p>Mağazadan teslim seçeneği varsa hazır olduğunda sizi bilgilendiririz. Sorularınız için WhatsApp hattımız açık.</p>`,
       coverImageUrl: apiStockImage('workshop'),
-      authorName: 'Emine Özberk',
+      authorName: 'Herbal Kapıda',
       tags: ['kargo', 'sipariş'],
       seoTitle: 'Sipariş ve Kargo Süreci',
       seoDescription:
-        'Herbal Ürünleri sipariş sonrası kargo ve takip süreci hakkında bilgilendirme.',
+        'Herbal Kapıda sipariş sonrası kargo ve takip süreci hakkında bilgilendirme.',
       relatedProductSlugs: [],
       relatedCategorySlugs: ['avantajli-setler'],
     },
@@ -713,7 +715,7 @@ async function seed() {
       content: `<p>Tüketiciler mesafeli satışta cayma hakkını kullanabilir. Ürünlerin açılmamış / hijyen şartlarına uygun olması gerekir; ayrıntılar İptal ve İade sayfasındadır.</p>
 <p>Başvuru için sipariş numaranız ve iletişim bilgileriniz yeterlidir. Koçluk desteği iade sürecinden bağımsızdır.</p>`,
       coverImageUrl: apiStockImage('ethos'),
-      authorName: 'Emine Özberk',
+      authorName: 'Herbal Kapıda',
       tags: ['iade', 'yasal'],
       seoTitle: 'İade ve Cayma Hakkı',
       seoDescription:
@@ -729,7 +731,7 @@ async function seed() {
       content: `<p>İlk hafta hedefi “mükemmel diyet” değil, düzen kurmaktır. Her gün Formül 1 öğünü, su kaydı ve akşam kısa yürüyüş iyi bir başlangıçtır.</p>
 <p>Hesabım → Beslenme Takibi’nden öğün fotoğrafı yükleyin; koçunuz onaylayıp yönlendirebilir.</p>`,
       coverImageUrl: apiStockImage('hero'),
-      authorName: 'Emine Özberk',
+      authorName: 'Herbal Kapıda',
       tags: ['başlangıç', 'takip', 'setler'],
       seoTitle: 'Yeni Başlayanlar İçin İlk Hafta',
       seoDescription:
@@ -806,7 +808,7 @@ async function seed() {
         em.create(ShippingProviderConfig, {
           provider: sp.provider,
           displayName: sp.displayName,
-          isEnabled: true,
+          isEnabled: sp.provider === ShippingProviderCode.DHL,
           credentials: {},
           settings: { fee: '89.90', estimatedDays: '2-5 gün' },
         }),
@@ -835,6 +837,7 @@ async function seed() {
         'logoUrl',
         'distributorName',
         'distributorTitle',
+        'distributorCode',
         'legalDisclaimer',
       ]) {
         if (brand[field] === undefined || brand[field] === '') {
@@ -847,6 +850,17 @@ async function seed() {
         brand.slogan = defaults.slogan;
         brand.tagline = defaults.tagline;
         changed = true;
+      }
+      if (brand.name !== defaults.name) {
+        brand.name = defaults.name;
+        changed = true;
+      }
+      for (const emineField of ['distributorName', 'distributorTitle', 'name']) {
+        const v = brand[emineField];
+        if (typeof v === 'string' && /emine/i.test(v)) {
+          brand[emineField] = defaults[emineField];
+          changed = true;
+        }
       }
       if (changed) {
         exists.value = brand;
@@ -994,6 +1008,8 @@ async function seed() {
     }
   }
 
+  await migrateCmsI18n(em);
+
   const welcomeCoupon = await em.findOne(Coupon, {
     where: { code: 'HOSGELDIN10' },
   });
@@ -1034,7 +1050,7 @@ async function seed() {
   if (!settings) {
     await em.save(
       em.create(AccountingSettings, {
-        companyTitle: 'Emine Özberk — Bağımsız Distribütör',
+        companyTitle: 'Herbal Kapıda — Bağımsız Distribütör',
         city: 'Türkiye',
       }),
     );
@@ -1384,6 +1400,8 @@ async function seed() {
     );
     console.log('Demo wellness measurements');
   }
+
+  await migrateI18nContent(em);
 
   console.log('Seed tamamlandı.');
   await AppDataSource.destroy();

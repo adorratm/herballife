@@ -9,11 +9,28 @@ export { categoryCatalogPath };
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
+export const OPEN_GRAPH_LOCALE: Record<string, string> = {
+  tr: "tr_TR",
+  en: "en_US",
+  de: "de_DE",
+  fr: "fr_FR",
+  es: "es_ES",
+};
+
+export function localizedPath(locale: string, path: string): string {
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  if (normalized === "/" || normalized === "") {
+    return `/${locale}`;
+  }
+  return `/${locale}${normalized}`;
+}
+
 type PageMetaInput = {
   title: string;
   description: string;
   path: string;
   settings: SiteSettings;
+  locale?: string;
   keywords?: string[];
   image?: string | null;
   noIndex?: boolean;
@@ -33,14 +50,16 @@ export function buildPageMetadata({
   description,
   path,
   settings,
+  locale = "tr",
   keywords,
   image,
   noIndex,
   ogType = "website",
 }: PageMetaInput): Metadata {
-  const url = `${SITE_URL}${path}`;
+  const url = `${SITE_URL}${localizedPath(locale, path)}`;
   const ogImage = image || settings.seo.ogImage;
   const fullTitle = `${title} | ${settings.brand.name}`;
+  const ogLocale = OPEN_GRAPH_LOCALE[locale] || OPEN_GRAPH_LOCALE.tr;
   return {
     title,
     description,
@@ -53,7 +72,7 @@ export function buildPageMetadata({
       : { index: true, follow: true },
     openGraph: {
       type: ogType,
-      locale: "tr_TR",
+      locale: ogLocale,
       url,
       siteName: settings.brand.name,
       title: fullTitle,
@@ -69,9 +88,56 @@ export function buildPageMetadata({
   };
 }
 
+export type SeoLabels = {
+  products: string;
+  productsDescription: string;
+  blog: string;
+  blogDescription: string;
+  searchTitle: string;
+  searchDescription: string;
+  categoryDescription: string;
+  blogTagTitle: string;
+  blogTagDescription: string;
+  pageSuffix: string;
+  aboutJsonLdDescription?: string;
+  keywordsCatalogDefault?: string[];
+  keywordsCategoryExtra?: string[];
+  keywordsBlog?: string[];
+};
+
+/** English defaults when callers omit translated labels (API/CMS metadata helpers). */
+export const DEFAULT_SEO_LABELS: SeoLabels = {
+  products: "Products",
+  productsDescription:
+    "Nutrition bundles, sets, and Formula products. Independent distributor assurance.",
+  blog: "Articles",
+  blogDescription:
+    "Nutrition tips, bundle guides, and wellness articles.",
+  searchTitle: "Search: {query}",
+  searchDescription: "Product results for “{query}” — {brand}.",
+  categoryDescription: "Products in {categoryName} — {brand}.",
+  blogTagTitle: "Articles · {tag}",
+  blogTagDescription: "Posts tagged “{tag}” — {brand}.",
+  pageSuffix: " · Page {page}",
+  aboutJsonLdDescription: "{brand} — independent Herbalife distributor.",
+  keywordsCatalogDefault: ["catalog", "products", "bundles", "sets"],
+  keywordsCategoryExtra: ["product", "bundle"],
+  keywordsBlog: ["articles", "nutrition", "Herbalife"],
+};
+
+function fillSeoTemplate(
+  template: string,
+  vars: Record<string, string | number>,
+): string {
+  return template.replace(/\{(\w+)\}/g, (_, key: string) =>
+    String(vars[key] ?? ""),
+  );
+}
+
 export function buildCatalogMetadata(
   settings: SiteSettings,
   opts: {
+    locale?: string;
     categorySlug?: string;
     categoryName?: string;
     categoryDescription?: string | null;
@@ -82,8 +148,11 @@ export function buildCatalogMetadata(
     origin?: string;
     sort?: string;
     order?: string;
+    labels?: Partial<SeoLabels>;
   } = {},
 ): Metadata {
+  const locale = opts.locale || "tr";
+  const labels = { ...DEFAULT_SEO_LABELS, ...opts.labels };
   const { categorySlug, categoryName, categoryDescription, q } = opts;
   const query = q?.trim();
   const pageNum = Number(opts.page || 1);
@@ -94,9 +163,8 @@ export function buildCatalogMetadata(
       opts.order?.trim(),
   );
 
-  let title = "Ürünler";
-  let description =
-    "Beslenme paketleri, setler ve Formül ürünleri. Bağımsız distribütör güvencesiyle.";
+  let title = labels.products;
+  let description = labels.productsDescription;
   let path = "/urunler";
 
   if (categorySlug && categoryName) {
@@ -104,11 +172,17 @@ export function buildCatalogMetadata(
     description =
       opts.categorySeoDescription?.trim() ||
       categoryDescription?.trim() ||
-      `${categoryName} kategorisindeki ürünler — ${settings.brand.name}.`;
+      fillSeoTemplate(labels.categoryDescription, {
+        categoryName,
+        brand: settings.brand.name,
+      });
     path = categoryCatalogPath(categorySlug);
   } else if (query) {
-    title = `Arama: ${query}`;
-    description = `“${query}” için ürün sonuçları — ${settings.brand.name}.`;
+    title = fillSeoTemplate(labels.searchTitle, { query });
+    description = fillSeoTemplate(labels.searchDescription, {
+      query,
+      brand: settings.brand.name,
+    });
     path = `/urunler?q=${encodeURIComponent(query)}`;
   }
 
@@ -117,14 +191,28 @@ export function buildCatalogMetadata(
     description,
     path,
     settings,
+    locale,
     keywords: categoryName
-      ? [categoryName, categorySlug || "", "ürün", "paket"]
-      : ["katalog", "ürün", "paket", "set"],
+      ? [
+          categoryName,
+          categorySlug || "",
+          ...(labels.keywordsCategoryExtra?.length
+            ? labels.keywordsCategoryExtra
+            : DEFAULT_SEO_LABELS.keywordsCategoryExtra!),
+        ]
+      : [
+          ...(labels.keywordsCatalogDefault?.length
+            ? labels.keywordsCatalogDefault
+            : DEFAULT_SEO_LABELS.keywordsCatalogDefault!),
+        ],
     noIndex: Boolean(query) || filtered,
   });
 }
 
-export function buildSiteMetadata(settings: SiteSettings): Metadata {
+export function buildSiteMetadata(
+  settings: SiteSettings,
+  locale = "tr",
+): Metadata {
   const { seo, brand } = settings;
   const verification =
     process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim() || undefined;
@@ -139,8 +227,8 @@ export function buildSiteMetadata(settings: SiteSettings): Metadata {
     keywords: seo.keywords,
     openGraph: {
       type: "website",
-      locale: "tr_TR",
-      url: SITE_URL,
+      locale: OPEN_GRAPH_LOCALE[locale] || OPEN_GRAPH_LOCALE.tr,
+      url: `${SITE_URL}${localizedPath(locale, "/")}`,
       siteName: brand.name,
       title: seo.title,
       description: seo.description,
@@ -153,7 +241,7 @@ export function buildSiteMetadata(settings: SiteSettings): Metadata {
       images: seo.ogImage ? [seo.ogImage] : undefined,
     },
     alternates: {
-      canonical: SITE_URL,
+      canonical: `${SITE_URL}${localizedPath(locale, "/")}`,
       types: {
         "application/rss+xml": `${SITE_URL}/feed.xml`,
       },
@@ -169,17 +257,21 @@ export function buildSiteMetadata(settings: SiteSettings): Metadata {
 }
 
 /** Ana sayfa için açık metadata (layout default’unu sayfa düzeyinde sabitler). */
-export function buildHomeMetadata(settings: SiteSettings): Metadata {
+export function buildHomeMetadata(
+  settings: SiteSettings,
+  locale = "tr",
+): Metadata {
   const { seo, brand } = settings;
+  const homeUrl = `${SITE_URL}${localizedPath(locale, "/")}`;
   return {
     title: { absolute: seo.title || brand.name },
     description: seo.description,
     keywords: seo.keywords,
-    alternates: { canonical: SITE_URL },
+    alternates: { canonical: homeUrl },
     openGraph: {
       type: "website",
-      locale: "tr_TR",
-      url: SITE_URL,
+      locale: OPEN_GRAPH_LOCALE[locale] || OPEN_GRAPH_LOCALE.tr,
+      url: homeUrl,
       siteName: brand.name,
       title: seo.title || brand.name,
       description: seo.description,
@@ -197,6 +289,7 @@ export function buildHomeMetadata(settings: SiteSettings): Metadata {
 export function buildProductMetadata(
   product: Product,
   settings: SiteSettings,
+  locale = "tr",
 ): Metadata {
   const title = product.seoTitle || product.name;
   const description =
@@ -205,7 +298,8 @@ export function buildProductMetadata(
     product.description?.slice(0, 160) ||
     settings.seo.description;
   const image = product.imageUrl || settings.seo.ogImage;
-  const url = `${SITE_URL}/urunler/${product.slug}`;
+  const url = `${SITE_URL}${localizedPath(locale, `/urunler/${product.slug}`)}`;
+  const ogLocale = OPEN_GRAPH_LOCALE[locale] || OPEN_GRAPH_LOCALE.tr;
 
   return {
     title,
@@ -216,7 +310,7 @@ export function buildProductMetadata(
       // Next Metadata yalnızca website|article|... kabul eder; "product" RSC'yi düşürür.
       // Ürün sinyali Product JSON-LD ile verilir.
       type: "website",
-      locale: "tr_TR",
+      locale: ogLocale,
       url,
       siteName: settings.brand.name,
       title,
@@ -234,22 +328,31 @@ export function buildProductMetadata(
 
 export function buildBlogIndexMetadata(
   settings: SiteSettings,
-  opts: { page?: number; tag?: string } = {},
+  opts: {
+    locale?: string;
+    page?: number;
+    tag?: string;
+    labels?: Partial<SeoLabels>;
+  } = {},
 ): Metadata {
+  const locale = opts.locale || "tr";
+  const labels = { ...DEFAULT_SEO_LABELS, ...opts.labels };
   const page = opts.page && opts.page > 1 ? opts.page : undefined;
   const tag = opts.tag?.trim();
-  let title = "Yazılar";
-  let description =
-    "Beslenme ipuçları, paket rehberleri ve sağlıklı yaşam yazıları.";
+  let title = labels.blog;
+  let description = labels.blogDescription;
   let path = "/blog";
   const qs = new URLSearchParams();
   if (tag) {
-    title = `Yazılar · ${tag}`;
-    description = `“${tag}” etiketli yazılar — ${settings.brand.name}.`;
+    title = fillSeoTemplate(labels.blogTagTitle, { tag });
+    description = fillSeoTemplate(labels.blogTagDescription, {
+      tag,
+      brand: settings.brand.name,
+    });
     qs.set("tag", tag);
   }
   if (page) {
-    title = `${title} · Sayfa ${page}`;
+    title = `${title}${fillSeoTemplate(labels.pageSuffix, { page })}`;
     qs.set("page", String(page));
   }
   const query = qs.toString();
@@ -260,7 +363,13 @@ export function buildBlogIndexMetadata(
     description,
     path,
     settings,
-    keywords: ["yazılar", "beslenme", "Herbalife", tag || ""].filter(Boolean),
+    locale,
+    keywords: [
+      ...(labels.keywordsBlog?.length
+        ? labels.keywordsBlog
+        : DEFAULT_SEO_LABELS.keywordsBlog!),
+      tag || "",
+    ].filter(Boolean),
     noIndex: Boolean(page || tag),
   });
 
@@ -278,6 +387,7 @@ export function buildBlogIndexMetadata(
 export function buildBlogPostMetadata(
   post: BlogPost,
   settings: SiteSettings,
+  locale = "tr",
 ): Metadata {
   const title = post.seoTitle || post.title;
   const description =
@@ -286,7 +396,8 @@ export function buildBlogPostMetadata(
     post.content.replace(/<[^>]+>/g, "").slice(0, 160) ||
     settings.seo.description;
   const image = post.coverImageUrl || settings.seo.ogImage;
-  const url = `${SITE_URL}/blog/${post.slug}`;
+  const url = `${SITE_URL}${localizedPath(locale, `/blog/${post.slug}`)}`;
+  const ogLocale = OPEN_GRAPH_LOCALE[locale] || OPEN_GRAPH_LOCALE.tr;
 
   return {
     title,
@@ -296,7 +407,7 @@ export function buildBlogPostMetadata(
     alternates: { canonical: url },
     openGraph: {
       type: "article",
-      locale: "tr_TR",
+      locale: ogLocale,
       url,
       siteName: settings.brand.name,
       title,
@@ -568,7 +679,7 @@ export function productJsonLd(
     product.originCountry
       ? {
           "@type": "PropertyValue",
-          name: "Menşei",
+          name: "Üretim / menşei ülke",
           value: [product.originRegion, product.originCountry]
             .filter(Boolean)
             .join(", "),
@@ -716,16 +827,24 @@ export function itemListJsonLd(
   };
 }
 
-export function aboutPageJsonLd(settings: SiteSettings) {
+export function aboutPageJsonLd(
+  settings: SiteSettings,
+  aboutTitle = "About us",
+  aboutDescriptionTemplate?: string,
+) {
   const { brand, contact, seo } = settings;
+  const fallbackAbout =
+    aboutDescriptionTemplate?.replace(/\{brand\}/g, brand.name) ||
+    DEFAULT_SEO_LABELS.aboutJsonLdDescription!.replace(
+      /\{brand\}/g,
+      brand.name,
+    );
   return {
     "@context": "https://schema.org",
     "@type": "AboutPage",
-    name: `Hakkımızda | ${brand.name}`,
+    name: `${aboutTitle} | ${brand.name}`,
     url: `${SITE_URL}/hakkimizda`,
-    description:
-      seo.description ||
-      `${brand.name} — bağımsız Herbalife distribütörü.`,
+    description: seo.description || fallbackAbout,
     mainEntity: {
       "@type": "Store",
       "@id": `${SITE_URL}/#organization`,

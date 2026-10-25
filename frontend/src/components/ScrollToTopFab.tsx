@@ -1,15 +1,42 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { useEffect, useRef, useState } from "react";
+import { useWhatsAppFabState } from "@/hooks/useWhatsAppFabState";
 import { readCookieConsent } from "@/lib/cookie-consent";
 
 const SHOW_AFTER = 380;
+const GAP_PX = 12;
+/** WhatsApp yuvarlak buton ~46px + iç gap */
+const WA_BUTTON_PX = 52;
 
-/** Tüm sayfalar: WhatsApp FAB’ın üstünde, kaydırınca görünür → yumuşak yukarı scroll */
+function waBottomPx(isMobile: boolean, cookieLift: boolean): number {
+  if (isMobile) {
+    return (cookieLift ? 11 : 5) * 16;
+  }
+  return cookieLift ? 10 * 16 : 24;
+}
+
+/**
+ * Yukarı kaydır: WA butonunun (ve varsa popup balonunun) hemen üstünde.
+ * Popup yüksekliği ResizeObserver ile gelir; kapanınca eski ofsete döner.
+ */
 export function ScrollToTopFab() {
+  const t = useTranslations("aria");
   const [visible, setVisible] = useState(false);
   const [liftForCookie, setLiftForCookie] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
+  const { popupVisible, popupHeightPx } = useWhatsAppFabState();
   const ticking = useRef(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const sync = () => setIsMobile(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   useEffect(() => {
     function syncCookieLift() {
@@ -43,17 +70,20 @@ export function ScrollToTopFab() {
     window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
   }
 
-  // WA bottom (5rem/11rem + safe) + FAB 3rem + gap 0.75rem
-  const bottomClass = liftForCookie
-    ? "bottom-[calc(14.75rem+env(safe-area-inset-bottom))] md:bottom-[13.75rem]"
-    : "bottom-[calc(8.75rem+env(safe-area-inset-bottom))] md:bottom-[5.25rem]";
+  const base = waBottomPx(isMobile, liftForCookie);
+  const popupBlock =
+    popupVisible && popupHeightPx > 0 ? popupHeightPx + GAP_PX : 0;
+  const bottomPx = base + WA_BUTTON_PX + popupBlock + GAP_PX;
 
   return (
     <button
       type="button"
-      aria-label="Yukarı kaydır"
+      aria-label={t("scrollToTop")}
       onClick={scrollTop}
-      className={`fixed right-3 z-40 flex h-[46px] w-[46px] items-center justify-center rounded-full border border-outline-variant/50 bg-white text-primary shadow-[0_8px_24px_rgba(18,20,17,0.14)] transition-all duration-300 ease-out hover:border-primary hover:bg-primary hover:text-on-primary md:right-6 ${bottomClass} ${
+      style={{
+        bottom: `calc(${bottomPx}px + env(safe-area-inset-bottom, 0px))`,
+      }}
+      className={`fixed right-3 z-40 flex h-11.5 w-11.5 items-center justify-center rounded-full border border-outline-variant/50 bg-white text-primary shadow-[0_8px_24px_rgba(18,20,17,0.14)] transition-[opacity,transform,bottom] duration-300 ease-out hover:border-primary hover:bg-primary hover:text-on-primary md:right-6 ${
         visible
           ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
           : "pointer-events-none translate-y-3 scale-90 opacity-0"

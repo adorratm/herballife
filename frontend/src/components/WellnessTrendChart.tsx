@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 
 export type TrendPoint = {
@@ -11,16 +12,20 @@ export type TrendPoint = {
 
 type SeriesKey = "weightKg" | "waistCm" | "hipCm";
 
-const SERIES: {
+type SeriesDef = {
   key: SeriesKey;
   label: string;
   unit: string;
   color: string;
-}[] = [
-  { key: "weightKg", label: "Kilo", unit: "kg", color: "var(--primary)" },
-  { key: "waistCm", label: "Bel", unit: "cm", color: "#0d9488" },
-  { key: "hipCm", label: "Kalça", unit: "cm", color: "#c45c26" },
-];
+};
+
+function buildSeries(t: ReturnType<typeof useTranslations<"wellnessChart">>): SeriesDef[] {
+  return [
+    { key: "weightKg", label: t("weight"), unit: "kg", color: "var(--primary)" },
+    { key: "waistCm", label: t("waist"), unit: "cm", color: "#0d9488" },
+    { key: "hipCm", label: t("hip"), unit: "cm", color: "#c45c26" },
+  ];
+}
 
 type Props = {
   points: TrendPoint[];
@@ -31,14 +36,14 @@ type Props = {
   className?: string;
 };
 
-function formatShortDate(iso: string) {
+function formatShortDate(iso: string, locale: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) {
     const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
     if (m) return `${m[3]}.${m[2]}`;
     return iso.slice(0, 10);
   }
-  return d.toLocaleDateString("tr-TR", { day: "2-digit", month: "short" });
+  return d.toLocaleDateString(locale, { day: "2-digit", month: "short" });
 }
 
 function niceDomain(min: number, max: number) {
@@ -55,17 +60,22 @@ function niceDomain(min: number, max: number) {
 export function WellnessTrendChart({
   points,
   goalValue,
-  goalLabel = "Hedef",
+  goalLabel,
   height = 280,
   className = "",
 }: Props) {
+  const t = useTranslations("wellnessChart");
+  const tAria = useTranslations("aria");
+  const locale = useLocale();
+  const allSeries = useMemo(() => buildSeries(t), [t]);
   const gradId = useId().replace(/:/g, "");
   const wrapRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(640);
   const [active, setActive] = useState<SeriesKey>("weightKg");
   const [hover, setHover] = useState<number | null>(null);
 
-  const seriesMeta = SERIES.find((s) => s.key === active)!;
+  const activeSeries = allSeries.find((s) => s.key === active)!;
+  const resolvedGoalLabel = goalLabel ?? t("goal");
   const showGoal =
     active === "weightKg" && goalValue != null && Number.isFinite(goalValue);
 
@@ -92,10 +102,10 @@ export function WellnessTrendChart({
   }, [points, active]);
 
   const available = useMemo(() => {
-    return SERIES.filter((s) =>
+    return allSeries.filter((s) =>
       points.some((p) => p[s.key] != null && Number.isFinite(Number(p[s.key]))),
     );
-  }, [points]);
+  }, [allSeries, points]);
 
   const stats = useMemo(() => {
     if (series.length < 1) return null;
@@ -186,7 +196,7 @@ export function WellnessTrendChart({
       <div
         className={`flex items-center justify-center rounded-xl bg-surface-container-low px-4 py-10 text-center text-sm text-on-surface-variant ${className}`}
       >
-        Grafik için en az 2 {seriesMeta.label.toLowerCase()} kaydı gerekir
+        {t("needTwoPoints", { series: activeSeries.label.toLowerCase() })}
       </div>
     );
   }
@@ -201,7 +211,7 @@ export function WellnessTrendChart({
     <div className={`space-y-3 ${className}`}>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap gap-1.5">
-          {(available.length ? available : SERIES.slice(0, 1)).map((s) => (
+          {(available.length ? available : allSeries.slice(0, 1)).map((s) => (
             <button
               key={s.key}
               type="button"
@@ -224,7 +234,7 @@ export function WellnessTrendChart({
             Δ{" "}
             <strong className={stats.delta <= 0 ? "text-primary" : "text-flash"}>
               {stats.delta > 0 ? "+" : ""}
-              {stats.delta.toFixed(1)} {seriesMeta.unit}
+              {stats.delta.toFixed(1)} {activeSeries.unit}
             </strong>
             <span className="mx-1.5 text-outline-variant">·</span>
             ort. {stats.avg.toFixed(1)}
@@ -248,10 +258,10 @@ export function WellnessTrendChart({
           {hi ? (
             <div className="flex items-baseline gap-3 rounded-xl border border-primary/20 bg-white/95 px-4 py-2 shadow-md backdrop-blur-sm">
               <span className="text-xs font-bold uppercase tracking-wide text-on-surface-variant">
-                {formatShortDate(hi.date)}
+                {formatShortDate(hi.date, locale)}
               </span>
               <span className="font-display text-lg font-bold text-primary">
-                {hi.value.toFixed(1)} {seriesMeta.unit}
+                {hi.value.toFixed(1)} {activeSeries.unit}
               </span>
               {stepDelta != null ? (
                 <span
@@ -260,7 +270,11 @@ export function WellnessTrendChart({
                   }`}
                 >
                   {stepDelta > 0 ? "+" : ""}
-                  {stepDelta.toFixed(1)} {prev ? "öncekiye" : "başa"} göre
+                  {t("deltaFromPrev", {
+                    delta: `${stepDelta > 0 ? "+" : ""}${stepDelta.toFixed(1)}`,
+                    ref: prev ? t("refPrevious") : t("refStart"),
+                  })}{" "}
+                  {activeSeries.unit}
                 </span>
               ) : null}
             </div>
@@ -273,12 +287,12 @@ export function WellnessTrendChart({
           viewBox={`0 0 ${layout.w} ${layout.h}`}
           className="block"
           role="img"
-          aria-label={`${seriesMeta.label} eğrisi`}
+          aria-label={tAria("wellnessChart", { label: activeSeries.label })}
         >
           <defs>
             <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={seriesMeta.color} stopOpacity="0.22" />
-              <stop offset="100%" stopColor={seriesMeta.color} stopOpacity="0" />
+              <stop offset="0%" stopColor={activeSeries.color} stopOpacity="0.22" />
+              <stop offset="100%" stopColor={activeSeries.color} stopOpacity="0" />
             </linearGradient>
           </defs>
 
@@ -322,7 +336,7 @@ export function WellnessTrendChart({
                 fill="var(--flash)"
                 style={{ fontSize: 12, fontWeight: 700 }}
               >
-                {goalLabel} {goalValue}
+                {resolvedGoalLabel} {goalValue}
               </text>
             </g>
           ) : null}
@@ -333,7 +347,7 @@ export function WellnessTrendChart({
             <path
               d={layout.lineD}
               fill="none"
-              stroke={seriesMeta.color}
+              stroke={activeSeries.color}
               strokeWidth={2.75}
               strokeLinejoin="round"
               strokeLinecap="round"
@@ -346,7 +360,7 @@ export function WellnessTrendChart({
               x2={hiCoord.x}
               y1={layout.padT}
               y2={layout.padT + layout.plotH}
-              stroke={seriesMeta.color}
+              stroke={activeSeries.color}
               strokeOpacity={0.35}
               strokeDasharray="4 4"
             />
@@ -362,7 +376,7 @@ export function WellnessTrendChart({
                     cx={c.x}
                     cy={c.y}
                     r={14}
-                    fill={seriesMeta.color}
+                    fill={activeSeries.color}
                     opacity={0.18}
                   />
                 ) : null}
@@ -370,8 +384,8 @@ export function WellnessTrendChart({
                   cx={c.x}
                   cy={c.y}
                   r={isHi ? 7 : 5}
-                  fill={isHi ? seriesMeta.color : "#fff"}
-                  stroke={seriesMeta.color}
+                  fill={isHi ? activeSeries.color : "#fff"}
+                  stroke={activeSeries.color}
                   strokeWidth={2.5}
                 />
                 <rect
@@ -401,7 +415,7 @@ export function WellnessTrendChart({
                 fill="var(--on-surface-variant)"
                 style={{ fontSize: 12, fontWeight: 600 }}
               >
-                {formatShortDate(c.date)}
+                {formatShortDate(c.date, locale)}
               </text>
             );
           })}
@@ -409,7 +423,7 @@ export function WellnessTrendChart({
 
         {!hi ? (
           <p className="pointer-events-none absolute bottom-10 right-4 text-xs text-on-surface-variant/65">
-            Noktaların üzerine gelin
+            {t("hoverHint")}
           </p>
         ) : null}
       </div>

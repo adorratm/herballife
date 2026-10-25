@@ -11,6 +11,7 @@ import {
   hasCredentials,
   mockTrackingNumber,
 } from '@modules/shipping/adapters/shipping.adapter';
+import { DhlApiAdapter } from '@modules/shipping/adapters/dhl.adapter';
 import { BadRequestException } from '@nestjs/common';
 
 export abstract class BaseMockShippingAdapter implements IShippingAdapter {
@@ -81,11 +82,18 @@ export class KolayGelsinAdapter extends BaseMockShippingAdapter {
 }
 
 @Injectable()
-export class DhlAdapter extends BaseMockShippingAdapter {
+export class DhlAdapter implements IShippingAdapter {
   readonly code = ShippingProviderCode.DHL;
-  readonly prefix = 'DHL';
-  readonly trackingBaseUrl =
-    'https://www.dhl.com/tr-tr/home/tracking.html?tracking-id=';
+
+  constructor(private readonly dhl: DhlApiAdapter) {}
+
+  createShipment(input: CreateShipmentInput) {
+    return this.dhl.createShipment(input);
+  }
+
+  trackShipment(trackingNumber: string, credentials: Record<string, string>) {
+    return this.dhl.trackShipment(trackingNumber, credentials);
+  }
 }
 
 @Injectable()

@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { logCookieConsent } from "@/lib/api";
 import { getCartSessionId } from "@/lib/cart";
@@ -11,6 +12,7 @@ import {
 } from "@/lib/cookie-consent";
 
 export function CookieBanner() {
+  const t = useTranslations("cookies");
   const [visible, setVisible] = useState(false);
   const [customize, setCustomize] = useState(false);
   const [analytics, setAnalytics] = useState(false);
@@ -49,11 +51,9 @@ export function CookieBanner() {
       <div className="page-shell flex flex-col gap-4 py-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <p className=" font-meta text-[11px] uppercase leading-relaxed text-secondary">
-            Bu site, oturum ve yasal zorunluluklar için gerekli çerezleri kullanır.
-            Analitik ve pazarlama çerezlerini ayrı ayrı seçebilirsiniz. Ayrıntılar
-            için{" "}
+            {t("introBefore")}{" "}
             <Link href="/cerez-politikasi" className="text-primary underline">
-              çerez politikası
+              {t("policyLink")}
             </Link>
             .
           </p>
@@ -64,21 +64,21 @@ export function CookieBanner() {
                 onClick={() => void save(false, false)}
                 className="btn-ghost px-5 py-3 text-xs"
               >
-                Yalnızca gerekli
+                {t("necessaryOnly")}
               </button>
               <button
                 type="button"
                 onClick={openCustomize}
                 className="border border-outline-variant/40 px-5 py-3 font-meta text-xs uppercase tracking-widest text-secondary hover:border-primary hover:text-primary"
               >
-                Özelleştir
+                {t("customize")}
               </button>
               <button
                 type="button"
                 onClick={() => void save(true, true)}
                 className="btn-cta px-5 py-3 text-xs"
               >
-                Tümünü kabul et
+                {t("acceptAll")}
               </button>
             </div>
           ) : null}
@@ -89,7 +89,7 @@ export function CookieBanner() {
             <div className="flex flex-wrap gap-6 font-meta text-[11px] uppercase text-secondary">
               <label className="flex items-center gap-2">
                 <input type="checkbox" checked disabled className="accent-primary" />
-                Gerekli
+                {t("necessary")}
               </label>
               <label className="flex items-center gap-2">
                 <input
@@ -98,7 +98,7 @@ export function CookieBanner() {
                   onChange={(e) => setAnalytics(e.target.checked)}
                   className="accent-primary"
                 />
-                Analitik (Google Analitik)
+                {t("analytics")}
               </label>
               <label className="flex items-center gap-2">
                 <input
@@ -107,7 +107,7 @@ export function CookieBanner() {
                   onChange={(e) => setMarketing(e.target.checked)}
                   className="accent-primary"
                 />
-                Pazarlama (Google Ads / Meta)
+                {t("marketing")}
               </label>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -116,14 +116,14 @@ export function CookieBanner() {
                 onClick={() => setCustomize(false)}
                 className="btn-ghost px-5 py-3 text-xs"
               >
-                Geri
+                {t("back")}
               </button>
               <button
                 type="button"
                 onClick={() => void save(analytics, marketing)}
                 className="btn-cta px-5 py-3 text-xs"
               >
-                Seçimi kaydet
+                {t("saveSelection")}
               </button>
             </div>
           </div>

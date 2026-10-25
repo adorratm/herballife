@@ -1,4 +1,4 @@
-import { getProductsPaged } from "@/lib/api";
+import { getProductsPaged } from "@/lib/catalog.server";
 import type { Product, ProductVariant } from "@/lib/types";
 
 export async function fetchAllCatalogProducts(): Promise<Product[]> {

@@ -1,4 +1,4 @@
-# Herbal Ürünleri (Herbalife mağaza + wellness + koç)
+# Herbal Kapıda (Herbalife mağaza + wellness + koç)
 
 Monorepo: NestJS API + Next.js vitrin + Next.js admin. Botanical Vitality tasarımı; marka/domain CMS ve env ile değiştirilebilir.
 
@@ -42,7 +42,7 @@ docker/     Dockerfile'lar
 
 ## Marka
 
-Admin → Site Ayarları: marka adı, logo, distribütör (varsayılan Emine Özberk), disclaimer, WhatsApp.
+Admin → Site Ayarları: marka adı (varsayılan Herbal Kapıda), logo, distribütör, disclaimer, WhatsApp. Domain: herbalkapida.com · info@herbalkapida.com
 
 ## Demo hesaplar (seed sonrası)
 

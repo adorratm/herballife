@@ -1,13 +1,15 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { getTranslations } from "next-intl/server";
 
 export type BreadcrumbItem = { name: string; path: string };
 
-export function PageBreadcrumb({ items }: { items: BreadcrumbItem[] }) {
+export async function PageBreadcrumb({ items }: { items: BreadcrumbItem[] }) {
+  const t = await getTranslations("aria");
   if (!items.length) return null;
 
   return (
     <nav
-      aria-label="Sayfa yolu"
+      aria-label={t("breadcrumb")}
       className="border-b border-outline-variant bg-white"
     >
       <ol className="page-shell flex flex-wrap items-center gap-x-2 gap-y-1 py-3 text-sm text-on-surface-variant">

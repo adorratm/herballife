@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import {
   useEffect,
@@ -32,7 +33,14 @@ type Props = {
   variant?: "bar" | "icon" | "both";
 };
 
+const GROUP_LABEL_KEY: Record<string, string> = {
+  products: "sectionProducts",
+  blog: "sectionBlog",
+  legal: "sectionLegal",
+};
+
 export function SiteSearch({ className = "", variant = "both" }: Props) {
+  const t = useTranslations("siteSearch");
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -164,14 +172,14 @@ export function SiteSearch({ className = "", variant = "both" }: Props) {
           >
             <button
               type="button"
-              aria-label="Kapat"
+              aria-label={t("closeOverlay")}
               className="absolute inset-0 bg-[#121411]/55 backdrop-blur-[2px]"
               onClick={close}
             />
             <div
               role="dialog"
               aria-modal="true"
-              aria-label="Site arama"
+              aria-label={t("dialogLabel")}
               className="relative z-10 flex w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-outline-variant/50 bg-white shadow-[0_24px_64px_-16px_rgba(18,20,17,0.35)]"
               onMouseDown={(e) => e.stopPropagation()}
             >
@@ -184,7 +192,7 @@ export function SiteSearch({ className = "", variant = "both" }: Props) {
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   onKeyDown={onInputKeyDown}
-                  placeholder="Ürün, yazı, sayfa…"
+                  placeholder={t("placeholder")}
                   className="w-full bg-transparent px-3 py-4 text-sm text-on-surface outline-none placeholder:text-on-surface-variant"
                   autoComplete="off"
                   spellCheck={false}
@@ -193,9 +201,9 @@ export function SiteSearch({ className = "", variant = "both" }: Props) {
                   type="button"
                   onClick={close}
                   className="mr-3 shrink-0 rounded-md border border-outline-variant/40 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-on-surface-variant transition-colors hover:border-primary hover:text-primary"
-                  aria-label="Aramayı kapat"
+                  aria-label={t("closeSearch")}
                 >
-                  Kapat
+                  {t("close")}
                 </button>
               </div>
 
@@ -206,33 +214,38 @@ export function SiteSearch({ className = "", variant = "both" }: Props) {
                 {q.trim().length < 2 ? (
                   <div className="space-y-3 px-4 py-6">
                     <p className="text-xs text-on-surface-variant">
-                      En az 2 karakter · yön tuşları ve Enter
+                      {t("hintMinChars")}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       <QuickChip
-                        label="Ürünler"
+                        label={t("quickProducts")}
                         onClick={() => go("/urunler")}
                       />
-                      <QuickChip label="Yazılar" onClick={() => go("/blog")} />
                       <QuickChip
-                        label="Sipariş sorgula"
+                        label={t("quickBlog")}
+                        onClick={() => go("/blog")}
+                      />
+                      <QuickChip
+                        label={t("quickOrderLookup")}
                         onClick={() => go("/siparis-sorgula")}
                       />
                     </div>
                   </div>
                 ) : loading ? (
                   <p className="px-4 py-6 text-xs text-on-surface-variant">
-                    Aranıyor…
+                    {t("searching")}
                   </p>
                 ) : !hasHits ? (
                   <div className="space-y-3 px-4 py-6">
-                    <p className="text-xs text-on-surface-variant">Sonuç yok</p>
+                    <p className="text-xs text-on-surface-variant">
+                      {t("noResults")}
+                    </p>
                     <button
                       type="button"
                       onClick={goCatalog}
                       className="text-sm font-semibold text-primary hover:underline"
                     >
-                      Katalogda “{q.trim()}” ara →
+                      {t("searchInCatalog", { q: q.trim() })}
                     </button>
                   </div>
                 ) : (
@@ -245,7 +258,14 @@ export function SiteSearch({ className = "", variant = "both" }: Props) {
                       >
                         <div className="flex items-center justify-between gap-2 px-4 py-2">
                           <p className="text-[11px] font-bold uppercase tracking-wide text-primary">
-                            {group.label}
+                            {GROUP_LABEL_KEY[group.type]
+                              ? t(
+                                  GROUP_LABEL_KEY[group.type] as
+                                    | "sectionProducts"
+                                    | "sectionBlog"
+                                    | "sectionLegal",
+                                )
+                              : group.label}
                           </p>
                           {seeAll ? (
                             <button
@@ -253,7 +273,7 @@ export function SiteSearch({ className = "", variant = "both" }: Props) {
                               onClick={() => go(seeAll(q.trim()))}
                               className="text-[11px] font-semibold text-on-surface-variant hover:text-primary"
                             >
-                              Tümünü gör
+                              {t("seeAll")}
                             </button>
                           ) : null}
                         </div>
@@ -299,8 +319,11 @@ export function SiteSearch({ className = "", variant = "both" }: Props) {
 
               {q.trim().length >= 2 ? (
                 <div className="flex flex-wrap gap-2 border-t border-outline-variant/30 bg-surface-container-low/80 px-3 py-2.5">
-                  <QuickChip label="Kataloğa git" onClick={goCatalog} />
-                  <QuickChip label="Yazılar" onClick={() => go("/blog")} />
+                  <QuickChip label={t("goToCatalog")} onClick={goCatalog} />
+                  <QuickChip
+                    label={t("quickBlog")}
+                    onClick={() => go("/blog")}
+                  />
                 </div>
               ) : null}
             </div>
@@ -318,13 +341,13 @@ export function SiteSearch({ className = "", variant = "both" }: Props) {
           className={`${
             variant === "both" ? "hidden h-10 w-full 2xl:flex" : "flex h-10 w-full"
           } items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-low px-3 text-left transition-colors hover:border-primary/35 hover:bg-white ${className}`}
-          aria-label="Ürün ara"
+          aria-label={t("searchProducts")}
         >
           <span className="shrink-0 text-on-surface-variant">
             <SearchIcon />
           </span>
           <span className="min-w-0 flex-1 truncate text-sm text-on-surface-variant">
-            Ara…
+            {t("searchShort")}
           </span>
           <kbd className="hidden shrink-0 rounded-md border border-outline-variant/40 px-1.5 py-0.5 text-[10px] text-on-surface-variant 2xl:inline">
             {hint}
@@ -341,7 +364,7 @@ export function SiteSearch({ className = "", variant = "both" }: Props) {
           } h-10 w-10 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-container-low ${
             variant === "both" ? "" : className
           }`}
-          aria-label="Ara"
+          aria-label={t("searchAria")}
         >
           <SearchIcon />
         </button>

@@ -4,12 +4,12 @@
  */
 
 const SELLER = {
-  name: 'Herbal Ürünleri — Emine Özberk (Bağımsız Distribütör)',
+  name: 'Herbal Kapıda (Bağımsız Distribütör)',
   address: 'Türkiye',
-  email: 'info@ornek.com',
+  email: 'info@herbalkapida.com',
   phone: '+90 500 000 00 00',
   hours: 'Pzt — Paz / 09:00 — 20:00',
-  website: 'https://herbalife.emrekilic.web.tr',
+  website: 'https://herbalkapida.com',
   taxOffice: '[Vergi dairesi — güncellenecek]',
   taxNumber: '',
   mersis: '[MERSİS No — güncellenecek]',
