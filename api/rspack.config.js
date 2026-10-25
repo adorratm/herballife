@@ -4,7 +4,7 @@ const nodeExternals = require('webpack-node-externals');
 const rootNodeModules = path.resolve(__dirname, '../node_modules');
 
 /**
- * Nest rspack: main + migrate entry (one-shot DB migrations in prod deploy).
+ * Nest rspack: main + migrate + seed entries (one-shot in prod deploy).
  * Yarn hoists deps to the workspace root, so externals must scan that
  * node_modules. @nestjs/typeorm v12 is ESM-only (no "require" export), so it
  * is allowlisted and bundled; rspack resolves it via the "import" condition.
@@ -21,6 +21,7 @@ module.exports = function (options) {
     entry: {
       main: mainEntry,
       migrate: './src/migrate.ts',
+      seed: './src/database/seed.ts',
     },
     output: {
       ...options.output,

@@ -1,6 +1,9 @@
+# Node 26 + Yarn 4.18 (packageManager / Volta ile hizalı)
 FROM node:26-bookworm-slim AS base
 WORKDIR /app
-RUN npm install -g corepack@latest --force && corepack enable
+RUN npm install -g corepack@latest --force \
+  && corepack enable \
+  && corepack prepare yarn@4.18.1 --activate
 
 FROM base AS build
 ENV NODE_OPTIONS=--max-old-space-size=1536
@@ -38,4 +41,5 @@ COPY --from=build /app/api/dist ./api/dist
 COPY --from=build /app/node_modules ./node_modules
 WORKDIR /app/api
 EXPOSE 4000
+# dist: main.js + migrate.js + seed.js (rspack entries)
 CMD ["node", "dist/main.js"]

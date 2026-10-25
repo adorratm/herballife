@@ -1,0 +1,247 @@
+# Build → GHCR → SSH zero-downtime deploy
+# Secrets: bkz. deploy/SECRETS.md
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: "Boş DB olmasa bile seed çalıştır (SEED_ON_DEPLOY=1)"
+        type: boolean
+        default: false
+      skip_deploy:
+        description: "Yalnızca GHCR build/push (deploy yok)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    name: Build & push GHCR
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      image_tag: ${{ steps.meta.outputs.version }}
+      owner: ${{ steps.meta.outputs.owner }}
+      repo: ${{ steps.meta.outputs.repo }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Image meta
+        id: meta
+        run: |
+          OWNER="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
+          REPO="$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')"
+          SHA_SHORT="$(echo '${{ github.sha }}' | cut -c1-7)"
+          {
+            echo "owner=${OWNER}"
+            echo "repo=${REPO}"
+            echo "version=sha-${SHA_SHORT}"
+            echo "prefix=${{ env.REGISTRY }}/${OWNER}/${REPO}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Resolve public build args
+        id: args
+        env:
+          V_API: ${{ vars.NEXT_PUBLIC_API_URL }}
+          V_SITE: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+          V_ADMIN: ${{ vars.NEXT_PUBLIC_ADMIN_URL }}
+          V_CDN: ${{ vars.NEXT_PUBLIC_CDN_URL }}
+          V_GA4: ${{ vars.NEXT_PUBLIC_GA4_ID }}
+          V_GTM: ${{ vars.NEXT_PUBLIC_GTM_ID }}
+          V_ADS: ${{ vars.NEXT_PUBLIC_GOOGLE_ADS_ID }}
+          V_META: ${{ vars.NEXT_PUBLIC_META_PIXEL_ID }}
+          V_GSV: ${{ vars.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }}
+          V_REGION: ${{ vars.AWS_REGION }}
+          S_API: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          S_SITE: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+          S_ADMIN: ${{ secrets.NEXT_PUBLIC_ADMIN_URL }}
+          S_CDN: ${{ secrets.NEXT_PUBLIC_CDN_URL }}
+          S_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          S_CDN_URL: ${{ secrets.AWS_CDN_URL }}
+        run: |
+          pick() { local a="$1" b="$2" d="$3"; if [ -n "$a" ]; then echo "$a"; elif [ -n "$b" ]; then echo "$b"; else echo "$d"; fi; }
+          {
+            echo "api=$(pick "$V_API" "$S_API" "https://api.herbalife.com.tr")"
+            echo "site=$(pick "$V_SITE" "$S_SITE" "https://herbalife.com.tr")"
+            echo "admin=$(pick "$V_ADMIN" "$S_ADMIN" "https://admin.herbalife.com.tr")"
+            echo "cdn=$(pick "$V_CDN" "$S_CDN" "")"
+            echo "ga4=${V_GA4}"
+            echo "gtm=${V_GTM}"
+            echo "ads=${V_ADS}"
+            echo "meta=${V_META}"
+            echo "gsv=${V_GSV}"
+            echo "region=$(pick "$V_REGION" "" "eu-central-1")"
+            echo "bucket=${S_BUCKET}"
+            echo "aws_cdn=${S_CDN_URL}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push API
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/api.Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.prefix }}/api:${{ steps.meta.outputs.version }}
+            ${{ steps.meta.outputs.prefix }}/api:latest
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,mode=max,scope=api
+
+      - name: Build & push Frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/frontend.Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.prefix }}/frontend:${{ steps.meta.outputs.version }}
+            ${{ steps.meta.outputs.prefix }}/frontend:latest
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ steps.args.outputs.api }}
+            NEXT_PUBLIC_SITE_URL=${{ steps.args.outputs.site }}
+            NEXT_PUBLIC_ADMIN_URL=${{ steps.args.outputs.admin }}
+            NEXT_PUBLIC_CDN_URL=${{ steps.args.outputs.cdn }}
+            NEXT_PUBLIC_GA4_ID=${{ steps.args.outputs.ga4 }}
+            NEXT_PUBLIC_GTM_ID=${{ steps.args.outputs.gtm }}
+            NEXT_PUBLIC_GOOGLE_ADS_ID=${{ steps.args.outputs.ads }}
+            NEXT_PUBLIC_META_PIXEL_ID=${{ steps.args.outputs.meta }}
+            NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=${{ steps.args.outputs.gsv }}
+            AWS_S3_BUCKET=${{ steps.args.outputs.bucket }}
+            AWS_REGION=${{ steps.args.outputs.region }}
+            AWS_CDN_URL=${{ steps.args.outputs.aws_cdn }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+      - name: Build & push Admin
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/admin.Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.prefix }}/admin:${{ steps.meta.outputs.version }}
+            ${{ steps.meta.outputs.prefix }}/admin:latest
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ steps.args.outputs.api }}
+            NEXT_PUBLIC_ADMIN_URL=${{ steps.args.outputs.admin }}
+            NEXT_PUBLIC_SITE_URL=${{ steps.args.outputs.site }}
+            NEXT_PUBLIC_CDN_URL=${{ steps.args.outputs.cdn }}
+          cache-from: type=gha,scope=admin
+          cache-to: type=gha,mode=max,scope=admin
+
+  deploy:
+    name: Zero-downtime deploy
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: >
+      github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' && inputs.skip_deploy != true)
+    environment: production
+    steps:
+      - name: Checkout (compose + deploy scripts)
+        uses: actions/checkout@v4
+
+      - name: Check deploy secrets
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          missing=0
+          for k in DEPLOY_HOST DEPLOY_USER DEPLOY_SSH_KEY; do
+            if [ -z "${!k}" ]; then
+              echo "::error::Secret eksik: $k — Settings → Secrets and variables → Actions (veya Environment: production)"
+              missing=1
+            fi
+          done
+          if [ "$missing" = "1" ]; then
+            echo "Sunucu secret'ları girilince deploy otomatik çalışır. Bkz. deploy/SECRETS.md"
+            exit 1
+          fi
+
+      - name: Resolve deploy path / port
+        id: dest
+        env:
+          P: ${{ secrets.DEPLOY_PATH }}
+          PORT: ${{ secrets.DEPLOY_PORT }}
+        run: |
+          echo "path=${P:-/opt/herballife}" >> "$GITHUB_OUTPUT"
+          echo "port=${PORT:-22}" >> "$GITHUB_OUTPUT"
+
+      - name: Sync files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ steps.dest.outputs.port }}
+          passphrase: ${{ secrets.DEPLOY_SSH_PASSPHRASE }}
+          source: "docker-compose.prod.yml,deploy/deploy.sh,deploy/.env.production.example,docker/api.Dockerfile,docker/frontend.Dockerfile,docker/admin.Dockerfile,frontend/public/downloads/.gitkeep"
+          target: ${{ steps.dest.outputs.path }}
+          overwrite: true
+
+      - name: Bootstrap + rolling deploy
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          GHCR_TOKEN: ${{ secrets.GHCR_PULL_TOKEN != '' && secrets.GHCR_PULL_TOKEN || secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ secrets.GHCR_PULL_USER != '' && secrets.GHCR_PULL_USER || github.actor }}
+          IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
+          GHCR_OWNER: ${{ needs.build.outputs.owner }}
+          GHCR_REPO: ${{ needs.build.outputs.repo }}
+          DEPLOY_PATH: ${{ steps.dest.outputs.path }}
+          DEPLOY_ENV_CONTENT: ${{ secrets.DEPLOY_ENV }}
+          SEED_FLAG: ${{ github.event_name == 'workflow_dispatch' && inputs.seed && '1' || '0' }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ steps.dest.outputs.port }}
+          passphrase: ${{ secrets.DEPLOY_SSH_PASSPHRASE }}
+          envs: GHCR_TOKEN,GHCR_USER,IMAGE_TAG,GHCR_OWNER,GHCR_REPO,DEPLOY_PATH,DEPLOY_ENV_CONTENT,SEED_FLAG
+          script: |
+            set -euo pipefail
+            mkdir -p "$DEPLOY_PATH/deploy" "$DEPLOY_PATH/frontend/public/downloads" "$DEPLOY_PATH/docker"
+            cd "$DEPLOY_PATH"
+            chmod +x deploy/deploy.sh 2>/dev/null || true
+
+            if [ ! -f deploy/.env ]; then
+              if [ -n "${DEPLOY_ENV_CONTENT:-}" ]; then
+                printf '%s\n' "$DEPLOY_ENV_CONTENT" > deploy/.env
+                echo "deploy/.env DEPLOY_ENV secret'tan yazıldı"
+              else
+                cp deploy/.env.production.example deploy/.env
+                echo "deploy/.env örnekten oluşturuldu — JWT/DB şifrelerini güncelleyin"
+              fi
+              chmod 600 deploy/.env
+            fi
+
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            export HERBALIFE_USE_REGISTRY=1
+            export IMAGE_TAG GHCR_OWNER GHCR_REPO
+            export SEED_ON_DEPLOY="${SEED_FLAG:-0}"
+            bash deploy/deploy.sh

@@ -1,6 +1,9 @@
+# Node 26 + Yarn 4.18 (packageManager / Volta ile hizalı)
 FROM node:26-bookworm-slim AS base
 WORKDIR /app
-RUN npm install -g corepack@latest --force && corepack enable
+RUN npm install -g corepack@latest --force \
+  && corepack enable \
+  && corepack prepare yarn@4.18.1 --activate
 
 FROM base AS build
 ENV NODE_OPTIONS=--max-old-space-size=1536

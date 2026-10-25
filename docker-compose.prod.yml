@@ -1,15 +1,13 @@
-# Herbalife — production (Hetzner, paylaşımlı VPS)
-# Prefer CI→GHCR (HERBALIFE_USE_REGISTRY=1); VPS compose build is last resort (sibling 502).
+# Herbalife — production (Hetzner / paylaşımlı VPS)
+# Tercih: CI → GHCR (HERBALIFE_USE_REGISTRY=1). Yerel compose build son çare.
 # Host portları TTEN (3000/4000) ve Portfolio (3100–3102 / 5433 / 6380) ile çakışmaz.
 # Kullanım: bash deploy/deploy.sh
-#
-# TTEN ağı: compose ile DEĞİL, deploy/sync-tten-nginx.sh ile bağlanır.
-# Sebep: compose service adı "frontend" TTEN nginx upstream'i (frontend:3000) ile çakışır.
 #
 # Zero-downtime yaklaşımı (deploy.sh):
 # 1) Pull/build image (eski container'lar ayakta)
 # 2) migrate one-shot (fail → eski container'lara dokunulmaz)
-# 3) Servisleri tek tek recreate + health; fail → :rollback image
+# 3) Boş DB ise seed (varsayılan demo veriler)
+# 4) Servisleri tek tek recreate + health; fail → :rollback image
 
 name: herbalife-prod
 
@@ -73,7 +71,7 @@ services:
       - herbalife
 
   api:
-    image: herbalife-prod-api:live
+    image: ${API_IMAGE:-herbalife-prod-api:live}
     build: *api-build
     container_name: herbalife-prod-api
     restart: unless-stopped
@@ -119,7 +117,7 @@ services:
       - herbalife
 
   frontend:
-    image: herbalife-prod-frontend:live
+    image: ${FRONTEND_IMAGE:-herbalife-prod-frontend:live}
     build:
       context: .
       dockerfile: docker/frontend.Dockerfile
@@ -170,7 +168,7 @@ services:
       - herbalife
 
   admin:
-    image: herbalife-prod-admin:live
+    image: ${ADMIN_IMAGE:-herbalife-prod-admin:live}
     build:
       context: .
       dockerfile: docker/admin.Dockerfile
