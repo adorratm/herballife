@@ -22,6 +22,7 @@ import {
   productKindLabel,
 } from "@/lib/catalog-seo";
 import { getSiteSettings } from "@/lib/cms";
+import { CmsHtml } from "@/components/CmsHtml";
 import { productImage } from "@/lib/format";
 import {
   JsonLd,
@@ -300,9 +301,10 @@ export default async function ProductDetailPage({ params }: Props) {
               {product.storageNotes ? (
                 <div className="industrial-border p-6">
                   <h3 className="mb-3 font-display text-2xl">{t("storage")}</h3>
-                  <p className="font-sans text-sm leading-6 text-on-surface-variant">
-                    {product.storageNotes}
-                  </p>
+                  <CmsHtml
+                    className="prose-blog font-sans text-sm leading-6 text-on-surface-variant"
+                    html={product.storageNotes}
+                  />
                 </div>
               ) : null}
               {category ? (

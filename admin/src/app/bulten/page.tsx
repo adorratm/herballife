@@ -11,6 +11,7 @@ import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import { asArray } from '@/lib/utils';
 import { DataTable } from '@/components/DataTable';
+import { RichTextEditor } from '@/components/RichTextEditor';
 import type { NewsletterSubscriber } from '@/lib/types';
 
 function NewsletterPageInner() {
@@ -107,17 +108,17 @@ function NewsletterPageInner() {
             className="mt-1 w-full border border-border-muted bg-background px-3 py-2 text-sm"
           />
         </label>
-        <label className="block text-sm">
+        <div className="block text-sm">
           <span className="mono text-[10px] uppercase text-muted">HTML gövde</span>
-          <textarea
-            required
-            rows={8}
-            value={campaignHtml}
-            onChange={(e) => setCampaignHtml(e.target.value)}
-            className="mt-1 w-full border border-border-muted bg-background px-3 py-2 font-mono text-xs"
-            placeholder="<p>Merhaba, yeni kampanyamız…</p>"
-          />
-        </label>
+          <div className="mt-1">
+            <RichTextEditor
+              value={campaignHtml}
+              onChange={setCampaignHtml}
+              placeholder="Kampanya içeriği…"
+              minHeight="240px"
+            />
+          </div>
+        </div>
         <button
           type="submit"
           disabled={campaignBusy}

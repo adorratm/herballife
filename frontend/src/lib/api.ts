@@ -73,21 +73,26 @@ async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T>
     headers.set("X-Session-Id", sessionId);
   }
 
+    const isMutation =
+      json !== undefined ||
+      Boolean(rest.method && rest.method !== "GET");
+    const cache: RequestCache =
+      rest.cache ?? (isMutation ? "no-store" : "default");
+    // cache: 'no-store' ile next.revalidate birlikte kullanılamaz (Next uyarısı)
+    const next =
+      rest.next ??
+      (cache === "no-store"
+        ? undefined
+        : isMutation
+          ? { revalidate: 0 }
+          : { revalidate: 300 });
+
     const res = await fetch(`${getApiBase()}${path}`, {
       ...rest,
       headers,
       body: json !== undefined ? JSON.stringify(json) : rest.body,
-      // Mutasyon ve sepet isteklerinde bayat cache kullanma
-      cache:
-        rest.cache ??
-        (json !== undefined || (rest.method && rest.method !== "GET")
-          ? "no-store"
-          : "default"),
-      next:
-        rest.next ??
-        (json !== undefined || (rest.method && rest.method !== "GET")
-          ? { revalidate: 0 }
-          : { revalidate: 300 }),
+      cache,
+      ...(next ? { next } : {}),
     });
 
   if (!res.ok) {

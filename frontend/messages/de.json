@@ -132,6 +132,14 @@
       "atistirmalik": {
         "name": "Snacks & Riegel",
         "blurb": "Proteinriegel und Snacks"
+      },
+      "kisisel-bakim": {
+        "name": "Hautpflege",
+        "blurb": "HL Skin Serie"
+      },
+      "tanitim-urunleri": {
+        "name": "Proben",
+        "blurb": "Starterprodukte"
       }
     },
     "productCount": "{count} Produkte",
@@ -297,7 +305,9 @@
     "vatIncluded": "(inkl. MwSt.)",
     "stock": "Bestand",
     "stockNone": "keine",
-    "lowStock": "Nur noch {count} — begrenzter Bestand",
+    "stockIn": "Auf Lager",
+    "stockOut": "Nicht auf Lager",
+    "lowStock": "Begrenzter Bestand",
     "trustOriginal": "Originalprodukt",
     "trustPaytr": "Sichere Zahlung (PayTR)",
     "trustReturn": "14-tägiges Widerrufsrecht",

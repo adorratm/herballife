@@ -10,7 +10,7 @@ export const UTILITY_LINKS: NavItem[] = [
   { href: "/hesabim/favoriler", label: "My favorites" },
 ];
 
-/** Kategori menü öğeleri — görsel + kısa açıklama (SiteHeader home.categoryHub ile override) */
+/** Kategori menü öğeleri — görsel + href; etiketler SiteHeader’da home.categoryHub ile locale’e göre */
 export const CATEGORY_CHIPS: (NavItem & {
   accent?: boolean;
   image: string;
@@ -18,52 +18,52 @@ export const CATEGORY_CHIPS: (NavItem & {
 })[] = [
   {
     href: "/urunler/kategori/kilo-kontrolu",
-    label: "Weight management",
-    blurb: "Formula and program",
+    label: "Kilo Kontrolü",
+    blurb: "Formül ve program ürünleri",
     image: "/images/products/thermo-complete-90-tablet.png",
   },
   {
     href: "/urunler/kategori/icecekler",
-    label: "Drinks",
-    blurb: "Aloe, tea, fiber",
+    label: "İçecekler",
+    blurb: "Aloe, çay ve lifli içecekler",
     image: "/images/products/herbal-aloe-konsantre-icecek-473-ml.png",
   },
   {
     href: "/urunler/kategori/avantajli-setler",
-    label: "Bundles",
-    blurb: "Shaker gift included",
+    label: "Hediyeli Setler",
+    blurb: "Karıştırıcı hediyeli paketler",
     image: "/images/products/2026-paket-1-shaker-hediyeli.png",
     accent: true,
   },
   {
     href: "/urunler/kategori/takviye-edici",
-    label: "Supplements",
-    blurb: "Vitamins and minerals",
+    label: "Takviye Edici",
+    blurb: "Vitamin ve mineral",
     image:
       "/images/products/formul-2-vitamin-ve-mineral-kompleks-kadinlar-icin-60-tablet.png",
   },
   {
     href: "/urunler/kategori/sporcu-urunleri",
-    label: "Sports",
-    blurb: "Protein and performance",
+    label: "Sporcu Ürünleri",
+    blurb: "Protein ve performans",
     image: "/images/products/formul-1-shake.png",
   },
   {
     href: "/urunler/kategori/atistirmalik",
-    label: "Snacks",
-    blurb: "Practical snacks",
+    label: "Atıştırmalık",
+    blurb: "Protein bar ve atıştırmalık",
     image: "/images/products/multi-fiber-multi-fiber-lifli-ve-aromali-icecek-tozu-elma-204-g.png",
   },
   {
     href: "/urunler/kategori/kisisel-bakim",
-    label: "Skin care",
-    blurb: "HL Skin series",
+    label: "Kişisel Bakım",
+    blurb: "HL Skin serisi",
     image: "/images/products/hl-skin-yenileyici-jel-temizleyici-147-ml.png",
   },
   {
     href: "/urunler/kategori/tanitim-urunleri",
-    label: "Samples",
-    blurb: "Starter products",
+    label: "Tanıtım",
+    blurb: "Başlangıç ürünleri",
     image: "/images/products/shaker-tekli.jpg",
   },
 ];

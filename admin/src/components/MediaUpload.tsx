@@ -86,7 +86,7 @@ export function MediaUpload({
       <MediaLibraryPicker
         open={pickerOpen}
         onClose={() => setPickerOpen(false)}
-        selectedUrls={value ? [value] : []}
+        selectedUrls={value ? [value] : undefined}
         onApply={(urls) => {
           if (urls[0]) onChange(urls[0]);
         }}

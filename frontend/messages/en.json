@@ -114,6 +114,14 @@
       "atistirmalik": {
         "name": "Snacks",
         "blurb": "Protein bars and snacks"
+      },
+      "kisisel-bakim": {
+        "name": "Skin care",
+        "blurb": "HL Skin series"
+      },
+      "tanitim-urunleri": {
+        "name": "Samples",
+        "blurb": "Starter products"
       }
     },
     "productCount": "{count} products",
@@ -297,7 +305,9 @@
     "vatIncluded": "(VAT included)",
     "stock": "Stock",
     "stockNone": "none",
-    "lowStock": "Only {count} left — limited stock",
+    "stockIn": "In stock",
+    "stockOut": "Out of stock",
+    "lowStock": "Limited stock",
     "trustOriginal": "Genuine product",
     "trustPaytr": "Secure payment (PayTR)",
     "trustReturn": "14-day withdrawal right",
@@ -769,9 +779,21 @@
     "categoryNotFound": "Category not found",
     "catalogLoading": "Loading catalog…",
     "aboutJsonLdDescription": "{brand} — independent Herbalife distributor.",
-    "keywordsCatalogDefault": ["catalog", "products", "bundles", "sets"],
-    "keywordsCategoryExtra": ["product", "bundle"],
-    "keywordsBlog": ["articles", "nutrition", "Herbalife"]
+    "keywordsCatalogDefault": [
+      "catalog",
+      "products",
+      "bundles",
+      "sets"
+    ],
+    "keywordsCategoryExtra": [
+      "product",
+      "bundle"
+    ],
+    "keywordsBlog": [
+      "articles",
+      "nutrition",
+      "Herbalife"
+    ]
   },
   "aboutPage": {
     "fallbackHeroTitle": "About us",

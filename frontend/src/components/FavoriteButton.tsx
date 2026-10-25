@@ -24,10 +24,13 @@ export function FavoriteButton({
 }: Props) {
   const tAria = useTranslations("aria");
   const router = useRouter();
+  /** SSR + ilk client boyaması hep false; wishlist yalnızca mount sonrası */
   const [active, setActive] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     void ensureWishlistIds();
     return subscribeWishlist((ids) => setActive(ids.has(productId)));
   }, [productId]);
@@ -57,6 +60,7 @@ export function FavoriteButton({
     size === "lg"
       ? "h-auto min-h-14 w-14"
       : "h-10 w-10";
+  const shown = mounted && active;
 
   return (
     <button
@@ -64,16 +68,17 @@ export function FavoriteButton({
       onClick={onClick}
       disabled={busy}
       aria-label={
-        active ? tAria("removeFromFavorites") : tAria("addToFavorites")
+        shown ? tAria("removeFromFavorites") : tAria("addToFavorites")
       }
-      aria-pressed={active}
+      aria-pressed={shown}
+      suppressHydrationWarning
       className={`pressable inline-flex cursor-pointer items-center justify-center rounded-full border shadow-sm transition-all hover:scale-105 ${sizeClass} ${
-        active
+        shown
           ? "border-tertiary bg-tertiary text-on-tertiary"
           : "border-outline-variant/40 bg-surface-container-lowest/95 text-on-surface-variant hover:border-tertiary hover:text-tertiary"
       } disabled:cursor-not-allowed disabled:opacity-60`}
     >
-      <HeartIcon filled={active} />
+      <HeartIcon filled={shown} />
     </button>
   );
 }

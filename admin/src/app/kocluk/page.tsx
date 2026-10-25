@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { Modal } from '@/components/Modal';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 type Meal = {
   id: string;
@@ -329,18 +330,19 @@ export default function CoachPage() {
             ) : (
               <p className="text-sm text-muted">Fotoğraf eklenmemiş.</p>
             )}
-            <label className="block text-sm">
+            <div className="block text-sm">
               <span className="mono text-[10px] uppercase text-muted">
                 Koç notu (onay / red mesajında gider)
               </span>
-              <textarea
-                rows={3}
-                value={coachNote}
-                onChange={(e) => setCoachNote(e.target.value)}
-                placeholder="Opsiyonel geri bildirim…"
-                className="mt-1 w-full rounded-lg border border-border-muted bg-background px-3 py-2"
-              />
-            </label>
+              <div className="mt-1">
+                <RichTextEditor
+                  value={coachNote}
+                  onChange={setCoachNote}
+                  placeholder="Opsiyonel geri bildirim…"
+                  minHeight="100px"
+                />
+              </div>
+            </div>
           </div>
         ) : detail ? (
           <div className="space-y-4">
@@ -376,18 +378,19 @@ export default function CoachPage() {
                 </dd>
               </div>
             </dl>
-            <label className="block text-sm">
+            <div className="block text-sm">
               <span className="mono text-[10px] uppercase text-muted">
                 Koç notu (onay / red mesajında gider)
               </span>
-              <textarea
-                rows={3}
-                value={coachNote}
-                onChange={(e) => setCoachNote(e.target.value)}
-                placeholder="Opsiyonel geri bildirim…"
-                className="mt-1 w-full rounded-lg border border-border-muted bg-background px-3 py-2"
-              />
-            </label>
+              <div className="mt-1">
+                <RichTextEditor
+                  value={coachNote}
+                  onChange={setCoachNote}
+                  placeholder="Opsiyonel geri bildirim…"
+                  minHeight="100px"
+                />
+              </div>
+            </div>
           </div>
         ) : null}
       </Modal>

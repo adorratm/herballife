@@ -126,8 +126,9 @@ export class ProductsService {
     }
 
     if (query.categorySlug) {
-      qb.andWhere('category.slug = :categorySlug', {
-        categorySlug: query.categorySlug,
+      // Lokalize kategori slug’ı da eşleşsin (en: weight-management vb.)
+      qb.andWhere(sqlMatchSlugAnyLocale('category', 'categorySlug'), {
+        categorySlug: query.categorySlug.trim().toLowerCase(),
       });
     }
 

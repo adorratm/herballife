@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { categoryCatalogPath } from "@/lib/catalog-paths";
 import { productGtin, productKindLabel } from "@/lib/catalog-seo";
 import type { SiteSettings } from "@/lib/cms";
+import { stripHtml } from "@/lib/format";
 import type { BlogPost, Product, ProductReview } from "@/lib/types";
 import {
   getPathname,
@@ -9,6 +10,10 @@ import {
   type AppLocale,
   type AppPathname,
 } from "@/i18n/routing";
+
+function plainMeta(text: string | null | undefined) {
+  return stripHtml(String(text || ""));
+}
 
 export { categoryCatalogPath };
 
@@ -150,9 +155,10 @@ export function buildPageMetadata({
   const ogImage = image || settings.seo.ogImage;
   const fullTitle = `${title} | ${settings.brand.name}`;
   const ogLocale = OPEN_GRAPH_LOCALE[locale] || OPEN_GRAPH_LOCALE.tr;
+  const metaDescription = plainMeta(description);
   return {
     title,
-    description,
+    description: metaDescription,
     keywords: keywords?.length
       ? [...(settings.seo.keywords || []), ...keywords]
       : undefined,
@@ -171,13 +177,13 @@ export function buildPageMetadata({
       url,
       siteName: settings.brand.name,
       title: fullTitle,
-      description,
+      description: metaDescription,
       images: ogImages(ogImage, settings.brand.name),
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
-      description,
+      description: metaDescription,
       images: ogImage ? [ogImage] : undefined,
     },
   };
@@ -311,6 +317,7 @@ export function buildSiteMetadata(
   const { seo, brand } = settings;
   const verification =
     process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim() || undefined;
+  const metaDescription = plainMeta(seo.description);
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -318,7 +325,7 @@ export function buildSiteMetadata(
       default: seo.title || brand.name,
       template: `%s | ${brand.name}`,
     },
-    description: seo.description,
+    description: metaDescription,
     keywords: seo.keywords,
     openGraph: {
       type: "website",
@@ -326,13 +333,13 @@ export function buildSiteMetadata(
       url: `${SITE_URL}${localizedPath(locale, "/")}`,
       siteName: brand.name,
       title: seo.title,
-      description: seo.description,
+      description: metaDescription,
       images: ogImages(seo.ogImage, brand.name),
     },
     twitter: {
       card: "summary_large_image",
       title: seo.title,
-      description: seo.description,
+      description: metaDescription,
       images: seo.ogImage ? [seo.ogImage] : undefined,
     },
     alternates: {

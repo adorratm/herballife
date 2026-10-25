@@ -153,7 +153,13 @@ export default async function HomePage() {
     tHome("waPrefillConsult", { name: settings.brand.distributorName }),
   );
 
-  const catBySlug = new Map(categories.map((c) => [c.slug, c]));
+  const catBySlug = new Map<string, Category>();
+  for (const c of categories) {
+    catBySlug.set(c.slug, c);
+    for (const s of Object.values(c.localeSlugs || {})) {
+      if (s) catBySlug.set(s, c);
+    }
+  }
   const faqLd = faqJsonLd(faqItems);
 
   const brandWords = settings.brand.name.trim().split(/\s+/);
@@ -207,31 +213,40 @@ export default async function HomePage() {
           <div className="hero-media relative lg:col-span-6">
             <div className="relative mx-auto aspect-6/5 w-full max-w-176">
               <div className="absolute bottom-[-3%] left-[17%] z-10 aspect-square h-[58%] -translate-x-1/2">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element -- hero LCP: kesin eager */}
+                <img
                   src="/images/cutouts/bitkisel-cay.png"
                   alt=""
-                  fill
-                  className="object-contain drop-shadow-[0_18px_22px_rgba(0,0,0,0.22)]"
-                  sizes="(max-width: 1024px) 40vw, 24rem"
+                  width={480}
+                  height={480}
+                  decoding="async"
+                  loading="eager"
+                  className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_22px_rgba(0,0,0,0.22)]"
                 />
               </div>
               <div className="absolute bottom-[-3%] left-[82%] z-10 aspect-square h-[88%] -translate-x-1/2">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element -- hero LCP: kesin eager */}
+                <img
                   src="/images/cutouts/herbal-aloe.png"
                   alt=""
-                  fill
-                  className="object-contain drop-shadow-[0_18px_22px_rgba(0,0,0,0.22)]"
-                  sizes="(max-width: 1024px) 70vw, 36rem"
+                  width={720}
+                  height={720}
+                  decoding="async"
+                  loading="eager"
+                  className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_22px_rgba(0,0,0,0.22)]"
                 />
               </div>
               <div className="absolute bottom-[-3%] left-1/2 z-20 aspect-square h-full -translate-x-1/2">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element -- hero LCP: kesin eager */}
+                <img
                   src="/images/cutouts/formul-1-shake.png"
                   alt={tHome("heroShakeAlt", { brand: settings.brand.name })}
-                  fill
-                  priority
-                  className="object-contain drop-shadow-[0_24px_28px_rgba(0,0,0,0.28)]"
-                  sizes="(max-width: 1024px) 90vw, 44rem"
+                  width={880}
+                  height={880}
+                  decoding="async"
+                  loading="eager"
+                  fetchPriority="high"
+                  className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_24px_28px_rgba(0,0,0,0.28)]"
                 />
               </div>
             </div>
@@ -278,7 +293,7 @@ export default async function HomePage() {
                 <li key={hub.slug}>
                   <Reveal delay={i * 50} className="h-full">
                     <Link
-                      href={categoryHref(hub.slug)}
+                      href={categoryHref(cat?.slug || hub.slug)}
                       className="group flex h-full flex-col border-t-2 border-outline-variant pt-5 transition-colors hover:border-primary"
                     >
                       <hub.Icon

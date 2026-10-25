@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 export type WhatsAppPresetRow = {
   label: string;
@@ -116,17 +117,19 @@ export function WhatsAppPresetEditor({ presets, onChange }: Props) {
                 </button>
               </div>
             </div>
-            <label className="block text-sm">
+            <div className="block text-sm">
               <span className="mono text-[10px] uppercase text-muted">
                 WhatsApp mesajı
               </span>
-              <textarea
-                rows={3}
-                value={row.message}
-                onChange={(e) => update(index, 'message', e.target.value)}
-                className="mt-1 w-full border border-border-muted bg-surface px-3 py-2"
-              />
-            </label>
+              <div className="mt-1">
+                <RichTextEditor
+                  value={row.message}
+                  onChange={(html) => update(index, 'message', html)}
+                  placeholder="Hazır mesaj…"
+                  minHeight="100px"
+                />
+              </div>
+            </div>
           </div>
         ))
       )}

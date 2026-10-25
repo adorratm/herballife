@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { MediaUpload } from '@/components/MediaUpload';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 type Section = {
   id: string;
@@ -450,14 +451,15 @@ function StringListEditor({
       {items.map((item, index) => (
         <div key={`${label}-${index}`} className="flex gap-2">
           {multiline ? (
-            <textarea
-              rows={3}
-              value={item}
-              onChange={(e) =>
-                onChange(items.map((v, i) => (i === index ? e.target.value : v)))
-              }
-              className={inputClassName()}
-            />
+            <div className="min-w-0 flex-1">
+              <RichTextEditor
+                value={item}
+                onChange={(html) =>
+                  onChange(items.map((v, i) => (i === index ? html : v)))
+                }
+                minHeight="100px"
+              />
+            </div>
           ) : (
             <input
               value={item}
@@ -573,12 +575,11 @@ function FaqItemsEditor({
               />
             </Field>
             <Field label="Cevap">
-              <textarea
-                rows={3}
+              <RichTextEditor
                 value={item.answer}
-                onChange={(e) => update(index, 'answer', e.target.value)}
-                className={inputClassName()}
+                onChange={(html) => update(index, 'answer', html)}
                 placeholder="Cevabı buraya yazın…"
+                minHeight="120px"
               />
             </Field>
           </div>
@@ -796,16 +797,15 @@ export default function ContentPage() {
                 </Field>
               </div>
               <Field label="Açıklama">
-                <textarea
-                  rows={3}
+                <RichTextEditor
                   value={form.data.description}
-                  onChange={(e) =>
+                  onChange={(html) =>
                     setForm({
                       kind: 'hero',
-                      data: { ...form.data, description: e.target.value },
+                      data: { ...form.data, description: html },
                     })
                   }
-                  className={inputClassName()}
+                  minHeight="120px"
                 />
               </Field>
               <CtaFields
@@ -841,16 +841,15 @@ export default function ContentPage() {
                 }
               />
               <Field label="Açıklama">
-                <textarea
-                  rows={3}
+                <RichTextEditor
                   value={form.data.description}
-                  onChange={(e) =>
+                  onChange={(html) =>
                     setForm({
                       kind: 'ethos',
-                      data: { ...form.data, description: e.target.value },
+                      data: { ...form.data, description: html },
                     })
                   }
-                  className={inputClassName()}
+                  minHeight="120px"
                 />
               </Field>
               <LabelValueListEditor
@@ -1000,16 +999,15 @@ export default function ContentPage() {
                 }
               />
               <Field label="Açıklama">
-                <textarea
-                  rows={3}
+                <RichTextEditor
                   value={form.data.description}
-                  onChange={(e) =>
+                  onChange={(html) =>
                     setForm({
                       kind: 'workshop',
-                      data: { ...form.data, description: e.target.value },
+                      data: { ...form.data, description: html },
                     })
                   }
-                  className={inputClassName()}
+                  minHeight="120px"
                 />
               </Field>
               <MediaUpload
@@ -1067,16 +1065,15 @@ export default function ContentPage() {
                 />
               </Field>
               <Field label="Açıklama">
-                <textarea
-                  rows={3}
+                <RichTextEditor
                   value={form.data.description}
-                  onChange={(e) =>
+                  onChange={(html) =>
                     setForm({
                       kind: 'newsletter',
-                      data: { ...form.data, description: e.target.value },
+                      data: { ...form.data, description: html },
                     })
                   }
-                  className={inputClassName()}
+                  minHeight="120px"
                 />
               </Field>
             </>
@@ -1134,19 +1131,18 @@ export default function ContentPage() {
                 />
               </Field>
               <Field label="Arama açıklaması">
-                <textarea
-                  rows={3}
+                <RichTextEditor
                   value={form.data.seoDescription}
-                  onChange={(e) =>
+                  onChange={(html) =>
                     setForm({
                       kind: 'about-hero',
                       data: {
                         ...form.data,
-                        seoDescription: e.target.value,
+                        seoDescription: html,
                       },
                     })
                   }
-                  className={inputClassName()}
+                  minHeight="120px"
                 />
               </Field>
               <p className="text-xs text-muted">
@@ -1256,16 +1252,15 @@ export default function ContentPage() {
                 />
               </Field>
               <Field label="Alıntı / mesaj">
-                <textarea
-                  rows={3}
+                <RichTextEditor
                   value={form.data.quote}
-                  onChange={(e) =>
+                  onChange={(html) =>
                     setForm({
                       kind: 'about-ethos',
-                      data: { ...form.data, quote: e.target.value },
+                      data: { ...form.data, quote: html },
                     })
                   }
-                  className={inputClassName()}
+                  minHeight="120px"
                 />
               </Field>
               <div className="grid gap-3 md:grid-cols-2">
@@ -1312,16 +1307,15 @@ export default function ContentPage() {
                 />
               </Field>
               <Field label="Alt başlık">
-                <textarea
-                  rows={3}
+                <RichTextEditor
                   value={form.data.subtitle}
-                  onChange={(e) =>
+                  onChange={(html) =>
                     setForm({
                       kind: 'contact-header',
-                      data: { ...form.data, subtitle: e.target.value },
+                      data: { ...form.data, subtitle: html },
                     })
                   }
-                  className={inputClassName()}
+                  minHeight="120px"
                 />
               </Field>
             </>
@@ -1354,16 +1348,15 @@ export default function ContentPage() {
                 />
               </Field>
               <Field label="Alt başlık">
-                <textarea
-                  rows={3}
+                <RichTextEditor
                   value={form.data.subtitle}
-                  onChange={(e) =>
+                  onChange={(html) =>
                     setForm({
                       kind: 'media-header',
-                      data: { ...form.data, subtitle: e.target.value },
+                      data: { ...form.data, subtitle: html },
                     })
                   }
-                  className={inputClassName()}
+                  minHeight="120px"
                 />
               </Field>
               <div className="grid gap-3 md:grid-cols-2">

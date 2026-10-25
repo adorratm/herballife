@@ -114,6 +114,14 @@
       "atistirmalik": {
         "name": "Atıştırmalık",
         "blurb": "Protein bar ve atıştırmalık"
+      },
+      "kisisel-bakim": {
+        "name": "Kişisel Bakım",
+        "blurb": "HL Skin serisi"
+      },
+      "tanitim-urunleri": {
+        "name": "Tanıtım",
+        "blurb": "Başlangıç ürünleri"
       }
     },
     "productCount": "{count} ürün",
@@ -297,7 +305,9 @@
     "vatIncluded": "(KDV dahil)",
     "stock": "Stok",
     "stockNone": "yok",
-    "lowStock": "Son {count} adet — stok sınırlı",
+    "stockIn": "Stokta var",
+    "stockOut": "Stokta yok",
+    "lowStock": "Stok sınırlı",
     "trustOriginal": "Orijinal ürün",
     "trustPaytr": "Güvenli ödeme (PayTR)",
     "trustReturn": "14 gün cayma hakkı",

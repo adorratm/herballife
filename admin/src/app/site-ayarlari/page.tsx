@@ -1,9 +1,10 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api';
 import { MediaUpload } from '@/components/MediaUpload';
 import { LinkListEditor } from '@/components/LinkListEditor';
+import { RichTextEditor } from '@/components/RichTextEditor';
 import {
   WhatsAppPresetEditor,
   type WhatsAppPresetRow,
@@ -51,6 +52,65 @@ type ShippingSettings = {
   freeShippingOver: string;
 };
 
+type BrandFields = {
+  name: string;
+  slogan: string;
+  tagline: string;
+  established: string;
+  location: string;
+  logoUrl: string;
+  distributorName: string;
+  distributorTitle: string;
+  distributorCode: string;
+  legalDisclaimer: string;
+};
+
+type ContactFields = {
+  address: string;
+  email: string;
+  phone: string;
+  hours: string;
+  locationLabel: string;
+  latitude: string;
+  longitude: string;
+};
+
+type SeoFields = {
+  title: string;
+  description: string;
+  keywords: string;
+  ogImage: string;
+};
+
+type FooterFields = {
+  description: string;
+  copyrightSuffix: string;
+};
+
+const FORM_LOCALES = ['tr', 'en', 'de', 'fr', 'es'] as const;
+type FormLocale = (typeof FORM_LOCALES)[number];
+const EXTRA_LOCALES = ['en', 'de', 'fr', 'es'] as const;
+type ExtraLocale = (typeof EXTRA_LOCALES)[number];
+
+type LocaleBundle = {
+  brand: Pick<
+    BrandFields,
+    | 'name'
+    | 'slogan'
+    | 'tagline'
+    | 'established'
+    | 'location'
+    | 'distributorName'
+    | 'distributorTitle'
+    | 'legalDisclaimer'
+  >;
+  contact: Pick<ContactFields, 'address' | 'hours' | 'locationLabel'>;
+  seo: Pick<SeoFields, 'title' | 'description' | 'keywords'>;
+  footer: FooterFields;
+  whatsapp: { greeting: string; presets: WhatsAppPresetRow[] };
+  navigation: Navigation;
+};
+
 const DEFAULT_ANALYTICS: AnalyticsSettings = {
   ga4Id: '',
   gtmId: '',
@@ -65,67 +125,6 @@ const DEFAULT_SHIPPING: ShippingSettings = {
   defaultFee: '89.90',
   freeShippingOver: '750',
 };
-
-const EXTRA_LOCALES = ['en', 'de', 'fr', 'es'] as const;
-type ExtraLocale = (typeof EXTRA_LOCALES)[number];
-
-type LocaleCopyFields = {
-  brandName: string;
-  brandSlogan: string;
-  brandTagline: string;
-  seoTitle: string;
-  seoDescription: string;
-  footerDescription: string;
-};
-
-function emptyLocaleCopy(): LocaleCopyFields {
-  return {
-    brandName: '',
-    brandSlogan: '',
-    brandTagline: '',
-    seoTitle: '',
-    seoDescription: '',
-    footerDescription: '',
-  };
-}
-
-function initialLocaleCopies(): Record<ExtraLocale, LocaleCopyFields> {
-  return {
-    en: emptyLocaleCopy(),
-    de: emptyLocaleCopy(),
-    fr: emptyLocaleCopy(),
-    es: emptyLocaleCopy(),
-  };
-}
-
-function readLocaleCopiesFromSettings(
-  map: Record<string, Record<string, unknown>>,
-): Record<ExtraLocale, LocaleCopyFields> {
-  const out = initialLocaleCopies();
-  for (const loc of EXTRA_LOCALES) {
-    const brand = map.brand?.translations as
-      | Record<string, Record<string, unknown>>
-      | undefined;
-    const seo = map.seo?.translations as
-      | Record<string, Record<string, unknown>>
-      | undefined;
-    const footer = map.footer?.translations as
-      | Record<string, Record<string, unknown>>
-      | undefined;
-    const b = brand?.[loc];
-    const s = seo?.[loc];
-    const f = footer?.[loc];
-    out[loc] = {
-      brandName: String(b?.name || ''),
-      brandSlogan: String(b?.slogan || ''),
-      brandTagline: String(b?.tagline || ''),
-      seoTitle: String(s?.title || ''),
-      seoDescription: String(s?.description || ''),
-      footerDescription: String(f?.description || ''),
-    };
-  }
-  return out;
-}
 
 const DEFAULT_WHATSAPP: WhatsAppSettings = {
   enabled: true,
@@ -156,6 +155,38 @@ const DEFAULT_WHATSAPP: WhatsAppSettings = {
     },
   ],
 };
+
+function emptyLocaleBundle(): LocaleBundle {
+  return {
+    brand: {
+      name: '',
+      slogan: '',
+      tagline: '',
+      established: '',
+      location: '',
+      distributorName: '',
+      distributorTitle: '',
+      legalDisclaimer: '',
+    },
+    contact: { address: '', hours: '', locationLabel: '' },
+    seo: { title: '', description: '', keywords: '' },
+    footer: { description: '', copyrightSuffix: '' },
+    whatsapp: {
+      greeting: '',
+      presets: DEFAULT_WHATSAPP.presets.map((p) => ({ ...p })),
+    },
+    navigation: { header: [], footerNav: [], footerLegal: [] },
+  };
+}
+
+function initialLocaleBundles(): Record<ExtraLocale, LocaleBundle> {
+  return {
+    en: emptyLocaleBundle(),
+    de: emptyLocaleBundle(),
+    fr: emptyLocaleBundle(),
+    es: emptyLocaleBundle(),
+  };
+}
 
 function asNavLinks(value: unknown): NavLink[] {
   if (!Array.isArray(value)) return [];
@@ -204,8 +235,127 @@ function asWhatsApp(value: unknown): WhatsAppSettings {
   };
 }
 
+function omitTranslations(
+  value: Record<string, unknown> | undefined,
+): Record<string, unknown> {
+  if (!value) return {};
+  const { translations: _t, ...rest } = value;
+  return rest;
+}
+
+function readLocaleBundles(
+  map: Record<string, Record<string, unknown>>,
+): Record<ExtraLocale, LocaleBundle> {
+  const out = initialLocaleBundles();
+  const brandT = (map.brand?.translations || {}) as Record<
+    string,
+    Record<string, unknown>
+  >;
+  const contactT = (map.contact?.translations || {}) as Record<
+    string,
+    Record<string, unknown>
+  >;
+  const seoT = (map.seo?.translations || {}) as Record<
+    string,
+    Record<string, unknown>
+  >;
+  const footerT = (map.footer?.translations || {}) as Record<
+    string,
+    Record<string, unknown>
+  >;
+  const whatsappT = (map.whatsapp?.translations || {}) as Record<
+    string,
+    Record<string, unknown>
+  >;
+  const navigationT = (map.navigation?.translations || {}) as Record<
+    string,
+    Record<string, unknown>
+  >;
+
+  const trNavRoot = omitTranslations(
+    (map.navigation || {}) as Record<string, unknown>,
+  );
+  const trNav: Navigation = {
+    header: asNavLinks(trNavRoot.header),
+    footerNav: asNavLinks(trNavRoot.footerNav),
+    footerLegal: asNavLinks(trNavRoot.footerLegal),
+  };
+  const trWa = asWhatsApp(
+    omitTranslations((map.whatsapp || {}) as Record<string, unknown>),
+  );
+
+  for (const loc of EXTRA_LOCALES) {
+    const b = brandT[loc] || {};
+    const c = contactT[loc] || {};
+    const s = seoT[loc] || {};
+    const f = footerT[loc] || {};
+    const w = whatsappT[loc] || {};
+    const n = navigationT[loc] || {};
+    const wa = asWhatsApp({
+      greeting: w.greeting || trWa.greeting,
+      presets: Array.isArray(w.presets) && w.presets.length ? w.presets : trWa.presets,
+      enabled: true,
+      phone: '',
+    });
+    const header = asNavLinks(n.header);
+    const footerNav = asNavLinks(n.footerNav);
+    const footerLegal = asNavLinks(n.footerLegal);
+    out[loc] = {
+      brand: {
+        name: String(b.name || ''),
+        slogan: String(b.slogan || ''),
+        tagline: String(b.tagline || ''),
+        established: String(b.established || ''),
+        location: String(b.location || ''),
+        distributorName: String(b.distributorName || ''),
+        distributorTitle: String(b.distributorTitle || ''),
+        legalDisclaimer: String(b.legalDisclaimer || ''),
+      },
+      contact: {
+        address: String(c.address || ''),
+        hours: String(c.hours || ''),
+        locationLabel: String(c.locationLabel || ''),
+      },
+      seo: {
+        title: String(s.title || ''),
+        description: String(s.description || ''),
+        keywords: Array.isArray(s.keywords)
+          ? s.keywords.map(String).join(', ')
+          : String(s.keywords || ''),
+      },
+      footer: {
+        description: String(f.description || ''),
+        copyrightSuffix: String(f.copyrightSuffix || ''),
+      },
+      whatsapp: {
+        greeting: wa.greeting,
+        presets: wa.presets,
+      },
+      navigation: {
+        header: header.length ? header : trNav.header.map((l) => ({ ...l })),
+        footerNav: footerNav.length
+          ? footerNav
+          : trNav.footerNav.map((l) => ({ ...l })),
+        footerLegal: footerLegal.length
+          ? footerLegal
+          : trNav.footerLegal.map((l) => ({ ...l })),
+      },
+    };
+  }
+  return out;
+}
+
+const LOCALE_LABELS: Record<FormLocale, string> = {
+  tr: 'TR',
+  en: 'EN',
+  de: 'DE',
+  fr: 'FR',
+  es: 'ES',
+};
+
 export default function SiteSettingsPage() {
-  const [brand, setBrand] = useState({
+  const [formLocale, setFormLocale] = useState<FormLocale>('tr');
+  const [brand, setBrand] = useState<BrandFields>({
     name: '',
     slogan: '',
     tagline: '',
@@ -217,7 +367,7 @@ export default function SiteSettingsPage() {
     distributorCode: '',
     legalDisclaimer: '',
   });
-  const [contact, setContact] = useState({
+  const [contact, setContact] = useState<ContactFields>({
     address: '',
     email: '',
     phone: '',
@@ -226,7 +376,7 @@ export default function SiteSettingsPage() {
     latitude: '',
     longitude: '',
   });
-  const [seo, setSeo] = useState({
+  const [seo, setSeo] = useState<SeoFields>({
     title: '',
     description: '',
     keywords: '',
@@ -241,7 +391,7 @@ export default function SiteSettingsPage() {
   const [whatsapp, setWhatsapp] = useState<WhatsAppSettings>(() =>
     asWhatsApp(null),
   );
-  const [footer, setFooter] = useState({
+  const [footer, setFooter] = useState<FooterFields>({
     description: '',
     copyrightSuffix: '',
   });
@@ -256,16 +406,188 @@ export default function SiteSettingsPage() {
   const [shipping, setShipping] = useState<ShippingSettings>({
     ...DEFAULT_SHIPPING,
   });
-  const [copyLocale, setCopyLocale] = useState<ExtraLocale>('en');
-  const [localeCopies, setLocaleCopies] =
-    useState<Record<ExtraLocale, LocaleCopyFields>>(initialLocaleCopies);
-  const [storedTranslations, setStoredTranslations] = useState<
-    Record<string, Record<string, unknown>>
-  >({});
+  const [localeBundles, setLocaleBundles] =
+    useState<Record<ExtraLocale, LocaleBundle>>(initialLocaleBundles);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+
+  const isTr = formLocale === 'tr';
+
+  const brandView = useMemo(
+    () => (isTr ? brand : { ...brand, ...localeBundles[formLocale].brand }),
+    [isTr, brand, localeBundles, formLocale],
+  );
+  const contactView = useMemo(
+    () =>
+      isTr ? contact : { ...contact, ...localeBundles[formLocale].contact },
+    [isTr, contact, localeBundles, formLocale],
+  );
+  const seoView = useMemo(
+    () => (isTr ? seo : { ...seo, ...localeBundles[formLocale].seo }),
+    [isTr, seo, localeBundles, formLocale],
+  );
+  const footerView = useMemo(
+    () => (isTr ? footer : localeBundles[formLocale].footer),
+    [isTr, footer, localeBundles, formLocale],
+  );
+  const whatsappView = useMemo(
+    () =>
+      isTr
+        ? whatsapp
+        : {
+            ...whatsapp,
+            greeting: localeBundles[formLocale].whatsapp.greeting,
+            presets: localeBundles[formLocale].whatsapp.presets,
+          },
+    [isTr, whatsapp, localeBundles, formLocale],
+  );
+  const navigationView = useMemo(
+    () => (isTr ? navigation : localeBundles[formLocale].navigation),
+    [isTr, navigation, localeBundles, formLocale],
+  );
+
+  function patchBrand(
+    patch: Partial<BrandFields> | ((prev: BrandFields) => BrandFields),
+  ) {
+    if (isTr) {
+      setBrand((s) =>
+        typeof patch === 'function' ? patch(s) : { ...s, ...patch },
+      );
+      return;
+    }
+    setLocaleBundles((prev) => {
+      const cur = prev[formLocale];
+      const nextBrand =
+        typeof patch === 'function'
+          ? patch({ ...brand, ...cur.brand })
+          : { ...cur.brand, ...patch };
+      return {
+        ...prev,
+        [formLocale]: {
+          ...cur,
+          brand: {
+            name: nextBrand.name,
+            slogan: nextBrand.slogan,
+            tagline: nextBrand.tagline,
+            established: nextBrand.established,
+            location: nextBrand.location,
+            distributorName: nextBrand.distributorName,
+            distributorTitle: nextBrand.distributorTitle,
+            legalDisclaimer: nextBrand.legalDisclaimer,
+          },
+        },
+      };
+    });
+  }
+
+  function patchContact(
+    patch: Partial<ContactFields> | ((prev: ContactFields) => ContactFields),
+  ) {
+    if (isTr) {
+      setContact((s) =>
+        typeof patch === 'function' ? patch(s) : { ...s, ...patch },
+      );
+      return;
+    }
+    setLocaleBundles((prev) => {
+      const cur = prev[formLocale];
+      const next =
+        typeof patch === 'function'
+          ? patch({ ...contact, ...cur.contact })
+          : { ...cur.contact, ...patch };
+      return {
+        ...prev,
+        [formLocale]: {
+          ...cur,
+          contact: {
+            address: next.address,
+            hours: next.hours,
+            locationLabel: next.locationLabel,
+          },
+        },
+      };
+    });
+  }
+
+  function patchSeo(
+    patch: Partial<SeoFields> | ((prev: SeoFields) => SeoFields),
+  ) {
+    if (isTr) {
+      setSeo((s) =>
+        typeof patch === 'function' ? patch(s) : { ...s, ...patch },
+      );
+      return;
+    }
+    setLocaleBundles((prev) => {
+      const cur = prev[formLocale];
+      const next =
+        typeof patch === 'function'
+          ? patch({ ...seo, ...cur.seo })
+          : { ...cur.seo, ...patch };
+      return {
+        ...prev,
+        [formLocale]: {
+          ...cur,
+          seo: {
+            title: next.title,
+            description: next.description,
+            keywords: next.keywords,
+          },
+        },
+      };
+    });
+  }
+
+  function patchFooter(
+    patch: Partial<FooterFields> | ((prev: FooterFields) => FooterFields),
+  ) {
+    if (isTr) {
+      setFooter((s) =>
+        typeof patch === 'function' ? patch(s) : { ...s, ...patch },
+      );
+      return;
+    }
+    setLocaleBundles((prev) => {
+      const cur = prev[formLocale];
+      const next =
+        typeof patch === 'function'
+          ? patch(cur.footer)
+          : { ...cur.footer, ...patch };
+      return { ...prev, [formLocale]: { ...cur, footer: next } };
+    });
+  }
+
+  function patchWhatsappLocal(
+    patch: Partial<Pick<WhatsAppSettings, 'greeting' | 'presets'>>,
+  ) {
+    if (isTr) {
+      setWhatsapp((s) => ({ ...s, ...patch }));
+      return;
+    }
+    setLocaleBundles((prev) => {
+      const cur = prev[formLocale];
+      return {
+        ...prev,
+        [formLocale]: {
+          ...cur,
+          whatsapp: { ...cur.whatsapp, ...patch },
+        },
+      };
+    });
+  }
+
+  function patchNavigation(next: Navigation) {
+    if (isTr) {
+      setNavigation(next);
+      return;
+    }
+    setLocaleBundles((prev) => ({
+      ...prev,
+      [formLocale]: { ...prev[formLocale], navigation: next },
+    }));
+  }
 
   useEffect(() => {
     async function load() {
@@ -273,30 +595,36 @@ export default function SiteSettingsPage() {
       try {
         const rows = await api<SettingRow[]>('/cms/admin/settings');
         const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
-        if (map.brand) setBrand((s) => ({ ...s, ...(map.brand as typeof s) }));
-        if (map.contact)
-          setContact((s) => ({ ...s, ...(map.contact as typeof s) }));
+        if (map.brand) {
+          const b = omitTranslations(map.brand as Record<string, unknown>);
+          setBrand((s) => ({ ...s, ...(b as Partial<BrandFields>) }));
+        }
+        if (map.contact) {
+          const c = omitTranslations(map.contact as Record<string, unknown>);
+          setContact((s) => ({ ...s, ...(c as Partial<ContactFields>) }));
+        }
         if (map.seo) {
-          const s = map.seo as {
-            title?: string;
-            description?: string;
-            keywords?: string[];
-            ogImage?: string;
-          };
+          const raw = omitTranslations(map.seo as Record<string, unknown>);
           setSeo({
-            title: String(s.title || ''),
-            description: String(s.description || ''),
-            keywords: Array.isArray(s.keywords) ? s.keywords.join(', ') : '',
-            ogImage: String(s.ogImage || ''),
+            title: String(raw.title || ''),
+            description: String(raw.description || ''),
+            keywords: Array.isArray(raw.keywords)
+              ? raw.keywords.map(String).join(', ')
+              : '',
+            ogImage: String(raw.ogImage || ''),
           });
         }
         if (map.social)
           setSocial((s) => ({ ...s, ...(map.social as typeof s) }));
-        setWhatsapp(asWhatsApp(map.whatsapp));
-        if (map.footer)
-          setFooter((s) => ({ ...s, ...(map.footer as typeof s) }));
+        setWhatsapp(asWhatsApp(omitTranslations(map.whatsapp as Record<string, unknown>)));
+        if (map.footer) {
+          const f = omitTranslations(map.footer as Record<string, unknown>);
+          setFooter((s) => ({ ...s, ...(f as Partial<FooterFields>) }));
+        }
         if (map.navigation) {
-          const nav = map.navigation as Record<string, unknown>;
+          const nav = omitTranslations(
+            map.navigation as Record<string, unknown>,
+          );
           setNavigation({
             header: asNavLinks(nav.header),
             footerNav: asNavLinks(nav.footerNav),
@@ -328,12 +656,7 @@ export default function SiteSettingsPage() {
                 : DEFAULT_SHIPPING.freeShippingOver,
           });
         }
-        setLocaleCopies(readLocaleCopiesFromSettings(map));
-        setStoredTranslations({
-          brand: (map.brand?.translations as Record<string, unknown>) || {},
-          seo: (map.seo?.translations as Record<string, unknown>) || {},
-          footer: (map.footer?.translations as Record<string, unknown>) || {},
-        });
+        setLocaleBundles(readLocaleBundles(map));
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Ayarlar yüklenemedi');
       } finally {
@@ -349,34 +672,74 @@ export default function SiteSettingsPage() {
     setError(null);
     setSaved(false);
     try {
+      const brandTranslations: Record<string, unknown> = {};
+      const contactTranslations: Record<string, unknown> = {};
+      const seoTranslations: Record<string, unknown> = {};
+      const footerTranslations: Record<string, unknown> = {};
+      const whatsappTranslations: Record<string, unknown> = {};
+      const navigationTranslations: Record<string, unknown> = {};
+
+      for (const loc of EXTRA_LOCALES) {
+        const copy = localeBundles[loc];
+        brandTranslations[loc] = {
+          name: copy.brand.name.trim() || brand.name,
+          slogan: copy.brand.slogan.trim(),
+          tagline: copy.brand.tagline.trim(),
+          established: copy.brand.established.trim(),
+          location: copy.brand.location.trim(),
+          distributorName: copy.brand.distributorName.trim(),
+          distributorTitle: copy.brand.distributorTitle.trim(),
+          legalDisclaimer: copy.brand.legalDisclaimer.trim(),
+        };
+        contactTranslations[loc] = {
+          address: copy.contact.address.trim(),
+          hours: copy.contact.hours.trim(),
+          locationLabel: copy.contact.locationLabel.trim(),
+        };
+        seoTranslations[loc] = {
+          title: copy.seo.title.trim(),
+          description: copy.seo.description.trim(),
+          keywords: copy.seo.keywords
+            .split(',')
+            .map((k) => k.trim())
+            .filter(Boolean),
+        };
+        footerTranslations[loc] = {
+          description: copy.footer.description.trim(),
+          copyrightSuffix: copy.footer.copyrightSuffix.trim(),
+        };
+        const presets = copy.whatsapp.presets
+          .map((p) => ({
+            label: p.label.trim(),
+            message: p.message.trim(),
+          }))
+          .filter((p) => p.label && p.message);
+        whatsappTranslations[loc] = {
+          greeting: copy.whatsapp.greeting.trim(),
+          presets,
+        };
+        // Boş dizi gönderme — resolveLocalizedRecord TR menüyü silmesin
+        const navBlock: Record<string, NavLink[]> = {};
+        if (copy.navigation.header.length) {
+          navBlock.header = copy.navigation.header;
+        }
+        if (copy.navigation.footerNav.length) {
+          navBlock.footerNav = copy.navigation.footerNav;
+        }
+        if (copy.navigation.footerLegal.length) {
+          navBlock.footerLegal = copy.navigation.footerLegal;
+        }
+        if (Object.keys(navBlock).length) {
+          navigationTranslations[loc] = navBlock;
+        }
+      }
+
       const cleanedPresets = whatsapp.presets
         .map((p) => ({
           label: p.label.trim(),
           message: p.message.trim(),
         }))
         .filter((p) => p.label && p.message);
-
-      const brandTranslations = { ...storedTranslations.brand };
-      const seoTranslations = { ...storedTranslations.seo };
-      const footerTranslations = { ...storedTranslations.footer };
-      for (const loc of EXTRA_LOCALES) {
-        const copy = localeCopies[loc];
-        brandTranslations[loc] = {
-          ...(brandTranslations[loc] as object),
-          name: copy.brandName.trim() || brand.name,
-          slogan: copy.brandSlogan.trim(),
-          tagline: copy.brandTagline.trim(),
-        };
-        seoTranslations[loc] = {
-          ...(seoTranslations[loc] as object),
-          title: copy.seoTitle.trim(),
-          description: copy.seoDescription.trim(),
-        };
-        footerTranslations[loc] = {
-          ...(footerTranslations[loc] as object),
-          description: copy.footerDescription.trim(),
-        };
-      }
 
       await api('/cms/admin/settings', {
         method: 'PATCH',
@@ -387,7 +750,11 @@ export default function SiteSettingsPage() {
               value: { ...brand, translations: brandTranslations },
               group: 'brand',
             },
-            { key: 'contact', value: contact, group: 'contact' },
+            {
+              key: 'contact',
+              value: { ...contact, translations: contactTranslations },
+              group: 'contact',
+            },
             {
               key: 'seo',
               value: {
@@ -408,6 +775,7 @@ export default function SiteSettingsPage() {
                 phone: whatsapp.phone.trim(),
                 greeting: whatsapp.greeting.trim(),
                 presets: cleanedPresets,
+                translations: whatsappTranslations,
               },
               group: 'whatsapp',
             },
@@ -416,7 +784,11 @@ export default function SiteSettingsPage() {
               value: { ...footer, translations: footerTranslations },
               group: 'footer',
             },
-            { key: 'navigation', value: navigation, group: 'navigation' },
+            {
+              key: 'navigation',
+              value: { ...navigation, translations: navigationTranslations },
+              group: 'navigation',
+            },
             {
               key: 'analytics',
               value: {
@@ -456,9 +828,32 @@ export default function SiteSettingsPage() {
       <div>
         <h2 className="admin-page-title text-xl">Site Ayarları</h2>
         <p className="admin-page-sub">
-          Marka, iletişim, SEO, sosyal, WhatsApp ve navigasyon bilgileri
-          frontend&apos;de dinamik kullanılır.
+          Marka, iletişim, SEO, sosyal, WhatsApp ve navigasyon — dil sekmesiyle
+          TR ve diğer diller ayrı düzenlenir.
         </p>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border-muted bg-surface p-3">
+        <span className="mono text-[10px] uppercase text-muted">Dil</span>
+        {FORM_LOCALES.map((loc) => (
+          <button
+            key={loc}
+            type="button"
+            onClick={() => setFormLocale(loc)}
+            className={`rounded-lg px-3 py-1.5 text-xs font-semibold uppercase ${
+              formLocale === loc
+                ? 'bg-accent text-white'
+                : 'border border-border-muted bg-surface-high text-muted'
+            }`}
+          >
+            {LOCALE_LABELS[loc]}
+          </button>
+        ))}
+        <span className="ml-auto text-xs text-muted">
+          {isTr
+            ? 'Türkçe (ana alanlar)'
+            : `${LOCALE_LABELS[formLocale]} çevirileri düzenleniyor`}
+        </span>
       </div>
 
       {error ? (
@@ -473,419 +868,394 @@ export default function SiteSettingsPage() {
       ) : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="px-2 text-xs font-bold uppercase tracking-wide text-muted">
-          Marka
-        </legend>
-        <p className="text-xs text-muted">
-          Marka adı, logo ve distribütör bilgileri sonradan kolayca
-          değiştirilebilir. Domain yalnızca sunucu env ile ayarlanır.
-        </p>
-        {(
-          [
-            ['name', 'Marka adı'],
-            ['slogan', 'Slogan'],
-            ['tagline', 'Tagline'],
-            ['established', 'Kuruluş etiketi'],
-            ['location', 'Konum'],
-            ['distributorName', 'Distribütör adı'],
-            ['distributorTitle', 'Distribütör ünvanı'],
-            ['distributorCode', 'Herbalife ID / distribütör kodu'],
-          ] as const
-        ).map(([key, label]) => (
-          <label key={key} className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">{label}</span>
-            <input
-              value={brand[key]}
-              onChange={(e) => setBrand((s) => ({ ...s, [key]: e.target.value }))}
-              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-            />
-          </label>
-        ))}
-        <label className="block text-sm">
-          <span className="mono text-[10px] uppercase text-muted">
-            Yasal uyarı (disclaimer)
-          </span>
-          <textarea
-            rows={3}
-            value={brand.legalDisclaimer}
-            onChange={(e) =>
-              setBrand((s) => ({ ...s, legalDisclaimer: e.target.value }))
-            }
-            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-          />
-        </label>
-        <div>
-          <span className="mono text-[10px] uppercase text-muted">Logo</span>
-          <MediaUpload
-            value={brand.logoUrl}
-            onChange={(url) => setBrand((s) => ({ ...s, logoUrl: url }))}
-            folder="brand"
-          />
-        </div>
-      </fieldset>
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+          <legend className="px-2 text-xs font-bold uppercase tracking-wide text-muted">
+            Marka ({LOCALE_LABELS[formLocale]})
+          </legend>
+          {(
+            [
+              ['name', 'Marka adı'],
+              ['slogan', 'Slogan'],
+              ['tagline', 'Tagline'],
+              ['established', 'Kuruluş etiketi'],
+              ['location', 'Konum'],
+              ['distributorName', 'Distribütör adı'],
+              ['distributorTitle', 'Distribütör ünvanı'],
+            ] as const
+          ).map(([key, label]) => (
+            <label key={key} className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                {label}
+              </span>
+              <input
+                value={brandView[key]}
+                onChange={(e) => patchBrand({ [key]: e.target.value })}
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              />
+            </label>
+          ))}
+          {isTr ? (
+            <label className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                Herbalife ID / distribütör kodu
+              </span>
+              <input
+                value={brand.distributorCode}
+                onChange={(e) =>
+                  setBrand((s) => ({ ...s, distributorCode: e.target.value }))
+                }
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              />
+            </label>
+          ) : null}
+          <div className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              Yasal uyarı (disclaimer)
+            </span>
+            <div className="mt-1">
+              <RichTextEditor
+                value={brandView.legalDisclaimer}
+                onChange={(html) => patchBrand({ legalDisclaimer: html })}
+                placeholder="Yasal uyarı metni…"
+                minHeight="140px"
+              />
+            </div>
+          </div>
+          {isTr ? (
+            <div>
+              <span className="mono text-[10px] uppercase text-muted">Logo</span>
+              <MediaUpload
+                value={brand.logoUrl}
+                onChange={(url) => setBrand((s) => ({ ...s, logoUrl: url }))}
+                folder="brand"
+              />
+            </div>
+          ) : (
+            <p className="text-xs text-muted">
+              Logo tüm dillerde ortaktır — TR sekmesinden değiştirin.
+            </p>
+          )}
+        </fieldset>
 
-      <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="mono px-2 text-xs uppercase text-muted">SEO</legend>
-        <label className="block text-sm">
-          <span className="mono text-[10px] uppercase text-muted">
-            Sayfa başlığı
-          </span>
-          <input
-            value={seo.title}
-            onChange={(e) => setSeo((s) => ({ ...s, title: e.target.value }))}
-            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-          />
-        </label>
-        <label className="block text-sm">
-          <span className="mono text-[10px] uppercase text-muted">
-            Meta açıklama
-          </span>
-          <textarea
-            rows={3}
-            value={seo.description}
-            onChange={(e) =>
-              setSeo((s) => ({ ...s, description: e.target.value }))
-            }
-            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-          />
-        </label>
-        <label className="block text-sm">
-          <span className="mono text-[10px] uppercase text-muted">
-            Anahtar kelimeler (virgülle)
-          </span>
-          <input
-            value={seo.keywords}
-            onChange={(e) => setSeo((s) => ({ ...s, keywords: e.target.value }))}
-            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-          />
-        </label>
-        <MediaUpload
-          label="OG görseli (boşsa marka opengraph-image kullanılır)"
-          value={seo.ogImage}
-          onChange={(url) => setSeo((s) => ({ ...s, ogImage: url }))}
-          folder="seo"
-        />
-      </fieldset>
-
-      <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="mono px-2 text-xs uppercase text-muted">
-          İletişim
-        </legend>
-        {(
-          [
-            ['address', 'Adres'],
-            ['email', 'E-posta'],
-            ['phone', 'Telefon (görünen / tel: link)'],
-            ['hours', 'Çalışma saatleri'],
-            ['locationLabel', 'Konum etiketi'],
-            ['latitude', 'Enlem (geo)'],
-            ['longitude', 'Boylam (geo)'],
-          ] as const
-        ).map(([key, label]) => (
-          <label key={key} className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">{label}</span>
-            <input
-              value={contact[key]}
-              onChange={(e) =>
-                setContact((s) => ({ ...s, [key]: e.target.value }))
-              }
-              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-            />
-          </label>
-        ))}
-      </fieldset>
-
-      <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="mono px-2 text-xs uppercase text-muted">
-          Sosyal / sameAs
-        </legend>
-        <p className="text-xs text-muted">
-          Dolu URL&apos;ler schema.org sameAs ve footer&apos;da görünür. Maps
-          profil bağlantısı (işletme hazır olunca) yerel arama için önemlidir. Google
-          yorum URL&apos;si /yorum sayfası ve QR için kullanılır.
-        </p>
-        {(
-          [
-            ['instagram', 'Instagram bağlantısı'],
-            ['facebook', 'Facebook bağlantısı'],
-            ['googleMaps', 'Google Maps / GBP URL'],
-            ['googleReviewUrl', 'Google yorum bağlantısı'],
-          ] as const
-        ).map(([key, label]) => (
-          <label key={key} className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">{label}</span>
-            <input
-              type="url"
-              placeholder="https://"
-              value={social[key]}
-              onChange={(e) =>
-                setSocial((s) => ({ ...s, [key]: e.target.value }))
-              }
-              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-            />
-          </label>
-        ))}
-      </fieldset>
-
-      <fieldset className="space-y-4 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="mono px-2 text-xs uppercase text-muted">
-          WhatsApp sohbet
-        </legend>
-        <p className="text-xs text-muted">
-          Numara boş bırakılırsa yukarıdaki iletişim telefonu kullanılır.
-          Kurumsal WhatsApp hattı farklıysa yalnızca buraya yazın.
-        </p>
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={whatsapp.enabled}
-            onChange={(e) =>
-              setWhatsapp((s) => ({ ...s, enabled: e.target.checked }))
-            }
-            className="accent-accent"
-          />
-          Sitede WhatsApp sohbetini göster
-        </label>
-        <label className="block text-sm">
-          <span className="mono text-[10px] uppercase text-muted">
-            WhatsApp numarası (opsiyonel)
-          </span>
-          <input
-            value={whatsapp.phone}
-            onChange={(e) =>
-              setWhatsapp((s) => ({ ...s, phone: e.target.value }))
-            }
-            placeholder={contact.phone || '+90 5xx xxx xx xx'}
-            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-          />
-        </label>
-        <label className="block text-sm">
-          <span className="mono text-[10px] uppercase text-muted">
-            Panel karşılama metni
-          </span>
-          <textarea
-            rows={2}
-            value={whatsapp.greeting}
-            onChange={(e) =>
-              setWhatsapp((s) => ({ ...s, greeting: e.target.value }))
-            }
-            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-          />
-        </label>
-        <WhatsAppPresetEditor
-          presets={whatsapp.presets}
-          onChange={(presets) => setWhatsapp((s) => ({ ...s, presets }))}
-        />
-      </fieldset>
-
-      <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="mono px-2 text-xs uppercase text-muted">
-          Kargo varsayılanları
-        </legend>
-        <p className="text-xs text-muted">
-          Sipariş hesaplamasında kullanılır. Sağlayıcı kartındaki ücret boşsa
-          varsayılan kargo ücreti uygulanır. Ücretsiz kargo eşiği 0 ise kapalıdır.
-        </p>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            SEO ({LOCALE_LABELS[formLocale]})
+          </legend>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
-              Varsayılan kargo ücreti (TRY)
+              Sayfa başlığı
             </span>
             <input
-              type="number"
-              min={0}
-              step="0.01"
-              value={shipping.defaultFee}
-              onChange={(e) =>
-                setShipping((s) => ({ ...s, defaultFee: e.target.value }))
-              }
+              value={seoView.title}
+              onChange={(e) => patchSeo({ title: e.target.value })}
               className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
             />
           </label>
+          <div className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              Meta açıklama
+            </span>
+            <div className="mt-1">
+              <RichTextEditor
+                value={seoView.description}
+                onChange={(html) => patchSeo({ description: html })}
+                placeholder="Arama motoru açıklaması…"
+                minHeight="120px"
+              />
+            </div>
+          </div>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
-              Ücretsiz kargo eşiği (TRY)
+              Anahtar kelimeler (virgülle)
             </span>
             <input
-              type="number"
-              min={0}
-              step="1"
-              value={shipping.freeShippingOver}
-              onChange={(e) =>
-                setShipping((s) => ({
-                  ...s,
-                  freeShippingOver: e.target.value,
-                }))
-              }
+              value={seoView.keywords}
+              onChange={(e) => patchSeo({ keywords: e.target.value })}
               className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
             />
           </label>
-        </div>
-      </fieldset>
-
-      <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="mono px-2 text-xs uppercase text-muted">
-          Analitik & piksel
-        </legend>
-        <p className="text-xs text-muted">
-          Boş bırakılan alanlar için sunucu / NEXT_PUBLIC env değerleri kullanılır.
-          GTM doluysa gtag doğrudan yüklenmez (GTM içinden yönetin).
-        </p>
-        {(
-          [
-            ['ga4Id', 'Google Analytics 4 (G-…)'],
-            ['gtmId', 'Google Tag Manager'],
-            ['googleAdsId', 'Google Ads dönüşüm'],
-            ['metaPixelId', 'Meta Pixel'],
-            ['facebookPixelId', 'Facebook Pixel (Meta ile aynı olabilir)'],
-            ['yandexMetrikaId', 'Yandex Metrika'],
-            ['tiktokPixelId', 'TikTok Pixel'],
-          ] as const
-        ).map(([key, label]) => (
-          <label key={key} className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">{label}</span>
-            <input
-              value={analytics[key]}
-              onChange={(e) =>
-                setAnalytics((s) => ({ ...s, [key]: e.target.value }))
-              }
-              placeholder="Boş = env"
-              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2 mono text-sm"
+          {isTr ? (
+            <MediaUpload
+              label="OG görseli (boşsa marka opengraph-image kullanılır)"
+              value={seo.ogImage}
+              onChange={(url) => setSeo((s) => ({ ...s, ogImage: url }))}
+              folder="seo"
             />
-          </label>
-        ))}
-      </fieldset>
+          ) : (
+            <p className="text-xs text-muted">
+              OG görseli ortaktır — TR sekmesinden değiştirin.
+            </p>
+          )}
+        </fieldset>
 
-      <fieldset className="space-y-6 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="px-2 text-xs font-bold uppercase tracking-wide text-muted">
-          Navigasyon
-        </legend>
-        <LinkListEditor
-          label="Header menü"
-          links={navigation.header}
-          onChange={(header) => setNavigation((n) => ({ ...n, header }))}
-        />
-        <LinkListEditor
-          label="Alt bilgi menüsü"
-          links={navigation.footerNav}
-          onChange={(footerNav) => setNavigation((n) => ({ ...n, footerNav }))}
-        />
-        <LinkListEditor
-          label="Alt bilgi yasal bağlantılar"
-          links={navigation.footerLegal}
-          onChange={(footerLegal) =>
-            setNavigation((n) => ({ ...n, footerLegal }))
-          }
-        />
-      </fieldset>
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            İletişim ({LOCALE_LABELS[formLocale]})
+          </legend>
+          {(
+            [
+              ['address', 'Adres', true],
+              ['hours', 'Çalışma saatleri', true],
+              ['locationLabel', 'Konum etiketi', true],
+              ['email', 'E-posta', false],
+              ['phone', 'Telefon (görünen / tel: link)', false],
+              ['latitude', 'Enlem (geo)', false],
+              ['longitude', 'Boylam (geo)', false],
+            ] as const
+          ).map(([key, label, localized]) => {
+            const editable = isTr || localized;
+            return (
+              <label key={key} className="block text-sm">
+                <span className="mono text-[10px] uppercase text-muted">
+                  {label}
+                  {!editable ? ' (ortak)' : ''}
+                </span>
+                <input
+                  value={contactView[key]}
+                  disabled={!editable}
+                  onChange={(e) => {
+                    if (!editable) return;
+                    if (localized) patchContact({ [key]: e.target.value });
+                    else
+                      setContact((s) => ({ ...s, [key]: e.target.value }));
+                  }}
+                  className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2 disabled:opacity-60"
+                />
+              </label>
+            );
+          })}
+        </fieldset>
+
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            Sosyal / sameAs
+          </legend>
+          <p className="text-xs text-muted">
+            Sosyal URL’ler tüm dillerde ortaktır.
+          </p>
+          {(
+            [
+              ['instagram', 'Instagram bağlantısı'],
+              ['facebook', 'Facebook bağlantısı'],
+              ['googleMaps', 'Google Maps / GBP URL'],
+              ['googleReviewUrl', 'Google yorum bağlantısı'],
+            ] as const
+          ).map(([key, label]) => (
+            <label key={key} className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                {label}
+              </span>
+              <input
+                type="url"
+                placeholder="https://"
+                value={social[key]}
+                onChange={(e) =>
+                  setSocial((s) => ({ ...s, [key]: e.target.value }))
+                }
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              />
+            </label>
+          ))}
+        </fieldset>
+
+        <fieldset className="space-y-4 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            WhatsApp sohbet ({LOCALE_LABELS[formLocale]})
+          </legend>
+          {isTr ? (
+            <>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={whatsapp.enabled}
+                  onChange={(e) =>
+                    setWhatsapp((s) => ({ ...s, enabled: e.target.checked }))
+                  }
+                  className="accent-accent"
+                />
+                Sitede WhatsApp sohbetini göster
+              </label>
+              <label className="block text-sm">
+                <span className="mono text-[10px] uppercase text-muted">
+                  WhatsApp numarası (opsiyonel)
+                </span>
+                <input
+                  value={whatsapp.phone}
+                  onChange={(e) =>
+                    setWhatsapp((s) => ({ ...s, phone: e.target.value }))
+                  }
+                  placeholder={contact.phone || '+90 5xx xxx xx xx'}
+                  className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+                />
+              </label>
+            </>
+          ) : (
+            <p className="text-xs text-muted">
+              Numara ve açık/kapalı ayarı ortaktır — yalnızca karşılama ve hazır
+              mesajları bu dilde düzenleyin.
+            </p>
+          )}
+          <div className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              Panel karşılama metni
+            </span>
+            <div className="mt-1">
+              <RichTextEditor
+                value={whatsappView.greeting}
+                onChange={(html) => patchWhatsappLocal({ greeting: html })}
+                placeholder="WhatsApp panel karşılama…"
+                minHeight="100px"
+              />
+            </div>
+          </div>
+          <WhatsAppPresetEditor
+            presets={whatsappView.presets}
+            onChange={(presets) => patchWhatsappLocal({ presets })}
+          />
+        </fieldset>
+
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            Kargo varsayılanları
+          </legend>
+          <p className="text-xs text-muted">Tüm dillerde ortaktır.</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                Varsayılan kargo ücreti (TRY)
+              </span>
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                value={shipping.defaultFee}
+                onChange={(e) =>
+                  setShipping((s) => ({ ...s, defaultFee: e.target.value }))
+                }
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                Ücretsiz kargo eşiği (TRY)
+              </span>
+              <input
+                type="number"
+                min={0}
+                step="1"
+                value={shipping.freeShippingOver}
+                onChange={(e) =>
+                  setShipping((s) => ({
+                    ...s,
+                    freeShippingOver: e.target.value,
+                  }))
+                }
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              />
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            Analitik & piksel
+          </legend>
+          <p className="text-xs text-muted">Tüm dillerde ortaktır.</p>
+          <div className="grid gap-3 md:grid-cols-2">
+            {(
+              [
+                ['ga4Id', 'Google Analytics 4 (G-…)'],
+                ['gtmId', 'Google Tag Manager'],
+                ['googleAdsId', 'Google Ads dönüşüm'],
+                ['metaPixelId', 'Meta Pixel'],
+                ['facebookPixelId', 'Facebook Pixel (Meta ile aynı olabilir)'],
+                ['yandexMetrikaId', 'Yandex Metrika'],
+                ['tiktokPixelId', 'TikTok Pixel'],
+              ] as const
+            ).map(([key, label]) => (
+              <label key={key} className="block text-sm">
+                <span className="mono text-[10px] uppercase text-muted">
+                  {label}
+                </span>
+                <input
+                  value={analytics[key]}
+                  onChange={(e) =>
+                    setAnalytics((s) => ({ ...s, [key]: e.target.value }))
+                  }
+                  placeholder="Boş = env"
+                  className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2 mono text-sm"
+                />
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset className="space-y-6 rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
+          <legend className="px-2 text-xs font-bold uppercase tracking-wide text-muted">
+            Navigasyon ({LOCALE_LABELS[formLocale]})
+          </legend>
+          <p className="text-xs text-muted">
+            Diğer dillerde etiketleri çevirin; bağlantı yolları genelde aynı
+            kalır (next-intl pathnames ile lokalize edilir).
+          </p>
+          <LinkListEditor
+            label="Header menü"
+            links={navigationView.header}
+            onChange={(header) =>
+              patchNavigation({ ...navigationView, header })
+            }
+          />
+          <LinkListEditor
+            label="Alt bilgi menüsü"
+            links={navigationView.footerNav}
+            onChange={(footerNav) =>
+              patchNavigation({ ...navigationView, footerNav })
+            }
+          />
+          <LinkListEditor
+            label="Alt bilgi yasal bağlantılar"
+            links={navigationView.footerLegal}
+            onChange={(footerLegal) =>
+              patchNavigation({ ...navigationView, footerLegal })
+            }
+          />
+        </fieldset>
       </div>
 
       <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
         <legend className="mono px-2 text-xs uppercase text-muted">
-          Alt bilgi
+          Alt bilgi ({LOCALE_LABELS[formLocale]})
         </legend>
-        <label className="block text-sm">
+        <div className="block text-sm">
           <span className="mono text-[10px] uppercase text-muted">Açıklama</span>
-          <textarea
-            rows={3}
-            value={footer.description}
-            onChange={(e) =>
-              setFooter((s) => ({ ...s, description: e.target.value }))
-            }
-            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-          />
-        </label>
+          <div className="mt-1">
+            <RichTextEditor
+              value={footerView.description}
+              onChange={(html) => patchFooter({ description: html })}
+              placeholder="Alt bilgi açıklaması…"
+              minHeight="120px"
+            />
+          </div>
+        </div>
         <label className="block text-sm">
           <span className="mono text-[10px] uppercase text-muted">
             Telif satırı eki
           </span>
           <input
-            value={footer.copyrightSuffix}
-            onChange={(e) =>
-              setFooter((s) => ({ ...s, copyrightSuffix: e.target.value }))
-            }
+            value={footerView.copyrightSuffix}
+            onChange={(e) => patchFooter({ copyrightSuffix: e.target.value })}
             className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
           />
         </label>
       </fieldset>
 
-      <fieldset className="col-span-full space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="mono px-2 text-xs uppercase text-muted">
-          Çeviriler (EN / DE / FR / ES)
-        </legend>
-        <p className="text-xs text-muted">
-          Türkçe alanlar yukarıdaki formlarda kalır. Diğer diller için marka,
-          SEO ve footer metinlerini buradan düzenleyin. Aktif diller, para
-          birimleri ve tam UI çeviri ağacı için{' '}
-          <a href="/dil-para-ceviriler" className="text-accent underline">
-            Dil / Para / Çeviriler
-          </a>{' '}
-          sayfasını kullanın.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {EXTRA_LOCALES.map((loc) => (
-            <button
-              key={loc}
-              type="button"
-              onClick={() => setCopyLocale(loc)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold uppercase ${
-                copyLocale === loc
-                  ? 'bg-accent text-white'
-                  : 'border border-border-muted bg-surface-high text-muted'
-              }`}
-            >
-              {loc}
-            </button>
-          ))}
-        </div>
-        {(
-          [
-            ['brandName', 'Marka adı'],
-            ['brandSlogan', 'Slogan'],
-            ['brandTagline', 'Tagline'],
-            ['seoTitle', 'SEO başlığı'],
-            ['seoDescription', 'SEO açıklama'],
-            ['footerDescription', 'Footer açıklama'],
-          ] as const
-        ).map(([key, label]) => (
-          <label key={key} className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">
-              {label} ({copyLocale})
-            </span>
-            {key === 'seoDescription' || key === 'footerDescription' ? (
-              <textarea
-                rows={3}
-                value={localeCopies[copyLocale][key]}
-                onChange={(e) =>
-                  setLocaleCopies((prev) => ({
-                    ...prev,
-                    [copyLocale]: {
-                      ...prev[copyLocale],
-                      [key]: e.target.value,
-                    },
-                  }))
-                }
-                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-              />
-            ) : (
-              <input
-                value={localeCopies[copyLocale][key]}
-                onChange={(e) =>
-                  setLocaleCopies((prev) => ({
-                    ...prev,
-                    [copyLocale]: {
-                      ...prev[copyLocale],
-                      [key]: e.target.value,
-                    },
-                  }))
-                }
-                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-              />
-            )}
-          </label>
-        ))}
-      </fieldset>
+      <p className="text-xs text-muted">
+        Tam UI çeviri ağacı (butonlar, formlar vb.) için{' '}
+        <a href="/dil-para-ceviriler" className="text-accent underline">
+          Dil / Para / Çeviriler
+        </a>{' '}
+        sayfasını kullanın.
+      </p>
 
       <button
         type="submit"

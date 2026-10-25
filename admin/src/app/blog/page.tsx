@@ -441,17 +441,19 @@ function BlogAdminPageInner() {
               className="mt-1 w-full border border-border-muted bg-background px-3 py-2 mono"
             />
           </label>
-          <label className="block text-sm md:col-span-2">
+          <div className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">Özet</span>
-            <textarea
-              rows={2}
-              value={form.excerpt}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, excerpt: e.target.value }))
-              }
-              className="mt-1 w-full border border-border-muted bg-background px-3 py-2 text-sm"
-            />
-          </label>
+            <div className="mt-1">
+              <RichTextEditor
+                value={form.excerpt}
+                onChange={(html) =>
+                  setForm((f) => ({ ...f, excerpt: html }))
+                }
+                placeholder="Yazı özeti…"
+                minHeight="120px"
+              />
+            </div>
+          </div>
           <div className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
               İçerik
@@ -581,28 +583,30 @@ function BlogAdminPageInner() {
                       className="mt-1 w-full border border-border-muted bg-background px-3 py-2 font-mono text-sm"
                     />
                   </label>
-                  <label className="block text-sm">
+                  <div className="block text-sm">
                     <span className="mono text-[10px] uppercase text-muted">
                       Özet ({tab})
                     </span>
-                    <textarea
-                      rows={2}
-                      value={row.excerpt}
-                      onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          translations: {
-                            ...f.translations,
-                            [tab]: {
-                              ...f.translations[tab],
-                              excerpt: e.target.value,
+                    <div className="mt-1">
+                      <RichTextEditor
+                        value={row.excerpt}
+                        onChange={(html) =>
+                          setForm((f) => ({
+                            ...f,
+                            translations: {
+                              ...f.translations,
+                              [tab]: {
+                                ...f.translations[tab],
+                                excerpt: html,
+                              },
                             },
-                          },
-                        }))
-                      }
-                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2 text-sm"
-                    />
-                  </label>
+                          }))
+                        }
+                        placeholder={`Özet (${tab})…`}
+                        minHeight="120px"
+                      />
+                    </div>
+                  </div>
                   <div className="block text-sm">
                     <span className="mono text-[10px] uppercase text-muted">
                       İçerik ({tab})

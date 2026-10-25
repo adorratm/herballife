@@ -840,28 +840,30 @@ function ProductsPageInner() {
                       className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
                     />
                   </label>
-                  <label className="block text-sm">
+                  <div className="block text-sm">
                     <span className="mono text-[10px] uppercase text-muted">
                       Açıklama
                     </span>
-                    <textarea
-                      rows={4}
-                      value={row.description}
-                      onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          translations: {
-                            ...f.translations,
-                            [tab]: {
-                              ...f.translations[tab],
-                              description: e.target.value,
+                    <div className="mt-1">
+                      <RichTextEditor
+                        value={row.description}
+                        onChange={(html) =>
+                          setForm((f) => ({
+                            ...f,
+                            translations: {
+                              ...f.translations,
+                              [tab]: {
+                                ...f.translations[tab],
+                                description: html,
+                              },
                             },
-                          },
-                        }))
-                      }
-                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-                    />
-                  </label>
+                          }))
+                        }
+                        placeholder="Ürün açıklaması…"
+                        minHeight="180px"
+                      />
+                    </div>
+                  </div>
                 </div>
               );
             })()}
@@ -1112,19 +1114,21 @@ function ProductsPageInner() {
               className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
             />
           </label>
-          <label className="block text-sm md:col-span-2">
+          <div className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
               Saklama
             </span>
-            <textarea
-              rows={3}
-              value={form.storageNotes}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, storageNotes: e.target.value }))
-              }
-              className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-            />
-          </label>
+            <div className="mt-1">
+              <RichTextEditor
+                value={form.storageNotes}
+                onChange={(html) =>
+                  setForm((f) => ({ ...f, storageNotes: html }))
+                }
+                placeholder="Saklama koşulları…"
+                minHeight="120px"
+              />
+            </div>
+          </div>
 
           <div className="md:col-span-2">
             <MediaUpload

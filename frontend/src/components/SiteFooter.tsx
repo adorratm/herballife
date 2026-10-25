@@ -2,6 +2,7 @@
 
 import { Link, toLinkHref } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
+import { CmsHtml } from "@/components/CmsHtml";
 import { Reveal } from "@/components/Reveal";
 import { FooterNavLinks } from "@/components/FooterNavLinks";
 import { PaymentCardLogos } from "@/components/PaymentCardLogos";
@@ -66,9 +67,13 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
                   <p className="text-sm font-bold text-on-surface">
                     {tFooter("distributorTrustTitle")}
                   </p>
-                  <p className="mt-1 max-w-xl text-xs leading-relaxed text-on-surface-variant">
-                    {brand.legalDisclaimer || tFooter("legalDisclaimerFallback")}
-                  </p>
+                  <CmsHtml
+                    as="div"
+                    className="mt-1 max-w-xl text-xs leading-relaxed text-on-surface-variant [&_a]:text-primary [&_a]:underline [&_p]:m-0"
+                    html={
+                      brand.legalDisclaimer || tFooter("legalDisclaimerFallback")
+                    }
+                  />
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -101,9 +106,11 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
             {brand.distributorName}
             {brand.distributorTitle ? ` · ${brand.distributorTitle}` : ""}
           </p>
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-on-surface-variant">
-            {footer.description}
-          </p>
+          <CmsHtml
+            as="div"
+            className="mt-4 max-w-sm text-sm leading-relaxed text-on-surface-variant [&_a]:text-primary [&_a]:underline [&_p]:mb-2 [&_p:last-child]:mb-0"
+            html={footer.description}
+          />
           <p className="mt-4 text-sm text-on-surface-variant">{contact.address}</p>
           {contact.email ? (
             <p className="mt-2 text-sm">

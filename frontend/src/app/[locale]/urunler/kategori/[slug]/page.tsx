@@ -45,19 +45,20 @@ export async function generateMetadata({
   params,
   searchParams,
 }: Props): Promise<Metadata> {
-  const [{ slug, locale }, sp, categories] = await Promise.all([
-    params,
-    searchParams,
-    getCategories().catch(() => []),
-  ]);
-  const [settings, labels, tSeo] = await Promise.all([
+  const [{ slug, locale }, sp] = await Promise.all([params, searchParams]);
+  const [settings, labels, tSeo, categories] = await Promise.all([
     getSiteSettings(locale),
     getSeoLabels(),
     getTranslations("seo"),
+    getCategories(locale).catch(() => []),
   ]);
   const category =
-    categories.find((c) => c.slug === slug) ||
-    (await getCategoryBySlug(slug)) ||
+    (await getCategoryBySlug(slug, locale)) ||
+    categories.find(
+      (c) =>
+        c.slug === slug ||
+        Object.values(c.localeSlugs || {}).includes(slug),
+    ) ||
     categoryFallback(slug);
   if (!category) {
     return {
@@ -88,18 +89,37 @@ export default async function CategoryCatalogPage({ params }: Props) {
     getTranslations("catalog"),
   ]);
   const [categories, relatedBlog, bySlug] = await Promise.all([
-    getCategories().catch(() => []),
+    getCategories(locale).catch(() => []),
     getBlogPosts({ categorySlug: slug, limit: 3, sort: "publishedAt" }),
-    getCategoryBySlug(slug),
+    getCategoryBySlug(slug, locale),
   ]);
+  // Önce API slug eşlemesi (TR/EN/…); liste lokalize slug ile de yedekler
   const category =
-    categories.find((c) => c.slug === slug) ||
     bySlug ||
+    categories.find(
+      (c) =>
+        c.slug === slug ||
+        Object.values(c.localeSlugs || {}).includes(slug),
+    ) ||
     categoryFallback(slug);
   if (!category) notFound();
 
   const requestSlug = decodeURIComponent(slug).toLowerCase();
-  if (category.slug && category.slug.toLowerCase() !== requestSlug) {
+  const canonicalSlug = (category.slug || "").toLowerCase();
+  const knownSlugs = new Set(
+    [
+      canonicalSlug,
+      ...Object.values(category.localeSlugs || {}).map((s) =>
+        String(s).toLowerCase(),
+      ),
+    ].filter(Boolean),
+  );
+  // Yalnızca bu dilin kanonik slug’ına yönlendir (çerez/dil uyumsuzluğunda döngü olmasın)
+  if (
+    canonicalSlug &&
+    knownSlugs.has(requestSlug) &&
+    requestSlug !== canonicalSlug
+  ) {
     redirect({
       href: {
         pathname: "/urunler/kategori/[slug]",
@@ -122,6 +142,7 @@ export default async function CategoryCatalogPage({ params }: Props) {
     page: 1,
     limit: 25,
     categorySlug: category.slug,
+    locale,
   }).catch(() => null);
 
   const intro = category.description?.trim() || "";
@@ -181,7 +202,7 @@ export default async function CategoryCatalogPage({ params }: Props) {
           </div>
         }
       >
-        <ProductsCatalog hideHeading />
+        <ProductsCatalog hideHeading categorySlug={category.slug} />
       </Suspense>
     </>
   );

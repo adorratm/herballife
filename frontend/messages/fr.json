@@ -131,7 +131,15 @@
       },
       "atistirmalik": {
         "name": "Snacks",
-        "blurb": "Protein bars and snacks"
+        "blurb": "Barres protéinées et snacks"
+      },
+      "kisisel-bakim": {
+        "name": "Soins de la peau",
+        "blurb": "Série HL Skin"
+      },
+      "tanitim-urunleri": {
+        "name": "Échantillons",
+        "blurb": "Produits de démarrage"
       }
     },
     "productCount": "{count} products",

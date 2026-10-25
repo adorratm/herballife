@@ -3,6 +3,7 @@
 import {
   useEffect,
   useId,
+  useRef,
   useState,
   type MouseEvent,
   type ReactNode,
@@ -50,6 +51,8 @@ export function Modal({
   const autoId = useId();
   const titleId = labelledBy || (title ? `${autoId}-title` : undefined);
   const [mounted, setMounted] = useState(false);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => setMounted(true), []);
 
@@ -58,14 +61,14 @@ export function Modal({
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') onCloseRef.current();
     }
     window.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = prev;
       window.removeEventListener('keydown', onKey);
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open || !mounted) return null;
 

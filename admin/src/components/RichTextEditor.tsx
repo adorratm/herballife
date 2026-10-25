@@ -69,6 +69,9 @@ export function RichTextEditor({
   const [uploadingImage, setUploadingImage] = useState(false);
   const imageMenuRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const applyingExternal = useRef(false);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -100,16 +103,27 @@ export function RichTextEditor({
       },
     },
     onUpdate: ({ editor: ed }) => {
-      onChange(ed.getHTML());
+      if (applyingExternal.current) return;
+      const html = ed.getHTML();
+      // TipTap boş içeriği <p></p> yapar
+      onChangeRef.current(
+        html === '<p></p>' || html === '<p><br></p>' ? '' : html,
+      );
     },
   });
 
   useEffect(() => {
     if (!editor || htmlMode) return;
     const current = editor.getHTML();
-    if (value !== current) {
-      editor.commands.setContent(value || '', { emitUpdate: false });
-    }
+    const incoming = value || '';
+    const same =
+      current === incoming ||
+      (incoming === '' &&
+        (current === '<p></p>' || current === '<p><br></p>' || editor.isEmpty));
+    if (same) return;
+    applyingExternal.current = true;
+    editor.commands.setContent(incoming, { emitUpdate: false });
+    applyingExternal.current = false;
   }, [value, editor, htmlMode]);
 
   useEffect(() => {

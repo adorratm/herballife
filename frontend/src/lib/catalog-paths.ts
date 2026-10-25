@@ -11,43 +11,43 @@ const CATEGORY_FALLBACKS: Record<
 > = {
   "kilo-kontrolu": {
     slug: "kilo-kontrolu",
-    name: "Weight management",
-    description: "Formula 1, Formula 2, and weight management products",
+    name: "Kilo Kontrolü",
+    description: "Formül 1, Formül 2 ve kilo kontrolü ürünleri",
   },
   icecekler: {
     slug: "icecekler",
-    name: "Drinks",
-    description: "Aloe, herbal teas, and flavored drink mixes",
+    name: "İçecekler",
+    description: "Aloe, bitki çayları ve aromalı içecekler",
   },
   "avantajli-setler": {
     slug: "avantajli-setler",
-    name: "Bundles",
-    description: "Gift packages and value bundles",
+    name: "Avantajlı Setler",
+    description: "Hediye paketleri ve avantajlı setler",
   },
   "takviye-edici": {
     slug: "takviye-edici",
-    name: "Supplements",
-    description: "Vitamins, minerals, and support products",
+    name: "Takviye Edici",
+    description: "Vitamin, mineral ve destek ürünleri",
   },
   "sporcu-urunleri": {
     slug: "sporcu-urunleri",
-    name: "Sports nutrition",
-    description: "Protein and performance products",
+    name: "Sporcu Ürünleri",
+    description: "Protein ve performans ürünleri",
   },
   atistirmalik: {
     slug: "atistirmalik",
-    name: "Snacks",
-    description: "Protein bars and practical snacks",
+    name: "Atıştırmalık",
+    description: "Protein bar ve pratik atıştırmalıklar",
   },
   "kisisel-bakim": {
     slug: "kisisel-bakim",
-    name: "Personal care",
-    description: "SKIN and Herbal Aloe care series",
+    name: "Kişisel Bakım",
+    description: "SKIN ve Herbal Aloe bakım serisi",
   },
   "tanitim-urunleri": {
     slug: "tanitim-urunleri",
-    name: "Sample products",
-    description: "Shakers and introductory products",
+    name: "Tanıtım Ürünleri",
+    description: "Shaker ve tanıtım ürünleri",
   },
 };
 

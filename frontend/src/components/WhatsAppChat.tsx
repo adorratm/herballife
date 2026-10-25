@@ -9,6 +9,7 @@ import {
   FAB_BOTTOM_MOBILE_COOKIE,
   useFabScrollExpand,
 } from "@/hooks/useFabScrollExpand";
+import { stripHtml } from "@/lib/format";
 import {
   DEFAULT_WHATSAPP_PHONE,
   DEFAULT_WHATSAPP_SETTINGS,
@@ -30,7 +31,7 @@ const POPUP_KEYS = ["popup0", "popup1", "popup2", "popup3", "popup4"] as const;
 const TITLE_KEYS = ["title0", "title1", "title2", "title3", "title4"] as const;
 
 function openWhatsApp(phone: string | null | undefined, text: string) {
-  const url = buildWhatsAppUrl(phone, text);
+  const url = buildWhatsAppUrl(phone, stripHtml(text));
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
@@ -55,15 +56,21 @@ export function WhatsAppChat({
     () => buildLocalizedWhatsAppSettings(t),
     [t],
   );
-  const greetingText =
+  const greetingText = stripHtml(
     greeting === DEFAULT_WHATSAPP_SETTINGS.greeting
       ? localizedDefaults.greeting
-      : greeting;
+      : greeting,
+  );
   const activePresets = useMemo(() => {
-    if (!presets.length || isDefaultWhatsAppPresets(presets)) {
-      return localizedDefaults.presets;
-    }
-    return presets;
+    const source =
+      !presets.length || isDefaultWhatsAppPresets(presets)
+        ? localizedDefaults.presets
+        : presets;
+    return source.map((p) => ({
+      ...p,
+      label: stripHtml(p.label),
+      message: stripHtml(p.message),
+    }));
   }, [presets, localizedDefaults.presets]);
 
   const [open, setOpen] = useState(false);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api } from '@/lib/api';
 import { Modal } from '@/components/Modal';
 
@@ -24,26 +24,41 @@ export function MediaLibraryPicker({
   open,
   onClose,
   multiple = false,
-  selectedUrls = [],
+  selectedUrls,
   onApply,
 }: Props) {
   const [library, setLibrary] = useState<MediaAsset[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const selectedUrlsRef = useRef(selectedUrls);
+  selectedUrlsRef.current = selectedUrls;
 
+  // Yalnızca modal açılınca listeyi çek; selectedUrls her render’da yeni [] olmasın diye bağımlılık yok
   useEffect(() => {
     if (!open) return;
-    setSelected(new Set(selectedUrls));
+    setSelected(new Set(selectedUrlsRef.current ?? []));
     setLoading(true);
     setError(null);
+    let cancelled = false;
     void api<MediaAsset[]>('/cms/admin/media')
-      .then((data) => setLibrary(Array.isArray(data) ? data : []))
-      .catch((e) =>
-        setError(e instanceof Error ? e.message : 'Medya listesi alınamadı'),
-      )
-      .finally(() => setLoading(false));
-  }, [open, selectedUrls]);
+      .then((data) => {
+        if (!cancelled) setLibrary(Array.isArray(data) ? data : []);
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setError(
+            e instanceof Error ? e.message : 'Medya listesi alınamadı',
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open]);
 
   function toggle(url: string) {
     setSelected((prev) => {

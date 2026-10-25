@@ -37,9 +37,15 @@ function linkActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+function categorySlugFromHref(href: string) {
+  const parts = href.split("/").filter(Boolean);
+  return parts[parts.length - 1] || "";
+}
+
 export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
   const tHeader = useTranslations("header");
   const tNav = useTranslations("nav");
+  const tHome = useTranslations("home");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
@@ -61,6 +67,29 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
   const phone = settings.contact.phone;
   const catActive = pathname.startsWith("/urunler");
   const pageLinks = nav.filter((item) => item.href !== "/urunler");
+
+  function categoryChipCopy(
+    href: string,
+    fallbackLabel: string,
+    fallbackBlurb: string,
+  ) {
+    const slug = categorySlugFromHref(href);
+    // Tireli slug anahtarları için raw map daha güvenilir (has/dot path kırılmasın)
+    let hub: Record<string, { name?: string; blurb?: string }> | null = null;
+    try {
+      hub = tHome.raw("categoryHub") as Record<
+        string,
+        { name?: string; blurb?: string }
+      >;
+    } catch {
+      hub = null;
+    }
+    const entry = hub?.[slug];
+    return {
+      name: entry?.name?.trim() || fallbackLabel,
+      blurb: entry?.blurb?.trim() || fallbackBlurb,
+    };
+  }
 
   /** CMS Türkçe etiketleri locale mesajlarıyla değiştir (TR dışı dilde TR menü kalmasın) */
   function navLabel(href: string, fallback: string): string {
@@ -216,6 +245,11 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                   <div className="grid grid-cols-2 gap-2.5">
                     {CATEGORY_CHIPS.map((chip) => {
                       const active = linkActive(pathname, chip.href);
+                      const copy = categoryChipCopy(
+                        chip.href,
+                        chip.label,
+                        chip.blurb,
+                      );
                       return (
                         <Link
                           key={`m-cat-${chip.href}`}
@@ -249,7 +283,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                             }`}
                           >
                             <p className="text-sm font-bold leading-tight">
-                              {chip.label}
+                              {copy.name}
                             </p>
                             <p
                               className={`mt-0.5 text-[11px] ${
@@ -258,7 +292,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                                   : "text-on-surface-variant"
                               }`}
                             >
-                              {chip.blurb}
+                              {copy.blurb}
                             </p>
                           </div>
                         </Link>
@@ -465,6 +499,11 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                     <div className="grid grid-cols-4 gap-1.5 p-2 xl:gap-3 xl:p-4 2xl:gap-3.5 2xl:p-5">
                       {CATEGORY_CHIPS.map((chip) => {
                         const active = linkActive(pathname, chip.href);
+                        const copy = categoryChipCopy(
+                          chip.href,
+                          chip.label,
+                          chip.blurb,
+                        );
                         return (
                           <Link
                             key={`mega-${chip.href}`}
@@ -480,7 +519,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                             <div className="relative aspect-5/4 bg-[linear-gradient(145deg,#eef3f0,#fff)] xl:aspect-4/3">
                               <Image
                                 src={chip.image}
-                                alt={chip.label}
+                                alt={copy.name}
                                 fill
                                 className="object-contain p-2 transition-transform duration-300 group-hover:scale-105 xl:p-3.5 2xl:p-4"
                                 sizes="(max-width: 1280px) 120px, 200px"
@@ -499,7 +538,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                               }`}
                             >
                               <p className="truncate text-[11px] font-bold leading-tight xl:text-sm 2xl:text-base">
-                                {chip.label}
+                                {copy.name}
                               </p>
                               <p
                                 className={`mt-0.5 hidden truncate text-xs xl:block ${
@@ -508,7 +547,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                                     : "text-on-surface-variant"
                                 }`}
                               >
-                                {chip.blurb}
+                                {copy.blurb}
                               </p>
                             </div>
                           </Link>

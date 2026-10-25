@@ -16,14 +16,20 @@ type SortKey = "name" | "price" | "createdAt" | "stock";
 const PAGE_LIMIT = 25;
 
 function categorySlugFromPath(pathname: string) {
-  const match = pathname.match(/^\/urunler\/kategori\/([^/]+)\/?$/);
+  // next-intl internal path VEYA lokalize dış path
+  const match = pathname.match(
+    /^\/(?:urunler\/kategori|products\/category|produkte\/kategorie|produits\/categorie|productos\/categoria)\/([^/]+)\/?$/,
+  );
   return match ? decodeURIComponent(match[1]) : "";
 }
 
 export default function ProductsCatalog({
   hideHeading = false,
+  /** Sunucu kategori sayfasından gelen kanonik slug (path parse yedek) */
+  categorySlug: categorySlugProp,
 }: {
   hideHeading?: boolean;
+  categorySlug?: string;
 }) {
   const router = useRouter();
   const intlLocale = useLocale();
@@ -44,7 +50,10 @@ export default function ProductsCatalog({
 
   const q = searchParams.get("q") || "";
   const categorySlug =
-    categorySlugFromPath(pathname) || searchParams.get("category") || "";
+    (categorySlugProp || "").trim() ||
+    categorySlugFromPath(pathname) ||
+    searchParams.get("category") ||
+    "";
   const originCountry = searchParams.get("origin") || "";
   const sort = (searchParams.get("sort") as SortKey) || "name";
   const order = (searchParams.get("order") as "asc" | "desc") || "asc";

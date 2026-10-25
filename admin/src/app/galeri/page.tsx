@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 import { MediaUpload } from '@/components/MediaUpload';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Reveal } from '@/components/Reveal';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 type GalleryItem = {
   id: string;
@@ -189,11 +190,11 @@ function GalleryPageInner() {
             folder="gallery"
             label="Görsel (S3)"
           />
-          <textarea
-            placeholder="Açıklama (isteğe bağlı)"
+          <RichTextEditor
             value={form.caption}
-            onChange={(e) => setForm((f) => ({ ...f, caption: e.target.value }))}
-            className="min-h-20 w-full border border-border-muted bg-background px-3 py-2 text-sm"
+            onChange={(html) => setForm((f) => ({ ...f, caption: html }))}
+            placeholder="Açıklama (isteğe bağlı)"
+            minHeight="100px"
           />
           <div className="flex flex-wrap items-center gap-4">
             <label className="flex items-center gap-2 text-sm">

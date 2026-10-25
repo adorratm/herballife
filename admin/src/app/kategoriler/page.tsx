@@ -8,6 +8,7 @@ import { DataTable } from '@/components/DataTable';
 import { Checkbox } from '@/components/Checkbox';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { AdminFormPanel } from '@/components/AdminFormPanel';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 type LocaleKey = 'en' | 'de' | 'fr' | 'es';
 
@@ -321,22 +322,24 @@ function CategoriesPageInner() {
               className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
             />
           </label>
-          <label className="block text-sm md:col-span-2">
+          <div className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
               Açıklama
             </span>
-            <textarea
-              value={form.description}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, description: e.target.value }))
-              }
-              className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-              rows={8}
-            />
+            <div className="mt-1">
+              <RichTextEditor
+                value={form.description}
+                onChange={(html) =>
+                  setForm((f) => ({ ...f, description: html }))
+                }
+                placeholder="Kategori açıklaması…"
+                minHeight="220px"
+              />
+            </div>
             <span className="mt-1 block text-xs text-muted">
               Kategori sayfasında H1 altında görünür (200–400 kelime önerilir).
             </span>
-          </label>
+          </div>
           <div className="md:col-span-2 space-y-3 rounded border border-border-muted p-3">
             <p className="mono text-[10px] uppercase text-muted">
               Çeviriler (TR ana alanlarda) — EN/DE/FR/ES zorunlu
@@ -409,28 +412,30 @@ function CategoriesPageInner() {
                       className="mt-1 w-full border border-border-muted bg-background px-3 py-2 font-mono text-sm"
                     />
                   </label>
-                  <label className="block text-sm">
+                  <div className="block text-sm">
                     <span className="mono text-[10px] uppercase text-muted">
                       Açıklama ({tab})
                     </span>
-                    <textarea
-                      rows={4}
-                      value={row.description}
-                      onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          translations: {
-                            ...f.translations,
-                            [tab]: {
-                              ...f.translations[tab],
-                              description: e.target.value,
+                    <div className="mt-1">
+                      <RichTextEditor
+                        value={row.description}
+                        onChange={(html) =>
+                          setForm((f) => ({
+                            ...f,
+                            translations: {
+                              ...f.translations,
+                              [tab]: {
+                                ...f.translations[tab],
+                                description: html,
+                              },
                             },
-                          },
-                        }))
-                      }
-                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-                    />
-                  </label>
+                          }))
+                        }
+                        placeholder={`Açıklama (${tab})…`}
+                        minHeight="160px"
+                      />
+                    </div>
+                  </div>
                 </div>
               );
             })()}
@@ -448,19 +453,21 @@ function CategoriesPageInner() {
               maxLength={220}
             />
           </label>
-          <label className="block text-sm">
+          <div className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
               Arama açıklaması
             </span>
-            <textarea
-              value={form.seoDescription}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, seoDescription: e.target.value }))
-              }
-              className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-              rows={3}
-            />
-          </label>
+            <div className="mt-1">
+              <RichTextEditor
+                value={form.seoDescription}
+                onChange={(html) =>
+                  setForm((f) => ({ ...f, seoDescription: html }))
+                }
+                placeholder="SEO açıklaması…"
+                minHeight="120px"
+              />
+            </div>
+          </div>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">Sıra</span>
             <input

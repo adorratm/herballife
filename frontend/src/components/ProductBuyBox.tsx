@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { CheckCircle2, XCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { FavoriteButton } from "@/components/FavoriteButton";
@@ -261,16 +262,28 @@ export function ProductBuyBox({
               {t("bestPrice30Days")}
             </p>
           ) : null}
-          <p className="mt-1 text-xs text-on-surface-variant">
-            {t("stock")} {outOfStock ? t("stockNone") : stock}
-            {aroma ? ` · ${aroma}` : ""}
-            {showShaker ? ` · ${shaker}` : ""}
+          <p
+            className={`mt-2 inline-flex items-center gap-1.5 text-xs font-semibold ${
+              outOfStock ? "text-error" : "text-primary"
+            }`}
+          >
+            {outOfStock ? (
+              <XCircle className="h-4 w-4 shrink-0" aria-hidden />
+            ) : (
+              <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
+            )}
+            <span>{outOfStock ? t("stockOut") : t("stockIn")}</span>
+            {aroma ? (
+              <span className="font-normal text-on-surface-variant">
+                · {aroma}
+              </span>
+            ) : null}
+            {showShaker ? (
+              <span className="font-normal text-on-surface-variant">
+                · {shaker}
+              </span>
+            ) : null}
           </p>
-          {!outOfStock && stock > 0 && stock <= 8 ? (
-            <p className="mt-1.5 text-xs font-semibold text-flash">
-              {t("lowStock", { count: stock })}
-            </p>
-          ) : null}
         </div>
       </div>
 

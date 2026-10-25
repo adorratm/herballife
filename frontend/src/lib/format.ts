@@ -19,6 +19,11 @@ export function displayUpper(text: string): string {
   return text.toLocaleUpperCase("en-US");
 }
 
+/** Zengin metin / HTML → düz metin (meta, WhatsApp vb.) */
+export function stripHtml(html: string) {
+  return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
 export function formatMoney(
   amount: string | number | null | undefined,
   currency = "TRY",

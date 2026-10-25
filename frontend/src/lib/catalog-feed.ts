@@ -1,5 +1,8 @@
 import { getProductsPaged } from "@/lib/catalog.server";
+import { stripHtml } from "@/lib/format";
 import type { Product, ProductVariant } from "@/lib/types";
+
+export { stripHtml } from "@/lib/format";
 
 export async function fetchAllCatalogProducts(): Promise<Product[]> {
   const limit = 100;
@@ -25,10 +28,6 @@ export function escapeXml(value: string) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
-}
-
-export function stripHtml(html: string) {
-  return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
 export function catalogProductDescription(product: Product, max = 5000) {
