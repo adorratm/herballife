@@ -108,32 +108,48 @@ export function WhatsAppChat({
   }, [open]);
 
   useEffect(() => {
-    const show = popupVisible && !open;
-    function publish(heightPx: number) {
+    /** Popup veya açık panel — ScrollToTop’un üstünde kalması için tam blok yüksekliği */
+    const show = (popupVisible && !open) || open;
+    function measureAndPublish() {
+      let heightPx = 0;
+      if (open && panelRef.current) {
+        heightPx = panelRef.current.getBoundingClientRect().height;
+      } else if (popupVisible && !open) {
+        const el = popupRef.current;
+        heightPx = el
+          ? el.getBoundingClientRect().height
+          : 96; /* animasyon öncesi yedek */
+      }
       window.dispatchEvent(
         new CustomEvent("herbalife:wa-popup", {
-          detail: { visible: show, heightPx: show ? heightPx : 0 },
+          detail: { visible: show && heightPx > 0, heightPx },
         }),
       );
     }
     if (!show) {
-      publish(0);
+      measureAndPublish();
       return;
     }
-    const el = popupRef.current;
-    if (!el) {
-      publish(72);
-      return;
-    }
-    publish(el.getBoundingClientRect().height);
-    const ro = new ResizeObserver((entries) => {
-      const h = entries[0]?.contentRect.height ?? el.getBoundingClientRect().height;
-      publish(h);
+    // banner-enter animasyonu bittikten sonra gerçek yükseklik
+    const raf = requestAnimationFrame(() => {
+      measureAndPublish();
+      requestAnimationFrame(measureAndPublish);
     });
-    ro.observe(el);
+    const el = open ? panelRef.current : popupRef.current;
+    const ro =
+      el &&
+      new ResizeObserver(() => {
+        measureAndPublish();
+      });
+    if (el && ro) ro.observe(el);
     return () => {
-      ro.disconnect();
-      publish(0);
+      cancelAnimationFrame(raf);
+      ro?.disconnect();
+      window.dispatchEvent(
+        new CustomEvent("herbalife:wa-popup", {
+          detail: { visible: false, heightPx: 0 },
+        }),
+      );
     };
   }, [popupVisible, open, popupIndex]);
 

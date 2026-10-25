@@ -9,10 +9,8 @@ import {
 } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
-import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
@@ -76,17 +74,18 @@ export function RichTextEditor({
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
+      // TipTap v3 StarterKit zaten link + underline içerir; ayrı eklemeyin (duplicate uyarısı)
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
         blockquote: {},
         codeBlock: {},
         horizontalRule: {},
         strike: {},
-      }),
-      Underline,
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' },
+        underline: {},
+        link: {
+          openOnClick: false,
+          HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' },
+        },
       }),
       Image.configure({ HTMLAttributes: { class: 'max-w-full h-auto' } }),
       Placeholder.configure({ placeholder }),

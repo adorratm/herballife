@@ -311,7 +311,35 @@ export function sectionContent<T extends Record<string, unknown>>(
 ): T {
   const section = sections.find((s) => s.sectionKey === key);
   if (!section?.content) return fallback;
-  return { ...fallback, ...section.content } as T;
+  const raw = { ...section.content } as Record<string, unknown>;
+  const untranslated = raw._cmsUntranslated === true;
+  delete raw._cmsUntranslated;
+  if (!untranslated) {
+    return { ...fallback, ...raw } as T;
+  }
+  // Çeviri yok: next-intl metin fallback’i kalsın; yalnızca yapısal CMS alanları
+  const merged: Record<string, unknown> = { ...fallback };
+  for (const [k, v] of Object.entries(raw)) {
+    if (v == null) continue;
+    if (typeof v === "string") continue;
+    if (Array.isArray(v) && v.every((x) => typeof x === "string")) continue;
+    if (
+      typeof v === "object" &&
+      !Array.isArray(v) &&
+      typeof (v as { label?: unknown }).label === "string" &&
+      typeof (fallback[k] as { label?: unknown } | undefined)?.label ===
+        "string"
+    ) {
+      merged[k] = {
+        ...(fallback[k] as object),
+        ...(v as object),
+        label: (fallback[k] as { label: string }).label,
+      };
+      continue;
+    }
+    merged[k] = v;
+  }
+  return merged as T;
 }
 
 export function cmsImageUrl(url: string | null | undefined, fallback: string) {

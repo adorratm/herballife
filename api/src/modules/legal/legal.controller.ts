@@ -6,8 +6,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { LegalService } from '@modules/legal/legal.service';
 import {
   CreateLegalDocumentDto,
@@ -108,15 +114,23 @@ export class LegalController {
 
   @Public()
   @Get('documents/:slug')
+  @ApiQuery({ name: 'locale', required: false })
   @ApiOperation({ summary: 'Yayımlanmış yasal belge (slug)' })
-  getBySlug(@Param('slug') slug: string) {
-    return this.legalService.getLatestPublished(slug);
+  getBySlug(
+    @Param('slug') slug: string,
+    @Query('locale') locale?: string,
+  ) {
+    return this.legalService.getLatestPublished(slug, locale);
   }
 
   @Public()
   @Get(':slug')
+  @ApiQuery({ name: 'locale', required: false })
   @ApiOperation({ summary: 'Yayımlanmış yasal belge (kısa yol)' })
-  getBySlugShort(@Param('slug') slug: string) {
-    return this.legalService.getLatestPublished(slug);
+  getBySlugShort(
+    @Param('slug') slug: string,
+    @Query('locale') locale?: string,
+  ) {
+    return this.legalService.getLatestPublished(slug, locale);
   }
 }

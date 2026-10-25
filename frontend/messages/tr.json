@@ -702,7 +702,9 @@
     "billingBadge": "Fatura",
     "closeAccountDetail": "Hesabınız pasife alınır, kişisel verileriniz anonimleştirilir. Geçmiş sipariş kayıtları yasal saklama için durur. Bu işlem geri alınamaz.",
     "closeAccountConfirmDetail": "Giriş yapamazsınız. Sipariş geçmişi mağaza kayıtlarında yasal süre boyunca kalır.",
-    "deleteMyAccount": "Hesabımı sil"
+    "deleteMyAccount": "Hesabımı sil",
+    "nutritionTracking": "Beslenme Takibi",
+    "progressReport": "Gelişim Raporu"
   },
   "faqPage": {
     "metaDescription": "{brand} hakkında sıkça sorulan sorular: ürünler, paketler, kargo ve beslenme takibi.",
@@ -741,7 +743,8 @@
         "question": "İade koşulları neler?",
         "answer": "Açılmamış ürünlerde yasal süre içinde iade mümkündür. Detaylar için İptal & İade sayfasını inceleyin veya bize yazın."
       }
-    ]
+    ],
+    "metaKeywords": "sss, sıkça sorulan sorular, kargo, Herbalife, paket"
   },
   "mediaPage": {
     "metaTitle": "Medya",
@@ -759,7 +762,8 @@
     "galleryTitle": "Galeriden seçkiler",
     "galleryLead": "Ürün, paket ve yaşam anları — tıklayınca büyük görünüm.",
     "galleryEmpty": "Henüz galeri görseli eklenmedi.",
-    "fallbackSubtitle": "Ürünler, paketler ve sağlıklı yaşam anlarından kareler. Instagram paylaşımlarımız ve seçilmiş görseller."
+    "fallbackSubtitle": "Ürünler, paketler ve sağlıklı yaşam anlarından kareler. Instagram paylaşımlarımız ve seçilmiş görseller.",
+    "metaKeywords": "Herbalife medya, Instagram, beslenme, sağlıklı yaşam"
   },
   "reviewsPage": {
     "metaTitle": "Google’da Değerlendir",
@@ -778,7 +782,8 @@
     "scanQr": "QR kodu tarayın",
     "reviewOnGoogle": "Google’da değerlendir",
     "reviewAria": "Google’da değerlendir — QR kodu tarayın",
-    "whatsappPrefill": "Merhaba, Google yorum linki için yazıyorum."
+    "whatsappPrefill": "Merhaba, Google yorum linki için yazıyorum.",
+    "metaKeywords": "Google yorum, Herbalife, Herbal Kapıda"
   },
   "seo": {
     "products": "Ürünler",
@@ -795,13 +800,27 @@
     "categoryNotFound": "Kategori bulunamadı",
     "catalogLoading": "Katalog yükleniyor…",
     "aboutJsonLdDescription": "{brand} — bağımsız Herbalife distribütörü.",
-    "keywordsCatalogDefault": ["katalog", "ürün", "paket", "set"],
-    "keywordsCategoryExtra": ["ürün", "paket"],
-    "keywordsBlog": ["yazılar", "beslenme", "Herbalife"]
+    "keywordsCatalogDefault": [
+      "katalog",
+      "ürün",
+      "paket",
+      "set"
+    ],
+    "keywordsCategoryExtra": [
+      "ürün",
+      "paket"
+    ],
+    "keywordsBlog": [
+      "yazılar",
+      "beslenme",
+      "Herbalife"
+    ]
   },
   "aboutPage": {
     "fallbackHeroTitle": "Hakkımızda",
     "fallbackHeroSeo": "Herbal Kapıda — bağımsız Herbalife distribütörü ile orijinal ürünler, avantajlı setler ve kişiselleştirilmiş beslenme desteği.",
+    "metaDescription": "{brand} — bağımsız Herbalife distribütörü.",
+    "metaKeywords": "hakkımızda, Herbalife, bağımsız distribütör, Herbal Kapıda, beslenme",
     "fallbackBodyLine1": "Sağlıklı yaşam",
     "fallbackBodyLine2": "yanınızda",
     "fallbackBodyP1": "Herbal Kapıda olarak orijinal Herbalife ürünlerini, avantajlı paketleri ve birebir beslenme danışmanlığını bir arada sunuyoruz.",
@@ -809,6 +828,13 @@
     "fallbackBodyP3": "Ürün seçimi, set önerisi veya wellness takibi için WhatsApp ve iletişim kanallarımızdan bize ulaşabilirsiniz.",
     "ctaProducts": "Ürünleri İncele",
     "ctaContact": "İletişim",
+    "ctaSets": "Setleri incele",
+    "storyEyebrow": "Hikayemiz",
+    "pillarsEyebrow": "Neden bizimle",
+    "pillarsTitle": "Ürün, rehberlik ve takip — üçü bir arada",
+    "contactEyebrow": "Bize ulaşın",
+    "closingTitle": "Birlikte başlayalım",
+    "closingBody": "Ücretsiz ürün danışmanlığı için yazın veya hediyeli setleri keşfedin.",
     "fallbackEthosEyebrow": "Beslenme yaklaşımımız",
     "fallbackEthosQuote": "Sürdürülebilir sonuçlar; doğru ürün, düzenli takip ve kişisel rehberlikle gelir.",
     "fallbackEthosLink": "Yazıları oku",
@@ -906,7 +932,8 @@
     "retry": "Ödemeyi yeniden dene",
     "newOrder": "Yeni sipariş",
     "continueShopping": "Alışverişe devam",
-    "orderStatus": "Sipariş durumu"
+    "orderStatus": "Sipariş durumu",
+    "redirecting": "Yönlendiriliyor…"
   },
   "paymentSuccess": {
     "loading": "Yükleniyor…",
@@ -1020,7 +1047,8 @@
   },
   "legalPage": {
     "comingSoon": "Bu yasal metin yakında yayınlanacaktır.",
-    "version": "Sürüm {version}"
+    "version": "Sürüm {version}",
+    "kicker": "Yasal belge"
   },
   "legalSeo": {
     "gizlilik": {
@@ -1226,8 +1254,9 @@
     "copy": "IBAN kopyala"
   },
   "notificationsBell": {
-    "markAllRead": "Tümünü oku",
-    "allAndSettings": "Tümü ve ayarlar"
+    "markAllRead": "Tümünü okundu say",
+    "allAndSettings": "Tüm bildirimler",
+    "viewAll": "Tüm bildirimler"
   },
   "campaignDate": {
     "validity": "Geçerlilik: {range}"
@@ -1353,5 +1382,80 @@
     "printFooter": "{brand} · Bağımsız Distribütör · Rapor {reportNo}",
     "pdfDocTitle": "Gelisim-Raporu-{name}-{reportNo}",
     "goal": "Hedef"
+  },
+  "inboxCopy": {
+    "order_received": {
+      "title": "Siparişin alındı",
+      "body": "{orderNumber} oluşturuldu. Ödeme tamamlanınca hazırlığa başlıyoruz."
+    },
+    "order_paid": {
+      "title": "Ödeme onaylandı",
+      "body": "{orderNumber} numaralı siparişinin ödemesi onaylandı."
+    },
+    "order_status": {
+      "title": "Sipariş durumu güncellendi",
+      "body": "{orderNumber} artık: {statusLabel}."
+    },
+    "shipment_created": {
+      "title": "Siparişin kargoya verildi",
+      "body": "{orderNumber} kargoya verildi.",
+      "bodyWithTracking": "{orderNumber} kargoda. Takip: {trackingNumber}"
+    },
+    "shipment_status": {
+      "title": "Kargo güncellendi",
+      "body": "{orderNumber} kargo durumu: {statusLabel}."
+    },
+    "return_requested": {
+      "title": "İade talebin alındı",
+      "body": "{orderNumber} için iade/iptal talebin kaydedildi."
+    },
+    "return_approved": {
+      "title": "İade talebin onaylandı",
+      "body": "{orderNumber} iade/iptal talebi onaylandı."
+    },
+    "return_rejected": {
+      "title": "İade talebin reddedildi",
+      "body": "{orderNumber} iade/iptal talebi reddedildi."
+    },
+    "abandoned_cart": {
+      "title": "Sepetin seni bekliyor",
+      "body": "{itemCount} ürün sepetinde kaldı. Siparişini tamamlamayı unutma."
+    },
+    "review_approved": {
+      "title": "Yorumun yayınlandı",
+      "body": "{productName} yorumun yayında."
+    },
+    "review_rejected": {
+      "title": "Yorumun yayınlanmadı",
+      "body": "{productName} yorumun yayınlanmadı."
+    },
+    "wellness_meal_approved": {
+      "title": "Öğün kaydın onaylandı",
+      "body": "Koçunuz öğün kaydınızı onayladı. Harika gidiyorsunuz!",
+      "bodyWithNote": "Koçunuz öğününüzü onayladı: {note}"
+    },
+    "wellness_meal_rejected": {
+      "title": "Öğün kaydın reddedildi",
+      "body": "Öğün kaydınız koçunuz tarafından reddedildi.",
+      "bodyWithNote": "Öğün kaydı reddedildi: {note}"
+    },
+    "wellness_measurement_approved": {
+      "title": "Ölçümün onaylandı",
+      "body": "Koçunuz ölçüm kaydınızı onayladı.",
+      "bodyWithNote": "Koçunuz ölçümünüzü onayladı: {note}"
+    },
+    "wellness_measurement_rejected": {
+      "title": "Ölçümün reddedildi",
+      "body": "Ölçüm kaydınız koçunuz tarafından reddedildi.",
+      "bodyWithNote": "Ölçüm reddedildi: {note}"
+    },
+    "ops_access_approved": {
+      "title": "Personel erişiminiz onaylandı",
+      "body": "Personel paneline aynı e-posta ve şifrenizle giriş yapabilirsiniz."
+    },
+    "ops_access_rejected": {
+      "title": "Personel erişim talebiniz reddedildi",
+      "body": "Personel erişim talebiniz onaylanmadı. Hesabınız müşteri olarak kullanılmaya devam eder."
+    }
   }
 }

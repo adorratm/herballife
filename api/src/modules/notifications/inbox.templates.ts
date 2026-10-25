@@ -11,6 +11,8 @@ export type InboxCopy = {
   body: string;
   href: string | null;
   orderId?: string | null;
+  /** Vitrin dili için — frontend type + payload ile çevirir */
+  payload?: Record<string, string | number | boolean | null> | null;
 };
 
 export function customerOrderCopy(input: {
@@ -31,6 +33,7 @@ export function customerOrderCopy(input: {
       body: `${orderNumber} oluşturuldu. Ödeme tamamlanınca hazırlığa başlıyoruz.`,
       href,
       orderId,
+      payload: { orderNumber },
     };
   }
   if (template === 'order_paid') {
@@ -42,6 +45,7 @@ export function customerOrderCopy(input: {
       body: `${orderNumber} numaralı siparişinin ödemesi onaylandı.`,
       href,
       orderId,
+      payload: { orderNumber },
     };
   }
   if (template === 'order_status') {
@@ -53,6 +57,7 @@ export function customerOrderCopy(input: {
       body: `${orderNumber} artık: ${statusLabel || 'güncellendi'}.`,
       href,
       orderId,
+      payload: { orderNumber, statusLabel: statusLabel || '' },
     };
   }
   if (template === 'shipment_created') {
@@ -66,6 +71,10 @@ export function customerOrderCopy(input: {
         : `${orderNumber} kargoya verildi.`,
       href,
       orderId,
+      payload: {
+        orderNumber,
+        trackingNumber: trackingNumber || '',
+      },
     };
   }
   if (template === 'shipment_status') {
@@ -77,6 +86,7 @@ export function customerOrderCopy(input: {
       body: `${orderNumber} kargo durumu: ${statusLabel || 'güncellendi'}.`,
       href,
       orderId,
+      payload: { orderNumber, statusLabel: statusLabel || '' },
     };
   }
   if (template === 'return_requested') {
@@ -88,6 +98,7 @@ export function customerOrderCopy(input: {
       body: `${orderNumber} için iade/iptal talebin kaydedildi.`,
       href,
       orderId,
+      payload: { orderNumber },
     };
   }
   if (template === 'return_approved') {
@@ -99,6 +110,7 @@ export function customerOrderCopy(input: {
       body: `${orderNumber} iade/iptal talebi onaylandı.`,
       href,
       orderId,
+      payload: { orderNumber },
     };
   }
   if (template === 'return_rejected') {
@@ -110,6 +122,7 @@ export function customerOrderCopy(input: {
       body: `${orderNumber} iade/iptal talebi reddedildi.`,
       href,
       orderId,
+      payload: { orderNumber },
     };
   }
   return null;
@@ -166,6 +179,7 @@ export function abandonedCartCopy(itemCount: number): InboxCopy {
     title: 'Sepetin seni bekliyor',
     body: `${itemCount} ürün sepetinde kaldı. Siparişini tamamlamayı unutma.`,
     href: '/sepet',
+    payload: { itemCount },
   };
 }
 
@@ -201,12 +215,13 @@ export function reviewModeratedCopy(
   return {
     audience: InboxAudience.USER,
     category: InboxCategory.ACCOUNT,
-    type: 'review_moderated',
+    type: approved ? 'review_approved' : 'review_rejected',
     title: approved ? 'Yorumun yayınlandı' : 'Yorumun yayınlanmadı',
     body: approved
       ? `${productName} yorumun yayında.`
       : `${productName} yorumun yayınlanmadı.`,
     href: '/hesabim',
+    payload: { productName },
   };
 }
 
@@ -254,6 +269,7 @@ export function wellnessMealDecisionCopy(
         ? `Öğün kaydı reddedildi: ${note}`
         : 'Öğün kaydınız koçunuz tarafından reddedildi.',
     href: '/hesabim/takip',
+    payload: { note: note || '', hasNote: Boolean(note) },
   };
 }
 
@@ -277,6 +293,7 @@ export function wellnessMeasurementDecisionCopy(
         ? `Ölçüm reddedildi: ${note}`
         : 'Ölçüm kaydınız koçunuz tarafından reddedildi.',
     href: '/hesabim/takip',
+    payload: { note: note || '', hasNote: Boolean(note) },
   };
 }
 
@@ -289,6 +306,7 @@ export function opsAccessDecisionCopy(approved: boolean): InboxCopy {
       title: 'Personel erişiminiz onaylandı',
       body: 'Personel paneline aynı e-posta ve şifrenizle giriş yapabilirsiniz.',
       href: '/hesabim',
+      payload: {},
     };
   }
   return {
@@ -298,5 +316,6 @@ export function opsAccessDecisionCopy(approved: boolean): InboxCopy {
     title: 'Personel erişim talebiniz reddedildi',
     body: OPS_ACCESS_REJECT_REASON,
     href: '/hesabim',
+    payload: {},
   };
 }

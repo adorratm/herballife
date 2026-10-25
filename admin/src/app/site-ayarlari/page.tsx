@@ -353,8 +353,27 @@ const LOCALE_LABELS: Record<FormLocale, string> = {
   es: 'ES',
 };
 
+type SettingsSection =
+  | 'marka'
+  | 'seo'
+  | 'iletisim'
+  | 'whatsapp'
+  | 'teknik'
+  | 'navigasyon';
+
+const SETTINGS_SECTIONS: { key: SettingsSection; label: string }[] = [
+  { key: 'marka', label: 'Marka' },
+  { key: 'seo', label: 'SEO' },
+  { key: 'iletisim', label: 'İletişim' },
+  { key: 'whatsapp', label: 'WhatsApp' },
+  { key: 'teknik', label: 'Kargo & analitik' },
+  { key: 'navigasyon', label: 'Menü & footer' },
+];
+
 export default function SiteSettingsPage() {
   const [formLocale, setFormLocale] = useState<FormLocale>('tr');
+  const [settingsSection, setSettingsSection] =
+    useState<SettingsSection>('marka');
   const [brand, setBrand] = useState<BrandFields>({
     name: '',
     slogan: '',
@@ -856,6 +875,23 @@ export default function SiteSettingsPage() {
         </span>
       </div>
 
+      <div className="flex flex-wrap gap-1.5">
+        {SETTINGS_SECTIONS.map(({ key, label }) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setSettingsSection(key)}
+            className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
+              settingsSection === key
+                ? 'bg-accent text-white'
+                : 'border border-border-muted text-muted hover:text-foreground'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
       {error ? (
         <p className="rounded-xl border border-danger/40 bg-danger/5 px-3 py-2 text-sm text-danger">
           {error}
@@ -868,7 +904,8 @@ export default function SiteSettingsPage() {
       ) : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+        {settingsSection === 'marka' ? (
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
           <legend className="px-2 text-xs font-bold uppercase tracking-wide text-muted">
             Marka ({LOCALE_LABELS[formLocale]})
           </legend>
@@ -936,8 +973,10 @@ export default function SiteSettingsPage() {
             </p>
           )}
         </fieldset>
+        ) : null}
 
-        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+        {settingsSection === 'seo' ? (
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
           <legend className="mono px-2 text-xs uppercase text-muted">
             SEO ({LOCALE_LABELS[formLocale]})
           </legend>
@@ -987,7 +1026,10 @@ export default function SiteSettingsPage() {
             </p>
           )}
         </fieldset>
+        ) : null}
 
+        {settingsSection === 'iletisim' ? (
+        <>
         <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
           <legend className="mono px-2 text-xs uppercase text-muted">
             İletişim ({LOCALE_LABELS[formLocale]})
@@ -1057,8 +1099,11 @@ export default function SiteSettingsPage() {
             </label>
           ))}
         </fieldset>
+        </>
+        ) : null}
 
-        <fieldset className="space-y-4 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+        {settingsSection === 'whatsapp' ? (
+        <fieldset className="space-y-4 rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
           <legend className="mono px-2 text-xs uppercase text-muted">
             WhatsApp sohbet ({LOCALE_LABELS[formLocale]})
           </legend>
@@ -1113,7 +1158,10 @@ export default function SiteSettingsPage() {
             onChange={(presets) => patchWhatsappLocal({ presets })}
           />
         </fieldset>
+        ) : null}
 
+        {settingsSection === 'teknik' ? (
+        <>
         <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
           <legend className="mono px-2 text-xs uppercase text-muted">
             Kargo varsayılanları
@@ -1189,7 +1237,11 @@ export default function SiteSettingsPage() {
             ))}
           </div>
         </fieldset>
+        </>
+        ) : null}
 
+        {settingsSection === 'navigasyon' ? (
+        <>
         <fieldset className="space-y-6 rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
           <legend className="px-2 text-xs font-bold uppercase tracking-wide text-muted">
             Navigasyon ({LOCALE_LABELS[formLocale]})
@@ -1220,34 +1272,36 @@ export default function SiteSettingsPage() {
             }
           />
         </fieldset>
-      </div>
 
-      <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
-        <legend className="mono px-2 text-xs uppercase text-muted">
-          Alt bilgi ({LOCALE_LABELS[formLocale]})
-        </legend>
-        <div className="block text-sm">
-          <span className="mono text-[10px] uppercase text-muted">Açıklama</span>
-          <div className="mt-1">
-            <RichTextEditor
-              value={footerView.description}
-              onChange={(html) => patchFooter({ description: html })}
-              placeholder="Alt bilgi açıklaması…"
-              minHeight="120px"
-            />
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            Alt bilgi ({LOCALE_LABELS[formLocale]})
+          </legend>
+          <div className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">Açıklama</span>
+            <div className="mt-1">
+              <RichTextEditor
+                value={footerView.description}
+                onChange={(html) => patchFooter({ description: html })}
+                placeholder="Alt bilgi açıklaması…"
+                minHeight="120px"
+              />
+            </div>
           </div>
-        </div>
-        <label className="block text-sm">
-          <span className="mono text-[10px] uppercase text-muted">
-            Telif satırı eki
-          </span>
-          <input
-            value={footerView.copyrightSuffix}
-            onChange={(e) => patchFooter({ copyrightSuffix: e.target.value })}
-            className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-          />
-        </label>
-      </fieldset>
+          <label className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              Telif satırı eki
+            </span>
+            <input
+              value={footerView.copyrightSuffix}
+              onChange={(e) => patchFooter({ copyrightSuffix: e.target.value })}
+              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+            />
+          </label>
+        </fieldset>
+        </>
+        ) : null}
+      </div>
 
       <p className="text-xs text-muted">
         Tam UI çeviri ağacı (butonlar, formlar vb.) için{' '}

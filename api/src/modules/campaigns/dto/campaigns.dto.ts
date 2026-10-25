@@ -102,7 +102,10 @@ export class CreateCampaignDto {
 
   @ApiPropertyOptional({ description: 'en/de/fr/es kampanya metinleri' })
   @IsOptional()
-  translations?: Record<string, { name?: string; headline?: string }>;
+  translations?: Record<
+    string,
+    { name?: string; headline?: string; badge?: string }
+  >;
 
   @ApiPropertyOptional()
   @IsOptional()

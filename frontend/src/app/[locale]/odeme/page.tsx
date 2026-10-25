@@ -492,6 +492,7 @@ export default function CheckoutPage() {
             ? STORE_PICKUP_CODE
             : form.shippingProvider,
           couponCode: couponPreview?.valid ? couponPreview.code : undefined,
+          locale,
           legalAcceptances: {
             mesafeliSatis: form.mesafeliSatis,
             onBilgilendirme: form.onBilgilendirme,

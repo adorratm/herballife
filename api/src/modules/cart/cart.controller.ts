@@ -33,38 +33,49 @@ export class CartController {
   @Get()
   @ApiBearerAuth()
   @ApiHeader({ name: 'X-Session-Id', required: false })
+  @ApiHeader({ name: 'X-Locale', required: false })
   @ApiOperation({ summary: 'Sepeti getir' })
   getCart(
     @CurrentUser() user: User | undefined,
     @Headers('x-session-id') sessionId?: string,
+    @Headers('x-locale') locale?: string,
   ) {
-    return this.cartService.getCart(user?.id, sessionId);
+    return this.cartService.getCart(user?.id, sessionId, locale);
   }
 
   @Public()
   @Patch('guest-email')
   @ApiBearerAuth()
   @ApiHeader({ name: 'X-Session-Id', required: false })
+  @ApiHeader({ name: 'X-Locale', required: false })
   @ApiOperation({ summary: 'Misafir sepet e-postası (terk edilen sepet)' })
   setGuestEmail(
     @Body() dto: SetGuestEmailDto,
     @CurrentUser() user: User | undefined,
     @Headers('x-session-id') sessionId?: string,
+    @Headers('x-locale') locale?: string,
   ) {
-    return this.cartService.setGuestEmail(dto.email, user?.id, sessionId);
+    return this.cartService.setGuestEmail(
+      dto.email,
+      user?.id,
+      sessionId,
+      locale,
+    );
   }
 
   @Public()
   @Post('items')
   @ApiBearerAuth()
   @ApiHeader({ name: 'X-Session-Id', required: false })
+  @ApiHeader({ name: 'X-Locale', required: false })
   @ApiOperation({ summary: 'Sepete ürün ekle' })
   addItem(
     @Body() dto: AddCartItemDto,
     @CurrentUser() user: User | undefined,
     @Headers('x-session-id') sessionId?: string,
+    @Headers('x-locale') locale?: string,
   ) {
-    return this.cartService.addItem(dto, user?.id, sessionId);
+    return this.cartService.addItem(dto, user?.id, sessionId, locale);
   }
 
   @Public()

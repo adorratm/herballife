@@ -25,7 +25,10 @@ export async function generateMetadata(): Promise<Metadata> {
     path: "/yorum",
     settings,
     locale,
-    keywords: ["Google yorum", "Herbalife", "Herbal Kapıda"],
+    keywords: t("metaKeywords")
+      .split(",")
+      .map((k) => k.trim())
+      .filter(Boolean),
   });
 }
 

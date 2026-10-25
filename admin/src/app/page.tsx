@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api';
 import { StatsCard } from '@/components/StatsCard';
 import { EChart } from '@/components/EChart';
@@ -12,6 +12,7 @@ import {
   statusPieOption,
   topProductsOption,
 } from '@/lib/charts';
+import { ADMIN_NAV_GROUPS } from '@/components/AdminSidebar';
 import type {
   DashboardStats,
   MarketplaceAccount,
@@ -52,6 +53,22 @@ export default function DashboardPage() {
   const [pendingOrders, setPendingOrders] = useState<number | string>('—');
   const [loading, setLoading] = useState(true);
   const [note, setNote] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const moduleHub = useMemo(
+    () =>
+      ADMIN_NAV_GROUPS.filter((g) => !g.advanced).map((g) => ({
+        title: g.title,
+        items: g.items.filter((item) => !item.adminOnly || isAdmin),
+      })).filter((g) => g.items.length > 0 && g.title !== 'Genel'),
+    [isAdmin],
+  );
+
+  useEffect(() => {
+    void api<{ role?: string }>('/auth/me')
+      .then((me) => setIsAdmin(me.role === 'admin'))
+      .catch(() => setIsAdmin(false));
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -170,10 +187,12 @@ export default function DashboardPage() {
       <Reveal>
         <div>
           <p className="text-[11px] font-bold uppercase tracking-wide text-muted">
-            Operasyon özeti
+            Yönetim
           </p>
-          <h2 className="admin-page-title mt-1">Günlük durum</h2>
-          <p className="admin-page-sub">Sipariş, ciro ve stok özeti</p>
+          <h2 className="admin-page-title mt-1">Özet panel</h2>
+          <p className="admin-page-sub">
+            Günlük durum ve tüm modüllere hızlı erişim
+          </p>
         </div>
       </Reveal>
 
@@ -184,6 +203,44 @@ export default function DashboardPage() {
           </p>
         </Reveal>
       ) : null}
+
+      <Reveal delay={30}>
+        <section className="space-y-4">
+          <h3 className="text-sm font-bold text-foreground">Modüller</h3>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {moduleHub.map((group) => (
+              <div
+                key={group.title}
+                className="rounded-xl border border-border-muted bg-surface p-4 shadow-sm"
+              >
+                <p className="text-[11px] font-bold uppercase tracking-wide text-muted">
+                  {group.title}
+                </p>
+                <ul className="mt-3 space-y-1.5">
+                  {group.items.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="flex items-center justify-between rounded-lg px-2 py-1.5 text-sm font-medium text-foreground/85 hover:bg-surface-high hover:text-accent"
+                      >
+                        {item.label}
+                        <span className="text-xs text-muted">→</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      </Reveal>
+
+      <Reveal delay={50}>
+        <div>
+          <h3 className="text-sm font-bold text-foreground">Günlük durum</h3>
+          <p className="text-xs text-muted">Sipariş, ciro ve stok özeti</p>
+        </div>
+      </Reveal>
 
       <Stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" step={70}>
         <StatsCard

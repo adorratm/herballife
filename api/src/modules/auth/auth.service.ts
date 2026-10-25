@@ -29,6 +29,7 @@ import {
 } from '@modules/auth/apple-token';
 import { NotificationsService } from '@modules/notifications/notifications.service';
 import { resolveFrontendUrl } from '@modules/notifications/notification.templates';
+import { storefrontHref } from '@modules/notifications/email-i18n';
 
 export interface AuthTokens {
   accessToken: string;
@@ -500,7 +501,8 @@ export class AuthService {
       await this.em.save(user);
 
       const frontendUrl = resolveFrontendUrl(this.config);
-      const resetUrl = `${frontendUrl}/sifre-sifirla?token=${encodeURIComponent(token)}`;
+      const locale = dto.locale || 'tr';
+      const resetUrl = `${storefrontHref(frontendUrl, locale, 'resetPassword')}?token=${encodeURIComponent(token)}`;
       const appResetUrl = `herbalifeops://reset-password?token=${encodeURIComponent(token)}`;
       const name = [user.firstName, user.lastName]
         .filter(Boolean)
@@ -514,6 +516,7 @@ export class AuthService {
           resetUrl,
           appResetUrl,
           isSetPassword: !user.passwordHash,
+          locale,
         });
       } catch (err) {
         this.logger.warn(

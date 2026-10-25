@@ -90,10 +90,12 @@ export function applyLiveSellerContact(
   }
 
   if (seller.hours) {
-    result = result.replace(
-      /Çalışma saatleri:\s*[^\n]+/g,
-      `Çalışma saatleri: ${seller.hours}`,
-    );
+    result = result
+      .replace(/Çalışma saatleri:\s*[^\n]+/g, `Çalışma saatleri: ${seller.hours}`)
+      .replace(/Opening hours:\s*[^\n]+/gi, `Opening hours: ${seller.hours}`)
+      .replace(/Öffnungszeiten:\s*[^\n]+/gi, `Öffnungszeiten: ${seller.hours}`)
+      .replace(/Horaires\s*:\s*[^\n]+/gi, `Horaires : ${seller.hours}`)
+      .replace(/Horario:\s*[^\n]+/gi, `Horario: ${seller.hours}`);
   }
 
   return result;

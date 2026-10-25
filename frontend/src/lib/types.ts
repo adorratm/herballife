@@ -4,6 +4,7 @@ export type ProductVariant = {
   sku: string;
   weightLabel: string;
   price: string;
+  prices?: Partial<Record<"TRY" | "USD" | "EUR" | "GBP", number>> | null;
   /** Kampanya varsa orijinal fiyat (API decorate) */
   compareAtPrice?: string | null;
   categoryKey?: string | null;
@@ -360,6 +361,8 @@ export type CheckoutPayload = {
   };
   shippingProvider: string;
   couponCode?: string;
+  /** Vitrin dili — sipariş e-postaları bu dile gider */
+  locale?: string;
   legalAcceptances: {
     mesafeliSatis: boolean;
     onBilgilendirme: boolean;

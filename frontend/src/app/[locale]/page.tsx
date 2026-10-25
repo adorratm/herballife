@@ -95,24 +95,35 @@ export default async function HomePage() {
   ] = await Promise.all([
     getSiteSettings(locale),
     getContentSections("home", locale),
-    getCategories().catch(() => [] as Category[]),
-    getProductsPaged({ page: 1, limit: 12, featured: true }).catch(() => ({
+    getCategories(locale).catch(() => [] as Category[]),
+    getProductsPaged({
+      page: 1,
+      limit: 12,
+      featured: true,
+      locale,
+    }).catch(() => ({
       items: [],
     })),
     getProductsPaged({
       page: 1,
       limit: 12,
       categorySlug: "avantajli-setler",
+      locale,
     }).catch(() => ({ items: [] })),
-    getProductsPaged({ page: 1, limit: 12, sort: "name", order: "asc" }).catch(
-      () => ({ items: [] }),
-    ),
+    getProductsPaged({
+      page: 1,
+      limit: 12,
+      sort: "name",
+      order: "asc",
+      locale,
+    }).catch(() => ({ items: [] })),
     getActiveCampaigns(),
     getBlogPosts({
       page: 1,
       limit: 3,
       sort: "publishedAt",
       order: "desc",
+      locale,
     }).catch(() => ({ items: [] as BlogPost[] })),
   ]);
 

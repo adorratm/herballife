@@ -686,7 +686,9 @@
     "billingBadge": "Billing",
     "closeAccountDetail": "Your account is deactivated and personal data is anonymized. Past order records remain for legal retention. This cannot be undone.",
     "closeAccountConfirmDetail": "You will not be able to sign in. Order history remains in store records for the legal retention period.",
-    "deleteMyAccount": "Delete my account"
+    "deleteMyAccount": "Delete my account",
+    "nutritionTracking": "Nutrition tracking",
+    "progressReport": "Progress report"
   },
   "faqPage": {
     "metaDescription": "Frequently asked questions about {brand}: products, bundles, shipping, and nutrition tracking.",
@@ -725,7 +727,8 @@
         "question": "What are the return terms?",
         "answer": "Returns are possible for unopened products within the legal period. See Returns & cancellation or contact us."
       }
-    ]
+    ],
+    "metaKeywords": "faq, frequently asked questions, shipping, Herbalife, bundles"
   },
   "mediaPage": {
     "metaTitle": "Media",
@@ -743,7 +746,8 @@
     "galleryTitle": "Gallery picks",
     "galleryLead": "Products, bundles, and lifestyle moments — tap for full view.",
     "galleryEmpty": "No gallery images yet.",
-    "fallbackSubtitle": "Products, bundles, and healthy living moments. Instagram posts and selected images."
+    "fallbackSubtitle": "Products, bundles, and healthy living moments. Instagram posts and selected images.",
+    "metaKeywords": "Herbalife media, Instagram, nutrition, healthy living"
   },
   "reviewsPage": {
     "metaTitle": "Review on Google",
@@ -762,7 +766,8 @@
     "scanQr": "Scan QR code",
     "reviewOnGoogle": "Review on Google",
     "reviewAria": "Review on Google — scan QR code",
-    "whatsappPrefill": "Hello, I’d like the Google review link."
+    "whatsappPrefill": "Hello, I’d like the Google review link.",
+    "metaKeywords": "Google review, Herbalife, Herbal Kapıda"
   },
   "seo": {
     "products": "Products",
@@ -798,6 +803,8 @@
   "aboutPage": {
     "fallbackHeroTitle": "About us",
     "fallbackHeroSeo": "Original products, gift bundles, and personalized nutrition support with an independent Herbalife distributor.",
+    "metaDescription": "{brand} — independent Herbalife distributor.",
+    "metaKeywords": "about us, Herbalife, independent distributor, Herbal Kapıda, nutrition",
     "fallbackBodyLine1": "Healthy living",
     "fallbackBodyLine2": "with you",
     "fallbackBodyP1": "We bring original Herbalife products, value bundles, and one-to-one nutrition guidance together.",
@@ -805,6 +812,13 @@
     "fallbackBodyP3": "Reach us on WhatsApp or contact channels for product choice, bundle advice, or wellness tracking.",
     "ctaProducts": "Browse products",
     "ctaContact": "Contact",
+    "ctaSets": "Browse bundles",
+    "storyEyebrow": "Our story",
+    "pillarsEyebrow": "Why us",
+    "pillarsTitle": "Product, guidance, and tracking — all together",
+    "contactEyebrow": "Get in touch",
+    "closingTitle": "Let's start together",
+    "closingBody": "Message us for free product advice or explore gift bundles.",
     "fallbackEthosEyebrow": "Our nutrition approach",
     "fallbackEthosQuote": "Sustainable results come from the right products, consistent tracking, and personal guidance.",
     "fallbackEthosLink": "Read articles",
@@ -1033,7 +1047,8 @@
   },
   "legalPage": {
     "comingSoon": "This legal text will be published soon.",
-    "version": "Version {version}"
+    "version": "Version {version}",
+    "kicker": "Legal document"
   },
   "legalSeo": {
     "gizlilik": {
@@ -1240,7 +1255,8 @@
   },
   "notificationsBell": {
     "markAllRead": "Mark all read",
-    "allAndSettings": "All & settings"
+    "allAndSettings": "View all notifications",
+    "viewAll": "View all notifications"
   },
   "campaignDate": {
     "validity": "Valid: {range}"
@@ -1366,5 +1382,80 @@
     "printFooter": "{brand} · Independent distributor · Report {reportNo}",
     "pdfDocTitle": "Progress-Report-{name}-{reportNo}",
     "goal": "Goal"
+  },
+  "inboxCopy": {
+    "order_received": {
+      "title": "Order received",
+      "body": "{orderNumber} was created. We’ll start preparing once payment is complete."
+    },
+    "order_paid": {
+      "title": "Payment confirmed",
+      "body": "Payment for order {orderNumber} was confirmed."
+    },
+    "order_status": {
+      "title": "Order status updated",
+      "body": "{orderNumber} is now: {statusLabel}."
+    },
+    "shipment_created": {
+      "title": "Your order has shipped",
+      "body": "{orderNumber} has been shipped.",
+      "bodyWithTracking": "{orderNumber} is on the way. Tracking: {trackingNumber}"
+    },
+    "shipment_status": {
+      "title": "Shipment updated",
+      "body": "{orderNumber} shipment status: {statusLabel}."
+    },
+    "return_requested": {
+      "title": "Return request received",
+      "body": "Your return/cancel request for {orderNumber} was saved."
+    },
+    "return_approved": {
+      "title": "Return request approved",
+      "body": "Your return/cancel request for {orderNumber} was approved."
+    },
+    "return_rejected": {
+      "title": "Return request declined",
+      "body": "Your return/cancel request for {orderNumber} was declined."
+    },
+    "abandoned_cart": {
+      "title": "Your cart is waiting",
+      "body": "{itemCount} items are still in your cart. Don’t forget to check out."
+    },
+    "review_approved": {
+      "title": "Your review is live",
+      "body": "Your review of {productName} is published."
+    },
+    "review_rejected": {
+      "title": "Review not published",
+      "body": "Your review of {productName} was not published."
+    },
+    "wellness_meal_approved": {
+      "title": "Meal log approved",
+      "body": "Your coach approved your meal log. Great work!",
+      "bodyWithNote": "Your coach approved your meal: {note}"
+    },
+    "wellness_meal_rejected": {
+      "title": "Meal log declined",
+      "body": "Your meal log was declined by your coach.",
+      "bodyWithNote": "Meal log declined: {note}"
+    },
+    "wellness_measurement_approved": {
+      "title": "Measurement approved",
+      "body": "Your coach approved your measurement.",
+      "bodyWithNote": "Your coach approved your measurement: {note}"
+    },
+    "wellness_measurement_rejected": {
+      "title": "Measurement declined",
+      "body": "Your measurement was declined by your coach.",
+      "bodyWithNote": "Measurement declined: {note}"
+    },
+    "ops_access_approved": {
+      "title": "Staff access approved",
+      "body": "You can sign in to the staff panel with the same email and password."
+    },
+    "ops_access_rejected": {
+      "title": "Staff access declined",
+      "body": "Your staff access request was not approved. Your account remains a customer account."
+    }
   }
 }

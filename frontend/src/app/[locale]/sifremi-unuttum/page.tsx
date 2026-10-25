@@ -1,7 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/routing";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { FormEvent, useState } from "react";
 import { AuthField, AuthShell } from "@/components/AuthModal";
 import { ApiError, forgotPassword } from "@/lib/api";
@@ -9,6 +9,7 @@ import { ApiError, forgotPassword } from "@/lib/api";
 export default function ForgotPasswordPage() {
   const t = useTranslations("authPassword");
   const tAuth = useTranslations("auth");
+  const locale = useLocale();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -19,7 +20,7 @@ export default function ForgotPasswordPage() {
     setLoading(true);
     setError(null);
     try {
-      await forgotPassword(email);
+      await forgotPassword(email, locale);
       setDone(true);
     } catch (err) {
       setError(

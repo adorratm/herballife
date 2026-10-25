@@ -44,7 +44,10 @@ export async function generateMetadata(): Promise<Metadata> {
     path: "/medya",
     settings,
     locale,
-    keywords: ["Herbalife medya", "Instagram", "beslenme", "sağlıklı yaşam"],
+    keywords: t("metaKeywords")
+      .split(",")
+      .map((k) => k.trim())
+      .filter(Boolean),
   });
 }
 
@@ -82,8 +85,8 @@ export default async function MediaPage() {
 
       <section className="border-b border-outline-variant bg-[#f7f8f6]">
         <div className="page-shell page-hero border-0 bg-transparent">
-          <p className="page-kicker">{header.eyebrow || "Medya"}</p>
-          <h1 className="page-title">{header.title || "Medya"}</h1>
+          <p className="page-kicker">{header.eyebrow || t("metaTitle")}</p>
+          <h1 className="page-title">{header.title || t("metaTitle")}</h1>
           <p className="page-lead">{header.subtitle}</p>
           {instagramUrl ? (
             <a

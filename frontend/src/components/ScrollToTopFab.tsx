@@ -7,9 +7,14 @@ import { useWhatsAppFabState } from "@/hooks/useWhatsAppFabState";
 import { readCookieConsent } from "@/lib/cookie-consent";
 
 const SHOW_AFTER = 380;
-const GAP_PX = 12;
-/** WhatsApp yuvarlak buton ~46px + iç gap */
-const WA_BUTTON_PX = 52;
+/** WA butonu ile ok arası */
+const GAP_PX = 16;
+/** Bildirim / panel ile ok arası — balonun altında kalmasın */
+const POPUP_CLEARANCE_PX = 20;
+/** WhatsApp FAB yüksekliği (h-11.5 ≈ 46) + stack gap-3 (12) */
+const WA_BUTTON_PX = 58;
+/** Ölçüm gelmeden önce güvenli minimum bildirim yüksekliği */
+const POPUP_MIN_PX = 100;
 
 function waBottomPx(isMobile: boolean, cookieLift: boolean): number {
   if (isMobile) {
@@ -19,8 +24,7 @@ function waBottomPx(isMobile: boolean, cookieLift: boolean): number {
 }
 
 /**
- * Yukarı kaydır: WA butonunun (ve varsa popup balonunun) hemen üstünde.
- * Popup yüksekliği ResizeObserver ile gelir; kapanınca eski ofsete döner.
+ * Yukarı kaydır: WA butonu + bildirim/panel bloğunun üzerinde.
  */
 export function ScrollToTopFab() {
   const t = useTranslations("aria");
@@ -71,8 +75,9 @@ export function ScrollToTopFab() {
   }
 
   const base = waBottomPx(isMobile, liftForCookie);
-  const popupBlock =
-    popupVisible && popupHeightPx > 0 ? popupHeightPx + GAP_PX : 0;
+  const popupBlock = popupVisible
+    ? Math.max(popupHeightPx, POPUP_MIN_PX) + POPUP_CLEARANCE_PX
+    : 0;
   const bottomPx = base + WA_BUTTON_PX + popupBlock + GAP_PX;
 
   return (

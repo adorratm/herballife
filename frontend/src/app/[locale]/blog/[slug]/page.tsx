@@ -72,7 +72,10 @@ function relatedSlugList(raw: unknown): string[] {
   return [];
 }
 
-async function loadRelatedProducts(raw: unknown): Promise<Product[]> {
+async function loadRelatedProducts(
+  raw: unknown,
+  locale?: string,
+): Promise<Product[]> {
   const slugs = relatedSlugList(raw).slice(0, 6);
   if (!slugs.length) return [];
 
@@ -80,7 +83,7 @@ async function loadRelatedProducts(raw: unknown): Promise<Product[]> {
     slugs.map(async (s) => {
       try {
         return await Promise.race([
-          getProductBySlug(s),
+          getProductBySlug(s, locale),
           new Promise<null>((resolve) => {
             setTimeout(() => resolve(null), 8000);
           }),
@@ -156,10 +159,13 @@ export default async function BlogPostPage({ params }: Props) {
   }
 
   const cover = blogCoverImage(post.coverImageUrl, post.slug);
-  const relatedProducts = await loadRelatedProducts(post.relatedProductSlugs);
+  const relatedProducts = await loadRelatedProducts(
+    post.relatedProductSlugs,
+    locale,
+  );
   const categorySlugs = relatedSlugList(post.relatedCategorySlugs);
   const categories = categorySlugs.length
-    ? await getCategories().catch(() => [])
+    ? await getCategories(locale).catch(() => [])
     : [];
   const relatedCategories = categories.filter((c) =>
     categorySlugs.includes(c.slug),

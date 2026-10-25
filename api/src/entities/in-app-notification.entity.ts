@@ -46,6 +46,10 @@ export class InAppNotification extends BaseEntity {
   @Column({ type: 'text' })
   body!: string;
 
+  /** i18n için yapılandırılmış alanlar (orderNumber, trackingNumber, …) */
+  @Column({ type: 'jsonb', nullable: true })
+  payload!: Record<string, string | number | boolean | null> | null;
+
   @Column({ type: 'varchar', length: 400, nullable: true })
   href!: string | null;
 

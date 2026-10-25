@@ -100,6 +100,10 @@ export class Order extends BaseEntity {
   @Column({ name: 'currency', type: 'varchar', length: 3, default: 'TRY' })
   currency!: string;
 
+  /** Checkout anındaki vitrin dili (e-posta / WA şablonları) */
+  @Column({ name: 'locale', type: 'varchar', length: 10, default: 'tr' })
+  locale!: string;
+
   @Column({
     name: 'shipping_provider',
     type: 'varchar',

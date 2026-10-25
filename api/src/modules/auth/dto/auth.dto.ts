@@ -77,6 +77,12 @@ export class ForgotPasswordDto {
   @ApiProperty({ example: 'ornek@email.com' })
   @IsEmail()
   email!: string;
+
+  @ApiPropertyOptional({ description: 'Vitrin dili', example: 'en' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(10)
+  locale?: string;
 }
 
 export class ResetPasswordDto {

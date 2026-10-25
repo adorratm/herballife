@@ -16,7 +16,7 @@ type RuleMode = 'flat' | 'nth_item' | 'both';
 
 type LocaleKey = 'en' | 'de' | 'fr' | 'es';
 
-type CampaignLocaleFields = { name: string; headline: string };
+type CampaignLocaleFields = { name: string; headline: string; badge: string };
 
 const LOCALE_TABS: { key: LocaleKey; label: string }[] = [
   { key: 'en', label: 'EN' },
@@ -25,11 +25,14 @@ const LOCALE_TABS: { key: LocaleKey; label: string }[] = [
   { key: 'es', label: 'ES' },
 ];
 
-const emptyCampaignTranslations = (): Record<LocaleKey, CampaignLocaleFields> => ({
-  en: { name: '', headline: '' },
-  de: { name: '', headline: '' },
-  fr: { name: '', headline: '' },
-  es: { name: '', headline: '' },
+const emptyCampaignTranslations = (): Record<
+  LocaleKey,
+  CampaignLocaleFields
+> => ({
+  en: { name: '', headline: '', badge: '' },
+  de: { name: '', headline: '', badge: '' },
+  fr: { name: '', headline: '', badge: '' },
+  es: { name: '', headline: '', badge: '' },
 });
 
 type Campaign = {
@@ -353,6 +356,7 @@ export default function CampaignsPage() {
           tr[key] = {
             name: t?.name || '',
             headline: t?.headline || '',
+            badge: t?.badge || '',
           };
         }
         return tr;
@@ -426,6 +430,7 @@ export default function CampaignsPage() {
         translations[key] = {
           name: row.name.trim(),
           headline: row.headline.trim(),
+          badge: row.badge.trim(),
         };
       }
 
@@ -843,6 +848,26 @@ export default function CampaignsPage() {
                             },
                           }))
                         }
+                        className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                      />
+                    </label>
+                    <label className="block text-sm">
+                      <span className="text-xs text-muted">Rozet ({tab})</span>
+                      <input
+                        value={row.badge}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            translations: {
+                              ...f.translations,
+                              [tab]: {
+                                ...f.translations[tab],
+                                badge: e.target.value,
+                              },
+                            },
+                          }))
+                        }
+                        placeholder="TR rozet boş bırakılırsa kullanılır"
                         className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
                       />
                     </label>

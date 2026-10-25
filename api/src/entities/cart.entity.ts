@@ -38,6 +38,10 @@ export class Cart extends BaseEntity {
   @Column({ name: 'guest_email', type: 'varchar', length: 255, nullable: true })
   guestEmail!: string | null;
 
+  /** Son bilinen vitrin dili (abandoned cart e-postası) */
+  @Column({ name: 'locale', type: 'varchar', length: 10, nullable: true })
+  locale!: string | null;
+
   /** cascade verme: boş items ile save kalemleri silebilir */
   @OneToMany('CartItem', 'cart')
   items!: CartItem[];

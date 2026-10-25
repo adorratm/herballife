@@ -40,7 +40,7 @@ export async function LegalPage({ slug }: Props) {
     <article className="page-shell mx-auto max-w-3xl py-16 md:py-24">
       <div className="page-enter">
         <div className="mb-3 font-meta text-xs uppercase tracking-widest text-primary">
-          Legal_Document / {slug}
+          {t("kicker")}
         </div>
         <h1 className="font-display text-4xl leading-none md:text-5xl">{title}</h1>
         {doc?.version ? (

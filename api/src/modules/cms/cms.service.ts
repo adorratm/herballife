@@ -484,7 +484,9 @@ export class CmsService {
           title = block.sectionTitle;
         }
       }
-      const content = resolveLocalizedRecord(rawContent, locale);
+      const content = resolveLocalizedRecord(rawContent, locale, {
+        missingLocale: 'structural',
+      });
       return { ...section, title, content };
     });
   }

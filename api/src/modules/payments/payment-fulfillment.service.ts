@@ -4,7 +4,6 @@ import { EntityManager } from 'typeorm';
 import { Order, OrderStatus } from '@entities/order.entity';
 import { Payment, PaymentStatus } from '@entities/payment.entity';
 import { NotificationsService } from '@modules/notifications/notifications.service';
-import { statusLabel } from '@modules/notifications/notification.templates';
 import { InventoryService } from '@modules/catalog/inventory.service';
 import { CartService } from '@modules/cart/cart.service';
 import { CouponsService } from '@modules/coupons/coupons.service';
@@ -63,7 +62,6 @@ export class PaymentFulfillmentService {
         ['email', 'whatsapp'],
         {
           status: OrderStatus.PAID,
-          statusLabel: statusLabel(OrderStatus.PAID),
         },
       );
       await this.notifications.enqueueOrderOpsAlert(order.id, 'paid');

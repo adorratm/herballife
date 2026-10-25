@@ -82,7 +82,11 @@ export default async function ProductsPage({ searchParams }: Props) {
     { name: tCatalog("title"), path: "/urunler" },
   ];
 
-  const catalog = await getProductsPaged({ page: 1, limit: 25 }).catch(() => null);
+  const catalog = await getProductsPaged({
+    page: 1,
+    limit: 25,
+    locale,
+  }).catch(() => null);
   const listItems = catalog?.items ?? [];
 
   return (

@@ -67,7 +67,7 @@ function ProductDescription({ html }: { html: string }) {
 export async function generateMetadata({ params }: Props) {
   const { slug, locale } = await params;
   const [product, settings] = await Promise.all([
-    getProductBySlug(slug),
+    getProductBySlug(slug, locale),
     getSiteSettings(locale),
   ]);
   if (!product) {
@@ -80,7 +80,7 @@ export async function generateMetadata({ params }: Props) {
 export default async function ProductDetailPage({ params }: Props) {
   const { slug, locale } = await params;
   const [product, settings, reviews] = await Promise.all([
-    getProductBySlug(slug),
+    getProductBySlug(slug, locale),
     getSiteSettings(locale),
     getProductReviews(slug, 1, 10).catch(() => null),
   ]);
@@ -110,6 +110,7 @@ export default async function ProductDetailPage({ params }: Props) {
         limit: 8,
         sort: "name",
         order: "asc",
+        locale,
       }).catch(() => null)
     : null;
   const related = (relatedPage?.items || [])

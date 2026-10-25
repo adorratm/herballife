@@ -3,6 +3,7 @@ export type ProductVariant = {
   sku: string;
   weightLabel: string;
   price: string | number;
+  prices?: Partial<Record<'TRY' | 'USD' | 'EUR' | 'GBP', number>> | null;
   categoryKey?: string | null;
   translations?: Partial<
     Record<
@@ -53,6 +54,7 @@ export type Product = {
       slug?: string;
       description?: string;
       shortDescription?: string;
+      badge?: string;
     }
   > | null;
   priceTaxIncluded?: boolean;

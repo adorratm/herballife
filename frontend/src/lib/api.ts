@@ -59,6 +59,17 @@ type FetchOptions = RequestInit & {
   json?: unknown;
 };
 
+function browserLocaleHeader(): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/(?:^|; )NEXT_LOCALE=([^;]*)/);
+  if (!match?.[1]) return null;
+  try {
+    return decodeURIComponent(match[1]);
+  } catch {
+    return match[1];
+  }
+}
+
 async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T> {
   const { token, sessionId, json, headers: initHeaders, ...rest } = options;
   const headers = new Headers(initHeaders);
@@ -71,6 +82,10 @@ async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T>
   }
   if (sessionId) {
     headers.set("X-Session-Id", sessionId);
+  }
+  if (!headers.has("X-Locale")) {
+    const locale = browserLocaleHeader();
+    if (locale) headers.set("X-Locale", locale);
   }
 
     const isMutation =
@@ -158,7 +173,7 @@ export async function getProductsPaged(
     });
     const data = await apiFetch<Product[] | Paginated<Product>>(
       `/products${qs}`,
-      fetchOptions,
+      fetchOptions ?? { cache: "no-store" },
     );
     if (Array.isArray(data)) {
       return {
@@ -378,10 +393,10 @@ export async function login(email: string, password: string) {
   });
 }
 
-export async function forgotPassword(email: string) {
+export async function forgotPassword(email: string, locale?: string) {
   return apiFetch<{ ok: boolean }>("/auth/forgot-password", {
     method: "POST",
-    json: { email },
+    json: { email, locale: locale || undefined },
   });
 }
 
@@ -683,6 +698,7 @@ export async function getBlogPosts(
     });
     const data = await apiFetch<BlogPost[] | Paginated<BlogPost>>(
       `/blog${qs}`,
+      { cache: "no-store" },
     );
     if (Array.isArray(data)) {
       return {
@@ -713,6 +729,7 @@ export async function getBlogPostBySlug(
     const qs = toQuery({ locale: params?.locale });
     return await apiFetch<BlogPost>(
       `/blog/${encodeURIComponent(slug)}${qs}`,
+      { cache: "no-store" },
     );
   } catch {
     return null;
@@ -778,6 +795,7 @@ export type InboxItem = {
   category: string;
   audience: string;
   orderId?: string | null;
+  payload?: Record<string, string | number | boolean | null> | null;
   readAt?: string | null;
   createdAt?: string;
 };

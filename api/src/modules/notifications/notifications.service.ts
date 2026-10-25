@@ -29,6 +29,10 @@ import {
   resolveAdminUrl,
   statusLabel,
 } from '@modules/notifications/notification.templates';
+import {
+  emailCopy,
+  storefrontHref,
+} from '@modules/notifications/email-i18n';
 import { InboxService } from '@modules/notifications/inbox.service';
 import {
   OPS_ACCESS_REJECT_REASON,
@@ -37,6 +41,7 @@ import {
 } from '@modules/notifications/inbox.templates';
 import { ConfigService } from '@nestjs/config';
 import { normalizePhoneE164 } from '@common/utils/phone';
+import { Cart } from '@entities/cart.entity';
 
 const DEFAULT_ORDER_CHANNELS: NotificationChannelName[] = ['email', 'whatsapp'];
 
@@ -134,6 +139,7 @@ export class NotificationsService {
     itemCount: number;
     reminder?: 1 | 2;
     userId?: string | null;
+    locale?: string | null;
   }) {
     const reminder = input.reminder === 2 ? 2 : 1;
     const template = reminder === 2 ? 'abandoned_cart_2' : 'abandoned_cart';
@@ -144,7 +150,11 @@ export class NotificationsService {
       recipientEmail: input.email,
       recipientName: input.name || undefined,
       userId: input.userId || undefined,
-      context: { itemCount: input.itemCount, reminder },
+      context: {
+        itemCount: input.itemCount,
+        reminder,
+        locale: input.locale || undefined,
+      },
     };
     await this.notifyQueue.add(template, payload, {
       attempts: 2,
@@ -192,13 +202,16 @@ export class NotificationsService {
     resetUrl: string;
     appResetUrl?: string;
     isSetPassword?: boolean;
+    locale?: string | null;
   }): Promise<void> {
-    const name = input.name?.trim() || 'Merhaba';
+    const locale = input.locale || 'tr';
+    const name = input.name?.trim() || emailCopy(locale).hello;
     const content = buildPasswordResetEmail({
       name,
       resetUrl: input.resetUrl,
       appResetUrl: input.appResetUrl,
       isSetPassword: input.isSetPassword,
+      locale,
     });
     await this.email.send({
       to: input.email,
@@ -311,18 +324,26 @@ export class NotificationsService {
       opsEventRaw === 'paid' || opsEventRaw === 'received'
         ? opsEventRaw
         : undefined;
+    const locale =
+      (typeof payload.context?.locale === 'string'
+        ? payload.context.locale
+        : null) ||
+      order.locale ||
+      'tr';
+    const isOps = payload.template === 'order_ops_alert';
 
     const ctx = {
       order,
       shipment,
-      statusLabel:
-        typeof payload.context?.statusLabel === 'string'
-          ? payload.context.statusLabel
-          : statusLabel(
-              (payload.context?.status as string) ||
-                shipment?.status ||
-                order.status,
-            ),
+      locale: isOps ? 'tr' : locale,
+      statusLabel: statusLabel(
+        (typeof payload.context?.status === 'string'
+          ? payload.context.status
+          : null) ||
+          shipment?.status ||
+          order.status,
+        isOps ? 'tr' : locale,
+      ),
       trackingUrl:
         typeof payload.context?.trackingUrl === 'string'
           ? payload.context.trackingUrl
@@ -476,12 +497,24 @@ export class NotificationsService {
       return;
     }
     const frontendUrl = resolveFrontendUrl(this.config);
-    const name = payload.recipientName || 'Değerli müşterimiz';
+    let locale =
+      typeof payload.context?.locale === 'string'
+        ? payload.context.locale
+        : null;
+    if (!locale && payload.cartId) {
+      const cart = await this.em.findOne(Cart, {
+        where: { id: payload.cartId },
+      });
+      locale = cart?.locale || null;
+    }
+    locale = locale || 'tr';
+    const copy = emailCopy(locale);
+    const name = payload.recipientName || copy.hello;
     const itemCount =
       typeof payload.context?.itemCount === 'number'
         ? payload.context.itemCount
         : 1;
-    const cartUrl = `${frontendUrl}/sepet`;
+    const cartUrl = storefrontHref(frontendUrl, locale, 'cart');
 
     const log = this.em.create(NotificationLog, {
       channel: NotificationChannel.EMAIL,
@@ -490,7 +523,7 @@ export class NotificationsService {
       orderId: null,
       shipmentId: null,
       status: NotificationStatus.PENDING,
-      payload: { cartId: payload.cartId, itemCount },
+      payload: { cartId: payload.cartId, itemCount, locale },
     });
     await this.em.save(log);
 
@@ -505,6 +538,7 @@ export class NotificationsService {
         itemCount,
         cartUrl,
         reminder,
+        locale,
       });
       const result = await this.email.send({
         to: email,

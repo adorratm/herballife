@@ -35,7 +35,10 @@ export async function generateMetadata(): Promise<Metadata> {
     path: "/sss",
     settings,
     locale,
-    keywords: ["sss", "sıkça sorulan sorular", "kargo", "Herbalife", "paket"],
+    keywords: t("metaKeywords")
+      .split(",")
+      .map((k) => k.trim())
+      .filter(Boolean),
   });
 }
 

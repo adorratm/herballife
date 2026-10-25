@@ -23,7 +23,10 @@ export async function getProductsPaged(
   params?: ProductQuery,
 ): Promise<Paginated<Product>> {
   const { locale, currency } = await ctx(params?.locale);
-  return getProductsPagedBase({ ...params, locale, currency });
+  return getProductsPagedBase(
+    { ...params, locale, currency },
+    { cache: "no-store" },
+  );
 }
 
 export async function getCategories(localeOverride?: string): Promise<Category[]> {

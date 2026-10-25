@@ -4,50 +4,50 @@ export function categoryCatalogPath(slug: string) {
   return `/urunler/kategori/${encodeURIComponent(slug)}`;
 }
 
-/** Seed / vitrin kategorileri — API geçici düşse bile chip linkleri 404 olmasın (English-neutral) */
+/** Seed / vitrin kategorileri — API düşse bile chip linkleri 404 olmasın (EN nötr; UI home.categoryHub ile çevirir) */
 const CATEGORY_FALLBACKS: Record<
   string,
   Pick<Category, "slug" | "name" | "description">
 > = {
   "kilo-kontrolu": {
     slug: "kilo-kontrolu",
-    name: "Kilo Kontrolü",
-    description: "Formül 1, Formül 2 ve kilo kontrolü ürünleri",
+    name: "Weight Management",
+    description: "Formula 1, Formula 2 and weight management products",
   },
   icecekler: {
     slug: "icecekler",
-    name: "İçecekler",
-    description: "Aloe, bitki çayları ve aromalı içecekler",
+    name: "Beverages",
+    description: "Aloe, herbal teas and flavored drinks",
   },
   "avantajli-setler": {
     slug: "avantajli-setler",
-    name: "Avantajlı Setler",
-    description: "Hediye paketleri ve avantajlı setler",
+    name: "Bundles",
+    description: "Gift packs and value sets",
   },
   "takviye-edici": {
     slug: "takviye-edici",
-    name: "Takviye Edici",
-    description: "Vitamin, mineral ve destek ürünleri",
+    name: "Supplements",
+    description: "Vitamins, minerals and support products",
   },
   "sporcu-urunleri": {
     slug: "sporcu-urunleri",
-    name: "Sporcu Ürünleri",
-    description: "Protein ve performans ürünleri",
+    name: "Sports Nutrition",
+    description: "Protein and performance products",
   },
   atistirmalik: {
     slug: "atistirmalik",
-    name: "Atıştırmalık",
-    description: "Protein bar ve pratik atıştırmalıklar",
+    name: "Snacks",
+    description: "Protein bars and practical snacks",
   },
   "kisisel-bakim": {
     slug: "kisisel-bakim",
-    name: "Kişisel Bakım",
-    description: "SKIN ve Herbal Aloe bakım serisi",
+    name: "Personal Care",
+    description: "SKIN and Herbal Aloe care range",
   },
   "tanitim-urunleri": {
     slug: "tanitim-urunleri",
-    name: "Tanıtım Ürünleri",
-    description: "Shaker ve tanıtım ürünleri",
+    name: "Promo Items",
+    description: "Shakers and promotional items",
   },
 };
 

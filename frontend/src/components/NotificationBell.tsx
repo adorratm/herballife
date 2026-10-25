@@ -2,7 +2,7 @@
 
 import { Link, asRouterHref, toLinkHref, useRouter } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   fetchInbox,
   fetchNotificationPrefs,
@@ -17,6 +17,7 @@ import {
   requestBrowserPushPermission,
   showBrowserNotification,
 } from "@/lib/inbox";
+import { localizeInboxItem } from "@/lib/inbox-copy";
 
 export function NotificationBell({
   listHref = "/hesabim/bildirimler",
@@ -26,11 +27,23 @@ export function NotificationBell({
   const t = useTranslations("notificationsBell");
   const tNav = useTranslations("nav");
   const tInbox = useTranslations("notificationsPage");
+  const tCopy = useTranslations("inboxCopy");
   const tAria = useTranslations("aria");
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [unread, setUnread] = useState(0);
   const [items, setItems] = useState<InboxItem[]>([]);
+
+  function copyFor(item: InboxItem) {
+    return localizeInboxItem(
+      item,
+      (key, values) => tCopy(key as never, values as never),
+      (key) => tCopy.has(key as never),
+    );
+  }
+
+  const copyForRef = useRef(copyFor);
+  copyForRef.current = copyFor;
 
   useEffect(() => {
     const token = getToken();
@@ -60,7 +73,9 @@ export function NotificationBell({
       setUnread((n) => n + 1);
       void fetchNotificationPrefs(token)
         .then((p) => {
-          if (p.pushEnabled) showBrowserNotification(row);
+          if (p.pushEnabled) {
+            showBrowserNotification({ ...row, ...copyForRef.current(row) });
+          }
         })
         .catch(() => undefined);
     });
@@ -132,35 +147,40 @@ export function NotificationBell({
             </p>
           ) : (
             <ul className="max-h-80 space-y-1.5 overflow-auto">
-              {items.map((item) => (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    onClick={() => void openItem(item)}
-                    className={`block w-full rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-surface-container-low ${
-                      item.readAt
-                        ? "opacity-60"
-                        : "bg-primary-fixed/50 ring-1 ring-inset ring-primary/15"
-                    }`}
-                  >
-                    <p className="text-sm font-semibold text-on-surface">
-                      {item.title}
-                    </p>
-                    <p className="mt-0.5 font-meta text-[11px] text-secondary">
-                      {item.body}
-                    </p>
-                  </button>
-                </li>
-              ))}
+              {items.map((item) => {
+                const copy = copyFor(item);
+                return (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      onClick={() => void openItem(item)}
+                      className={`block w-full rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-surface-container-low ${
+                        item.readAt
+                          ? "opacity-60"
+                          : "bg-primary-fixed/50 ring-1 ring-inset ring-primary/15"
+                      }`}
+                    >
+                      <p className="text-sm font-semibold text-on-surface">
+                        {copy.title}
+                      </p>
+                      <p className="mt-0.5 line-clamp-2 font-meta text-[11px] leading-snug text-secondary">
+                        {copy.body}
+                      </p>
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           )}
-          <Link
-            href={toLinkHref(listHref)}
-            onClick={() => setOpen(false)}
-            className="mt-2 block rounded-xl border-t border-outline-variant/30 pt-2.5 text-center font-meta text-[10px] uppercase tracking-widest text-primary hover:bg-surface-container-low"
-          >
-            {t("allAndSettings")}
-          </Link>
+          <div className="mt-3 border-t border-outline-variant/25 pt-3">
+            <Link
+              href={toLinkHref(listHref)}
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center justify-center rounded-xl bg-primary px-3 py-2.5 text-center text-sm font-semibold text-on-primary transition-opacity hover:opacity-90"
+            >
+              {t("viewAll")}
+            </Link>
+          </div>
         </div>
       ) : null}
     </div>

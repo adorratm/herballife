@@ -24,6 +24,10 @@ import {
   buildInvoiceSentEmail,
   resolveFrontendUrl,
 } from '@modules/notifications/notification.templates';
+import {
+  emailCopy,
+  storefrontHref,
+} from '@modules/notifications/email-i18n';
 import { buildInvoicePrintHtml } from '@modules/accounting/invoice-html';
 import {
   htmlToPdfBuffer,
@@ -276,12 +280,14 @@ export class InvoiceEmailService {
     }
 
     const frontendUrl = resolveFrontendUrl(this.config);
+    const locale = input.order.locale || 'tr';
     const content = buildInvoiceSentEmail({
-      name: input.order.customerName || 'Merhaba',
+      name: input.order.customerName || emailCopy(locale).hello,
       orderNumber: input.order.orderNumber,
       invoiceNumber: input.invoiceNumber,
       edocumentType: input.edocumentType,
-      ordersUrl: `${frontendUrl}/hesabim`,
+      ordersUrl: storefrontHref(frontendUrl, locale, 'account'),
+      locale,
     });
 
     const log = this.em.create(NotificationLog, {

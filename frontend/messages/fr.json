@@ -308,6 +308,8 @@
     "vatIncluded": "(VAT included)",
     "stock": "Stock",
     "stockNone": "none",
+    "stockIn": "En stock",
+    "stockOut": "Rupture de stock",
     "lowStock": "Only {count} left — limited stock",
     "trustOriginal": "Genuine product",
     "trustPaytr": "Secure payment (PayTR)",
@@ -418,7 +420,9 @@
     "billingBadge": "Billing",
     "closeAccountDetail": "Your account is deactivated and personal data is anonymized. Past order records remain for legal retention. This cannot be undone.",
     "closeAccountConfirmDetail": "You will not be able to sign in. Order history remains in store records for the legal retention period.",
-    "deleteMyAccount": "Delete my account"
+    "deleteMyAccount": "Delete my account",
+    "nutritionTracking": "Suivi nutrition",
+    "progressReport": "Rapport de progrès"
   },
   "footer": {
     "rights": "Tous droits réservés.",
@@ -506,25 +510,33 @@
     "kicker": "Contact",
     "phone": "Téléphone",
     "email": "E-mail",
-    "writeNow": "Message now",
-    "hours": "Opening hours",
-    "writeWhatsapp": "Message on WhatsApp",
-    "sendMessage": "Send a message",
-    "reachUs": "Get in touch",
-    "subject": "Subject",
+    "writeNow": "Écrire maintenant",
+    "hours": "Horaires",
+    "writeWhatsapp": "Écrire sur WhatsApp",
+    "sendMessage": "Envoyer un message",
+    "reachUs": "Nous contacter",
+    "subject": "Sujet",
     "message": "Message",
-    "subjectGeneral": "General",
-    "subjectCoaching": "Nutrition coaching",
-    "subjectLogistics": "Order / shipping",
-    "subjectTechnical": "Technical",
-    "sending": "Sending…",
-    "send": "Send",
-    "success": "Message received. We will reply as soon as we can.",
-    "error": "Could not send. Please try again later.",
-    "waPrefill": "Hello, I'm writing from the {brand} contact page.",
+    "subjectGeneral": "Général",
+    "subjectCoaching": "Conseil nutrition",
+    "subjectLogistics": "Commande / livraison",
+    "subjectTechnical": "Technique",
+    "sending": "Envoi…",
+    "send": "Envoyer",
+    "success": "Message envoyé. Nous vous répondrons bientôt.",
+    "error": "Échec de l'envoi. Réessayez.",
+    "waPrefill": "Bonjour, je vous écris depuis la page contact de {brand}.",
     "metaTitle": "Contact",
-    "metaDescription": "Write to us for product advice, orders, and nutrition tracking. {brand} — independent distributor.",
-    "metaDescriptionLocation": "Contact {brand} — {location} workshop and order questions."
+    "metaDescription": "Conseils produits, commandes et suivi nutritionnel — écrivez-nous. {brand} — distributeur indépendant.",
+    "metaDescriptionLocation": "Contactez {brand} — atelier et commandes à {location}.",
+    "name": "Nom",
+    "required": "Champ obligatoire",
+    "address": "Adresse",
+    "formLead": "Écrivez-nous — nous répondons rapidement.",
+    "protocolGeneral": "Général",
+    "protocolOrder": "Commande",
+    "protocolProduct": "Produit",
+    "protocolOther": "Autre"
   },
   "paymentFailure": {
     "loading": "Loading payment result…",
@@ -677,64 +689,77 @@
   "aboutPage": {
     "breadcrumbHome": "Accueil",
     "address": "Adresse",
-    "hours": "Opening hours",
+    "hours": "Horaires",
     "phone": "Téléphone",
     "email": "E-mail",
-    "waWrite": "Message on WhatsApp",
-    "jsonLdDescription": "{brand} — independent Herbalife distributor.",
-    "fallbackHeroTitle": "About us",
-    "fallbackHeroSeo": "Original products, gift bundles, and personalized nutrition support with an independent Herbalife distributor.",
-    "fallbackBodyLine1": "Healthy living",
-    "fallbackBodyLine2": "with you",
-    "fallbackBodyP1": "We bring original Herbalife products, value bundles, and one-to-one nutrition guidance together.",
-    "fallbackBodyP2": "Our goal is not random shelf products — but the right program, sustainable habits, and trusted access.",
-    "fallbackBodyP3": "Reach us on WhatsApp or contact channels for product choice, bundle advice, or wellness tracking.",
-    "ctaProducts": "Browse products",
+    "waWrite": "Écrire sur WhatsApp",
+    "jsonLdDescription": "{brand} — distributeur indépendant Herbalife.",
+    "fallbackHeroTitle": "À propos",
+    "fallbackHeroSeo": "Produits d'origine, coffrets cadeaux et accompagnement nutritionnel personnalisé avec un distributeur indépendant Herbalife.",
+    "fallbackBodyLine1": "Une vie saine",
+    "fallbackBodyLine2": "à vos côtés",
+    "fallbackBodyP1": "Nous réunissons produits Herbalife d'origine, coffrets avantageux et conseils nutritionnels personnalisés.",
+    "fallbackBodyP2": "Notre objectif n'est pas de remplir des rayons au hasard — mais le bon programme, des habitudes durables et un accès de confiance.",
+    "fallbackBodyP3": "Contactez-nous sur WhatsApp ou via nos canaux pour le choix des produits, les coffrets ou le suivi wellness.",
+    "ctaProducts": "Voir les produits",
     "ctaContact": "Contact",
-    "fallbackEthosEyebrow": "Our nutrition approach",
-    "fallbackEthosQuote": "Sustainable results come from the right products, consistent tracking, and personal guidance.",
-    "fallbackEthosLink": "Read articles",
-    "pillarOriginalTitle": "Genuine products",
-    "pillarOriginalBody": "100% original Herbalife products with independent distributor assurance.",
-    "pillarProgramTitle": "Personal program",
-    "pillarProgramBody": "Bundle recommendations for your goal and one-to-one WhatsApp coaching.",
-    "pillarTrackingTitle": "Health tracking",
-    "pillarTrackingBody": "Water, meals, and measurements in your account; progress with coach approval.",
-    "waPrefillAbout": "Hello {brand}, I would like to learn more about you."
+    "fallbackEthosEyebrow": "Notre approche nutritionnelle",
+    "fallbackEthosQuote": "Des résultats durables viennent des bons produits, d'un suivi régulier et d'un accompagnement personnel.",
+    "fallbackEthosLink": "Lire les articles",
+    "pillarOriginalTitle": "Produits authentiques",
+    "pillarOriginalBody": "Produits Herbalife 100 % d'origine avec la garantie d'un distributeur indépendant.",
+    "pillarProgramTitle": "Programme personnel",
+    "pillarProgramBody": "Recommandations de coffrets selon votre objectif et coaching WhatsApp individuel.",
+    "pillarTrackingTitle": "Suivi santé",
+    "pillarTrackingBody": "Eau, repas et mesures dans votre compte ; progressez avec l'aval du coach.",
+    "waPrefillAbout": "Bonjour {brand}, je souhaite en savoir plus sur vous.",
+    "metaDescription": "{brand} — distributeur indépendant Herbalife.",
+    "metaKeywords": "à propos, Herbalife, distributeur indépendant, Herbal Kapıda, nutrition",
+    "ctaSets": "Voir les coffrets",
+    "storyEyebrow": "Notre histoire",
+    "pillarsEyebrow": "Pourquoi nous",
+    "pillarsTitle": "Produit, accompagnement et suivi — réunis",
+    "contactEyebrow": "Nous contacter",
+    "closingTitle": "Commençons ensemble",
+    "closingBody": "Écrivez-nous pour un conseil produit gratuit ou découvrez les coffrets cadeaux."
   },
   "mediaPage": {
-    "fallbackSubtitle": "Products, bundles, and healthy living moments. Instagram posts and selected images.",
+    "fallbackSubtitle": "Produits, coffrets et moments d'une vie saine. Publications Instagram et images sélectionnées.",
     "metaTitle": "Médias",
-    "metaDescription": "Instagram posts, stories, and selected images from {brand}.",
-    "followInstagram": "Follow on Instagram",
-    "emptySoon": "Media content coming soon. Instagram or gallery uploads can be added from the admin panel.",
-    "storiesTitle": "Instagram stories",
-    "storiesLead": "Active stories from the last 24 hours — tap for full view.",
-    "noActiveStories": "No active Instagram stories right now.",
-    "storiesSoon": "Instagram stories will appear here soon.",
-    "postsTitle": "Instagram posts",
-    "lastSync": "Last sync:",
-    "postsNotSynced": "Instagram posts not synced yet.",
-    "feedSoon": "Instagram feed coming soon.",
-    "galleryTitle": "Gallery picks",
-    "galleryLead": "Products, bundles, and lifestyle moments — tap for full view.",
-    "galleryEmpty": "No gallery images yet."
+    "metaDescription": "Publications Instagram, stories et images sélectionnées de {brand}.",
+    "followInstagram": "Suivre sur Instagram",
+    "emptySoon": "Le contenu média arrivera bientôt. Les publications Instagram ou la galerie peuvent être ajoutées depuis l'admin.",
+    "storiesTitle": "Stories Instagram",
+    "storiesLead": "Stories actives des dernières 24 h — cliquez pour agrandir.",
+    "noActiveStories": "Aucune story Instagram active pour le moment.",
+    "storiesSoon": "Les stories Instagram arriveront bientôt ici.",
+    "postsTitle": "Publications Instagram",
+    "lastSync": "Dernière synchro :",
+    "postsNotSynced": "Les publications Instagram ne sont pas encore synchronisées.",
+    "feedSoon": "Le fil Instagram arrivera bientôt ici.",
+    "galleryTitle": "Sélection de la galerie",
+    "galleryLead": "Produits, coffrets et moments de vie — cliquez pour agrandir.",
+    "galleryEmpty": "Aucune image de galerie pour le moment.",
+    "metaKeywords": "médias Herbalife, Instagram, nutrition, vie saine",
+    "kicker": "Médias",
+    "title": "Galerie",
+    "emptyMessage": "Aucune story active pour le moment."
   },
   "seo": {
     "aboutTitle": "À propos",
-    "aboutJsonLdDescription": "{brand} — independent Herbalife distributor.",
-    "products": "Products",
-    "productsDescription": "Nutrition bundles, sets, and Formula products. Independent distributor assurance.",
+    "aboutJsonLdDescription": "{brand} — distributeur indépendant Herbalife.",
+    "products": "Produits",
+    "productsDescription": "Coffrets nutrition, sets et produits Formula. Garantie distributeur indépendant.",
     "blog": "Articles",
-    "blogDescription": "Nutrition tips, bundle guides, and wellness articles.",
-    "searchTitle": "Search: {query}",
-    "searchDescription": "Product results for “{query}” — {brand}.",
-    "categoryDescription": "Products in {categoryName} — {brand}.",
+    "blogDescription": "Conseils nutrition, guides de coffrets et articles wellness.",
+    "searchTitle": "Recherche : {query}",
+    "searchDescription": "Résultats produits pour « {query} » — {brand}.",
+    "categoryDescription": "Produits dans {categoryName} — {brand}.",
     "blogTagTitle": "Articles · {tag}",
-    "blogTagDescription": "Posts tagged “{tag}” — {brand}.",
+    "blogTagDescription": "Articles tagués « {tag} » — {brand}.",
     "pageSuffix": " · Page {page}",
-    "categoryNotFound": "Category not found",
-    "catalogLoading": "Loading catalog…",
+    "categoryNotFound": "Catégorie introuvable",
+    "catalogLoading": "Chargement du catalogue…",
     "keywordsCatalogDefault": [
       "catalog",
       "products",
@@ -991,7 +1016,8 @@
   },
   "notificationsBell": {
     "markAllRead": "Tout marquer lu",
-    "allAndSettings": "Tout & réglages"
+    "allAndSettings": "Voir toutes les notifications",
+    "viewAll": "Voir toutes les notifications"
   },
   "campaignDate": {
     "validity": "Valable : {range}"
@@ -1165,30 +1191,44 @@
   "blog": {
     "homeCrumb": "Accueil",
     "postsCrumb": "Articles",
-    "title": "Articles",
-    "heroBody": "Nutrition routines, bundle tips, and wellness notes.",
+    "title": "Blog",
+    "heroBody": "Routines nutrition, conseils coffrets et notes wellness.",
     "tagsNav": "Tags",
-    "emptyTitle": "No posts yet",
-    "emptyTag": "No content with tag “{tag}”.",
-    "emptyDefault": "New posts coming soon.",
-    "allPosts": "All articles",
-    "exploreProducts": "Explore products",
-    "featuredTag": "Featured",
+    "emptyTitle": "Aucun article pour le moment",
+    "emptyTag": "Aucun contenu avec le tag « {tag} ».",
+    "emptyDefault": "De nouveaux articles arrivent bientôt.",
+    "allPosts": "Tous les articles",
+    "exploreProducts": "Voir les produits",
+    "featuredTag": "À la une",
     "postTag": "Article",
-    "readPost": "Read article",
+    "readPost": "Lire l'article",
     "readMinutes": "{minutes} min",
-    "readMinutesLong": "{minutes} min read",
+    "readMinutesLong": "{minutes} min de lecture",
     "pagination": "Pagination",
-    "previous": "Previous",
-    "next": "Next",
-    "notFound": "Post not found",
-    "relatedCategories": "Related categories",
-    "relatedProducts": "Related products",
-    "relatedProductsBody": "Often viewed with this article",
-    "ctaTitle": "Continue your routine with products",
-    "ctaBody": "Browse bundles or return to all articles.",
-    "ctaSets": "Browse bundles",
-    "ctaAllPosts": "All articles"
+    "previous": "Précédent",
+    "next": "Suivant",
+    "notFound": "Article introuvable",
+    "relatedCategories": "Catégories liées",
+    "relatedProducts": "Produits liés",
+    "relatedProductsBody": "Souvent consultés avec cet article",
+    "ctaTitle": "Poursuivez votre routine avec les produits",
+    "ctaBody": "Parcourez les coffrets ou revenez à tous les articles.",
+    "ctaSets": "Voir les coffrets",
+    "ctaAllPosts": "Tous les articles",
+    "metaTitle": "Blog",
+    "empty": "Aucun article pour le moment.",
+    "readMore": "Lire la suite",
+    "latest": "Derniers articles",
+    "searchPlaceholder": "Rechercher…",
+    "categories": "Catégories",
+    "tags": "Tags",
+    "related": "Articles liés",
+    "backToBlog": "Retour au blog",
+    "publishedAt": "Publié le {date}",
+    "noResults": "Aucun résultat.",
+    "loadMore": "Charger plus",
+    "kicker": "Conseils",
+    "lead": "Nutrition, habitudes et guides produits."
   },
   "tour": {
     "eyebrow": "Site tour · {current}/{total}",
@@ -1227,12 +1267,17 @@
     "sectionLegal": "Legal"
   },
   "notFoundPage": {
-    "metaTitle": "Page not found",
-    "title": "Page not found",
-    "description": "The page you’re looking for may have moved or been removed. Return to the catalog to find what you need.",
-    "goProducts": "Go to products",
+    "metaTitle": "Page introuvable",
+    "title": "Page introuvable",
+    "description": "La page demandée a peut-être été déplacée ou retirée. Retournez au catalogue ou écrivez-nous.",
+    "goProducts": "Voir les produits",
     "goHome": "Accueil",
-    "linkGiftSets": "Gift bundles",
+    "waWrite": "WhatsApp",
+    "waMessage": "Bonjour, je n’ai pas trouvé une page sur le site. Pouvez-vous m’aider ?",
+    "shortcutsEyebrow": "Où aller ?",
+    "shortcutsTitle": "Destinations populaires",
+    "linkGiftSets": "Packs cadeaux",
+    "linkBlog": "Blog",
     "linkContact": "Contact",
     "linkFaq": "FAQ"
   },
@@ -1299,65 +1344,142 @@
     "loading": "Loading…"
   },
   "faqPage": {
-    "metaDescription": "Frequently asked questions about {brand}: products, bundles, shipping, and nutrition tracking.",
-    "kicker": "Support",
-    "lead": "Common questions about products, orders, shipping, and nutrition tracking.",
-    "empty": "No questions added yet.",
-    "stillQuestions": "Still have a question?",
-    "distributorHelp": "Distributor {name} can give you personalized answers.",
-    "askWhatsapp": "Ask on WhatsApp",
-    "contactForm": "Contact form",
-    "browseProducts": "Browse products",
-    "whatsappPrefill": "Hello, I have a question beyond the FAQ.",
-    "fallbackTitle": "Frequently asked questions",
+    "metaDescription": "Questions fréquentes sur {brand} : produits, coffrets, livraison et suivi nutritionnel.",
+    "kicker": "Aide",
+    "lead": "Tout ce qu'il faut savoir sur les produits, commandes, livraison et suivi nutritionnel.",
+    "empty": "Aucune question pour le moment.",
+    "stillQuestions": "Vous avez encore une question ?",
+    "distributorHelp": "Le distributeur {name} peut vous répondre personnellement.",
+    "askWhatsapp": "Demander sur WhatsApp",
+    "contactForm": "Formulaire de contact",
+    "browseProducts": "Voir les produits",
+    "whatsappPrefill": "Bonjour, j'ai une question en dehors de la FAQ.",
+    "fallbackTitle": "Questions fréquentes",
     "fallbackItems": [
       {
-        "question": "Are the products genuine?",
-        "answer": "Yes. Products sold are original Herbalife products. This site belongs to an independent Herbalife Nutrition distributor."
+        "question": "Les produits sont-ils authentiques ?",
+        "answer": "Oui. Les produits vendus sont des produits Herbalife d'origine. Ce site appartient à un distributeur indépendant Herbalife Nutrition."
       },
       {
-        "question": "Which bundle should I choose?",
-        "answer": "We offer gift bundles for your goal (weight, sport, general wellness). Free product advice is available on WhatsApp."
+        "question": "Quel coffret dois-je choisir ?",
+        "answer": "Nous proposons des coffrets selon votre objectif (gestion du poids, sport, bien-être). Demandez un conseil gratuit sur WhatsApp."
       },
       {
-        "question": "How long does shipping take?",
-        "answer": "After payment confirmation, orders usually ship within 1–3 business days. We share the tracking code with your order notification."
+        "question": "Quels sont les délais de livraison ?",
+        "answer": "Les commandes sont généralement expédiées sous 1–2 jours ouvrés. Le délai dépend du transporteur et de votre région."
       },
       {
-        "question": "How does nutrition tracking work?",
-        "answer": "Under Account → Nutrition tracking you can log water, meals, and measurements. Your coach reviews progress from the approval queue."
-      },
-      {
-        "question": "Is cash on delivery available?",
-        "answer": "Yes, cash or card on delivery may be offered. Choose the available method at checkout."
-      },
-      {
-        "question": "What are the return terms?",
-        "answer": "Returns are possible for unopened products within the legal period. See Returns & cancellation or contact us."
+        "question": "Puis-je retourner un produit ?",
+        "answer": "Oui, dans le cadre du droit de rétractation et de notre politique de retour. Consultez les pages légales ou contactez-nous."
       }
-    ]
+    ],
+    "metaTitle": "FAQ",
+    "metaKeywords": "faq, livraison, paiement, retour, Herbalife, questions",
+    "title": "Questions fréquentes",
+    "stillNeedHelp": "Besoin d'aide ?",
+    "contactCta": "Nous contacter",
+    "waCta": "Écrire sur WhatsApp",
+    "searchPlaceholder": "Rechercher une question…",
+    "noResults": "Aucun résultat."
   },
   "reviewsPage": {
-    "metaTitle": "Review on Google",
-    "metaDescription": "Share your {brand} experience on Google Business Profile.",
-    "kicker": "Feedback",
-    "title": "Share your experience",
-    "lead": "A short Google review helps local visibility. Scan the QR code or use the link below.",
-    "highlight1Title": "30 seconds",
-    "highlight1Body": "A quick star rating and sentence on Google makes a big difference for local visibility.",
-    "highlight2Title": "Real experience",
-    "highlight2Body": "Honest feedback on product quality, shipping, and coaching support matters.",
-    "highlight3Title": "Community",
-    "highlight3Body": "Reviews help new visitors start with confidence.",
+    "metaTitle": "Évaluer sur Google",
+    "metaDescription": "Partagez votre expérience {brand} sur Google Business Profile.",
+    "kicker": "Avis",
+    "title": "Partagez votre expérience",
+    "lead": "Un court avis Google aide notre visibilité locale. Scannez le QR ou cliquez sur le lien.",
+    "highlight1Title": "30 secondes",
+    "highlight1Body": "Quelques étoiles et une phrase sur Google suffisent ; cela aide beaucoup notre visibilité locale.",
+    "highlight2Title": "Profil vérifié",
+    "highlight2Body": "Votre avis apparaît sur notre fiche Google Business et aide d'autres clients.",
+    "highlight3Title": "Merci",
+    "highlight3Body": "Chaque retour nous aide à améliorer produits et service.",
     "googleBusiness": "Google Business",
-    "reviewQrAlt": "Google review QR code",
-    "scanQr": "Scan QR code",
-    "reviewOnGoogle": "Review on Google",
-    "reviewAria": "Review on Google — scan QR code",
-    "whatsappPrefill": "Hello, I’d like the Google review link."
+    "reviewQrAlt": "QR code pour laisser un avis Google",
+    "scanQr": "Scanner le QR",
+    "reviewOnGoogle": "Évaluer sur Google",
+    "reviewAria": "Ouvrir la page d'avis Google",
+    "whatsappPrefill": "Bonjour, j'aimerais laisser un avis Google.",
+    "metaKeywords": "avis Google, Herbalife, Herbal Kapıda"
   },
   "legalPage": {
-    "comingSoon": "This legal text will be published soon.",
-    "version": "Version {version}"
+    "comingSoon": "Ce texte juridique sera publié prochainement.",
+    "version": "Version {version}",
+    "kicker": "Document juridique"
+  },
+  "inboxCopy": {
+    "order_received": {
+      "title": "Commande reçue",
+      "body": "{orderNumber} a été créée. Nous préparons dès confirmation du paiement."
+    },
+    "order_paid": {
+      "title": "Paiement confirmé",
+      "body": "Le paiement de la commande {orderNumber} est confirmé."
+    },
+    "order_status": {
+      "title": "Statut de commande mis à jour",
+      "body": "{orderNumber} est maintenant : {statusLabel}."
+    },
+    "shipment_created": {
+      "title": "Commande expédiée",
+      "body": "{orderNumber} a été expédiée.",
+      "bodyWithTracking": "{orderNumber} est en route. Suivi : {trackingNumber}"
+    },
+    "shipment_status": {
+      "title": "Livraison mise à jour",
+      "body": "Statut d’envoi de {orderNumber} : {statusLabel}."
+    },
+    "return_requested": {
+      "title": "Demande de retour reçue",
+      "body": "Votre demande de retour/annulation pour {orderNumber} a été enregistrée."
+    },
+    "return_approved": {
+      "title": "Retour approuvé",
+      "body": "Votre demande de retour/annulation pour {orderNumber} a été approuvée."
+    },
+    "return_rejected": {
+      "title": "Retour refusé",
+      "body": "Votre demande de retour/annulation pour {orderNumber} a été refusée."
+    },
+    "abandoned_cart": {
+      "title": "Votre panier vous attend",
+      "body": "{itemCount} articles sont encore dans le panier. Pensez à finaliser."
+    },
+    "review_approved": {
+      "title": "Avis publié",
+      "body": "Votre avis sur {productName} est en ligne."
+    },
+    "review_rejected": {
+      "title": "Avis non publié",
+      "body": "Votre avis sur {productName} n’a pas été publié."
+    },
+    "wellness_meal_approved": {
+      "title": "Repas approuvé",
+      "body": "Votre coach a approuvé votre repas. Bravo !",
+      "bodyWithNote": "Votre coach a approuvé votre repas : {note}"
+    },
+    "wellness_meal_rejected": {
+      "title": "Repas refusé",
+      "body": "Votre enregistrement de repas a été refusé par votre coach.",
+      "bodyWithNote": "Repas refusé : {note}"
+    },
+    "wellness_measurement_approved": {
+      "title": "Mesure approuvée",
+      "body": "Votre coach a approuvé votre mesure.",
+      "bodyWithNote": "Votre coach a approuvé votre mesure : {note}"
+    },
+    "wellness_measurement_rejected": {
+      "title": "Mesure refusée",
+      "body": "Votre mesure a été refusée par votre coach.",
+      "bodyWithNote": "Mesure refusée : {note}"
+    },
+    "ops_access_approved": {
+      "title": "Accès personnel approuvé",
+      "body": "Vous pouvez vous connecter au panneau personnel avec le même e-mail et mot de passe."
+    },
+    "ops_access_rejected": {
+      "title": "Accès personnel refusé",
+      "body": "Votre demande d’accès personnel n’a pas été approuvée. Votre compte reste un compte client."
+    }
   }
 }

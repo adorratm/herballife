@@ -213,6 +213,7 @@ export class InboxService {
       type: copy.type,
       title: copy.title,
       body: copy.body,
+      payload: copy.payload ?? null,
       href: copy.href,
       orderId: copy.orderId ?? null,
       readAt: null,

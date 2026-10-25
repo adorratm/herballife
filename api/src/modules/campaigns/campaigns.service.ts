@@ -252,7 +252,7 @@ export class CampaignsService {
       salePrice: this.applyPercent(basePrice, percent),
       campaignName: localized.name,
       discountPercent: percent,
-      campaignBadge: campaign.badge,
+      campaignBadge: localized.badge ?? campaign.badge,
       campaignTheme: campaign.theme,
       campaignHeadline: localized.headline,
     };
@@ -375,7 +375,7 @@ export class CampaignsService {
         compareAtPrice: Number(product.basePrice).toFixed(2),
         campaignName: localized.name,
         discountPercent: percent,
-        campaignBadge: campaign.badge,
+        campaignBadge: localized.badge ?? campaign.badge,
         campaignTheme: campaign.theme,
         campaignHeadline: localized.headline,
       };

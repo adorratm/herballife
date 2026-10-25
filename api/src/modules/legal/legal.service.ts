@@ -27,7 +27,27 @@ export class LegalService {
     });
   }
 
-  async getLatestPublished(slug: string): Promise<LegalDocument> {
+  async getLatestPublished(
+    slug: string,
+    localeRaw?: string | null,
+  ): Promise<LegalDocument> {
+    const locale = String(localeRaw || 'tr')
+      .trim()
+      .toLowerCase()
+      .split(/[-_]/)[0] || 'tr';
+
+    const byLocale = await this.em.find(LegalDocument, {
+      where: { slug, isPublished: true, locale },
+      order: { publishedAt: 'DESC', createdAt: 'DESC' },
+      take: 1,
+    });
+    if (byLocale[0]) return byLocale[0];
+
+    // İstenen dilde yayın yoksa 404 → vitrin lokalize fallback kullanır (TR metni dayatma)
+    if (locale !== 'tr') {
+      throw new NotFoundException('Yasal belge bulunamadı');
+    }
+
     const docs = await this.em.find(LegalDocument, {
       where: { slug, isPublished: true },
       order: { publishedAt: 'DESC', createdAt: 'DESC' },

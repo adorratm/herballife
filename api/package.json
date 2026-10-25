@@ -23,7 +23,8 @@
     "migration:generate": "yarn typeorm migration:generate",
     "migration:run": "yarn typeorm migration:run",
     "migration:revert": "yarn typeorm migration:revert",
-    "seed": "ts-node -r tsconfig-paths/register src/database/seed.ts"
+    "seed": "ts-node -r tsconfig-paths/register src/database/seed.ts",
+    "migrate:i18n": "ts-node -r tsconfig-paths/register src/database/migrate-i18n-cli.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1156.0",

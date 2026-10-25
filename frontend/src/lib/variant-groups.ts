@@ -1,11 +1,41 @@
 import type { ProductVariant } from "@/lib/types";
 
-const DEFAULT_CATEGORY_LABELS: Record<string, string> = {
-  package: "Paket / boy",
-  package_size: "Paket / boy",
-  size: "Paket / boy",
-  shake_flavor: "Shake tadı",
-  flavor: "Lezzet seçeneği",
+const DEFAULT_CATEGORY_LABELS: Record<string, Record<string, string>> = {
+  tr: {
+    package: "Paket / boy",
+    package_size: "Paket / boy",
+    size: "Paket / boy",
+    shake_flavor: "Shake tadı",
+    flavor: "Lezzet seçeneği",
+  },
+  en: {
+    package: "Pack / size",
+    package_size: "Pack / size",
+    size: "Size",
+    shake_flavor: "Shake flavor",
+    flavor: "Flavor",
+  },
+  de: {
+    package: "Packung / Größe",
+    package_size: "Packung / Größe",
+    size: "Größe",
+    shake_flavor: "Shake-Geschmack",
+    flavor: "Geschmack",
+  },
+  fr: {
+    package: "Pack / format",
+    package_size: "Pack / format",
+    size: "Format",
+    shake_flavor: "Parfum shake",
+    flavor: "Parfum",
+  },
+  es: {
+    package: "Pack / tamaño",
+    package_size: "Pack / tamaño",
+    size: "Tamaño",
+    shake_flavor: "Sabor del shake",
+    flavor: "Sabor",
+  },
 };
 
 export type VariantGroup = {
@@ -14,22 +44,35 @@ export type VariantGroup = {
   variants: ProductVariant[];
 };
 
+function normalizeLocale(locale?: string | null): string {
+  return String(locale || "tr")
+    .trim()
+    .toLowerCase()
+    .split(/[-_]/)[0] || "tr";
+}
+
 export function variantCategoryLabel(
   variant: ProductVariant,
-  locale: "tr" | "en" = "tr",
+  localeRaw: string = "tr",
 ): string {
-  const tr = variant.translations?.tr?.categoryLabel?.trim();
-  if (tr) return tr;
-  const fromLocale = variant.translations?.[locale]?.categoryLabel?.trim();
+  const locale = normalizeLocale(localeRaw);
+  const fromLocale =
+    variant.translations?.[locale as "tr"]?.categoryLabel?.trim();
   if (fromLocale) return fromLocale;
+  const fromTr = variant.translations?.tr?.categoryLabel?.trim();
+  if (fromTr && locale === "tr") return fromTr;
   const key = variant.categoryKey?.trim();
-  if (key && DEFAULT_CATEGORY_LABELS[key]) return DEFAULT_CATEGORY_LABELS[key];
+  const defaults =
+    DEFAULT_CATEGORY_LABELS[locale] || DEFAULT_CATEGORY_LABELS.en;
+  if (key && defaults[key]) return defaults[key];
+  if (fromTr) return fromTr;
   if (key) return key.replace(/_/g, " ");
-  return "Paket / boy";
+  return defaults.package || DEFAULT_CATEGORY_LABELS.tr.package;
 }
 
 export function groupProductVariants(
   variants: ProductVariant[],
+  locale: string = "tr",
 ): VariantGroup[] {
   const active = variants.filter((v) => v.isActive !== false);
   const map = new Map<string, ProductVariant[]>();
@@ -39,6 +82,9 @@ export function groupProductVariants(
     list.push(v);
     map.set(key, list);
   }
+  const defaults =
+    DEFAULT_CATEGORY_LABELS[normalizeLocale(locale)] ||
+    DEFAULT_CATEGORY_LABELS.en;
   const groups: VariantGroup[] = [];
   for (const [key, list] of map) {
     const sample = list[0];
@@ -46,8 +92,8 @@ export function groupProductVariants(
       key,
       label:
         key === "__default__"
-          ? "Paket / boy"
-          : variantCategoryLabel(sample),
+          ? defaults.package || DEFAULT_CATEGORY_LABELS.tr.package
+          : variantCategoryLabel(sample, locale),
       variants: list,
     });
   }
@@ -56,10 +102,11 @@ export function groupProductVariants(
 
 export function formatVariantDisplayLabel(
   variant: ProductVariant | null | undefined,
+  locale: string = "tr",
 ): string | null {
   if (!variant?.weightLabel?.trim()) return null;
   const label = variant.weightLabel.trim();
   const key = variant.categoryKey?.trim();
   if (!key) return label;
-  return `${variantCategoryLabel(variant)} · ${label}`;
+  return `${variantCategoryLabel(variant, locale)} · ${label}`;
 }

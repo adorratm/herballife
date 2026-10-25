@@ -81,6 +81,7 @@ export default async function BlogIndexPage({ searchParams }: Props) {
       tag,
       sort: "publishedAt",
       order: "desc",
+      locale,
     }),
   ]);
 

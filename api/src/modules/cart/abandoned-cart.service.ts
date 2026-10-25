@@ -65,6 +65,7 @@ export class AbandonedCartService {
         itemCount: cart.items.reduce((n, i) => n + i.quantity, 0),
         reminder: 1,
         userId: cart.userId,
+        locale: cart.locale,
       });
 
       cart.abandonedReminderAt = new Date();
@@ -111,6 +112,7 @@ export class AbandonedCartService {
         itemCount: cart.items.reduce((n, i) => n + i.quantity, 0),
         reminder: 2,
         userId: cart.userId,
+        locale: cart.locale,
       });
 
       cart.abandonedReminder2At = new Date();

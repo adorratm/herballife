@@ -2,6 +2,15 @@ import { ConfigService } from '@nestjs/config';
 import { Order } from '@entities/order.entity';
 import { Shipment } from '@entities/shipment.entity';
 import { BRAND_LOGO_CID } from '@modules/notifications/brand-logo';
+import {
+  emailCopy,
+  formatMoneyLocalized,
+  localizedStatusLabel,
+  normalizeStoreLocale,
+  resolveEmailLocale,
+  storefrontHref,
+  type EmailCopy,
+} from '@modules/notifications/email-i18n';
 
 export type NotificationTemplateContext = {
   order: Order;
@@ -12,21 +21,8 @@ export type NotificationTemplateContext = {
   adminUrl?: string;
   /** Admin sipariş maili: received | paid */
   opsEvent?: 'received' | 'paid';
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  pending_payment: 'Ödeme bekleniyor',
-  paid: 'Ödeme alındı',
-  processing: 'Hazırlanıyor',
-  shipped: 'Kargoya verildi',
-  delivered: 'Teslim edildi',
-  cancelled: 'İptal edildi',
-  refunded: 'İade edildi',
-  pending: 'Beklemede',
-  label_created: 'Etiket oluşturuldu',
-  in_transit: 'Yolda',
-  failed: 'Başarısız',
-  returned: 'İade kargo',
+  /** Müşteri dili (yoksa order.locale) */
+  locale?: string;
 };
 
 const BRAND = 'Herbal Kapıda';
@@ -48,8 +44,12 @@ function isLoopbackHost(url: string): boolean {
   }
 }
 
-export function statusLabel(status: string): string {
-  return STATUS_LABELS[status] || status;
+export function statusLabel(status: string, locale?: string | null): string {
+  return localizedStatusLabel(status, locale);
+}
+
+function ctxLocale(ctx: NotificationTemplateContext): string {
+  return normalizeStoreLocale(ctx.locale || ctx.order.locale || 'tr');
 }
 
 /**
@@ -110,25 +110,24 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;');
 }
 
-function formatMoney(amount: string | number, currency = 'TRY'): string {
-  const n = Number(amount);
-  const formatted = Number.isFinite(n)
-    ? n.toLocaleString('tr-TR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })
-    : String(amount);
-  return currency === 'TRY' ? `${formatted} ₺` : `${formatted} ${currency}`;
+function formatMoney(
+  amount: string | number,
+  currency = 'TRY',
+  locale?: string | null,
+): string {
+  return formatMoneyLocalized(amount, currency, locale);
 }
 
 function formatAddress(
   addr: Record<string, string> | null | undefined,
+  copy?: EmailCopy,
 ): string {
   if (!addr) return '—';
+  const c = copy || emailCopy('tr');
   const lines = [
     addr.companyTitle,
-    addr.taxNumber ? `VKN: ${addr.taxNumber}` : null,
-    addr.taxOffice ? `Vergi dairesi: ${addr.taxOffice}` : null,
+    addr.taxNumber ? `${c.taxId}: ${addr.taxNumber}` : null,
+    addr.taxOffice ? `${c.taxOffice}: ${addr.taxOffice}` : null,
     addr.fullName,
     addr.phone,
     addr.addressLine,
@@ -140,18 +139,19 @@ function formatAddress(
 
 function formatAddressOneLine(
   addr: Record<string, string> | null | undefined,
+  copy?: EmailCopy,
 ): string {
-  return formatAddress(addr).replace(/\n/g, ' · ');
+  return formatAddress(addr, copy).replace(/\n/g, ' · ');
 }
 
-function orderItemsList(order: Order): string {
+function orderItemsList(order: Order, locale?: string | null): string {
   const items = order.items || [];
   if (!items.length) return '—';
   return items
     .map((it) => {
       const parts = [it.productName];
       if (it.variantLabel) parts.push(it.variantLabel);
-      return `${parts.join(' · ')} ×${it.quantity} — ${formatMoney(it.lineTotal, order.currency)}`;
+      return `${parts.join(' · ')} ×${it.quantity} — ${formatMoney(it.lineTotal, order.currency, locale)}`;
     })
     .join('\n');
 }
@@ -175,9 +175,11 @@ function infoCard(label: string, bodyHtml: string): string {
 /** Sipariş özeti HTML bloğu (ürünler + iletişim + adres + tutarlar) */
 export function buildOrderDetailsHtml(
   order: Order,
-  opts?: { includePersonal?: boolean },
+  opts?: { includePersonal?: boolean; locale?: string | null },
 ): string {
   const includePersonal = opts?.includePersonal !== false;
+  const locale = opts?.locale || order.locale || 'tr';
+  const copy = emailCopy(locale);
   const items = order.items || [];
   const itemRows = items.length
     ? items
@@ -208,22 +210,22 @@ export function buildOrderDetailsHtml(
                 </td>
               </tr></table>
             </td>
-            <td style="padding:12px 0;border-bottom:${border};font-family:Arial,Helvetica,sans-serif;font-size:14px;color:${C.cream};text-align:right;white-space:nowrap;vertical-align:top;">${escapeHtml(formatMoney(it.lineTotal, order.currency))}</td>
+            <td style="padding:12px 0;border-bottom:${border};font-family:Arial,Helvetica,sans-serif;font-size:14px;color:${C.cream};text-align:right;white-space:nowrap;vertical-align:top;">${escapeHtml(formatMoney(it.lineTotal, order.currency, locale))}</td>
           </tr>`;
         })
         .join('')
-    : `<tr><td colspan="2" style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:${C.muted};">Kalem yok</td></tr>`;
+    : `<tr><td colspan="2" style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:${C.muted};">${escapeHtml(copy.noItems)}</td></tr>`;
 
-  const ship = formatAddress(order.shippingAddress);
+  const ship = formatAddress(order.shippingAddress, copy);
   const bill = order.billingAddress
-    ? formatAddress(order.billingAddress)
+    ? formatAddress(order.billingAddress, copy)
     : null;
 
   const itemsBlock = `
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 18px;background:#241e1a;border:1px solid ${C.line};">
     <tr>
       <td style="padding:16px 18px;">
-        ${sectionLabel('Sipariş içeriği')}
+        ${sectionLabel(copy.orderContents)}
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${itemRows}</table>
       </td>
     </tr>
@@ -232,7 +234,7 @@ export function buildOrderDetailsHtml(
   if (!includePersonal) return itemsBlock;
 
   const personalBlock = infoCard(
-    'Müşteri',
+    copy.customer,
     `<p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.7;color:${C.soft};white-space:pre-line;">${escapeHtml(
       [order.customerName, order.customerEmail, order.customerPhone]
         .filter(Boolean)
@@ -241,21 +243,21 @@ export function buildOrderDetailsHtml(
   );
 
   const shipBlock = infoCard(
-    'Teslimat adresi',
+    copy.shippingAddress,
     `<p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.7;color:${C.soft};white-space:pre-line;">${escapeHtml(ship)}</p>`,
   );
 
   const billBlock =
     bill && bill !== ship
       ? infoCard(
-          'Fatura adresi',
+          copy.billingAddress,
           `<p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.7;color:${C.soft};white-space:pre-line;">${escapeHtml(bill)}</p>`,
         )
       : '';
 
   const notesBlock = order.notes
     ? infoCard(
-        'Not',
+        copy.note,
         `<p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.7;color:${C.soft};">${escapeHtml(order.notes)}</p>`,
       )
     : '';
@@ -265,68 +267,90 @@ export function buildOrderDetailsHtml(
 
 export function buildOrderDetailsText(
   order: Order,
-  opts?: { includePersonal?: boolean },
+  opts?: { includePersonal?: boolean; locale?: string | null },
 ): string {
   const includePersonal = opts?.includePersonal !== false;
+  const locale = opts?.locale || order.locale || 'tr';
+  const copy = emailCopy(locale);
   const lines = [
-    `Sipariş: ${order.orderNumber}`,
-    `Durum: ${statusLabel(order.status)}`,
+    `${copy.order}: ${order.orderNumber}`,
+    `${copy.status}: ${statusLabel(order.status, locale)}`,
     '',
-    'Ürünler:',
-    orderItemsList(order),
+    `${copy.products}:`,
+    orderItemsList(order, locale),
     '',
-    `Ara toplam: ${formatMoney(order.subtotal, order.currency)}`,
+    `${copy.subtotal}: ${formatMoney(order.subtotal, order.currency, locale)}`,
     Number(order.discountAmount) > 0
-      ? `İndirim: −${formatMoney(order.discountAmount, order.currency)}${order.couponCode ? ` (${order.couponCode})` : ''}`
+      ? `${copy.discount}: −${formatMoney(order.discountAmount, order.currency, locale)}${order.couponCode ? ` (${order.couponCode})` : ''}`
       : null,
-    `Kargo: ${formatMoney(order.shippingFee, order.currency)}${order.shippingProvider ? ` · ${order.shippingProvider}` : ''}`,
-    `Toplam: ${formatMoney(order.total, order.currency)}`,
+    `${copy.shipping}: ${formatMoney(order.shippingFee, order.currency, locale)}${order.shippingProvider ? ` · ${order.shippingProvider}` : ''}`,
+    `${copy.total}: ${formatMoney(order.total, order.currency, locale)}`,
   ];
   if (includePersonal) {
     lines.push(
       '',
-      `Müşteri: ${order.customerName}`,
+      `${copy.customer}: ${order.customerName}`,
       `E-posta: ${order.customerEmail}`,
       `Telefon: ${order.customerPhone}`,
-      `Teslimat: ${formatAddressOneLine(order.shippingAddress)}`,
+      `${copy.delivery}: ${formatAddressOneLine(order.shippingAddress, copy)}`,
     );
     if (order.billingAddress) {
-      lines.push(`Fatura: ${formatAddressOneLine(order.billingAddress)}`);
+      lines.push(
+        `${copy.billingAddress}: ${formatAddressOneLine(order.billingAddress, copy)}`,
+      );
     }
-    if (order.notes) lines.push(`Not: ${order.notes}`);
+    if (order.notes) lines.push(`${copy.note}: ${order.notes}`);
   }
   return lines.filter((x) => x !== null).join('\n');
 }
 
-function orderTotalMetaRows(order: Order): { label: string; value: string }[] {
+function orderTotalMetaRows(
+  order: Order,
+  locale?: string | null,
+): { label: string; value: string }[] {
+  const copy = emailCopy(locale || order.locale);
   const rows: { label: string; value: string }[] = [
-    { label: 'Sipariş', value: order.orderNumber },
-    { label: 'Durum', value: statusLabel(order.status) },
-    { label: 'Ara toplam', value: formatMoney(order.subtotal, order.currency) },
+    { label: copy.order, value: order.orderNumber },
+    { label: copy.status, value: statusLabel(order.status, locale) },
+    {
+      label: copy.subtotal,
+      value: formatMoney(order.subtotal, order.currency, locale),
+    },
   ];
   if (Number(order.discountAmount) > 0) {
     rows.push({
-      label: order.couponCode ? `İndirim (${order.couponCode})` : 'İndirim',
-      value: `−${formatMoney(order.discountAmount, order.currency)}`,
+      label: order.couponCode
+        ? `${copy.discount} (${order.couponCode})`
+        : copy.discount,
+      value: `−${formatMoney(order.discountAmount, order.currency, locale)}`,
     });
   }
   rows.push(
     {
-      label: 'Kargo',
-      value: `${formatMoney(order.shippingFee, order.currency)}${order.shippingProvider ? ` · ${order.shippingProvider}` : ''}`,
+      label: copy.shipping,
+      value: `${formatMoney(order.shippingFee, order.currency, locale)}${order.shippingProvider ? ` · ${order.shippingProvider}` : ''}`,
     },
-    { label: 'Toplam', value: formatMoney(order.total, order.currency) },
+    {
+      label: copy.total,
+      value: formatMoney(order.total, order.currency, locale),
+    },
   );
   return rows;
 }
 
 function trackUrlFor(ctx: NotificationTemplateContext): string {
+  const locale = ctxLocale(ctx);
   const trackCode = ctx.shipment?.trackingNumber;
   return (
     ctx.trackingUrl ||
     (trackCode
-      ? `${ctx.frontendUrl}/takip/${encodeURIComponent(trackCode)}`
-      : `${ctx.frontendUrl}/hesabim`)
+      ? storefrontHref(
+          ctx.frontendUrl,
+          locale,
+          'tracking',
+          `/${encodeURIComponent(trackCode)}`,
+        )
+      : storefrontHref(ctx.frontendUrl, locale, 'account'))
   );
 }
 
@@ -342,8 +366,11 @@ export function renderBrandedEmail(input: {
   extraHtml?: string;
   /** Logo için vitrin kök URL (https://herbalife.com.tr) */
   siteUrl?: string;
+  locale?: string | null;
 }): string {
   const preheader = input.preheader || input.title;
+  const lang = resolveEmailLocale(input.locale);
+  const copy = emailCopy(lang);
   const site = (
     input.siteUrl ||
     process.env.FRONTEND_URL ||
@@ -391,7 +418,7 @@ export function renderBrandedEmail(input: {
     : '';
 
   return `<!DOCTYPE html>
-<html lang="tr">
+<html lang="${lang}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -409,7 +436,7 @@ export function renderBrandedEmail(input: {
               <a href="${escapeHtml(site)}" style="text-decoration:none;">
                 <img src="${escapeHtml(logo)}" width="220" alt="${escapeHtml(BRAND)}" style="display:block;margin:0 auto;width:220px;max-width:72%;height:auto;border:0;outline:none;" />
               </a>
-              <p style="margin:14px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:${C.accent};">Bağımsız Distribütör</p>
+              <p style="margin:14px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:${C.accent};">${escapeHtml(copy.distributorTag)}</p>
             </td>
           </tr>
           <tr>
@@ -450,52 +477,68 @@ export function buildEmailContent(
   template: string,
   ctx: NotificationTemplateContext,
 ): { subject: string; html: string; text: string } {
+  const locale = ctxLocale(ctx);
+  const copy = emailCopy(locale);
   const orderNo = ctx.order.orderNumber;
   const name = ctx.order.customerName;
   const trackCode = ctx.shipment?.trackingNumber;
   const trackUrl = trackUrlFor(ctx);
-  const label = ctx.statusLabel || statusLabel(ctx.order.status);
-  const ordersUrl = `${ctx.frontendUrl}/hesabim`;
+  const label =
+    ctx.statusLabel || statusLabel(ctx.order.status, locale);
+  const ordersUrl = storefrontHref(ctx.frontendUrl, locale, 'account');
   const siteUrl = ctx.frontendUrl;
   const detailsHtml = buildOrderDetailsHtml(ctx.order, {
     includePersonal: true,
+    locale,
   });
   const detailsText = buildOrderDetailsText(ctx.order, {
     includePersonal: true,
+    locale,
   });
-  const totals = orderTotalMetaRows(ctx.order);
+  const totals = orderTotalMetaRows(ctx.order, locale);
+  const orderNoHtml = `<strong style="color:${C.cream};">${escapeHtml(orderNo)}</strong>`;
+  const labelHtml = `<strong style="color:${C.accentSoft};">${escapeHtml(label)}</strong>`;
   const mail = (
-    opts: Omit<Parameters<typeof renderBrandedEmail>[0], 'siteUrl'>,
-  ) => renderBrandedEmail({ ...opts, siteUrl });
+    opts: Omit<Parameters<typeof renderBrandedEmail>[0], 'siteUrl' | 'locale'>,
+  ) => renderBrandedEmail({ ...opts, siteUrl, locale });
 
   switch (template) {
     case 'order_received':
       return {
-        subject: `Siparişiniz alındı — ${orderNo}`,
+        subject: copy.orderReceivedSubject(orderNo),
         html: mail({
-          title: 'Sipariş alındı',
-          greeting: `Merhaba ${name},`,
-          paragraphs: [
-            `<strong style="color:${C.cream};">${escapeHtml(orderNo)}</strong> numaralı siparişiniz alındı. Ödeme tamamlandığında hazırlığa başlıyoruz.`,
-          ],
+          title: copy.orderReceivedTitle,
+          greeting: copy.helloName(name),
+          paragraphs: [copy.orderReceivedBody(orderNoHtml)],
           metaRows: totals,
           extraHtml: detailsHtml,
-          cta: { label: 'Siparişlerim', href: ordersUrl },
+          cta: { label: copy.myOrders, href: ordersUrl },
         }),
-        text: `Merhaba ${name},\n\n${orderNo} siparişiniz alındı.\n\n${detailsText}\n\n${ordersUrl}`,
+        text: `${copy.helloName(name)}\n\n${copy.orderReceivedText(orderNo)}\n\n${detailsText}\n\n${ordersUrl}`,
       };
     case 'order_ops_alert': {
+      // Ops / admin — her zaman TR
+      const ops = emailCopy('tr');
       const isPaid = ctx.opsEvent === 'paid' || ctx.order.status === 'paid';
       const adminBase = (
         ctx.adminUrl ||
         process.env.ADMIN_URL ||
         'https://admin.herbalife.com.tr'
       ).replace(/\/$/, '');
+      const opsDetailsHtml = buildOrderDetailsHtml(ctx.order, {
+        includePersonal: true,
+        locale: 'tr',
+      });
+      const opsDetailsText = buildOrderDetailsText(ctx.order, {
+        includePersonal: true,
+        locale: 'tr',
+      });
+      const opsTotals = orderTotalMetaRows(ctx.order, 'tr');
       return {
         subject: isPaid
-          ? `Yeni ödeme — ${orderNo} · ${formatMoney(ctx.order.total, ctx.order.currency)}`
-          : `Yeni sipariş — ${orderNo} · ${formatMoney(ctx.order.total, ctx.order.currency)}`,
-        html: mail({
+          ? `Yeni ödeme — ${orderNo} · ${formatMoney(ctx.order.total, ctx.order.currency, 'tr')}`
+          : `Yeni sipariş — ${orderNo} · ${formatMoney(ctx.order.total, ctx.order.currency, 'tr')}`,
+        html: renderBrandedEmail({
           title: isPaid ? 'Yeni ödeme' : 'Yeni sipariş',
           greeting: isPaid ? 'Ödeme alındı' : 'Sipariş oluşturuldu',
           paragraphs: [
@@ -504,166 +547,157 @@ export function buildEmailContent(
               : `<strong style="color:${C.cream};">${escapeHtml(orderNo)}</strong> oluşturuldu (ödeme bekleniyor).`,
             `${escapeHtml(ctx.order.customerName)} · ${escapeHtml(ctx.order.customerEmail)} · ${escapeHtml(ctx.order.customerPhone)}`,
           ],
-          metaRows: totals,
-          extraHtml: detailsHtml,
+          metaRows: opsTotals,
+          extraHtml: opsDetailsHtml,
           cta: {
-            label: 'Admin siparişler',
+            label: ops.adminOrders,
             href: `${adminBase}/siparisler`,
           },
+          siteUrl,
+          locale: 'tr',
         }),
-        text: `${isPaid ? 'Yeni ödeme' : 'Yeni sipariş'}: ${orderNo}\n\n${detailsText}`,
+        text: `${isPaid ? 'Yeni ödeme' : 'Yeni sipariş'}: ${orderNo}\n\n${opsDetailsText}`,
       };
     }
     case 'order_paid':
       return {
-        subject: `Ödemeniz alındı — ${orderNo}`,
+        subject: copy.orderPaidSubject(orderNo),
         html: mail({
-          title: 'Ödeme alındı',
-          greeting: `Merhaba ${name},`,
-          paragraphs: [
-            `<strong style="color:${C.cream};">${escapeHtml(orderNo)}</strong> numaralı siparişinizin ödemesi alındı. Siparişiniz hazırlanmaya başlıyor.`,
-          ],
+          title: copy.orderPaidTitle,
+          greeting: copy.helloName(name),
+          paragraphs: [copy.orderPaidBody(orderNoHtml)],
           metaRows: totals,
           extraHtml: detailsHtml,
-          cta: { label: 'Siparişlerim', href: ordersUrl },
+          cta: { label: copy.myOrders, href: ordersUrl },
         }),
-        text: `Merhaba ${name},\n\n${orderNo} ödemesi alındı.\n\n${detailsText}\n\n${ordersUrl}`,
+        text: `${copy.helloName(name)}\n\n${copy.orderPaidText(orderNo)}\n\n${detailsText}\n\n${ordersUrl}`,
       };
     case 'order_status':
       return {
-        subject: `Sipariş durumu: ${label} — ${orderNo}`,
+        subject: copy.orderStatusSubject(label, orderNo),
         html: mail({
-          title: 'Sipariş güncellemesi',
-          greeting: `Merhaba ${name},`,
-          paragraphs: [
-            `<strong style="color:${C.cream};">${escapeHtml(orderNo)}</strong> siparişinizin yeni durumu: <strong style="color:${C.accentSoft};">${escapeHtml(label)}</strong>.`,
-          ],
+          title: copy.orderStatusTitle,
+          greeting: copy.helloName(name),
+          paragraphs: [copy.orderStatusBody(orderNoHtml, labelHtml)],
           metaRows: [
-            { label: 'Sipariş', value: orderNo },
-            { label: 'Durum', value: label },
+            { label: copy.order, value: orderNo },
+            { label: copy.status, value: label },
             {
-              label: 'Toplam',
-              value: formatMoney(ctx.order.total, ctx.order.currency),
+              label: copy.total,
+              value: formatMoney(ctx.order.total, ctx.order.currency, locale),
             },
           ],
           extraHtml: detailsHtml,
-          cta: { label: 'Siparişlerim', href: ordersUrl },
+          cta: { label: copy.myOrders, href: ordersUrl },
         }),
-        text: `Merhaba ${name},\n\n${orderNo} durumu: ${label}.\n\n${detailsText}\n\n${ordersUrl}`,
+        text: `${copy.helloName(name)}\n\n${copy.orderStatusText(orderNo, label)}\n\n${detailsText}\n\n${ordersUrl}`,
       };
     case 'return_requested':
       return {
-        subject: `İade / iptal talebiniz alındı — ${orderNo}`,
+        subject: copy.returnRequestedSubject(orderNo),
         html: mail({
-          title: 'Talep alındı',
-          greeting: `Merhaba ${name},`,
-          paragraphs: [
-            `<strong style="color:${C.cream};">${escapeHtml(orderNo)}</strong> için iptal/iade talebiniz alındı. İnceleme sonrası size bilgi vereceğiz.`,
-          ],
+          title: copy.returnRequestedTitle,
+          greeting: copy.helloName(name),
+          paragraphs: [copy.returnRequestedBody(orderNoHtml)],
           metaRows: [
-            { label: 'Sipariş', value: orderNo },
-            { label: 'Durum', value: 'Talep incelemede' },
+            { label: copy.order, value: orderNo },
+            { label: copy.status, value: copy.returnReviewing },
           ],
           extraHtml: detailsHtml,
-          cta: { label: 'Siparişlerim', href: ordersUrl },
+          cta: { label: copy.myOrders, href: ordersUrl },
         }),
-        text: `Merhaba ${name}, ${orderNo} iptal/iade talebiniz alındı.\n\n${detailsText}\n\n${ordersUrl}`,
+        text: `${copy.helloName(name)} ${copy.returnRequestedText(orderNo)}\n\n${detailsText}\n\n${ordersUrl}`,
       };
     case 'return_approved':
       return {
-        subject: `İade / iptal talebiniz onaylandı — ${orderNo}`,
+        subject: copy.returnApprovedSubject(orderNo),
         html: mail({
-          title: 'Talep onaylandı',
-          greeting: `Merhaba ${name},`,
-          paragraphs: [
-            `<strong style="color:${C.cream};">${escapeHtml(orderNo)}</strong> için talebiniz onaylandı. Ödeme iadesi tamamlandığında bildirim alacaksınız.`,
-          ],
+          title: copy.returnApprovedTitle,
+          greeting: copy.helloName(name),
+          paragraphs: [copy.returnApprovedBody(orderNoHtml)],
           metaRows: [
-            { label: 'Sipariş', value: orderNo },
-            { label: 'Durum', value: label || 'Onaylandı' },
+            { label: copy.order, value: orderNo },
+            { label: copy.status, value: label || copy.approved },
           ],
           extraHtml: detailsHtml,
-          cta: { label: 'Siparişlerim', href: ordersUrl },
+          cta: { label: copy.myOrders, href: ordersUrl },
         }),
-        text: `Merhaba ${name}, ${orderNo} iptal/iade talebiniz onaylandı.\n\n${detailsText}\n\n${ordersUrl}`,
+        text: `${copy.helloName(name)} ${copy.returnApprovedText(orderNo)}\n\n${detailsText}\n\n${ordersUrl}`,
       };
     case 'return_rejected':
       return {
-        subject: `İade / iptal talebiniz — ${orderNo}`,
+        subject: copy.returnRejectedSubject(orderNo),
         html: mail({
-          title: 'Talep sonucu',
-          greeting: `Merhaba ${name},`,
-          paragraphs: [
-            `<strong style="color:${C.cream};">${escapeHtml(orderNo)}</strong> için talebiniz şu an onaylanamadı. Detay için bizimle iletişime geçebilirsiniz.`,
-          ],
+          title: copy.returnRejectedTitle,
+          greeting: copy.helloName(name),
+          paragraphs: [copy.returnRejectedBody(orderNoHtml)],
           metaRows: [
-            { label: 'Sipariş', value: orderNo },
-            { label: 'Durum', value: 'Reddedildi' },
+            { label: copy.order, value: orderNo },
+            { label: copy.status, value: copy.rejected },
           ],
           extraHtml: detailsHtml,
-          cta: { label: 'Siparişlerim', href: ordersUrl },
+          cta: { label: copy.myOrders, href: ordersUrl },
         }),
-        text: `Merhaba ${name}, ${orderNo} iptal/iade talebiniz onaylanamadı.\n\n${ordersUrl}`,
+        text: `${copy.helloName(name)} ${copy.returnRejectedText(orderNo)}\n\n${ordersUrl}`,
       };
     case 'shipment_created':
       return {
-        subject: `Kargoya verildi — ${orderNo}`,
+        subject: copy.shipmentCreatedSubject(orderNo),
         html: mail({
-          title: 'Kargoya verildi',
-          greeting: `Merhaba ${name},`,
-          paragraphs: [
-            `<strong style="color:${C.cream};">${escapeHtml(orderNo)}</strong> siparişiniz kargoya verildi.`,
-          ],
+          title: copy.shipmentCreatedTitle,
+          greeting: copy.helloName(name),
+          paragraphs: [copy.shipmentCreatedBody(orderNoHtml)],
           metaRows: [
-            { label: 'Sipariş', value: orderNo },
-            ...(trackCode ? [{ label: 'Takip kodu', value: trackCode }] : []),
+            { label: copy.order, value: orderNo },
+            ...(trackCode
+              ? [{ label: copy.trackingCode, value: trackCode }]
+              : []),
             {
-              label: 'Teslimat',
-              value: formatAddressOneLine(ctx.order.shippingAddress),
+              label: copy.delivery,
+              value: formatAddressOneLine(ctx.order.shippingAddress, copy),
             },
           ],
           extraHtml: buildOrderDetailsHtml(ctx.order, {
             includePersonal: false,
+            locale,
           }),
-          cta: { label: 'Kargo takip', href: trackUrl },
+          cta: { label: copy.trackShipment, href: trackUrl },
         }),
-        text: `Merhaba ${name}, ${orderNo} kargoya verildi. Takip: ${trackCode || trackUrl}\n\n${detailsText}`,
+        text: `${copy.helloName(name)} ${copy.shipmentCreatedText(orderNo, trackCode || trackUrl)}\n\n${detailsText}`,
       };
     case 'shipment_status':
       return {
-        subject: `Kargo güncellemesi: ${label} — ${orderNo}`,
+        subject: copy.shipmentStatusSubject(label, orderNo),
         html: mail({
-          title: 'Kargo güncellemesi',
-          greeting: `Merhaba ${name},`,
-          paragraphs: [
-            `Kargo durumunuz güncellendi: <strong style="color:${C.accentSoft};">${escapeHtml(label)}</strong>.`,
-          ],
+          title: copy.shipmentStatusTitle,
+          greeting: copy.helloName(name),
+          paragraphs: [copy.shipmentStatusBody(labelHtml)],
           metaRows: [
-            { label: 'Sipariş', value: orderNo },
-            { label: 'Durum', value: label },
-            ...(trackCode ? [{ label: 'Takip kodu', value: trackCode }] : []),
+            { label: copy.order, value: orderNo },
+            { label: copy.status, value: label },
+            ...(trackCode
+              ? [{ label: copy.trackingCode, value: trackCode }]
+              : []),
           ],
-          cta: { label: 'Canlı takip', href: trackUrl },
+          cta: { label: copy.liveTracking, href: trackUrl },
         }),
-        text: `Merhaba ${name}, kargo durumu ${label}. Takip: ${trackUrl}`,
+        text: `${copy.helloName(name)} ${copy.shipmentStatusText(label, trackUrl)}`,
       };
     default:
       return {
-        subject: `${BRAND} bildirimi — ${orderNo}`,
+        subject: copy.defaultNotifySubject(BRAND, orderNo),
         html: mail({
-          title: 'Sipariş bildirimi',
-          greeting: `Merhaba ${name},`,
-          paragraphs: [
-            `Siparişiniz hakkında bir güncelleme var: <strong style="color:${C.accentSoft};">${escapeHtml(label)}</strong>.`,
-          ],
+          title: copy.defaultNotifyTitle,
+          greeting: copy.helloName(name),
+          paragraphs: [copy.defaultNotifyBody(labelHtml)],
           metaRows: [
-            { label: 'Sipariş', value: orderNo },
-            { label: 'Durum', value: label },
+            { label: copy.order, value: orderNo },
+            { label: copy.status, value: label },
           ],
           extraHtml: detailsHtml,
-          cta: { label: 'Siparişlerim', href: ordersUrl },
+          cta: { label: copy.myOrders, href: ordersUrl },
         }),
-        text: `Merhaba ${name}, sipariş güncellemesi: ${label}.\n\n${detailsText}`,
+        text: `${copy.helloName(name)} ${copy.defaultNotifyText(label)}\n\n${detailsText}`,
       };
   }
 }
@@ -672,25 +706,41 @@ export function buildWhatsAppBody(
   template: string,
   ctx: NotificationTemplateContext,
 ): string {
+  const locale = ctxLocale(ctx);
+  const copy = emailCopy(locale);
   const orderNo = ctx.order.orderNumber;
-  const name = ctx.order.customerName?.split(' ')[0] || 'Merhaba';
+  const name =
+    ctx.order.customerName?.split(' ')[0] || copy.hello;
   const trackCode = ctx.shipment?.trackingNumber;
-  const label = ctx.statusLabel || statusLabel(ctx.order.status);
+  const label =
+    ctx.statusLabel || statusLabel(ctx.order.status, locale);
   const trackUrl = trackUrlFor(ctx);
 
   switch (template) {
     case 'order_received':
-      return `Merhaba ${name},\n\n${orderNo} numaralı siparişiniz alındı. Ödeme tamamlandığında hazırlığa başlıyoruz.\n\n${BRAND}`;
+      return copy.waOrderReceived(name, orderNo, BRAND);
     case 'order_paid':
-      return `Merhaba ${name},\n\n${orderNo} numaralı siparişinizin ödemesi alındı. Siparişiniz hazırlanmaya başlıyor.\n\n${BRAND}`;
+      return copy.waOrderPaid(name, orderNo, BRAND);
     case 'shipment_created':
-      return `Merhaba ${name},\n\n${orderNo} siparişiniz kargoya verildi.${trackCode ? `\nTakip kodu: ${trackCode}` : ''}\nTakip: ${trackUrl}\n\n${BRAND}`;
+      return copy.waShipmentCreated(
+        name,
+        orderNo,
+        trackCode || undefined,
+        trackUrl,
+        BRAND,
+      );
     case 'shipment_status':
-      return `Merhaba ${name},\n\nKargo durumu: ${label}.${trackCode ? `\nTakip kodu: ${trackCode}` : ''}\nTakip: ${trackUrl}\n\n${BRAND}`;
+      return copy.waShipmentStatus(
+        name,
+        label,
+        trackCode || undefined,
+        trackUrl,
+        BRAND,
+      );
     case 'order_status':
-      return `Merhaba ${name},\n\n${orderNo} siparişinizin yeni durumu: ${label}.\n\n${BRAND}`;
+      return copy.waOrderStatus(name, orderNo, label, BRAND);
     default:
-      return `Merhaba ${name},\n\n${orderNo} — ${label}\n\n${BRAND}`;
+      return copy.waDefault(name, orderNo, label, BRAND);
   }
 }
 
@@ -703,32 +753,32 @@ export function buildPasswordResetEmail(input: {
   appResetUrl?: string;
   /** Google vb. OAuth hesabında henüz yerel şifre yoksa */
   isSetPassword?: boolean;
+  locale?: string | null;
 }): { subject: string; html: string; text: string } {
+  const copy = emailCopy(input.locale);
   const isSet = !!input.isSetPassword;
   const paragraphs = [
-    isSet
-      ? 'Hesabınıza e-posta ve şifre ile de giriş yapabilmeniz için bir şifre belirleyebilirsiniz. Google ile girişiniz açık kalır. Bağlantı 1 saat geçerlidir.'
-      : 'Hesabınız için şifre sıfırlama talebi aldık. Bağlantı 1 saat geçerlidir. Siz talep etmediyseniz bu e-postayı yok sayabilirsiniz.',
+    isSet ? copy.passwordSetBody : copy.passwordResetBody,
   ];
   if (input.appResetUrl) {
-    paragraphs.push(
-      `Uygulamayı kullanıyorsanız bu bağlantıyı açın: ${input.appResetUrl}`,
-    );
+    paragraphs.push(copy.passwordAppLink(input.appResetUrl));
   }
+  const title = isSet ? copy.passwordSetSubject : copy.passwordResetSubject;
   return {
-    subject: isSet ? 'Şifre belirleme' : 'Şifre sıfırlama',
+    subject: title,
     html: renderBrandedEmail({
-      title: isSet ? 'Şifre belirleme' : 'Şifre sıfırlama',
-      greeting: `Merhaba ${input.name},`,
+      title,
+      greeting: copy.helloName(input.name),
       paragraphs,
       cta: {
-        label: isSet ? 'Şifre belirle' : 'Şifreyi sıfırla',
+        label: isSet ? copy.passwordSetCta : copy.passwordResetCta,
         href: input.resetUrl,
       },
+      locale: input.locale,
     }),
     text: isSet
-      ? `Merhaba ${input.name}, şifre belirlemek için: ${input.resetUrl}${input.appResetUrl ? ` · uygulama: ${input.appResetUrl}` : ''} (1 saat geçerli). Google ile girişiniz açık kalır.`
-      : `Merhaba ${input.name}, şifrenizi sıfırlamak için: ${input.resetUrl}${input.appResetUrl ? ` · uygulama: ${input.appResetUrl}` : ''} (1 saat geçerli)`,
+      ? copy.passwordSetText(input.name, input.resetUrl, input.appResetUrl)
+      : copy.passwordResetText(input.name, input.resetUrl, input.appResetUrl),
   };
 }
 
@@ -778,23 +828,25 @@ export function buildAbandonedCartEmail(input: {
   itemCount: number;
   cartUrl: string;
   reminder?: 1 | 2;
+  locale?: string | null;
 }): { subject: string; html: string; text: string } {
+  const copy = emailCopy(input.locale);
   const isSecond = input.reminder === 2;
+  const countHtml = `<strong style="color:${C.cream};">${input.itemCount}</strong>`;
   return {
-    subject: isSecond
-      ? 'Sepetiniz hâlâ sizi bekliyor'
-      : 'Sepetinizde ürünler sizi bekliyor',
+    subject: isSecond ? copy.abandonedSubject2 : copy.abandonedSubject1,
     html: renderBrandedEmail({
-      title: isSecond ? 'Son hatırlatma' : 'Sepet hatırlatması',
-      greeting: `Merhaba ${input.name},`,
+      title: isSecond ? copy.abandonedTitle2 : copy.abandonedTitle1,
+      greeting: copy.helloName(input.name),
       paragraphs: [
         isSecond
-          ? `Sepetinizdeki <strong style="color:${C.cream};">${input.itemCount}</strong> ürün hâlâ sizi bekliyor. Siparişinizi tamamlamak için son bir hatırlatma.`
-          : `Sepetinizde <strong style="color:${C.cream};">${input.itemCount}</strong> ürün kaldı. Siparişinizi tamamlayın — kampanya bitmeden.`,
+          ? copy.abandonedBody2(countHtml)
+          : copy.abandonedBody1(countHtml),
       ],
-      cta: { label: 'Sepete dön', href: input.cartUrl },
+      cta: { label: copy.backToCart, href: input.cartUrl },
+      locale: input.locale,
     }),
-    text: `Merhaba ${input.name}, sepetinizde ${input.itemCount} ürün var: ${input.cartUrl}`,
+    text: copy.abandonedText(input.name, input.itemCount, input.cartUrl),
   };
 }
 
@@ -804,25 +856,37 @@ export function buildInvoiceSentEmail(input: {
   invoiceNumber: string;
   edocumentType: 'earchive' | 'einvoice';
   ordersUrl: string;
+  locale?: string | null;
 }): { subject: string; html: string; text: string } {
+  const copy = emailCopy(input.locale);
   const docLabel =
-    input.edocumentType === 'einvoice' ? 'e-Fatura' : 'e-Arşiv faturanız';
+    input.edocumentType === 'einvoice'
+      ? copy.invoiceEinvoice
+      : copy.invoiceEarchive;
+  const orderHtml = `<strong style="color:${C.cream};">${escapeHtml(input.orderNumber)}</strong>`;
+  const invHtml = `<strong style="color:${C.accentSoft};">${escapeHtml(input.invoiceNumber)}</strong>`;
   return {
-    subject: `${docLabel} — ${input.invoiceNumber}`,
+    subject: copy.invoiceSubject(docLabel, input.invoiceNumber),
     html: renderBrandedEmail({
       title: docLabel,
-      greeting: `Merhaba ${input.name},`,
+      greeting: copy.helloName(input.name),
       paragraphs: [
-        `<strong style="color:${C.cream};">${escapeHtml(input.orderNumber)}</strong> numaralı siparişinize ait <strong style="color:${C.accentSoft};">${escapeHtml(input.invoiceNumber)}</strong> belgesi ekte yer almaktadır.`,
-        'Sorularınız için bu e-postaya yanıt verebilir veya bizimle iletişime geçebilirsiniz.',
+        copy.invoiceBody(orderHtml, invHtml),
+        copy.invoiceContact,
       ],
       metaRows: [
-        { label: 'Sipariş', value: input.orderNumber },
-        { label: 'Belge', value: input.invoiceNumber },
+        { label: copy.order, value: input.orderNumber },
+        { label: copy.document, value: input.invoiceNumber },
       ],
-      cta: { label: 'Siparişlerim', href: input.ordersUrl },
+      cta: { label: copy.myOrders, href: input.ordersUrl },
+      locale: input.locale,
     }),
-    text: `Merhaba ${input.name},\n\n${input.orderNumber} siparişinize ait ${input.invoiceNumber} faturanız ekte.\n\n${input.ordersUrl}`,
+    text: copy.invoiceText(
+      input.name,
+      input.orderNumber,
+      input.invoiceNumber,
+      input.ordersUrl,
+    ),
   };
 }
 
@@ -832,19 +896,24 @@ export function buildLowStockEmail(input: {
   sku: string | null;
   adminUrl: string;
 }): { subject: string; html: string; text: string } {
+  const copy = emailCopy('tr');
   return {
     subject: `Düşük stok: ${input.label} (${input.stock})`,
     html: renderBrandedEmail({
       title: 'Admin stok uyarısı',
-      greeting: 'Merhaba,',
+      greeting: `${copy.hello},`,
       paragraphs: [
         `<strong style="color:${C.cream};">${escapeHtml(input.label)}</strong> stok seviyesi eşik altına düştü.`,
       ],
       metaRows: [
-        { label: 'Stok', value: String(input.stock) },
-        ...(input.sku ? [{ label: 'SKU', value: input.sku }] : []),
+        { label: copy.stock, value: String(input.stock) },
+        ...(input.sku ? [{ label: copy.sku, value: input.sku }] : []),
       ],
-      cta: { label: 'Ürünleri yönet', href: `${input.adminUrl}/urunler` },
+      cta: {
+        label: copy.manageProducts,
+        href: `${input.adminUrl}/urunler`,
+      },
+      locale: 'tr',
     }),
     text: `Düşük stok: ${input.label} — kalan ${input.stock}${input.sku ? ` (SKU: ${input.sku})` : ''}. Yönet: ${input.adminUrl}/urunler`,
   };

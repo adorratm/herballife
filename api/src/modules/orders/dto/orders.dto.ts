@@ -162,6 +162,16 @@ export class CreateOrderDto {
   @IsString()
   @MaxLength(40)
   couponCode?: string;
+
+  @ApiPropertyOptional({
+    description: 'Vitrin dili (e-posta şablonları)',
+    example: 'en',
+  })
+  @IsOptional()
+  @Transform(trimString)
+  @IsString()
+  @MaxLength(10)
+  locale?: string;
 }
 
 export class UpdateOrderStatusDto {

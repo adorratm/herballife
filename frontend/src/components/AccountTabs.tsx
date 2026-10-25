@@ -58,7 +58,15 @@ function TabNav({ current }: { current: AccountTabId }) {
   const tTabs = useTranslations("accountTabs");
 
   function tabLabel(key: (typeof TABS)[number]["labelKey"]): string {
-    if (key === "favorites" || key === "notifications") return tNav(key);
+    // nav’da olan ortak etiketler (account.* bazı dillerde eksik kalabiliyor)
+    if (
+      key === "favorites" ||
+      key === "notifications" ||
+      key === "nutritionTracking" ||
+      key === "progressReport"
+    ) {
+      return tNav(key);
+    }
     return tAccount(key);
   }
 

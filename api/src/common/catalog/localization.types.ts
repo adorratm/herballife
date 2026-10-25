@@ -19,6 +19,8 @@ export type ProductLocaleFields = {
   description?: string;
   shortDescription?: string;
   slug?: string;
+  /** Vitrin rozet metni */
+  badge?: string;
 };
 
 export type ProductTranslations = Partial<
@@ -38,6 +40,8 @@ export type CategoryTranslations = Partial<
 export type CampaignLocaleFields = {
   name?: string;
   headline?: string;
+  /** Vitrin rozet metni */
+  badge?: string;
 };
 
 export type CampaignTranslations = Partial<

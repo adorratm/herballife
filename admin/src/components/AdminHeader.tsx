@@ -28,6 +28,8 @@ const TITLES: Record<string, string> = {
   '/kuyruklar': 'Kuyruklar',
   '/bildirimler': 'Bildirimler',
   '/kocluk': 'Koçluk',
+  '/kocluk/whatsapp': 'Toplu WhatsApp',
+  '/dil-para-ceviriler': 'Dil / Para / Çeviriler',
   '/kasa': 'Kasa',
   '/cari': 'Cari',
   '/stok': 'Stok',

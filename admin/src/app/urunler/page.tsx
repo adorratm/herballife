@@ -21,6 +21,12 @@ type LocaleFields = {
   slug: string;
   description: string;
   shortDescription: string;
+  badge: string;
+};
+
+type VariantLocaleFields = {
+  name: string;
+  categoryLabel: string;
 };
 
 type VariantForm = {
@@ -29,7 +35,12 @@ type VariantForm = {
   weightLabel: string;
   categoryKey: string;
   categoryLabel: string;
+  localeLabels: Record<LocaleKey, VariantLocaleFields>;
+  /** TRY (kök fiyat) */
   price: string;
+  priceUsd: string;
+  priceEur: string;
+  priceGbp: string;
   stock: string;
   isActive: boolean;
 };
@@ -41,11 +52,29 @@ const LOCALE_TABS: { key: LocaleKey; label: string }[] = [
   { key: 'es', label: 'ES' },
 ];
 
+type FormPanelTab =
+  | 'temel'
+  | 'fiyat'
+  | 'ceviriler'
+  | 'medya'
+  | 'varyantlar'
+  | 'gelismis';
+
+const FORM_PANEL_TABS: { key: FormPanelTab; label: string }[] = [
+  { key: 'temel', label: 'Temel' },
+  { key: 'fiyat', label: 'Fiyat & stok' },
+  { key: 'ceviriler', label: 'Çeviriler' },
+  { key: 'medya', label: 'Medya' },
+  { key: 'varyantlar', label: 'Varyantlar' },
+  { key: 'gelismis', label: 'Gelişmiş' },
+];
+
 const emptyLocaleFields = (): LocaleFields => ({
   name: '',
   slug: '',
   description: '',
   shortDescription: '',
+  badge: '',
 });
 
 const emptyTranslations = (): Record<LocaleKey, LocaleFields> => ({
@@ -53,6 +82,16 @@ const emptyTranslations = (): Record<LocaleKey, LocaleFields> => ({
   de: emptyLocaleFields(),
   fr: emptyLocaleFields(),
   es: emptyLocaleFields(),
+});
+
+const emptyVariantLocaleLabels = (): Record<
+  LocaleKey,
+  VariantLocaleFields
+> => ({
+  en: { name: '', categoryLabel: '' },
+  de: { name: '', categoryLabel: '' },
+  fr: { name: '', categoryLabel: '' },
+  es: { name: '', categoryLabel: '' },
 });
 
 type FormState = {
@@ -103,7 +142,11 @@ const emptyVariant = (_kind = 'other'): VariantForm => ({
   weightLabel: '250g',
   categoryKey: '',
   categoryLabel: '',
+  localeLabels: emptyVariantLocaleLabels(),
   price: '',
+  priceUsd: '',
+  priceEur: '',
+  priceGbp: '',
   stock: '0',
   isActive: true,
 });
@@ -169,6 +212,7 @@ function ProductsPageInner() {
   const [rows, setRows] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [form, setForm] = useState<FormState>(emptyForm());
+  const [formPanelTab, setFormPanelTab] = useState<FormPanelTab>('temel');
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -237,22 +281,36 @@ function ProductsPageInner() {
 
   function startCreate() {
     setForm(emptyForm());
+    setFormPanelTab('temel');
     setEditing(true);
   }
 
   function startEdit(p: Product) {
     const variants: VariantForm[] =
       p.variants && p.variants.length
-        ? p.variants.map((v: ProductVariant) => ({
-            id: v.id,
-            sku: v.sku || '',
-            weightLabel: v.weightLabel || '',
-            categoryKey: v.categoryKey || '',
-            categoryLabel: v.translations?.tr?.categoryLabel || '',
-            price: String(v.price ?? ''),
-            stock: String(v.stock ?? 0),
-            isActive: v.isActive !== false,
-          }))
+        ? p.variants.map((v: ProductVariant) => {
+            const localeLabels = emptyVariantLocaleLabels();
+            for (const { key } of LOCALE_TABS) {
+              localeLabels[key] = {
+                name: v.translations?.[key]?.name || '',
+                categoryLabel: v.translations?.[key]?.categoryLabel || '',
+              };
+            }
+            return {
+              id: v.id,
+              sku: v.sku || '',
+              weightLabel: v.weightLabel || '',
+              categoryKey: v.categoryKey || '',
+              categoryLabel: v.translations?.tr?.categoryLabel || '',
+              localeLabels,
+              price: String(v.prices?.TRY ?? v.price ?? ''),
+              priceUsd: v.prices?.USD != null ? String(v.prices.USD) : '',
+              priceEur: v.prices?.EUR != null ? String(v.prices.EUR) : '',
+              priceGbp: v.prices?.GBP != null ? String(v.prices.GBP) : '',
+              stock: String(v.stock ?? 0),
+              isActive: v.isActive !== false,
+            };
+          })
         : [emptyVariant(p.kind || 'other')];
     const tr = emptyTranslations();
     for (const { key } of LOCALE_TABS) {
@@ -262,6 +320,7 @@ function ProductsPageInner() {
         slug: row?.slug || '',
         description: row?.description || '',
         shortDescription: row?.shortDescription || '',
+        badge: row?.badge || '',
       };
     }
     setForm({
@@ -313,6 +372,7 @@ function ProductsPageInner() {
       storageNotes: p.storageNotes || '',
       variants,
     });
+    setFormPanelTab('temel');
     setEditing(true);
   }
 
@@ -347,23 +407,53 @@ function ProductsPageInner() {
 
     const variants = form.variants
       .filter((v) => v.weightLabel.trim() && String(v.price).trim())
-      .map((v, i) => ({
-        ...(v.id ? { id: v.id } : {}),
-        sku:
-          v.sku.trim() ||
-          [slugify(form.name) || 'urun', slugify(v.weightLabel) || String(i + 1)]
-            .filter(Boolean)
-            .join('-')
-            .toUpperCase(),
-        weightLabel: v.weightLabel.trim(),
-        categoryKey: v.categoryKey.trim() || undefined,
-        translations: v.categoryLabel.trim()
-          ? { tr: { categoryLabel: v.categoryLabel.trim() } }
-          : undefined,
-        price: String(v.price),
-        stock: Number(v.stock) || 0,
-        isActive: v.isActive,
-      }));
+      .map((v, i) => {
+        const translations: Record<
+          string,
+          { name?: string; categoryLabel?: string }
+        > = {};
+        if (v.categoryLabel.trim()) {
+          translations.tr = { categoryLabel: v.categoryLabel.trim() };
+        }
+        for (const { key } of LOCALE_TABS) {
+          const row = v.localeLabels[key];
+          const name = row.name.trim();
+          const categoryLabel = row.categoryLabel.trim();
+          if (name || categoryLabel) {
+            translations[key] = {
+              ...(name ? { name } : {}),
+              ...(categoryLabel ? { categoryLabel } : {}),
+            };
+          }
+        }
+        const variantPrices: Record<string, number> = {
+          TRY: Number(v.price),
+        };
+        if (v.priceUsd.trim()) variantPrices.USD = Number(v.priceUsd);
+        if (v.priceEur.trim()) variantPrices.EUR = Number(v.priceEur);
+        if (v.priceGbp.trim()) variantPrices.GBP = Number(v.priceGbp);
+
+        return {
+          ...(v.id ? { id: v.id } : {}),
+          sku:
+            v.sku.trim() ||
+            [
+              slugify(form.name) || 'urun',
+              slugify(v.weightLabel) || String(i + 1),
+            ]
+              .filter(Boolean)
+              .join('-')
+              .toUpperCase(),
+          weightLabel: v.weightLabel.trim(),
+          categoryKey: v.categoryKey.trim() || undefined,
+          translations:
+            Object.keys(translations).length > 0 ? translations : undefined,
+          price: String(v.price),
+          prices: variantPrices,
+          stock: Number(v.stock) || 0,
+          isActive: v.isActive,
+        };
+      });
     if (!String(form.basePrice).trim()) {
       setError('TRY fiyatı zorunludur.');
       setSaving(false);
@@ -412,6 +502,7 @@ function ProductsPageInner() {
         slug: row.slug.trim() || slugify(row.name),
         description: row.description.trim(),
         shortDescription: row.shortDescription.trim(),
+        badge: row.badge.trim(),
       };
     }
 
@@ -610,9 +701,28 @@ function ProductsPageInner() {
           onSubmit={onSubmit}
           className="grid gap-3 md:grid-cols-2"
         >
-          <h3 className="md:col-span-2 mono text-xs uppercase tracking-widest text-muted">
-            {form.id ? 'Ürün düzenle' : 'Yeni ürün'}
-          </h3>
+          <div className="md:col-span-2 flex flex-wrap gap-1.5 border-b border-border-muted pb-3">
+            {FORM_PANEL_TABS.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setFormPanelTab(key)}
+                className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
+                  formPanelTab === key
+                    ? 'bg-accent text-white'
+                    : 'border border-border-muted text-muted hover:text-foreground'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div
+            style={{
+              display: formPanelTab === 'temel' ? 'contents' : 'none',
+            }}
+          >
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">Ad</span>
             <input
@@ -696,6 +806,13 @@ function ProductsPageInner() {
               placeholder="Boşsa kısa açıklama kullanılır"
             />
           </label>
+          </div>
+
+          <div
+            style={{
+              display: formPanelTab === 'fiyat' ? 'contents' : 'none',
+            }}
+          >
           <div className="col-span-full space-y-2 rounded border border-border-muted p-3">
             <p className="mono text-[10px] uppercase text-muted">
               Fiyatlar (KDV dahil)
@@ -747,6 +864,23 @@ function ProductsPageInner() {
               vitrin ve yasal metinlerde belirtin.
             </p>
           </div>
+          <label className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">Stok</span>
+            <input
+              required
+              type="number"
+              value={form.stock}
+              onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))}
+              className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+            />
+          </label>
+          </div>
+
+          <div
+            style={{
+              display: formPanelTab === 'ceviriler' ? 'contents' : 'none',
+            }}
+          >
           <div className="col-span-full space-y-3 rounded border border-border-muted p-3">
             <p className="mono text-[10px] uppercase text-muted">
               Çeviriler (TR ana alanlarda) — EN/DE/FR/ES zorunlu
@@ -840,6 +974,28 @@ function ProductsPageInner() {
                       className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
                     />
                   </label>
+                  <label className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      Rozet ({tab.toUpperCase()})
+                    </span>
+                    <input
+                      value={row.badge}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          translations: {
+                            ...f.translations,
+                            [tab]: {
+                              ...f.translations[tab],
+                              badge: e.target.value,
+                            },
+                          },
+                        }))
+                      }
+                      placeholder="TR rozet boş bırakılırsa kullanılır"
+                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                    />
+                  </label>
                   <div className="block text-sm">
                     <span className="mono text-[10px] uppercase text-muted">
                       Açıklama
@@ -868,6 +1024,13 @@ function ProductsPageInner() {
               );
             })()}
           </div>
+          </div>
+
+          <div
+            style={{
+              display: formPanelTab === 'temel' ? 'contents' : 'none',
+            }}
+          >
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">Tür</span>
             <select
@@ -938,6 +1101,25 @@ function ProductsPageInner() {
               ))}
             </select>
           </label>
+          <Checkbox
+            checked={form.isActive}
+            onChange={(isActive) => setForm((f) => ({ ...f, isActive }))}
+            label="Aktif"
+            description="Mağazada listelenir"
+          />
+          <Checkbox
+            checked={form.isFeatured}
+            onChange={(isFeatured) => setForm((f) => ({ ...f, isFeatured }))}
+            label="Öne çıkan"
+            description="Ana sayfada vurgulanır"
+          />
+          </div>
+
+          <div
+            style={{
+              display: formPanelTab === 'gelismis' ? 'contents' : 'none',
+            }}
+          >
           <label className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
               Hepsiburada alt kategori kimliği
@@ -978,16 +1160,6 @@ function ProductsPageInner() {
               Zorunlu enum değerlerini attribute.id ile yazın. Değerleri
               Pazaryeri → HB kategori şemasından alın.
             </span>
-          </label>
-          <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">Stok</span>
-            <input
-              required
-              type="number"
-              value={form.stock}
-              onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))}
-              className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-            />
           </label>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
@@ -1129,7 +1301,13 @@ function ProductsPageInner() {
               />
             </div>
           </div>
+          </div>
 
+          <div
+            style={{
+              display: formPanelTab === 'medya' ? 'contents' : 'none',
+            }}
+          >
           <div className="md:col-span-2">
             <MediaUpload
               label="Ana görsel (TR)"
@@ -1184,6 +1362,13 @@ function ProductsPageInner() {
               folder="products"
             />
           </div>
+          </div>
+
+          <div
+            style={{
+              display: formPanelTab === 'varyantlar' ? 'contents' : 'none',
+            }}
+          >
           <div className="md:col-span-2 space-y-3 border border-border-muted p-3">
             <div className="flex items-center justify-between gap-2">
               <span className="mono text-[10px] uppercase text-muted">
@@ -1203,98 +1388,179 @@ function ProductsPageInner() {
               </button>
             </div>
             <p className="text-[11px] text-muted">
-              Her satır ayrı seçenektir. Grup anahtarı (ör. shake_flavor) ile
-              vitrinde &quot;Shake tadı&quot; gibi gruplanır; grup başlığı TR
-              etiket alanından gelir.
+              Her satır ayrı seçenektir. Fiyatlar üründeki gibi TRY / USD / EUR /
+              GBP; TR etiket kök, EN/DE/FR/ES ad ve grup başlığı ayrıdır.
             </p>
             {form.variants.map((v, i) => (
               <div
                 key={v.id || i}
-                className="grid gap-2 border border-border-muted/60 p-2 md:grid-cols-3 lg:grid-cols-8"
+                className="space-y-2 border border-border-muted/60 p-2"
               >
-                <input
-                  placeholder="Stok kodu (boş bırakılırsa otomatik)"
-                  value={v.sku}
-                  onChange={(e) =>
-                    setForm((f) => {
-                      const variants = [...f.variants];
-                      variants[i] = { ...variants[i], sku: e.target.value };
-                      return { ...f, variants };
-                    })
-                  }
-                  className="border border-border-muted bg-background px-2 py-1.5 text-sm mono md:col-span-2 lg:col-span-2"
-                />
-                <input
-                  placeholder="250g"
-                  value={v.weightLabel}
-                  onChange={(e) =>
-                    setForm((f) => {
-                      const variants = [...f.variants];
-                      variants[i] = {
-                        ...variants[i],
-                        weightLabel: e.target.value,
-                      };
-                      return { ...f, variants };
-                    })
-                  }
-                  className="border border-border-muted bg-background px-2 py-1.5 text-sm"
-                />
-                <input
-                  placeholder="Grup anahtarı"
-                  title="categoryKey — shake_flavor, size…"
-                  value={v.categoryKey}
-                  onChange={(e) =>
-                    setForm((f) => {
-                      const variants = [...f.variants];
-                      variants[i] = {
-                        ...variants[i],
-                        categoryKey: e.target.value,
-                      };
-                      return { ...f, variants };
-                    })
-                  }
-                  className="border border-border-muted bg-background px-2 py-1.5 text-sm mono"
-                />
-                <input
-                  placeholder="Grup başlığı (TR)"
-                  value={v.categoryLabel}
-                  onChange={(e) =>
-                    setForm((f) => {
-                      const variants = [...f.variants];
-                      variants[i] = {
-                        ...variants[i],
-                        categoryLabel: e.target.value,
-                      };
-                      return { ...f, variants };
-                    })
-                  }
-                  className="border border-border-muted bg-background px-2 py-1.5 text-sm md:col-span-2"
-                />
-                <input
-                  placeholder="Fiyat"
-                  value={v.price}
-                  onChange={(e) =>
-                    setForm((f) => {
-                      const variants = [...f.variants];
-                      variants[i] = { ...variants[i], price: e.target.value };
-                      return { ...f, variants };
-                    })
-                  }
-                  className="border border-border-muted bg-background px-2 py-1.5 text-sm"
-                />
-                <input
-                  placeholder="Stok"
-                  value={v.stock}
-                  onChange={(e) =>
-                    setForm((f) => {
-                      const variants = [...f.variants];
-                      variants[i] = { ...variants[i], stock: e.target.value };
-                      return { ...f, variants };
-                    })
-                  }
-                  className="border border-border-muted bg-background px-2 py-1.5 text-sm"
-                />
-                <div className="flex flex-col gap-2 md:col-span-3 lg:col-span-8 md:flex-row md:items-center md:justify-between">
+                <div className="grid gap-2 md:grid-cols-3 lg:grid-cols-8">
+                  <input
+                    placeholder="Stok kodu (boş bırakılırsa otomatik)"
+                    value={v.sku}
+                    onChange={(e) =>
+                      setForm((f) => {
+                        const variants = [...f.variants];
+                        variants[i] = { ...variants[i], sku: e.target.value };
+                        return { ...f, variants };
+                      })
+                    }
+                    className="border border-border-muted bg-background px-2 py-1.5 text-sm mono md:col-span-2 lg:col-span-2"
+                  />
+                  <input
+                    placeholder="Etiket TR (250g / Çikolata)"
+                    value={v.weightLabel}
+                    onChange={(e) =>
+                      setForm((f) => {
+                        const variants = [...f.variants];
+                        variants[i] = {
+                          ...variants[i],
+                          weightLabel: e.target.value,
+                        };
+                        return { ...f, variants };
+                      })
+                    }
+                    className="border border-border-muted bg-background px-2 py-1.5 text-sm"
+                  />
+                  <input
+                    placeholder="Grup anahtarı"
+                    title="categoryKey — shake_flavor, size…"
+                    value={v.categoryKey}
+                    onChange={(e) =>
+                      setForm((f) => {
+                        const variants = [...f.variants];
+                        variants[i] = {
+                          ...variants[i],
+                          categoryKey: e.target.value,
+                        };
+                        return { ...f, variants };
+                      })
+                    }
+                    className="border border-border-muted bg-background px-2 py-1.5 text-sm mono"
+                  />
+                  <input
+                    placeholder="Grup başlığı (TR)"
+                    value={v.categoryLabel}
+                    onChange={(e) =>
+                      setForm((f) => {
+                        const variants = [...f.variants];
+                        variants[i] = {
+                          ...variants[i],
+                          categoryLabel: e.target.value,
+                        };
+                        return { ...f, variants };
+                      })
+                    }
+                    className="border border-border-muted bg-background px-2 py-1.5 text-sm md:col-span-2"
+                  />
+                  <input
+                    placeholder="Stok"
+                    value={v.stock}
+                    onChange={(e) =>
+                      setForm((f) => {
+                        const variants = [...f.variants];
+                        variants[i] = { ...variants[i], stock: e.target.value };
+                        return { ...f, variants };
+                      })
+                    }
+                    className="border border-border-muted bg-background px-2 py-1.5 text-sm"
+                  />
+                </div>
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                  {(
+                    [
+                      ['TRY *', 'price'],
+                      ['USD', 'priceUsd'],
+                      ['EUR', 'priceEur'],
+                      ['GBP', 'priceGbp'],
+                    ] as const
+                  ).map(([label, field]) => (
+                    <label key={field} className="block text-sm">
+                      <span className="mono text-[10px] uppercase text-muted">
+                        {label}
+                      </span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        placeholder={label}
+                        value={v[field]}
+                        onChange={(e) =>
+                          setForm((f) => {
+                            const variants = [...f.variants];
+                            variants[i] = {
+                              ...variants[i],
+                              [field]: e.target.value,
+                            };
+                            return { ...f, variants };
+                          })
+                        }
+                        className="mt-1 w-full border border-border-muted bg-background px-2 py-1.5 text-sm"
+                      />
+                    </label>
+                  ))}
+                </div>
+                {!v.priceUsd.trim() ||
+                !v.priceEur.trim() ||
+                !v.priceGbp.trim() ? (
+                  <p className="text-[11px] text-amber-700">
+                    USD/EUR/GBP boşsa bu varyantta yurtdışı ziyaretçiler TRY
+                    fiyatına düşer.
+                  </p>
+                ) : null}
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                  {LOCALE_TABS.map(({ key, label }) => (
+                    <div key={key} className="space-y-1">
+                      <p className="mono text-[10px] uppercase text-muted">
+                        {label} etiket / grup
+                      </p>
+                      <input
+                        placeholder={`Ad (${label})`}
+                        value={v.localeLabels[key].name}
+                        onChange={(e) =>
+                          setForm((f) => {
+                            const variants = [...f.variants];
+                            variants[i] = {
+                              ...variants[i],
+                              localeLabels: {
+                                ...variants[i].localeLabels,
+                                [key]: {
+                                  ...variants[i].localeLabels[key],
+                                  name: e.target.value,
+                                },
+                              },
+                            };
+                            return { ...f, variants };
+                          })
+                        }
+                        className="w-full border border-border-muted bg-background px-2 py-1.5 text-sm"
+                      />
+                      <input
+                        placeholder={`Grup (${label})`}
+                        value={v.localeLabels[key].categoryLabel}
+                        onChange={(e) =>
+                          setForm((f) => {
+                            const variants = [...f.variants];
+                            variants[i] = {
+                              ...variants[i],
+                              localeLabels: {
+                                ...variants[i].localeLabels,
+                                [key]: {
+                                  ...variants[i].localeLabels[key],
+                                  categoryLabel: e.target.value,
+                                },
+                              },
+                            };
+                            return { ...f, variants };
+                          })
+                        }
+                        className="w-full border border-border-muted bg-background px-2 py-1.5 text-sm"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                   <Checkbox
                     checked={v.isActive}
                     onChange={(isActive) =>
@@ -1319,18 +1585,7 @@ function ProductsPageInner() {
               </div>
             ))}
           </div>
-          <Checkbox
-            checked={form.isActive}
-            onChange={(isActive) => setForm((f) => ({ ...f, isActive }))}
-            label="Aktif"
-            description="Mağazada listelenir"
-          />
-          <Checkbox
-            checked={form.isFeatured}
-            onChange={(isFeatured) => setForm((f) => ({ ...f, isFeatured }))}
-            label="Öne çıkan"
-            description="Ana sayfada vurgulanır"
-          />
+          </div>
         </form>
       </AdminFormPanel>
 
@@ -1352,12 +1607,27 @@ function ProductsPageInner() {
           {
             key: 'name',
             header: 'Ürün',
-            render: (r) => (
-              <div>
-                <div className="font-medium">{r.name}</div>
-                <div className="mono text-[10px] text-muted">{r.slug}</div>
-              </div>
-            ),
+            render: (r) => {
+              const enName = r.translations?.en?.name?.trim();
+              const i18nOk = Boolean(
+                enName &&
+                  r.translations?.de?.name?.trim() &&
+                  r.translations?.fr?.name?.trim() &&
+                  r.translations?.es?.name?.trim(),
+              );
+              return (
+                <div>
+                  <div className="font-medium">{r.name}</div>
+                  {enName && enName !== r.name ? (
+                    <div className="text-xs text-muted">EN: {enName}</div>
+                  ) : null}
+                  <div className="mono text-[10px] text-muted">
+                    {r.slug}
+                    {i18nOk ? ' · EN/DE/FR/ES ✓' : ' · çeviri eksik'}
+                  </div>
+                </div>
+              );
+            },
           },
           {
             key: 'category',

@@ -57,16 +57,16 @@ export const ADMIN_NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    title: 'İçerik',
+    title: 'Site & içerik',
     items: [
-      { href: '/blog', label: 'Yazılar', adminOnly: true },
-      { href: '/icerik', label: 'İçerik', adminOnly: true },
-      { href: '/medya', label: 'Medya', adminOnly: true },
-      { href: '/galeri', label: 'Site Galerisi', adminOnly: true },
-      { href: '/site-ayarlari', label: 'Site Ayarları', adminOnly: true },
+      { href: '/site-ayarlari', label: 'Site ayarları', adminOnly: true },
+      { href: '/icerik', label: 'Sayfa metinleri', adminOnly: true },
+      { href: '/blog', label: 'Blog', adminOnly: true },
+      { href: '/galeri', label: 'Galeri', adminOnly: true },
+      { href: '/medya', label: 'Medya kütüphanesi', adminOnly: true },
       {
         href: '/dil-para-ceviriler',
-        label: 'Dil / Para / Çeviriler',
+        label: 'Dil ve çeviriler',
         adminOnly: true,
       },
     ],
@@ -117,6 +117,28 @@ function NavLinks({
 }) {
   const pathname = usePathname();
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('admin-nav-collapsed');
+      if (raw) setCollapsed(JSON.parse(raw) as Record<string, boolean>);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  function toggleGroup(title: string) {
+    setCollapsed((prev) => {
+      const next = { ...prev, [title]: !prev[title] };
+      try {
+        localStorage.setItem('admin-nav-collapsed', JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }
 
   const groups = useMemo(
     () =>
@@ -127,8 +149,36 @@ function NavLinks({
     [isAdmin],
   );
 
+  function renderItems(items: NavItem[]) {
+    return (
+      <div className="flex flex-col gap-0.5">
+        {items.map((item) => {
+          const active =
+            item.href === '/'
+              ? pathname === '/'
+              : pathname === item.href ||
+                pathname.startsWith(`${item.href}/`);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onNavigate}
+              className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${
+                active
+                  ? 'admin-nav-active shadow-sm'
+                  : 'text-foreground/80 hover:bg-surface-high hover:text-foreground'
+              }`}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
-    <nav className="flex flex-1 flex-col gap-5 overflow-auto p-3">
+    <nav className="flex flex-1 flex-col gap-4 overflow-auto p-3">
       {groups.map((group) => {
         if (group.advanced && !showAdvanced) {
           return (
@@ -152,60 +202,30 @@ function NavLinks({
               >
                 {group.title} · gizle
               </button>
-              <div className="flex flex-col gap-0.5">
-                {group.items.map((item) => {
-                  const active =
-                    item.href === '/'
-                      ? pathname === '/'
-                      : pathname === item.href ||
-                        pathname.startsWith(`${item.href}/`);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={onNavigate}
-                      className={`rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
-                        active
-                          ? 'admin-nav-active shadow-sm'
-                          : 'text-foreground/75 hover:bg-surface-high hover:text-foreground'
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </div>
+              {renderItems(group.items)}
             </div>
           );
         }
+        const isCollapsed = Boolean(collapsed[group.title]);
+        const hasActive = group.items.some((item) =>
+          item.href === '/'
+            ? pathname === '/'
+            : pathname === item.href || pathname.startsWith(`${item.href}/`),
+        );
+        const open = !isCollapsed || hasActive;
         return (
           <div key={group.title}>
-            <p className="mb-1.5 px-2.5 text-[11px] font-bold uppercase tracking-wide text-muted">
+            <button
+              type="button"
+              onClick={() => toggleGroup(group.title)}
+              className="mb-1.5 flex w-full items-center justify-between px-2.5 text-[11px] font-bold uppercase tracking-wide text-muted hover:text-foreground"
+            >
               {group.title}
-            </p>
-            <div className="flex flex-col gap-0.5">
-              {group.items.map((item) => {
-                const active =
-                  item.href === '/'
-                    ? pathname === '/'
-                    : pathname === item.href ||
-                      pathname.startsWith(`${item.href}/`);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={onNavigate}
-                    className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${
-                      active
-                        ? 'admin-nav-active shadow-sm'
-                        : 'text-foreground/80 hover:bg-surface-high hover:text-foreground'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </div>
+              <span className="text-[10px] font-semibold normal-case tracking-normal">
+                {open ? 'gizle' : 'aç'}
+              </span>
+            </button>
+            {open ? renderItems(group.items) : null}
           </div>
         );
       })}

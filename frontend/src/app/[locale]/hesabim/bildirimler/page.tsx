@@ -15,14 +15,24 @@ import {
 } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { requestBrowserPushPermission } from "@/lib/inbox";
+import { localizeInboxItem } from "@/lib/inbox-copy";
 
 export default function AccountNotificationsPage() {
   const t = useTranslations("notificationsPage");
+  const tCopy = useTranslations("inboxCopy");
   const locale = useLocale();
   const router = useRouter();
   const [items, setItems] = useState<InboxItem[]>([]);
   const [prefs, setPrefs] = useState<NotificationPrefs | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  function copyFor(item: InboxItem) {
+    return localizeInboxItem(
+      item,
+      (key, values) => tCopy(key as never, values as never),
+      (key) => tCopy.has(key as never),
+    );
+  }
 
   const CUSTOMER_TOGGLES = useMemo(
     () =>
@@ -134,29 +144,32 @@ export default function AccountNotificationsPage() {
           </p>
         ) : (
           <ul className="space-y-2.5">
-            {items.map((item) => (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  onClick={() => void openItem(item)}
-                  className={`block w-full rounded-2xl border border-outline-variant/25 bg-white px-5 py-4 text-left shadow-sm transition-colors hover:border-primary/35 hover:bg-surface-container-low ${
-                    item.readAt
-                      ? "opacity-60"
-                      : "ring-1 ring-inset ring-primary/15"
-                  }`}
-                >
-                  <p className="text-sm font-semibold">{item.title}</p>
-                  <p className="mt-1 font-meta text-[11px] text-secondary">
-                    {item.body}
-                  </p>
-                  {item.createdAt ? (
-                    <p className="mt-1 font-meta text-[10px] uppercase text-secondary">
-                      {new Date(item.createdAt).toLocaleString(locale)}
+            {items.map((item) => {
+              const copy = copyFor(item);
+              return (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    onClick={() => void openItem(item)}
+                    className={`block w-full rounded-2xl border border-outline-variant/25 bg-white px-5 py-4 text-left shadow-sm transition-colors hover:border-primary/35 hover:bg-surface-container-low ${
+                      item.readAt
+                        ? "opacity-60"
+                        : "ring-1 ring-inset ring-primary/15"
+                    }`}
+                  >
+                    <p className="text-sm font-semibold">{copy.title}</p>
+                    <p className="mt-1 font-meta text-[11px] text-secondary">
+                      {copy.body}
                     </p>
-                  ) : null}
-                </button>
-              </li>
-            ))}
+                    {item.createdAt ? (
+                      <p className="mt-1 font-meta text-[10px] uppercase text-secondary">
+                        {new Date(item.createdAt).toLocaleString(locale)}
+                      </p>
+                    ) : null}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>

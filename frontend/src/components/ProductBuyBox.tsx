@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, XCircle } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { formatMoney } from "@/lib/format";
@@ -42,6 +42,7 @@ export function ProductBuyBox({
   whatsappPhone = DEFAULT_WHATSAPP_PHONE,
 }: Props) {
   const t = useTranslations("product");
+  const locale = useLocale();
   const shakers = useMemo(
     () => SHAKER_KEYS.map((key) => t(key)),
     [t],
@@ -55,8 +56,8 @@ export function ProductBuyBox({
   );
 
   const variantGroups = useMemo(
-    () => groupProductVariants(variants),
-    [variants],
+    () => groupProductVariants(variants, locale),
+    [variants, locale],
   );
 
   const aromas = useMemo(

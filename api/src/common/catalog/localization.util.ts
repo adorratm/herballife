@@ -54,10 +54,67 @@ function deepMergeLocalizedRecord(
   return result;
 }
 
+/**
+ * Metin alanları: çeviri yokken TR gövdeyi “yerelleşmiş” gibi döndürme.
+ * Yapısal alanlar (URL, href, boolean, sayı, görsel) korunur.
+ */
+function isStructuralCmsValue(key: string, value: unknown): boolean {
+  if (
+    key.endsWith('Url') ||
+    key.endsWith('Href') ||
+    key.endsWith('Image') ||
+    key === 'imageUrl' ||
+    key === 'href' ||
+    key === 'linkHref' ||
+    key === 'showContactAside'
+  ) {
+    return true;
+  }
+  if (typeof value === 'boolean' || typeof value === 'number') return true;
+  if (isPlainRecord(value)) {
+    const keys = Object.keys(value);
+    return (
+      keys.includes('href') ||
+      keys.includes('imageUrl') ||
+      keys.includes('url')
+    );
+  }
+  return false;
+}
+
+function structuralCmsOnly(
+  base: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = { _cmsUntranslated: true };
+  for (const [key, value] of Object.entries(base)) {
+    if (isStructuralCmsValue(key, value)) {
+      if (isPlainRecord(value) && typeof value.label === 'string') {
+        const { label: _label, ...rest } = value;
+        out[key] = Object.keys(rest).length ? rest : value;
+        if (typeof (out[key] as Record<string, unknown>).href === 'string') {
+          // keep href-only CTA so next-intl labels win
+          out[key] = { href: (value as { href: string }).href };
+        }
+      } else {
+        out[key] = value;
+      }
+    }
+  }
+  return out;
+}
+
 /** CMS site ayarı / içerik jsonb — TR kök, diğer diller `translations[locale]`. */
 export function resolveLocalizedRecord(
   value: Record<string, unknown>,
   locale: LocaleCode,
+  opts?: {
+    /**
+     * Çeviri bloğu yokken:
+     * - base: TR kökü döndür (site ayarları)
+     * - structural: yalnızca URL/href/boolean (metin sayfaları → next-intl fallback)
+     */
+    missingLocale?: 'base' | 'structural';
+  },
 ): Record<string, unknown> {
   if (locale === 'tr') {
     const { translations: _t, ...rest } = value;
@@ -69,7 +126,9 @@ export function resolveLocalizedRecord(
   const localeBlock = translations?.[locale];
   const { translations: _t, ...base } = value;
   if (!localeBlock || !isPlainRecord(localeBlock)) {
-    return { ...base };
+    return opts?.missingLocale === 'structural'
+      ? structuralCmsOnly(base)
+      : { ...base };
   }
   return deepMergeLocalizedRecord(base, localeBlock);
 }
@@ -279,37 +338,49 @@ export function ensureProductPrices(
   return map;
 }
 
+function pickTranslationBlock<T extends Record<string, unknown>>(
+  translations: Partial<Record<string, T>> | null | undefined,
+  locale: LocaleCode,
+): T | undefined {
+  if (!translations || locale === 'tr') return undefined;
+  const direct = translations[locale];
+  if (direct && typeof direct === 'object') return direct;
+  // Mağaza dilleri (it/nl/…) için EN yedeği
+  const en = translations.en;
+  if (en && typeof en === 'object') return en;
+  return undefined;
+}
+
 export function applyProductLocale<
   T extends {
     slug: string;
     name: string;
     description: string;
     shortDescription?: string | null;
+    badge?: string | null;
     translations?: ProductTranslations | null;
   },
 >(product: T, locale: LocaleCode): T {
   if (locale === 'tr') {
     return product;
   }
-  const block =
-    locale in (product.translations || {})
-      ? product.translations?.[locale as MandatoryLocale]
-      : undefined;
+  const block = pickTranslationBlock(
+    product.translations as Partial<Record<string, Record<string, unknown>>>,
+    locale,
+  ) as ProductTranslations[MandatoryLocale] | undefined;
   if (!block) {
-    return {
-      ...product,
-      name: '',
-      description: '',
-      shortDescription: '',
-    };
+    // Çeviri yoksa TR köke düş (boş kart / TR sızıntısından iyidir)
+    return product;
   }
   const localizedSlug = block.slug?.trim();
   return {
     ...product,
     slug: localizedSlug || product.slug,
-    name: block.name?.trim() || '',
-    description: block.description?.trim() || '',
-    shortDescription: block.shortDescription?.trim() || '',
+    name: block.name?.trim() || product.name,
+    description: block.description?.trim() || product.description,
+    shortDescription:
+      block.shortDescription?.trim() || product.shortDescription || '',
+    badge: block.badge?.trim() || product.badge || null,
   };
 }
 
@@ -325,24 +396,19 @@ export function applyCategoryLocale<
   if (locale === 'tr') {
     return { ...category, localeSlugs };
   }
-  const block =
-    locale in (category.translations || {})
-      ? category.translations?.[locale as MandatoryLocale]
-      : undefined;
+  const block = pickTranslationBlock(
+    category.translations as Partial<Record<string, Record<string, unknown>>>,
+    locale,
+  ) as CategoryTranslations[MandatoryLocale] | undefined;
   if (!block) {
-    return {
-      ...category,
-      name: '',
-      description: '',
-      localeSlugs,
-    };
+    return { ...category, localeSlugs };
   }
   const localizedSlug = block.slug?.trim();
   return {
     ...category,
     slug: localizedSlug || category.slug,
-    name: block.name?.trim() || '',
-    description: block.description?.trim() || '',
+    name: block.name?.trim() || category.name,
+    description: block.description?.trim() || category.description || '',
     localeSlugs,
   };
 }
@@ -351,6 +417,7 @@ export function applyCampaignLocale<
   T extends {
     name: string;
     headline?: string | null;
+    badge?: string | null;
     imageUrl?: string | null;
     translations?: CampaignTranslations | null;
     imagesByLocale?: ImagesByLocale | null;
@@ -366,22 +433,18 @@ export function applyCampaignLocale<
   if (locale === 'tr') {
     return { ...campaign, imageUrl };
   }
-  const block =
-    locale in (campaign.translations || {})
-      ? campaign.translations?.[locale as MandatoryLocale]
-      : undefined;
+  const block = pickTranslationBlock(
+    campaign.translations as Partial<Record<string, Record<string, unknown>>>,
+    locale,
+  ) as CampaignTranslations[MandatoryLocale] | undefined;
   if (!block) {
-    return {
-      ...campaign,
-      name: '',
-      headline: '',
-      imageUrl,
-    };
+    return { ...campaign, imageUrl };
   }
   return {
     ...campaign,
-    name: block.name?.trim() || '',
-    headline: block.headline?.trim() || '',
+    name: block.name?.trim() || campaign.name,
+    headline: block.headline?.trim() || campaign.headline || '',
+    badge: block.badge?.trim() || campaign.badge || null,
     imageUrl,
   };
 }
@@ -413,31 +476,23 @@ export function applyBlogLocale<
   if (locale === 'tr') {
     return { ...post, coverImageUrl, localeSlugs };
   }
-  const block =
-    locale in (post.translations || {})
-      ? post.translations?.[locale as MandatoryLocale]
-      : undefined;
+  const block = pickTranslationBlock(
+    post.translations as Partial<Record<string, Record<string, unknown>>>,
+    locale,
+  ) as BlogTranslations[MandatoryLocale] | undefined;
   if (!block) {
-    return {
-      ...post,
-      title: '',
-      excerpt: '',
-      content: '',
-      seoTitle: null,
-      seoDescription: null,
-      coverImageUrl,
-      localeSlugs,
-    };
+    return { ...post, coverImageUrl, localeSlugs };
   }
   const localizedSlug = block.slug?.trim();
   return {
     ...post,
     slug: localizedSlug || post.slug,
-    title: block.title?.trim() || '',
-    excerpt: block.excerpt?.trim() || '',
-    content: block.content?.trim() || '',
-    seoTitle: block.seoTitle?.trim() || null,
-    seoDescription: block.seoDescription?.trim() || null,
+    title: block.title?.trim() || post.title,
+    excerpt: block.excerpt?.trim() || post.excerpt || '',
+    content: block.content?.trim() || post.content,
+    seoTitle: block.seoTitle?.trim() || post.seoTitle || null,
+    seoDescription:
+      block.seoDescription?.trim() || post.seoDescription || null,
     coverImageUrl,
     localeSlugs,
   };
@@ -458,8 +513,14 @@ export function localizeProductForCatalog<
     variants?: Array<{
       price: string;
       prices?: ProductPrices | null;
-      translations?: ProductTranslations | null;
+      translations?: Partial<
+        Record<
+          MandatoryLocale | 'tr',
+          { name?: string; categoryLabel?: string }
+        >
+      > | null;
       weightLabel: string;
+      categoryKey?: string | null;
     }>;
     category?: {
       name: string;
@@ -486,16 +547,29 @@ export function localizeProductForCatalog<
     currency,
   );
   const variants = localized.variants?.map((v) => {
-    const vName =
+    const block =
       locale !== 'tr'
-        ? v.translations?.[locale as MandatoryLocale]?.name
+        ? v.translations?.[locale as MandatoryLocale | 'tr']
         : undefined;
-    const vLocalized = vName
-      ? {
-          ...v,
-          weightLabel: vName.trim() || v.weightLabel,
-        }
-      : v;
+    const vName = block?.name?.trim();
+    const vCategory = block?.categoryLabel?.trim();
+    const vLocalized = {
+      ...v,
+      weightLabel: vName || v.weightLabel,
+      translations: {
+        ...(v.translations || {}),
+        // FE grup başlığı locale-first okusun diye istenen dili öne yaz
+        ...(vCategory
+          ? {
+              [locale]: {
+                ...(v.translations?.[locale as MandatoryLocale | 'tr'] || {}),
+                categoryLabel: vCategory,
+                ...(vName ? { name: vName } : {}),
+              },
+            }
+          : {}),
+      },
+    };
     return {
       ...vLocalized,
       price: resolveProductPrices(v.price, v.prices, currency),

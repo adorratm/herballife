@@ -420,7 +420,9 @@
     "billingBadge": "Rechnung",
     "closeAccountDetail": "Ihr Konto wird deaktiviert und personenbezogene Daten anonymisiert. Frühere Bestellungen bleiben aus rechtlichen Gründen erhalten. Nicht rückgängig zu machen.",
     "closeAccountConfirmDetail": "Sie können sich nicht mehr anmelden. Bestellhistorie bleibt für die gesetzliche Aufbewahrungsfrist gespeichert.",
-    "deleteMyAccount": "Mein Konto löschen"
+    "deleteMyAccount": "Mein Konto löschen",
+    "nutritionTracking": "Ernährungstracking",
+    "progressReport": "Fortschrittsbericht"
   },
   "footer": {
     "rights": "Alle Rechte vorbehalten.",
@@ -823,7 +825,16 @@
     "pillarProgramBody": "Set-Empfehlungen für Ihr Ziel und persönliches WhatsApp-Coaching.",
     "pillarTrackingTitle": "Gesundheitstracking",
     "pillarTrackingBody": "Wasser, Mahlzeiten und Messungen in Ihrem Konto; Fortschritt mit Coach-Freigabe.",
-    "waPrefillAbout": "Hallo {brand}, ich möchte mehr über Sie erfahren."
+    "waPrefillAbout": "Hallo {brand}, ich möchte mehr über Sie erfahren.",
+    "metaDescription": "{brand} — unabhängiger Herbalife-Vertriebspartner.",
+    "metaKeywords": "über uns, Herbalife, unabhängiger Vertriebspartner, Herbal Kapıda, Ernährung",
+    "ctaSets": "Sets ansehen",
+    "storyEyebrow": "Unsere Geschichte",
+    "pillarsEyebrow": "Warum wir",
+    "pillarsTitle": "Produkt, Begleitung und Tracking — alles zusammen",
+    "contactEyebrow": "Kontakt",
+    "closingTitle": "Lassen Sie uns gemeinsam starten",
+    "closingBody": "Schreiben Sie uns für eine kostenlose Produktberatung oder entdecken Sie Geschenk-Sets."
   },
   "mediaPage": {
     "fallbackSubtitle": "Produkte, Sets und Momente gesunden Lebens. Instagram-Beiträge und ausgewählte Bilder.",
@@ -841,7 +852,8 @@
     "feedSoon": "Instagram-Feed demnächst.",
     "galleryTitle": "Galerie-Auswahl",
     "galleryLead": "Produkte, Sets und Lifestyle-Momente — tippen für Vollansicht.",
-    "galleryEmpty": "Noch keine Galeriebilder."
+    "galleryEmpty": "Noch keine Galeriebilder.",
+    "metaKeywords": "Herbalife Medien, Instagram, Ernährung, gesundes Leben"
   },
   "seo": {
     "aboutTitle": "Über uns",
@@ -1079,7 +1091,8 @@
   },
   "notificationsBell": {
     "markAllRead": "Alle gelesen",
-    "allAndSettings": "Alle & Einstellungen"
+    "allAndSettings": "Alle Benachrichtigungen",
+    "viewAll": "Alle Benachrichtigungen"
   },
   "campaignDate": {
     "validity": "Gültig: {range}"
@@ -1342,7 +1355,8 @@
         "question": "What are the return terms?",
         "answer": "Returns are possible for unopened products within the legal period. See Returns & cancellation or contact us."
       }
-    ]
+    ],
+    "metaKeywords": "FAQ, häufige Fragen, Versand, Herbalife, Sets"
   },
   "reviewsPage": {
     "metaTitle": "Auf Google bewerten",
@@ -1361,10 +1375,87 @@
     "scanQr": "QR-Code scannen",
     "reviewOnGoogle": "Auf Google bewerten",
     "reviewAria": "Auf Google bewerten — QR-Code scannen",
-    "whatsappPrefill": "Hallo, ich hätte gern den Google-Bewertungslink."
+    "whatsappPrefill": "Hallo, ich hätte gern den Google-Bewertungslink.",
+    "metaKeywords": "Google Bewertung, Herbalife, Herbal Kapıda"
   },
   "legalPage": {
     "comingSoon": "Dieser Rechtstext wird in Kürze veröffentlicht.",
-    "version": "Version {version}"
+    "version": "Version {version}",
+    "kicker": "Rechtsdokument"
+  },
+  "inboxCopy": {
+    "order_received": {
+      "title": "Bestellung eingegangen",
+      "body": "{orderNumber} wurde erstellt. Nach Zahlungseingang beginnen wir mit der Vorbereitung."
+    },
+    "order_paid": {
+      "title": "Zahlung bestätigt",
+      "body": "Die Zahlung für Bestellung {orderNumber} wurde bestätigt."
+    },
+    "order_status": {
+      "title": "Bestellstatus aktualisiert",
+      "body": "{orderNumber} ist jetzt: {statusLabel}."
+    },
+    "shipment_created": {
+      "title": "Bestellung versendet",
+      "body": "{orderNumber} wurde versendet.",
+      "bodyWithTracking": "{orderNumber} ist unterwegs. Sendung: {trackingNumber}"
+    },
+    "shipment_status": {
+      "title": "Sendung aktualisiert",
+      "body": "{orderNumber} Sendungsstatus: {statusLabel}."
+    },
+    "return_requested": {
+      "title": "Rückgabeanfrage erhalten",
+      "body": "Ihre Rückgabe-/Stornoanfrage für {orderNumber} wurde gespeichert."
+    },
+    "return_approved": {
+      "title": "Rückgabeanfrage genehmigt",
+      "body": "Ihre Rückgabe-/Stornoanfrage für {orderNumber} wurde genehmigt."
+    },
+    "return_rejected": {
+      "title": "Rückgabeanfrage abgelehnt",
+      "body": "Ihre Rückgabe-/Stornoanfrage für {orderNumber} wurde abgelehnt."
+    },
+    "abandoned_cart": {
+      "title": "Ihr Warenkorb wartet",
+      "body": "{itemCount} Artikel sind noch im Warenkorb. Schließen Sie die Bestellung ab."
+    },
+    "review_approved": {
+      "title": "Ihre Bewertung ist online",
+      "body": "Ihre Bewertung zu {productName} ist veröffentlicht."
+    },
+    "review_rejected": {
+      "title": "Bewertung nicht veröffentlicht",
+      "body": "Ihre Bewertung zu {productName} wurde nicht veröffentlicht."
+    },
+    "wellness_meal_approved": {
+      "title": "Mahlzeiteneintrag genehmigt",
+      "body": "Ihr Coach hat Ihren Mahlzeiteneintrag genehmigt. Super!",
+      "bodyWithNote": "Ihr Coach hat Ihre Mahlzeit genehmigt: {note}"
+    },
+    "wellness_meal_rejected": {
+      "title": "Mahlzeiteneintrag abgelehnt",
+      "body": "Ihr Mahlzeiteneintrag wurde von Ihrem Coach abgelehnt.",
+      "bodyWithNote": "Mahlzeiteneintrag abgelehnt: {note}"
+    },
+    "wellness_measurement_approved": {
+      "title": "Messung genehmigt",
+      "body": "Ihr Coach hat Ihre Messung genehmigt.",
+      "bodyWithNote": "Ihr Coach hat Ihre Messung genehmigt: {note}"
+    },
+    "wellness_measurement_rejected": {
+      "title": "Messung abgelehnt",
+      "body": "Ihre Messung wurde von Ihrem Coach abgelehnt.",
+      "bodyWithNote": "Messung abgelehnt: {note}"
+    },
+    "ops_access_approved": {
+      "title": "Mitarbeiterzugang genehmigt",
+      "body": "Sie können sich mit derselben E-Mail und demselben Passwort im Mitarbeiterbereich anmelden."
+    },
+    "ops_access_rejected": {
+      "title": "Mitarbeiterzugang abgelehnt",
+      "body": "Ihr Antrag auf Mitarbeiterzugang wurde nicht genehmigt. Ihr Konto bleibt ein Kundenkonto."
+    }
   }
 }

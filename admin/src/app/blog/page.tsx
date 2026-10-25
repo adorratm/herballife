@@ -764,7 +764,30 @@ function BlogAdminPageInner() {
             header: 'Kısa ad',
             render: (r) => <span className="mono text-xs">{r.slug}</span>,
           },
-          { key: 'title', header: 'Başlık', render: (r) => r.title },
+          {
+            key: 'title',
+            header: 'Başlık',
+            render: (r) => {
+              const enTitle = r.translations?.en?.title?.trim();
+              const i18nOk = Boolean(
+                enTitle &&
+                  r.translations?.de?.title?.trim() &&
+                  r.translations?.fr?.title?.trim() &&
+                  r.translations?.es?.title?.trim(),
+              );
+              return (
+                <div>
+                  <div className="font-medium">{r.title}</div>
+                  {enTitle && enTitle !== r.title ? (
+                    <div className="text-xs text-muted">EN: {enTitle}</div>
+                  ) : null}
+                  <div className="mono text-[10px] text-muted">
+                    {i18nOk ? 'EN/DE/FR/ES ✓' : 'çeviri eksik'}
+                  </div>
+                </div>
+              );
+            },
+          },
           {
             key: 'pub',
             header: 'Durum',

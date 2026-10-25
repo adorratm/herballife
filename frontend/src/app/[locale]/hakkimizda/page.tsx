@@ -118,17 +118,14 @@ export async function generateMetadata(): Promise<Metadata> {
     title: hero.title || t("fallbackHeroTitle"),
     description:
       hero.seoDescription ||
-      `${settings.brand.name} — bağımsız Herbalife distribütörü.`,
+      t("metaDescription", { brand: settings.brand.name }),
     path: "/hakkimizda",
     settings,
     locale,
-    keywords: [
-      "hakkımızda",
-      "Herbalife",
-      "bağımsız distribütör",
-      "Herbal Kapıda",
-      "beslenme",
-    ],
+    keywords: t("metaKeywords")
+      .split(",")
+      .map((k) => k.trim())
+      .filter(Boolean),
     image: "/images/products/2026-paket-1-shaker-hediyeli.png",
   });
 }
@@ -216,7 +213,7 @@ export default async function AboutPage() {
         data={aboutPageJsonLd(
           settings,
           tSeo("aboutTitle"),
-          tSeo("aboutJsonLdDescription"),
+          tSeo("aboutJsonLdDescription", { brand: settings.brand.name }),
           locale,
         )}
       />
@@ -306,7 +303,7 @@ export default async function AboutPage() {
       <section className="bg-white py-16 md:py-28">
         <div className="page-shell grid gap-10 lg:grid-cols-12 lg:gap-16">
           <Reveal className="lg:col-span-5">
-            <p className="eyebrow text-primary">Hikayemiz</p>
+            <p className="eyebrow text-primary">{t("storyEyebrow")}</p>
             <h2 className="display-lg mt-4 text-on-surface">
               {body.titleLine1}
               {body.titleLine2 ? (
@@ -333,9 +330,9 @@ export default async function AboutPage() {
       <section className="mint-wash py-16 md:py-24">
         <div className="page-shell">
           <Reveal>
-            <p className="eyebrow text-primary">Neden bizimle</p>
+            <p className="eyebrow text-primary">{t("pillarsEyebrow")}</p>
             <h2 className="display-md mt-3 max-w-xl text-on-surface">
-              Ürün, rehberlik ve takip — üçü bir arada
+              {t("pillarsTitle")}
             </h2>
           </Reveal>
           <ul className="mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
@@ -411,7 +408,7 @@ export default async function AboutPage() {
         <section className="bg-white py-16 md:py-24">
           <div className="page-shell">
             <Reveal>
-              <p className="eyebrow text-primary">Bize ulaşın</p>
+              <p className="eyebrow text-primary">{t("contactEyebrow")}</p>
               <h2 className="display-md mt-3 text-on-surface">
                 {brand.distributorName || brand.name}
               </h2>
@@ -452,11 +449,10 @@ export default async function AboutPage() {
         <div className="page-shell py-20 text-center md:py-28">
           <Reveal>
             <h2 className="display-lg mx-auto max-w-3xl text-white">
-              Birlikte başlayalım
+              {t("closingTitle")}
             </h2>
             <p className="mx-auto mt-5 max-w-lg text-lg leading-relaxed text-white/80">
-              Ücretsiz ürün danışmanlığı için yazın veya hediyeli setleri
-              keşfedin.
+              {t("closingBody")}
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-3">
               {whatsapp.enabled ? (
@@ -467,18 +463,18 @@ export default async function AboutPage() {
                   className="btn-brand-light"
                 >
                   <MessageCircle className="h-4 w-4" aria-hidden />
-                  WhatsApp ile yaz
+                  {t("waWrite")}
                 </a>
               ) : (
                 <Link href="/iletisim" className="btn-brand-light">
-                  İletişime geç
+                  {t("ctaContact")}
                 </Link>
               )}
               <Link
                 href={categoryHref("avantajli-setler")}
                 className="btn-outline-light"
               >
-                Setleri incele
+                {t("ctaSets")}
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </div>

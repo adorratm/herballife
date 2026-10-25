@@ -33,6 +33,7 @@ import {
   resolveFrontendUrl,
   statusLabel,
 } from '@modules/notifications/notification.templates';
+import { storefrontHref } from '@modules/notifications/email-i18n';
 import { ConfigService } from '@nestjs/config';
 import {
   DHL_TRACKING_BASE,
@@ -134,7 +135,12 @@ export class ShippingService {
 
     const frontendUrl = resolveFrontendUrl(this.config);
     const trackPath = shipment.trackingNumber
-      ? `${frontendUrl}/takip/${encodeURIComponent(shipment.trackingNumber)}`
+      ? storefrontHref(
+          frontendUrl,
+          order.locale,
+          'tracking',
+          `/${encodeURIComponent(shipment.trackingNumber)}`,
+        )
       : undefined;
 
     await this.notifications.enqueueShipmentStatus(
@@ -144,7 +150,6 @@ export class ShippingService {
       ['email', 'whatsapp'],
       {
         status: shipment.status,
-        statusLabel: statusLabel(shipment.status),
         trackingUrl: trackPath,
       },
     );
@@ -242,7 +247,6 @@ export class ShippingService {
           ['email', 'whatsapp'],
           {
             status: result.status,
-            statusLabel: statusLabel(result.status),
           },
         );
       }

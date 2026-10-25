@@ -90,7 +90,12 @@ export default async function CategoryCatalogPage({ params }: Props) {
   ]);
   const [categories, relatedBlog, bySlug] = await Promise.all([
     getCategories(locale).catch(() => []),
-    getBlogPosts({ categorySlug: slug, limit: 3, sort: "publishedAt" }),
+    getBlogPosts({
+      categorySlug: slug,
+      limit: 3,
+      sort: "publishedAt",
+      locale,
+    }),
     getCategoryBySlug(slug, locale),
   ]);
   // Önce API slug eşlemesi (TR/EN/…); liste lokalize slug ile de yedekler

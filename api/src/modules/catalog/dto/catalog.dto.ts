@@ -56,7 +56,10 @@ export class ProductVariantDto {
   @ApiPropertyOptional({ description: 'en/de/fr/es etiket çevirileri' })
   @IsOptional()
   @IsObject()
-  translations?: Record<string, { name?: string }>;
+  translations?: Record<
+    string,
+    { name?: string; categoryLabel?: string }
+  >;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -246,7 +249,13 @@ export class CreateProductDto {
   @IsObject()
   translations?: Record<
     string,
-    { name?: string; description?: string; shortDescription?: string }
+    {
+      name?: string;
+      description?: string;
+      shortDescription?: string;
+      badge?: string;
+      slug?: string;
+    }
   >;
 
   @ApiPropertyOptional({ default: true })

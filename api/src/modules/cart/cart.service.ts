@@ -136,8 +136,13 @@ export class CartService {
     await this.em.save(userCart);
   }
 
-  async getCart(userId?: string | null, sessionId?: string | null) {
+  async getCart(
+    userId?: string | null,
+    sessionId?: string | null,
+    locale?: string | null,
+  ) {
     const cart = await this.getOrCreateCart(userId, sessionId);
+    await this.maybeSetLocale(cart, locale);
     await this.refreshCampaignPricing(cart);
     return this.withTotals(cart);
   }
@@ -159,8 +164,10 @@ export class CartService {
     dto: AddCartItemDto,
     userId?: string | null,
     sessionId?: string | null,
+    locale?: string | null,
   ) {
     const cart = await this.getOrCreateCart(userId, sessionId);
+    await this.maybeSetLocale(cart, locale);
     const product = await this.em.findOne(Product, {
       where: { id: dto.productId, isActive: true },
     });
@@ -359,16 +366,28 @@ export class CartService {
     });
   }
 
+  private async maybeSetLocale(cart: Cart, locale?: string | null) {
+    const next = String(locale || '')
+      .trim()
+      .toLowerCase()
+      .slice(0, 10);
+    if (!next || cart.locale === next) return;
+    cart.locale = next;
+    await this.em.update(Cart, cart.id, { locale: next });
+  }
+
   async setGuestEmail(
     email: string,
     userId?: string | null,
     sessionId?: string | null,
+    locale?: string | null,
   ) {
     const cart = await this.getOrCreateCart(userId, sessionId);
     const normalized = email.toLowerCase().trim();
     cart.guestEmail = normalized;
+    await this.maybeSetLocale(cart, locale);
     await this.em.save(cart);
-    return this.getCart(userId, sessionId);
+    return this.getCart(userId, sessionId, locale);
   }
 
   private withTotals(cart: Cart) {

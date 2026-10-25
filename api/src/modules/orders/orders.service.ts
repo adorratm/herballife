@@ -31,7 +31,6 @@ import {
   AddressPayloadDto,
 } from '@modules/orders/dto/orders.dto';
 import { NotificationsService } from '@modules/notifications/notifications.service';
-import { statusLabel } from '@modules/notifications/notification.templates';
 import { CouponsService } from '@modules/coupons/coupons.service';
 import { InventoryService } from '@modules/catalog/inventory.service';
 import { CartService } from '@modules/cart/cart.service';
@@ -161,6 +160,7 @@ export class OrdersService {
         taxAmount: taxAmount.toFixed(2),
         total: total.toFixed(2),
         currency: 'TRY',
+        locale: (dto.locale || 'tr').trim().toLowerCase().slice(0, 10) || 'tr',
         shippingProvider: dto.shippingProvider ?? null,
         legalAcceptances: dto.legalAcceptances ?? null,
         notes: dto.notes ?? null,
@@ -176,7 +176,11 @@ export class OrdersService {
           productId: item.productId,
           variantId: item.variantId,
           productName: item.product?.name || 'Ürün',
-          variantLabel: formatOrderVariantLabel(item.variant) ?? null,
+          variantLabel:
+            formatOrderVariantLabel(
+              item.variant,
+              (dto.locale || 'tr').trim().toLowerCase().slice(0, 10) || 'tr',
+            ) ?? null,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
           lineTotal: (Number(item.unitPrice) * item.quantity).toFixed(2),
@@ -224,7 +228,6 @@ export class OrdersService {
       ['email', 'whatsapp'],
       {
         status: OrderStatus.PENDING_PAYMENT,
-        statusLabel: statusLabel(OrderStatus.PENDING_PAYMENT),
       },
     );
     await this.notifications.enqueueOrderOpsAlert(orderId, 'received');
@@ -424,7 +427,6 @@ export class OrdersService {
         ['email', 'whatsapp'],
         {
           status: dto.status,
-          statusLabel: statusLabel(dto.status),
         },
       );
     }
@@ -471,10 +473,7 @@ export class OrdersService {
       'return_requested',
       ['email'],
       {
-        statusLabel:
-          dto.type === ReturnRequestType.CANCEL
-            ? 'İptal talebi'
-            : 'İade talebi',
+        returnType: dto.type,
       },
     );
 
@@ -630,14 +629,13 @@ export class OrdersService {
         request.orderId,
         'return_approved',
         ['email'],
-        { statusLabel: statusLabel(targetStatus) },
+        { status: targetStatus },
       );
     } else {
       await this.notifications.enqueueOrderStatus(
         request.orderId,
         'return_rejected',
         ['email'],
-        { statusLabel: 'Reddedildi' },
       );
     }
 
