@@ -235,21 +235,21 @@ if [[ "${SEED_ON_DEPLOY:-0}" == "1" ]]; then
 else
   product_count="$("${COMPOSE[@]}" exec -T postgres \
     psql -U "${POSTGRES_USER:-herbalkapida}" -d "${POSTGRES_DB:-herbalkapida}" -tAc \
-    "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='product';" \
+    "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='products';" \
     2>/dev/null | tr -d '[:space:]' || echo 0)"
   if [[ "${product_count}" == "1" ]]; then
     rows="$("${COMPOSE[@]}" exec -T postgres \
       psql -U "${POSTGRES_USER:-herbalkapida}" -d "${POSTGRES_DB:-herbalkapida}" -tAc \
-      "SELECT COUNT(*) FROM product;" 2>/dev/null | tr -d '[:space:]' || echo 0)"
+      "SELECT COUNT(*) FROM products;" 2>/dev/null | tr -d '[:space:]' || echo 0)"
     if [[ "${rows}" == "0" || -z "${rows}" ]]; then
       should_seed=1
-      log "product tablosu boş — varsayılan seed çalışacak"
+      log "products tablosu boş — varsayılan seed çalışacak"
     else
       log "Mevcut veri var (${rows} ürün) — seed atlandı"
     fi
   else
     should_seed=1
-    log "product tablosu yok/boş — varsayılan seed çalışacak"
+    log "products tablosu yok — varsayılan seed çalışacak"
   fi
 fi
 

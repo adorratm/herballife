@@ -46,12 +46,29 @@ function shouldSynchronizeForSeed(): boolean {
   return process.env.NODE_ENV !== 'production';
 }
 
-async function seed() {
-  await AppDataSource.initialize();
+async function ensureSchemaForSeed(): Promise<void> {
   if (shouldSynchronizeForSeed()) {
     await AppDataSource.synchronize();
     console.log('Schema synchronized (seed)');
+    return;
   }
+  // Prod: migrate one-shot şemayı kurmalı; yoksa net hata ver.
+  const rows: Array<{ exists: boolean }> = await AppDataSource.query(
+    `SELECT EXISTS (
+       SELECT 1 FROM information_schema.tables
+       WHERE table_schema = 'public' AND table_name = 'categories'
+     ) AS exists`,
+  );
+  if (!rows[0]?.exists) {
+    throw new Error(
+      'categories tablosu yok — önce `node dist/migrate.js` çalıştırın (InitialSchema).',
+    );
+  }
+}
+
+async function seed() {
+  await AppDataSource.initialize();
+  await ensureSchemaForSeed();
   const em = AppDataSource.manager;
 
   const adminEmail = (process.env.ADMIN_ALLOWLIST || '')
@@ -76,7 +93,7 @@ async function seed() {
     }
   } else {
     console.log(
-      'ADMIN_ALLOWLIST boş — seed atlandı; admin’i Kullanıcılar ekranından ekleyin',
+      'ADMIN_ALLOWLIST boş — admin bootstrap atlandı; admin’i Kullanıcılar ekranından ekleyin',
     );
   }
 
