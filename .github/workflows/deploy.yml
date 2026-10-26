@@ -161,7 +161,8 @@ jobs:
     if: >
       github.event_name == 'push' ||
       (github.event_name == 'workflow_dispatch' && inputs.skip_deploy != true)
-    environment: production
+    # Repository secrets kullanılır (Settings → Secrets and variables → Actions).
+    # Environment şartı yok — yanlış isimli environment secret'ları boş gelmesin.
     steps:
       - name: Checkout (compose + deploy scripts)
         uses: actions/checkout@v4
@@ -175,12 +176,14 @@ jobs:
           missing=0
           for k in DEPLOY_HOST DEPLOY_USER DEPLOY_SSH_KEY; do
             if [ -z "${!k}" ]; then
-              echo "::error::Secret eksik: $k — Settings → Secrets and variables → Actions (veya Environment: production)"
+              echo "::error::Secret eksik: $k"
+              echo "::error::Ekle: https://github.com/${{ github.repository }}/settings/secrets/actions"
+              echo "::error::Repository secrets → New repository secret (Environment değil)"
               missing=1
             fi
           done
           if [ "$missing" = "1" ]; then
-            echo "Sunucu secret'ları girilince deploy otomatik çalışır. Bkz. deploy/SECRETS.md"
+            echo "Gerekli: DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY — bkz. deploy/SECRETS.md"
             exit 1
           fi
 

@@ -2,8 +2,17 @@
 
 `main` / `master` push → GHCR build → SSH zero-downtime deploy (**herbalkapida.com**).
 
-**Settings → Secrets and variables → Actions**  
-(veya **Environments → production** — workflow `environment: production` kullanır)
+**Settings → Secrets and variables → Actions → Repository secrets**
+
+Deploy job **environment kullanmaz**; secret’lar yalnızca buradan okunur.
+
+> Environments sayfasına yazılan secret’lar **okunmaz**. Oraya girdysen aynı üç ismi **Repository secrets** altına yeniden ekle.
+
+### Sık hata: “Secret eksik” ama ben girdim
+
+1. **Environments** altına yazdıysan → Repository secrets’a taşı.
+2. **Variables** sekmesine yazdıysan → **Secrets** olmalı.
+3. İsimler birebir: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`.
 
 ## Zorunlu (sunucu)
 

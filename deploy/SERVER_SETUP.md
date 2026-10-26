@@ -172,7 +172,10 @@ Tam şablon: `deploy/.env.production.example`
 
 ## 8. GitHub’da girilecekler
 
-**Settings → Secrets and variables → Actions** (veya Environment: `production`)
+**Settings → Secrets and variables → Actions → Repository secrets**
+
+> **Environments** sayfasına değil, doğrudan **Repository secrets** altına ekle.  
+> **Variables** değil **Secrets**. İsimler: `DEPLOY_HOST` / `DEPLOY_USER` / `DEPLOY_SSH_KEY`.
 
 ### Secrets (zorunlu)
 
