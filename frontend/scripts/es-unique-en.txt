@@ -8,7 +8,7 @@
 + Add new address
 + New billing address
 100% genuine products
-100% original Herbalife products with independent distributor assurance.
+100% original Herbal Kapıda products with independent distributor assurance.
 14-day withdrawal right
 256-bit SSL
 30 seconds
@@ -209,7 +209,7 @@ Herbal Kapıda · WhatsApp support
 Herbal Kapıda — We're here for you
 Herbal Kapıda — WhatsApp line is open.
 Herbal tea
-Herbalife ID
+Herbal Kapıda ID
 Hi! Message us for product and bundle suggestions.
 Home, Work
 Honest feedback on product quality, shipping, and coaching support matters.
@@ -328,7 +328,7 @@ Order status
 Orders
 Orders, addresses, and wellness tracking in your account.
 Origin
-Original products, gift bundles, and personalized nutrition support with an independent Herbalife distributor.
+Original products, gift bundles, and personalized nutrition support with an independent Herbal Kapıda distributor.
 Our goal is not random shelf products — but the right program, sustainable habits, and trusted access.
 Our nutrition approach
 Package
@@ -485,7 +485,7 @@ This action cannot be undone. Orders already placed remain on record.
 This address will be permanently removed.
 This legal text will be published soon.
 This order was cancelled.
-This site belongs to an independent Herbalife Nutrition distributor. Products are 100% original.
+This site belongs to an independent Herbal Kapıda Nutrition distributor. Products are 100% original.
 Tip
 Track order
 Track shipment
@@ -506,7 +506,7 @@ Verifying…
 Version {version}
 View IBANs
 Water, meals, and measurements in your account; progress with coach approval.
-We bring original Herbalife products, value bundles, and one-to-one nutrition guidance together.
+We bring original Herbal Kapıda products, value bundles, and one-to-one nutrition guidance together.
 We couldn't find that product
 We match your payment to your order
 We offer gift bundles for your goal (weight, sport, general wellness). Free product advice is available on WhatsApp.
@@ -520,7 +520,7 @@ Wire transfer · EFT
 Wondering about delivery time? Ask us.
 Write to us for product advice, orders, and nutrition tracking. {brand} — independent distributor.
 Yes, cash or card on delivery may be offered. Choose the available method at checkout.
-Yes. Products sold are original Herbalife products. This site belongs to an independent Herbalife Nutrition distributor.
+Yes. Products sold are original Herbal Kapıda products. This site belongs to an independent Herbal Kapıda Nutrition distributor.
 You might also like
 You signed in with Google. You can set a password here and then sign in with email too. Your Google link stays active.
 You will not be able to sign in. Order history remains in store records for the legal retention period.
@@ -552,7 +552,7 @@ sets
 text.
 with you
 you@example.com
-{brand} — independent Herbalife distributor.
+{brand} — independent Herbal Kapıda distributor.
 {count} reviews
 {days}-day returns
 {minutes} min

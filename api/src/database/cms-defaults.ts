@@ -5,7 +5,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     name: 'Herbal Kapıda',
     slogan: 'Daha sağlıklı, daha mutlu bir yaşam',
     tagline:
-      'Bağımsız distribütör rehberliğinde orijinal Herbalife ürünleri ve kişiselleştirilmiş beslenme desteği.',
+      'Bağımsız distribütör rehberliğinde orijinal Herbal Kapıda ürünleri ve kişiselleştirilmiş beslenme desteği.',
     established: '2024’ten beri',
     location: 'Türkiye',
     logoUrl: '',
@@ -13,7 +13,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     distributorTitle: 'Bağımsız Distribütör',
     distributorCode: '',
     legalDisclaimer:
-      'Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir. Herbalife Nutrition resmi sitesi değildir. Ürünler orijinal Herbalife ürünleridir.',
+      'Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir. Herbal Kapıda Nutrition resmi sitesi değildir. Ürünler orijinal Herbal Kapıda ürünleridir.',
   },
   contact: {
     address: 'Türkiye — [Yayın öncesi gerçek adres]',
@@ -26,12 +26,12 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     longitude: '',
   },
   seo: {
-    title: 'Herbal Kapıda | Orijinal Herbalife Ürünleri',
+    title: 'Herbal Kapıda | Orijinal Herbal Kapıda Ürünleri',
     description:
-      'Orijinal Herbalife ürünleri, avantajlı setler ve kişiselleştirilmiş beslenme danışmanlığı. Bağımsız distribütör Herbal Kapıda — herbalkapida.com.',
+      'Orijinal Herbal Kapıda ürünleri, avantajlı setler ve kişiselleştirilmiş beslenme danışmanlığı. Bağımsız distribütör Herbal Kapıda — herbalkapida.com.',
     keywords: [
       'Herbal Kapıda',
-      'Herbalife',
+      'Herbal Kapıda',
       'Formül 1',
       'kilo kontrolü',
       'protein shake',
@@ -119,7 +119,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
   },
   footer: {
     description:
-      'Herbal Kapıda ile orijinal Herbalife ürünleri, avantajlı setler ve birebir beslenme desteği.',
+      'Herbal Kapıda ile orijinal Herbal Kapıda ürünleri, avantajlı setler ve birebir beslenme desteği.',
     copyrightSuffix: 'Bağımsız Distribütör',
   },
   localization: {
@@ -207,13 +207,13 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     supplementDisclaimer:
       'Bu ürünler gıda takviyesidir; hastalıkların teşhis, tedavi veya önlenmesi amacıyla kullanılmaz. Dengeli ve çeşitli beslenme ile sağlıklı yaşam tarzı önemlidir. Hamileler, emzirenler ve kronik rahatsızlığı olanlar kullanmadan önce hekimine danışmalıdır.',
     weightDisclaimer:
-      'Kilo kontrolü ve vücut kompozisyonu sonuçları kişiden kişiye değişir; tek başına ürün kullanımı yeterli değildir. Kalori alımı, fiziksel aktivite ve düzenli takip birlikte değerlendirilmelidir. Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir.',
+      'Kilo kontrolü ve vücut kompozisyonu sonuçları kişiden kişiye değişir; tek başına ürün kullanımı yeterli değildir. Kalori alımı, fiziksel aktivite ve düzenli takip birlikte değerlendirilmelidir. Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir.',
   },
   membership: {
-    ctaLabel: 'Resmi Herbalife üyeliği',
-    ctaUrl: 'https://www.myherbalife.com',
+    ctaLabel: 'Resmi Herbal Kapıda üyeliği',
+    ctaUrl: 'https://www.myherbalkapida.com',
     disclaimer:
-      'Herbalife Nutrition distribütörü olmak için kayıt yalnızca resmi myHerbalife platformu üzerinden yapılır. Bu site bağımsız bir distribütör sitesidir.',
+      'Herbal Kapıda Nutrition distribütörü olmak için kayıt yalnızca resmi myHerbal Kapıda platformu üzerinden yapılır. Bu site bağımsız bir distribütör sitesidir.',
   },
 };
 
@@ -232,7 +232,7 @@ export const DEFAULT_HOME_SECTIONS: Array<{
     content: {
       eyebrow: 'Resmi Bağımsız Distribütör Güvencesi',
       headline: 'Daha Sağlıklı, Daha Mutlu Bir Yaşama Adım Atın',
-      body: 'Kişiselleştirilmiş beslenme programları, sürdürülebilir kilo kontrolü ve %100 orijinal Herbalife ürünleri.',
+      body: 'Kişiselleştirilmiş beslenme programları, sürdürülebilir kilo kontrolü ve %100 orijinal Herbal Kapıda ürünleri.',
       ctaLabel: 'Popüler Paketleri Keşfet',
       ctaHref: '/urunler/kategori/avantajli-setler',
       secondaryCtaLabel: 'Ücretsiz Danışmanlık Al',
@@ -264,7 +264,7 @@ export const DEFAULT_HOME_SECTIONS: Array<{
         {
           question: 'Ürünler orijinal mi?',
           answer:
-            'Evet. Satılan ürünler orijinal Herbalife ürünleridir. Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir.',
+            'Evet. Satılan ürünler orijinal Herbal Kapıda ürünleridir. Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir.',
         },
         {
           question: 'Hangi paketi seçmeliyim?',
@@ -294,7 +294,7 @@ export const DEFAULT_HOME_SECTIONS: Array<{
       imageUrl: '',
       title: 'Hakkımızda',
       seoDescription:
-        'Herbal Kapıda — bağımsız Herbalife distribütörü ile orijinal ürünler ve kişiselleştirilmiş beslenme desteği.',
+        'Herbal Kapıda — bağımsız Herbal Kapıda distribütörü ile orijinal ürünler ve kişiselleştirilmiş beslenme desteği.',
     },
     sortOrder: 1,
     isPublished: true,
@@ -307,7 +307,7 @@ export const DEFAULT_HOME_SECTIONS: Array<{
       titleLine1: 'Sağlıklı yaşam',
       titleLine2: 'yanınızda',
       paragraphs: [
-        'Herbal Kapıda olarak orijinal Herbalife ürünlerini, avantajlı paketleri ve birebir beslenme danışmanlığını bir arada sunuyoruz.',
+        'Herbal Kapıda olarak orijinal Herbal Kapıda ürünlerini, avantajlı paketleri ve birebir beslenme danışmanlığını bir arada sunuyoruz.',
         'Amacımız hedefinize uygun program, sürdürülebilir alışkanlıklar ve güvenilir ürün erişimi sağlamaktır.',
         'Ürün seçimi veya wellness takibi için WhatsApp ve iletişim kanallarımızdan bize ulaşabilirsiniz.',
       ],

@@ -35,7 +35,7 @@ export async function getSeoLabels(): Promise<SeoLabels> {
     pageSuffix: seoTemplate(t.raw("pageSuffix"), " · Page {page}"),
     aboutJsonLdDescription: seoTemplate(
       t.raw("aboutJsonLdDescription"),
-      "{brand} — independent Herbalife distributor.",
+      "{brand} — independent Herbal Kapıda distributor.",
     ),
     keywordsCatalogDefault: seoKeywordArray(t.raw("keywordsCatalogDefault")),
     keywordsCategoryExtra: seoKeywordArray(t.raw("keywordsCategoryExtra")),

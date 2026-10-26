@@ -75,9 +75,9 @@ jobs:
         run: |
           pick() { local a="$1" b="$2" d="$3"; if [ -n "$a" ]; then echo "$a"; elif [ -n "$b" ]; then echo "$b"; else echo "$d"; fi; }
           {
-            echo "api=$(pick "$V_API" "$S_API" "https://api.herbalife.com.tr")"
-            echo "site=$(pick "$V_SITE" "$S_SITE" "https://herbalife.com.tr")"
-            echo "admin=$(pick "$V_ADMIN" "$S_ADMIN" "https://admin.herbalife.com.tr")"
+            echo "api=$(pick "$V_API" "$S_API" "https://api.herbalkapida.com")"
+            echo "site=$(pick "$V_SITE" "$S_SITE" "https://herbalkapida.com")"
+            echo "admin=$(pick "$V_ADMIN" "$S_ADMIN" "https://admin.herbalkapida.com")"
             echo "cdn=$(pick "$V_CDN" "$S_CDN" "")"
             echo "ga4=${V_GA4}"
             echo "gtm=${V_GTM}"
@@ -190,7 +190,7 @@ jobs:
           P: ${{ secrets.DEPLOY_PATH }}
           PORT: ${{ secrets.DEPLOY_PORT }}
         run: |
-          echo "path=${P:-/opt/herballife}" >> "$GITHUB_OUTPUT"
+          echo "path=${P:-/opt/herbalkapida}" >> "$GITHUB_OUTPUT"
           echo "port=${PORT:-22}" >> "$GITHUB_OUTPUT"
 
       - name: Sync files to server
@@ -241,7 +241,7 @@ jobs:
             fi
 
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
-            export HERBALIFE_USE_REGISTRY=1
+            export HERBAL_KAPIDA_USE_REGISTRY=1
             export IMAGE_TAG GHCR_OWNER GHCR_REPO
             export SEED_ON_DEPLOY="${SEED_FLAG:-0}"
             bash deploy/deploy.sh

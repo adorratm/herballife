@@ -218,7 +218,7 @@ table{width:100%;border-collapse:collapse;margin-top:20px}
 td,th{border:1px solid #ccc;padding:8px;font-size:13px;text-align:left}
 .meta{color:#666;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
 </style></head><body>
-<p class="meta">Herbalife // e-Arşiv (XML)</p>
+<p class="meta">Herbal Kapıda // e-Arşiv (XML)</p>
 <h1>${escapeHtml(invoiceNumber)}</h1>
 <p>Tarih: ${escapeHtml(issueDate)} · ${escapeHtml(currency)}</p>
 <p><strong>Satıcı:</strong> ${escapeHtml(supplier)}</p>

@@ -1,4 +1,4 @@
-const TOKEN_KEY = 'herbalife_admin_token';
+const TOKEN_KEY = 'herbalkapida_admin_token';
 
 export function getToken(): string | null {
   if (typeof window === 'undefined') return null;

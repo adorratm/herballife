@@ -332,7 +332,7 @@ export class InvoiceEmailService {
     if (!row) {
       row = await this.em.save(
         this.em.create(AccountingSettings, {
-          companyTitle: 'Herbalife',
+          companyTitle: 'Herbal Kapıda',
         }),
       );
     }

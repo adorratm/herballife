@@ -2,7 +2,7 @@
 # Zero-downtime production deploy (GHCR veya yerel build).
 # Kullanım:
 #   bash deploy/deploy.sh
-#   HERBALIFE_USE_REGISTRY=1 IMAGE_TAG=sha-abc123 bash deploy/deploy.sh
+#   HERBAL_KAPIDA_USE_REGISTRY=1 IMAGE_TAG=sha-abc123 bash deploy/deploy.sh
 #   SEED_ON_DEPLOY=1 bash deploy/deploy.sh   # zorla seed
 set -euo pipefail
 
@@ -13,7 +13,7 @@ COMPOSE=(docker compose -f docker-compose.prod.yml --env-file deploy/.env)
 HEALTH_TIMEOUT_SEC="${HEALTH_TIMEOUT_SEC:-180}"
 IMAGE_TAG="${IMAGE_TAG:-latest}"
 GHCR_OWNER="${GHCR_OWNER:-${GITHUB_REPOSITORY_OWNER:-adorratm}}"
-GHCR_REPO="${GHCR_REPO:-${GITHUB_REPOSITORY_NAME:-herballife}}"
+GHCR_REPO="${GHCR_REPO:-${GITHUB_REPOSITORY_NAME:-herbalkapida}}"
 # ghcr.io zorunlu küçük harf
 GHCR_OWNER="$(echo "$GHCR_OWNER" | tr '[:upper:]' '[:lower:]')"
 GHCR_REPO="$(echo "$GHCR_REPO" | tr '[:upper:]' '[:lower:]')"
@@ -57,7 +57,7 @@ mkdir -p frontend/public/downloads deploy/artifacts
 
 # ── Redis AOF onarım (opsiyonel) ──────────────────────────────────────────────
 repair_redis_aof() {
-  if ! docker ps --format '{{.Names}}' | grep -qx herbalife-prod-redis; then
+  if ! docker ps --format '{{.Names}}' | grep -qx herbalkapida-prod-redis; then
     return 0
   fi
   if ! "${COMPOSE[@]}" exec -T redis redis-cli ping 2>/dev/null | grep -qi pong; then
@@ -69,20 +69,20 @@ repair_redis_aof() {
 }
 
 # ── Image etiketleri ──────────────────────────────────────────────────────────
-LOCAL_API="herbalife-prod-api"
-LOCAL_FE="herbalife-prod-frontend"
-LOCAL_ADMIN="herbalife-prod-admin"
+LOCAL_API="herbalkapida-prod-api"
+LOCAL_FE="herbalkapida-prod-frontend"
+LOCAL_ADMIN="herbalkapida-prod-admin"
 
 tag_exists() {
   docker image inspect "$1" >/dev/null 2>&1
 }
 
 compose_network() {
-  # name: herbalife-prod + networks.herbalife → herbalife-prod_herbalife
+  # name: herbalkapida-prod + networks.herbalkapida → herbalkapida-prod_herbalkapida
   local n
-  n="$(docker network ls --format '{{.Name}}' | grep -E '^herbalife-prod_herbalife$' || true)"
+  n="$(docker network ls --format '{{.Name}}' | grep -E '^herbalkapida-prod_herbalkapida$' || true)"
   if [[ -z "$n" ]]; then
-    n="$(docker inspect herbalife-prod-postgres -f '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}' 2>/dev/null || true)"
+    n="$(docker inspect herbalkapida-prod-postgres -f '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}' 2>/dev/null || true)"
   fi
   [[ -n "$n" ]] || die "Docker ağı bulunamadı (postgres ayakta mı?)"
   printf '%s' "$n"
@@ -184,7 +184,7 @@ wait_healthy postgres || die "postgres healthy değil"
 wait_healthy redis || die "redis healthy değil"
 
 # ── 2) Image pull / build ─────────────────────────────────────────────────────
-if [[ "${HERBALIFE_USE_REGISTRY:-0}" == "1" ]]; then
+if [[ "${HERBAL_KAPIDA_USE_REGISTRY:-0}" == "1" ]]; then
   log "GHCR pull: ${REGISTRY_PREFIX}:{api,frontend,admin}:${IMAGE_TAG}"
   docker pull "${REGISTRY_PREFIX}/api:${IMAGE_TAG}"
   docker pull "${REGISTRY_PREFIX}/frontend:${IMAGE_TAG}"
@@ -234,12 +234,12 @@ if [[ "${SEED_ON_DEPLOY:-0}" == "1" ]]; then
   log "SEED_ON_DEPLOY=1 — seed zorlanıyor"
 else
   product_count="$("${COMPOSE[@]}" exec -T postgres \
-    psql -U "${POSTGRES_USER:-herbalife}" -d "${POSTGRES_DB:-herbalife}" -tAc \
+    psql -U "${POSTGRES_USER:-herbalkapida}" -d "${POSTGRES_DB:-herbalkapida}" -tAc \
     "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='product';" \
     2>/dev/null | tr -d '[:space:]' || echo 0)"
   if [[ "${product_count}" == "1" ]]; then
     rows="$("${COMPOSE[@]}" exec -T postgres \
-      psql -U "${POSTGRES_USER:-herbalife}" -d "${POSTGRES_DB:-herbalife}" -tAc \
+      psql -U "${POSTGRES_USER:-herbalkapida}" -d "${POSTGRES_DB:-herbalkapida}" -tAc \
       "SELECT COUNT(*) FROM product;" 2>/dev/null | tr -d '[:space:]' || echo 0)"
     if [[ "${rows}" == "0" || -z "${rows}" ]]; then
       should_seed=1
@@ -275,4 +275,4 @@ recreate_rolling frontend "$LOCAL_FE"
 recreate_rolling admin "$LOCAL_ADMIN"
 
 log "Tamam — api/frontend/admin healthy"
-log "Image tag: ${IMAGE_TAG} (registry=${HERBALIFE_USE_REGISTRY:-0})"
+log "Image tag: ${IMAGE_TAG} (registry=${HERBAL_KAPIDA_USE_REGISTRY:-0})"

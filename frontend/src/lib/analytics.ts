@@ -162,7 +162,7 @@ export function trackPurchase(order: {
   googleAdsId?: string;
 }) {
   if (typeof window === "undefined") return;
-  const key = `herbalife_purchase_tracked_${order.id}`;
+  const key = `herbalkapida_purchase_tracked_${order.id}`;
   if (sessionStorage.getItem(key)) return;
   sessionStorage.setItem(key, "1");
 

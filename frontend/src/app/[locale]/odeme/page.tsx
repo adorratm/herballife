@@ -505,14 +505,14 @@ export default function CheckoutPage() {
 
       if (result.orderId) {
         try {
-          sessionStorage.setItem("herbalife_last_order_id", result.orderId);
+          sessionStorage.setItem("herbalkapida_last_order_id", result.orderId);
           sessionStorage.setItem(
-            "herbalife_last_order_email",
+            "herbalkapida_last_order_email",
             form.customerEmail.trim(),
           );
           if (result.orderNumber) {
             sessionStorage.setItem(
-              "herbalife_last_order_number",
+              "herbalkapida_last_order_number",
               result.orderNumber,
             );
           }

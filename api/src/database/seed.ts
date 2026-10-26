@@ -671,7 +671,7 @@ async function seed() {
       tags: ['setler', 'rehber'],
       seoTitle: 'Avantajlı Set Seçim Rehberi',
       seoDescription:
-        'Herbalife avantajlı set seçerken hedef, hediye ve program nasıl değerlendirilir?',
+        'Herbal Kapıda avantajlı set seçerken hedef, hediye ve program nasıl değerlendirilir?',
       relatedProductSlugs: ['2026-paket-1-shaker-hediyeli'],
       relatedCategorySlugs: ['avantajli-setler'],
     },
@@ -735,7 +735,7 @@ async function seed() {
       tags: ['başlangıç', 'takip', 'setler'],
       seoTitle: 'Yeni Başlayanlar İçin İlk Hafta',
       seoDescription:
-        'Herbalife setiyle ilk hafta rutini: su, öğün ve koç takibi.',
+        'Herbal Kapıda setiyle ilk hafta rutini: su, öğün ve koç takibi.',
       relatedProductSlugs: ['2026-paket-1-shaker-hediyeli'],
       relatedCategorySlugs: ['avantajli-setler'],
     },

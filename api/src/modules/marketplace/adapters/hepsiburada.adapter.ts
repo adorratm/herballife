@@ -76,7 +76,7 @@ export class HepsiburadaAdapter implements IMarketplaceAdapter {
       credentials.userAgent?.trim() ||
       credentials.developerUsername?.trim() ||
       this.config.get<string>('marketplace.hepsiburada.userAgent') ||
-      'herbalife_dev';
+      'herbalkapida_dev';
     return {
       merchantId: merchantId,
       Authorization: basicAuthHeader(username, password),
@@ -523,7 +523,7 @@ export class HepsiburadaAdapter implements IMarketplaceAdapter {
     ) {
       throw new BadRequestException({
         message:
-          'Hepsiburada Marka alanı merchantId/UUID olamaz. credentials.brand = HB satıcı panelindeki marka adı olmalı (ör. "Herbalife").',
+          'Hepsiburada Marka alanı merchantId/UUID olamaz. credentials.brand = HB satıcı panelindeki marka adı olmalı (ör. "Herbal Kapıda").',
         receivedBrand: brand,
         hint: 'Admin → Pazaryeri → credentials JSON içinde "brand" değerini düzeltin.',
       });

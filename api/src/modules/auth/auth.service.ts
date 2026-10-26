@@ -503,7 +503,7 @@ export class AuthService {
       const frontendUrl = resolveFrontendUrl(this.config);
       const locale = dto.locale || 'tr';
       const resetUrl = `${storefrontHref(frontendUrl, locale, 'resetPassword')}?token=${encodeURIComponent(token)}`;
-      const appResetUrl = `herbalifeops://reset-password?token=${encodeURIComponent(token)}`;
+      const appResetUrl = `herbalkapidaops://reset-password?token=${encodeURIComponent(token)}`;
       const name = [user.firstName, user.lastName]
         .filter(Boolean)
         .join(' ')

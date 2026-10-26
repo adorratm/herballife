@@ -95,10 +95,10 @@ export function WhatsAppChat({
       setLiftForCookie(!readCookieConsent());
     }
     syncCookieLift();
-    window.addEventListener("herbalife:cookie-consent", syncCookieLift);
+    window.addEventListener("herbalkapida:cookie-consent", syncCookieLift);
     window.addEventListener("storage", syncCookieLift);
     return () => {
-      window.removeEventListener("herbalife:cookie-consent", syncCookieLift);
+      window.removeEventListener("herbalkapida:cookie-consent", syncCookieLift);
       window.removeEventListener("storage", syncCookieLift);
     };
   }, []);
@@ -121,7 +121,7 @@ export function WhatsAppChat({
           : 96; /* animasyon öncesi yedek */
       }
       window.dispatchEvent(
-        new CustomEvent("herbalife:wa-popup", {
+        new CustomEvent("herbalkapida:wa-popup", {
           detail: { visible: show && heightPx > 0, heightPx },
         }),
       );
@@ -146,7 +146,7 @@ export function WhatsAppChat({
       cancelAnimationFrame(raf);
       ro?.disconnect();
       window.dispatchEvent(
-        new CustomEvent("herbalife:wa-popup", {
+        new CustomEvent("herbalkapida:wa-popup", {
           detail: { visible: false, heightPx: 0 },
         }),
       );

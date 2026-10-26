@@ -10,7 +10,7 @@
 - [ ] Mobil hamburger: Blog, Koçluk, Medya, İletişim, SSS, Sipariş sorgula
 - [ ] Ürünler mobil: filtre varsayılan kapalı, “Filtrele / Ara” ile açılır
 - [ ] Marka adı Herbal Kapıda (admin + vitrin); Emine / Herbal Ürünleri yok
-- [ ] Site Ayarları’nda `distributorCode` (Herbalife ID); doluysa logo yanı + ürün detay
+- [ ] Site Ayarları’nda `distributorCode` (Herbal Kapıda ID); doluysa logo yanı + ürün detay
 
 ## Faz B — i18n
 
@@ -25,14 +25,14 @@
 - [ ] Kampanya geçerlilik tarih şeridi (startsAt/endsAt varsa)
 - [ ] Benefits: aynı gün kargo / koçluk / iade günü CMS’ten
 - [ ] Footer + ürün detay takviye / kilo disclaimer
-- [ ] myHerbalife üyelik CTA + yasal uyarı
+- [ ] myHerbal Kapıda üyelik CTA + yasal uyarı
 - [ ] Kategori hub ürün sayısı
 - [ ] Footer’da distributorCode
 
 ## Operasyon
 
 1. API restart + `DATABASE_SYNCHRONIZE=true` (dev) veya migration  
-2. Kök dizinde `yarn seed` (workspace `@herbalife/api` seed + i18n migrate)  
+2. Kök dizinde `yarn seed` (workspace `@herbalkapida/api` seed + i18n migrate)  
 3. Admin → Site Ayarları: marka Herbal Kapıda, distributorCode (gelince), promises/legal  
 4. Frontend `/tr` ve `/en` smoke test  
 

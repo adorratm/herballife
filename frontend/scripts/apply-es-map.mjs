@@ -9,7 +9,7 @@ const enPath = path.join(root, "en.json");
 const esPath = path.join(root, "es.json");
 
 const EXACT_OK = new Set([
-  "Herbalife",
+  "Herbal Kapıda",
   "PayTR",
   "WhatsApp",
   "Google",
@@ -80,7 +80,7 @@ const TRANSLATIONS = {
   "checkout.shippingProviderHeading": "Transportista",
   "home.fallbackFaqItems[0].question": "¿Los productos son originales?",
   "home.fallbackFaqItems[0].answer":
-    "Sí. Los productos vendidos son originales de Herbalife Nutrition. Este sitio pertenece a un distribuidor independiente; no es el sitio oficial de Herbalife.",
+    "Sí. Los productos vendidos son originales de Herbal Kapıda Nutrition. Este sitio pertenece a un distribuidor independiente; no es el sitio oficial de Herbal Kapıda.",
   "home.fallbackFaqItems[1].question": "¿Cuánto tarda el envío?",
   "home.fallbackFaqItems[1].answer":
     "Tras confirmar el pago, los pedidos suelen enviarse en 1–3 días laborables. Compartimos el código de seguimiento en tu notificación.",

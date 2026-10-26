@@ -1,6 +1,6 @@
 # GitHub Secrets & Variables
 
-`main` / `master` push → GHCR build → SSH zero-downtime deploy.
+`main` / `master` push → GHCR build → SSH zero-downtime deploy (**herbalkapida.com**).
 
 **Settings → Secrets and variables → Actions**  
 (veya **Environments → production** — workflow `environment: production` kullanır)
@@ -20,7 +20,7 @@ Bu üçü girilince pipeline deploy adımına geçer. Eksikse build yine GHCR’
 | Secret | Varsayılan | Açıklama |
 |--------|------------|----------|
 | `DEPLOY_PORT` | `22` | SSH port |
-| `DEPLOY_PATH` | `/opt/herballife` | Proje kökü (compose + deploy/) |
+| `DEPLOY_PATH` | `/opt/herbalkapida` | Proje kökü (compose + deploy/) |
 | `DEPLOY_SSH_PASSPHRASE` | — | Key passphrase varsa |
 | `DEPLOY_ENV` | — | İlk kurulumda `deploy/.env` içeriği (çok satır). Yoksa örnek dosya kopyalanır |
 | `GHCR_PULL_TOKEN` | `GITHUB_TOKEN` | Sunucuda `docker pull` için PAT (`read:packages`) |
@@ -32,14 +32,14 @@ Frontend/admin image’a gömülür. **Variables** veya Secrets:
 
 | Name | Örnek |
 |------|--------|
-| `NEXT_PUBLIC_SITE_URL` | `https://herbalife.com.tr` |
-| `NEXT_PUBLIC_API_URL` | `https://api.herbalife.com.tr` |
-| `NEXT_PUBLIC_ADMIN_URL` | `https://admin.herbalife.com.tr` |
+| `NEXT_PUBLIC_SITE_URL` | `https://herbalkapida.com` |
+| `NEXT_PUBLIC_API_URL` | `https://api.herbalkapida.com` |
+| `NEXT_PUBLIC_ADMIN_URL` | `https://admin.herbalkapida.com` |
 | `NEXT_PUBLIC_CDN_URL` | CDN base (opsiyonel) |
 | `NEXT_PUBLIC_GTM_ID` / `GA4` / Ads / Meta / site verification | opsiyonel |
 | `AWS_REGION` | `eu-central-1` |
 
-Boş bırakılırsa Dockerfile varsayılanları (`herbalife.com.tr`) kullanılır.
+Boş bırakılırsa Dockerfile varsayılanları (`herbalkapida.com`) kullanılır.
 
 ## Opsiyonel AWS (build args)
 
@@ -56,19 +56,20 @@ sudo apt-get update && sudo apt-get install -y docker.io docker-compose-v2
 sudo usermod -aG docker "$USER"
 
 # Deploy dizini
-sudo mkdir -p /opt/herballife && sudo chown "$USER":"$USER" /opt/herballife
+sudo mkdir -p /opt/herbalkapida && sudo chown "$USER":"$USER" /opt/herbalkapida
 
 # SSH: public key → ~/.ssh/authorized_keys
 ```
 
-Nginx / TLS: [DEMO.md](./DEMO.md). Canlı checklist: [GO_LIVE.md](./GO_LIVE.md).
+Ubuntu sunucu kurulumu (Docker, DNS, Nginx, ne girilir): [SERVER_SETUP.md](./SERVER_SETUP.md).  
+Nginx / TLS checklist: [GO_LIVE.md](./GO_LIVE.md). Geçici sunum: [DEMO.md](./DEMO.md).
 
 ## İlk yayın davranışı
 
-1. GHCR: `ghcr.io/<owner>/herballife/{api,frontend,admin}:sha-…` + `:latest`
+1. GHCR: `ghcr.io/<owner>/herbalkapida/{api,frontend,admin}:sha-…` + `:latest`
 2. Sunucuya compose + `deploy.sh` kopyalanır
-3. `deploy/.env` yoksa `DEPLOY_ENV` veya örnek dosya
-4. Pull → migrate → **boş DB ise seed** (demo ürün/kategori/CMS)
+3. `deploy/.env` yoksa `DEPLOY_ENV` veya örnek dosya (`info@herbalkapida.com` mail varsayılanları)
+4. Pull → migrate → **boş DB ise seed** (mevcut katalog / CMS verileri)
 5. api → frontend → admin sırayla recreate + health; fail → `:rollback`
 
 Manuel seed zorla: Actions → **Build & Deploy** → `seed: true`.
@@ -77,7 +78,7 @@ Yerel (registry’siz):
 
 ```bash
 cp deploy/.env.production.example deploy/.env
-# JWT_SECRET / POSTGRES_PASSWORD düzenle
+# JWT_SECRET / POSTGRES_PASSWORD / MAIL_* düzenle
 bash deploy/deploy.sh
 ```
 

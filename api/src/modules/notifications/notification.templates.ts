@@ -27,7 +27,7 @@ export type NotificationTemplateContext = {
 
 const BRAND = 'Herbal Kapıda';
 const BRAND_EMAIL = 'info@herbalkapida.com';
-const BRAND_PHONE = '+90 541 214 79 63';
+const BRAND_PHONE = '+90 555 111 22 33';
 const DEFAULT_SITE_URL = 'https://herbalkapida.com';
 
 function isLoopbackHost(url: string): boolean {
@@ -364,7 +364,7 @@ export function renderBrandedEmail(input: {
   metaRows?: { label: string; value: string }[];
   /** Önceden escape edilmiş / güvenli HTML (sipariş tablosu vb.) */
   extraHtml?: string;
-  /** Logo için vitrin kök URL (https://herbalife.com.tr) */
+  /** Logo için vitrin kök URL (https://herbalkapida.com) */
   siteUrl?: string;
   locale?: string | null;
 }): string {
@@ -523,7 +523,7 @@ export function buildEmailContent(
       const adminBase = (
         ctx.adminUrl ||
         process.env.ADMIN_URL ||
-        'https://admin.herbalife.com.tr'
+        'https://admin.herbalkapida.com'
       ).replace(/\/$/, '');
       const opsDetailsHtml = buildOrderDetailsHtml(ctx.order, {
         includePersonal: true,

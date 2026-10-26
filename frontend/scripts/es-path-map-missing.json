@@ -100,9 +100,9 @@
     "tr": "Sık birlikte alınanlar"
   },
   {
-    "path": "product.specHerbalifeId",
-    "en": "Herbalife ID",
-    "tr": "Herbalife ID"
+    "path": "product.specHerbal KapıdaId",
+    "en": "Herbal Kapıda ID",
+    "tr": "Herbal Kapıda ID"
   },
   {
     "path": "product.specKind",
@@ -1621,8 +1621,8 @@
   },
   {
     "path": "faqPage.fallbackItems[0].answer",
-    "en": "Yes. Products sold are original Herbalife products. This site belongs to an independent Herbalife Nutrition distributor.",
-    "tr": "Evet. Satılan ürünler orijinal Herbalife ürünleridir. Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir."
+    "en": "Yes. Products sold are original Herbal Kapıda products. This site belongs to an independent Herbal Kapıda Nutrition distributor.",
+    "tr": "Evet. Satılan ürünler orijinal Herbal Kapıda ürünleridir. Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir."
   },
   {
     "path": "faqPage.fallbackItems[1].answer",
@@ -1876,8 +1876,8 @@
   },
   {
     "path": "seo.aboutJsonLdDescription",
-    "en": "{brand} — independent Herbalife distributor.",
-    "tr": "{brand} — bağımsız Herbalife distribütörü."
+    "en": "{brand} — independent Herbal Kapıda distributor.",
+    "tr": "{brand} — bağımsız Herbal Kapıda distribütörü."
   },
   {
     "path": "seo.keywordsCatalogDefault[0]",
@@ -1926,8 +1926,8 @@
   },
   {
     "path": "aboutPage.fallbackHeroSeo",
-    "en": "Original products, gift bundles, and personalized nutrition support with an independent Herbalife distributor.",
-    "tr": "Herbal Kapıda — bağımsız Herbalife distribütörü ile orijinal ürünler, avantajlı setler ve kişiselleştirilmiş beslenme desteği."
+    "en": "Original products, gift bundles, and personalized nutrition support with an independent Herbal Kapıda distributor.",
+    "tr": "Herbal Kapıda — bağımsız Herbal Kapıda distribütörü ile orijinal ürünler, avantajlı setler ve kişiselleştirilmiş beslenme desteği."
   },
   {
     "path": "aboutPage.fallbackBodyLine1",
@@ -1941,8 +1941,8 @@
   },
   {
     "path": "aboutPage.fallbackBodyP1",
-    "en": "We bring original Herbalife products, value bundles, and one-to-one nutrition guidance together.",
-    "tr": "Herbal Kapıda olarak orijinal Herbalife ürünlerini, avantajlı paketleri ve birebir beslenme danışmanlığını bir arada sunuyoruz."
+    "en": "We bring original Herbal Kapıda products, value bundles, and one-to-one nutrition guidance together.",
+    "tr": "Herbal Kapıda olarak orijinal Herbal Kapıda ürünlerini, avantajlı paketleri ve birebir beslenme danışmanlığını bir arada sunuyoruz."
   },
   {
     "path": "aboutPage.fallbackBodyP2",
@@ -1981,8 +1981,8 @@
   },
   {
     "path": "aboutPage.pillarOriginalBody",
-    "en": "100% original Herbalife products with independent distributor assurance.",
-    "tr": "Bağımsız distribütör güvencesiyle %100 orijinal Herbalife ürünleri."
+    "en": "100% original Herbal Kapıda products with independent distributor assurance.",
+    "tr": "Bağımsız distribütör güvencesiyle %100 orijinal Herbal Kapıda ürünleri."
   },
   {
     "path": "aboutPage.pillarProgramTitle",
@@ -2021,8 +2021,8 @@
   },
   {
     "path": "aboutPage.jsonLdDescription",
-    "en": "{brand} — independent Herbalife distributor.",
-    "tr": "{brand} — bağımsız Herbalife distribütörü."
+    "en": "{brand} — independent Herbal Kapıda distributor.",
+    "tr": "{brand} — bağımsız Herbal Kapıda distribütörü."
   },
   {
     "path": "footer.legal",

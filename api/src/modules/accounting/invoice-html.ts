@@ -38,7 +38,7 @@ td,th{border:1px solid #57423d;padding:8px;text-align:left;font-size:13px}
 .meta{color:#a58b84;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
 .accent{color:#cc5b3e}
 </style></head><body>
-<p class="meta">Herbalife // ${escapeHtml(docLabel)}</p>
+<p class="meta">Herbal Kapıda // ${escapeHtml(docLabel)}</p>
 <h1>${escapeHtml(settings.companyTitle)}</h1>
 <p>${escapeHtml(invoice.invoiceNumber)} · ${invoice.issueDate} · <span class="accent">${escapeHtml(docLabel)}</span></p>
 <p>Cari: ${escapeHtml(invoice.party?.title || '—')} ${invoice.party?.taxNumber || ''}</p>

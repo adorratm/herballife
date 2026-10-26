@@ -1,5 +1,5 @@
-# Herbalife — production (Hetzner / paylaşımlı VPS)
-# Tercih: CI → GHCR (HERBALIFE_USE_REGISTRY=1). Yerel compose build son çare.
+# Herbal Kapıda — production herbalkapida.com (Hetzner / paylaşımlı VPS)
+# Tercih: CI → GHCR (HERBAL_KAPIDA_USE_REGISTRY=1). Yerel compose build son çare.
 # Host portları TTEN (3000/4000) ve Portfolio (3100–3102 / 5433 / 6380) ile çakışmaz.
 # Kullanım: bash deploy/deploy.sh
 #
@@ -9,7 +9,7 @@
 # 3) Boş DB ise seed (varsayılan demo veriler)
 # 4) Servisleri tek tek recreate + health; fail → :rollback image
 
-name: herbalife-prod
+name: herbalkapida-prod
 
 x-api-build: &api-build
   context: .
@@ -18,17 +18,17 @@ x-api-build: &api-build
 services:
   postgres:
     image: postgres:18-alpine
-    container_name: herbalife-prod-postgres
+    container_name: herbalkapida-prod-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-herbalife}
+      POSTGRES_USER: ${POSTGRES_USER:-herbalkapida}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB:-herbalife}
+      POSTGRES_DB: ${POSTGRES_DB:-herbalkapida}
     ports:
       - "${POSTGRES_HOST_PORT:-5434}:5432"
     # PG18+: mount parent dir (data → /var/lib/postgresql/18/docker)
     volumes:
-      - herbalife_postgres_data:/var/lib/postgresql
+      - herbalkapida_postgres_data:/var/lib/postgresql
     healthcheck:
       test:
         [
@@ -40,11 +40,11 @@ services:
       retries: 12
       start_period: 20s
     networks:
-      - herbalife
+      - herbalkapida
 
   redis:
     image: redis:7-alpine
-    container_name: herbalife-prod-redis
+    container_name: herbalkapida-prod-redis
     restart: unless-stopped
     # aof-use-rdb-preamble: base RDB + incr; ani kill'de incr bozulabilir (deploy.sh onarır)
     command:
@@ -60,7 +60,7 @@ services:
     ports:
       - "${REDIS_HOST_PORT:-6381}:6379"
     volumes:
-      - herbalife_redis_data:/data
+      - herbalkapida_redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -68,12 +68,12 @@ services:
       retries: 12
       start_period: 15s
     networks:
-      - herbalife
+      - herbalkapida
 
   api:
-    image: ${API_IMAGE:-herbalife-prod-api:live}
+    image: ${API_IMAGE:-herbalkapida-prod-api:live}
     build: *api-build
-    container_name: herbalife-prod-api
+    container_name: herbalkapida-prod-api
     restart: unless-stopped
     depends_on:
       postgres:
@@ -87,20 +87,20 @@ services:
       API_PORT: 4000
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
-      POSTGRES_USER: ${POSTGRES_USER:-herbalife}
+      POSTGRES_USER: ${POSTGRES_USER:-herbalkapida}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB:-herbalife}
+      POSTGRES_DB: ${POSTGRES_DB:-herbalkapida}
       REDIS_URL: redis://redis:6379
-      FRONTEND_URL: ${FRONTEND_URL:-https://herbalife.com.tr}
-      ADMIN_URL: ${ADMIN_URL:-https://admin.herbalife.com.tr}
-      API_URL: ${API_URL:-https://api.herbalife.com.tr}
+      FRONTEND_URL: ${FRONTEND_URL:-https://herbalkapida.com}
+      ADMIN_URL: ${ADMIN_URL:-https://admin.herbalkapida.com}
+      API_URL: ${API_URL:-https://api.herbalkapida.com}
       DATABASE_SYNCHRONIZE: ${DATABASE_SYNCHRONIZE:-false}
       # Migration deploy.sh one-shot; boot'ta çalıştırma
       DATABASE_MIGRATIONS_RUN: "false"
     ports:
       - "${API_HOST_PORT:-3202}:4000"
     volumes:
-      - herbalife_uploads:/app/api/uploads
+      - herbalkapida_uploads:/app/api/uploads
     healthcheck:
       test:
         [
@@ -114,10 +114,10 @@ services:
       retries: 8
       start_period: 45s
     networks:
-      - herbalife
+      - herbalkapida
 
   frontend:
-    image: ${FRONTEND_IMAGE:-herbalife-prod-frontend:live}
+    image: ${FRONTEND_IMAGE:-herbalkapida-prod-frontend:live}
     build:
       context: .
       dockerfile: docker/frontend.Dockerfile
@@ -134,7 +134,7 @@ services:
         AWS_S3_BUCKET: ${AWS_S3_BUCKET:-}
         AWS_REGION: ${AWS_REGION:-eu-central-1}
         AWS_CDN_URL: ${AWS_CDN_URL:-}
-    container_name: herbalife-prod-frontend
+    container_name: herbalkapida-prod-frontend
     restart: unless-stopped
     depends_on:
       api:
@@ -165,10 +165,10 @@ services:
       retries: 8
       start_period: 60s
     networks:
-      - herbalife
+      - herbalkapida
 
   admin:
-    image: ${ADMIN_IMAGE:-herbalife-prod-admin:live}
+    image: ${ADMIN_IMAGE:-herbalkapida-prod-admin:live}
     build:
       context: .
       dockerfile: docker/admin.Dockerfile
@@ -177,7 +177,7 @@ services:
         NEXT_PUBLIC_ADMIN_URL: ${NEXT_PUBLIC_ADMIN_URL}
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
         NEXT_PUBLIC_CDN_URL: ${NEXT_PUBLIC_CDN_URL:-}
-    container_name: herbalife-prod-admin
+    container_name: herbalkapida-prod-admin
     restart: unless-stopped
     depends_on:
       api:
@@ -202,13 +202,13 @@ services:
       retries: 8
       start_period: 60s
     networks:
-      - herbalife
+      - herbalkapida
 
 volumes:
-  herbalife_postgres_data:
-  herbalife_redis_data:
-  herbalife_uploads:
+  herbalkapida_postgres_data:
+  herbalkapida_redis_data:
+  herbalkapida_uploads:
 
 networks:
-  herbalife:
+  herbalkapida:
     driver: bridge

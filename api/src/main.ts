@@ -67,7 +67,7 @@ async function bootstrap() {
   );
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Herbalife API')
+    .setTitle('Herbal Kapıda API')
     .setDescription('E-ticaret, ödeme, kargo ve pazar yeri API')
     .setVersion('1.0')
     .addBearerAuth()

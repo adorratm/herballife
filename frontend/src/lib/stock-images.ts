@@ -76,6 +76,6 @@ export function isBrokenRemoteImageUrl(url: string): boolean {
     /\/stock\/(hero|ethos|workshop|blog|og|product-\d+)\.jpg/i.test(url) ||
     /herbalurunleri\.com\/upload/i.test(url) ||
     /1781247663/i.test(url) ||
-    /herbalife\.s3\.[^/]+\.amazonaws\.com\/stock\//i.test(url)
+    /herbalkapida\.s3\.[^/]+\.amazonaws\.com\/stock\//i.test(url)
   );
 }

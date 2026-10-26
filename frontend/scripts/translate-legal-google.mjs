@@ -22,7 +22,7 @@ const KEEP = [
   "{{seller.mersis}}",
   "PayTR",
   "KVKK",
-  "Herbalife",
+  "Herbal Kapıda",
 ];
 
 function protect(text) {

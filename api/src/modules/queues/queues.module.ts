@@ -24,7 +24,7 @@ import { ShippingPollScheduler } from '@modules/queues/shipping-poll.scheduler';
 import { ShippingModule } from '@modules/shipping/shipping.module';
 import { User, UserRole } from '@entities/user.entity';
 
-const BULL_BOARD_COOKIE = 'herbalife_bull_board';
+const BULL_BOARD_COOKIE = 'herbalkapida_bull_board';
 
 function readCookie(req: Request, name: string): string | null {
   const raw = req.headers.cookie;

@@ -5,7 +5,7 @@
 - Emine Özberk kaldır; marka **Herbal Kapıda**
 - Domain / e-posta: herbalkapida.com, info@herbalkapida.com
 - Logo yokken metin marka
-- Kahve alanları → Herbalife ürün alanları
+- Kahve alanları → Herbal Kapıda ürün alanları
 - iyzico tamamen kaldır
 - ÖKC tamamen kaldır
 - Faturalar modülü kaldır; siparişten fatura ilet kalır

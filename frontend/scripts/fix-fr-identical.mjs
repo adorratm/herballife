@@ -7,7 +7,7 @@ const listPath = path.join(import.meta.dirname, "fr-identical.txt");
 const mapPath = path.join(import.meta.dirname, "fr-translations-map.json");
 
 const EXACT_OK = new Set([
-  "Herbalife",
+  "Herbal Kapıda",
   "PayTR",
   "WhatsApp",
   "Google",
@@ -24,8 +24,8 @@ const EXACT_OK = new Set([
 ]);
 
 const KEEP = [
-  "Herbalife",
-  "Herbalife Nutrition",
+  "Herbal Kapıda",
+  "Herbal Kapıda Nutrition",
   "PayTR",
   "KVKK",
   "WhatsApp",
@@ -62,7 +62,7 @@ const FORCE = {
   Date: "Date du jour",
   " incl.": " incluse",
   "{minutes} min": "{minutes} min.",
-  "Herbalife ID": "Identifiant Herbalife",
+  "Herbal Kapıda ID": "Identifiant Herbal Kapıda",
   "Order no.": "N° de commande",
   Code: "Code suivi",
   Amount: "Montant",

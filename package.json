@@ -1,5 +1,5 @@
 {
-  "name": "herbalife",
+  "name": "herbalkapida",
   "private": true,
   "workspaces": [
     "api",
@@ -8,16 +8,16 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:api": "yarn workspace @herbalife/api start:dev",
-    "dev:frontend": "yarn workspace @herbalife/frontend dev",
-    "dev:admin": "yarn workspace @herbalife/admin dev",
+    "dev:api": "yarn workspace @herbalkapida/api start:dev",
+    "dev:frontend": "yarn workspace @herbalkapida/frontend dev",
+    "dev:admin": "yarn workspace @herbalkapida/admin dev",
     "build": "yarn workspaces foreach -Apt run build",
-    "build:api": "yarn workspace @herbalife/api build",
-    "build:frontend": "yarn workspace @herbalife/frontend build",
-    "build:admin": "yarn workspace @herbalife/admin build",
-    "seed": "yarn workspace @herbalife/api seed",
-    "migration:run": "yarn workspace @herbalife/api migration:run",
-    "migration:generate": "yarn workspace @herbalife/api migration:generate",
+    "build:api": "yarn workspace @herbalkapida/api build",
+    "build:frontend": "yarn workspace @herbalkapida/frontend build",
+    "build:admin": "yarn workspace @herbalkapida/admin build",
+    "seed": "yarn workspace @herbalkapida/api seed",
+    "migration:run": "yarn workspace @herbalkapida/api migration:run",
+    "migration:generate": "yarn workspace @herbalkapida/api migration:generate",
     "lint": "yarn workspaces foreach -Apt run lint",
     "stock:upload": "node scripts/upload-stock-images.mjs",
     "s3:cors": "node scripts/apply-s3-cors.cjs"

@@ -173,7 +173,7 @@ function GalleryPageInner() {
             {syncing ? 'Senkronize ediliyor…' : 'Instagram senkronize et'}
           </button>
           <p className="mono text-[10px] text-muted">
-            INSTAGRAM_ACCESS_TOKEN gerekir · @herbalife
+            INSTAGRAM_ACCESS_TOKEN gerekir · @herbalkapida
           </p>
         </div>
       </Reveal>

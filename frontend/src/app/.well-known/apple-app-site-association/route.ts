@@ -1,4 +1,4 @@
-const BUNDLE_ID = "tr.herbalife.ops";
+const BUNDLE_ID = "tr.herbalkapida.ops";
 
 export async function GET() {
   const teamId = (

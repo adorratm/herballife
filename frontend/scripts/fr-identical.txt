@@ -2,7 +2,7 @@ header.pages	Pages
 checkout.vatIncluded	 incl.
 checkout.total	Total
 product.stock	Stock
-product.specHerbalifeId	Herbalife ID
+product.specHerbal KapıdaId	Herbal Kapıda ID
 product.specKind	Type
 catalog.sortStock	Stock
 blog.postTag	Article
@@ -91,7 +91,7 @@ faqPage.browseProducts	Browse products
 faqPage.whatsappPrefill	Hello, I have a question beyond the FAQ.
 faqPage.fallbackTitle	Frequently asked questions
 faqPage.fallbackItems[0].question	Are the products genuine?
-faqPage.fallbackItems[0].answer	Yes. Products sold are original Herbalife products. This site belongs to an independent Herbalife Nutrition distributor.
+faqPage.fallbackItems[0].answer	Yes. Products sold are original Herbal Kapıda products. This site belongs to an independent Herbal Kapıda Nutrition distributor.
 faqPage.fallbackItems[1].question	Which bundle should I choose?
 faqPage.fallbackItems[1].answer	We offer gift bundles for your goal (weight, sport, general wellness). Free product advice is available on WhatsApp.
 faqPage.fallbackItems[2].question	How long does shipping take?

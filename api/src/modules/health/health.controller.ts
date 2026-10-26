@@ -10,7 +10,7 @@ export class HealthController {
   check() {
     return {
       status: 'ok',
-      service: 'herbalife-api',
+      service: 'herbalkapida-api',
       timestamp: new Date().toISOString(),
     };
   }

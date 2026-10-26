@@ -82,7 +82,7 @@
       "title": "Rutina saludable en 3 pasos",
       "body": "De la compra al seguimiento — proceso simple, apoyo continuo.",
       "cta": "Empezar por WhatsApp",
-      "disclaimer": "{distributor} · distribuidor Herbalife independiente. No es el sitio oficial de Herbalife.",
+      "disclaimer": "{distributor} · distribuidor Herbal Kapıda independiente. No es el sitio oficial de Herbal Kapıda.",
       "step1Title": "Comparte tu objetivo",
       "step1Body": "Peso, energía o deporte — aclaramos el punto de partida por WhatsApp.",
       "step2Title": "Elige el set adecuado",
@@ -105,7 +105,7 @@
     "faqEyebrow": "Preguntas frecuentes",
     "faqAllLink": "Todas las preguntas",
     "membershipEyebrow": "¿Quieres ser distribuidor?",
-    "membershipFallbackTitle": "Membresía oficial Herbalife",
+    "membershipFallbackTitle": "Membresía oficial Herbal Kapıda",
     "newsletterTitle": "Boletín de promociones",
     "newsletterBody": "Ofertas de sets, regalos y consejos wellness — sin spam, solo valor.",
     "categoryHub": {
@@ -148,7 +148,7 @@
     "fallbackFaqItems": [
       {
         "question": "Are the products genuine?",
-        "answer": "Yes. Products sold are original Herbalife Nutrition products. This site belongs to an independent distributor; not the official Herbalife site."
+        "answer": "Yes. Products sold are original Herbal Kapıda Nutrition products. This site belongs to an independent distributor; not the official Herbal Kapıda site."
       },
       {
         "question": "How long does shipping take?",
@@ -197,7 +197,7 @@
     "emailSaveError": "No se pudo guardar el correo.",
     "trustPaytr": "✓ Pago seguro PayTR 256 bits",
     "trustReturn": "✓ Derecho de desistimiento 14 días",
-    "trustOriginal": "✓ Productos Herbalife originales",
+    "trustOriginal": "✓ Productos Herbal Kapıda originales",
     "upsellEyebrow": "Recomendación",
     "upsellTitle": "Comprados juntos",
     "added": "Añadido al carrito",
@@ -326,7 +326,7 @@
     "relatedWithCategory": "Complete with {name}",
     "relatedDefault": "Often bought together",
     "specCategory": "Category",
-    "specHerbalifeId": "Herbalife ID",
+    "specHerbal KapıdaId": "Herbal Kapıda ID",
     "specKind": "Type",
     "specForm": "Form / type",
     "specHighlight": "Key ingredients",
@@ -433,12 +433,12 @@
     "paymentNotice": "Aviso de pago",
     "bankAccounts": "Cuentas bancarias",
     "myFavorites": "Mis favoritos",
-    "membershipCta": "Membresía oficial Herbalife",
+    "membershipCta": "Membresía oficial Herbal Kapıda",
     "navigation": "Navigation",
     "map": "Map",
     "googleReview": "Google review",
     "whatsappPrefill": "Hello, I'm writing about {brand}.",
-    "legalDisclaimerFallback": "This site belongs to an independent Herbalife Nutrition distributor. Products are 100% original."
+    "legalDisclaimerFallback": "This site belongs to an independent Herbal Kapıda Nutrition distributor. Products are 100% original."
   },
   "locale": {
     "language": "Idioma",
@@ -693,12 +693,12 @@
     "phone": "Teléfono",
     "email": "Correo",
     "waWrite": "Escribir por WhatsApp",
-    "jsonLdDescription": "{brand} — distribuidor independiente de Herbalife.",
+    "jsonLdDescription": "{brand} — distribuidor independiente de Herbal Kapıda.",
     "fallbackHeroTitle": "Sobre nosotros",
-    "fallbackHeroSeo": "Productos originales, packs con regalo y apoyo nutricional personalizado con un distribuidor independiente de Herbalife.",
+    "fallbackHeroSeo": "Productos originales, packs con regalo y apoyo nutricional personalizado con un distribuidor independiente de Herbal Kapıda.",
     "fallbackBodyLine1": "Vida saludable",
     "fallbackBodyLine2": "contigo",
-    "fallbackBodyP1": "Unimos productos originales Herbalife, packs ventajosos y asesoramiento nutricional uno a uno.",
+    "fallbackBodyP1": "Unimos productos originales Herbal Kapıda, packs ventajosos y asesoramiento nutricional uno a uno.",
     "fallbackBodyP2": "Nuestro objetivo no es llenar estanterías al azar — sino el programa adecuado, hábitos sostenibles y un acceso de confianza.",
     "fallbackBodyP3": "Escríbenos por WhatsApp o por nuestros canales para elegir productos, packs o seguimiento wellness.",
     "ctaProducts": "Ver productos",
@@ -707,14 +707,14 @@
     "fallbackEthosQuote": "Los resultados sostenibles llegan con los productos correctos, seguimiento constante y guía personal.",
     "fallbackEthosLink": "Leer artículos",
     "pillarOriginalTitle": "Productos originales",
-    "pillarOriginalBody": "Productos Herbalife 100 % originales con garantía de distribuidor independiente.",
+    "pillarOriginalBody": "Productos Herbal Kapıda 100 % originales con garantía de distribuidor independiente.",
     "pillarProgramTitle": "Programa personal",
     "pillarProgramBody": "Recomendaciones de packs según tu objetivo y coaching por WhatsApp.",
     "pillarTrackingTitle": "Seguimiento de salud",
     "pillarTrackingBody": "Agua, comidas y mediciones en tu cuenta; avanza con la aprobación del coach.",
     "waPrefillAbout": "Hola {brand}, me gustaría saber más sobre vosotros.",
-    "metaDescription": "{brand} — distribuidor independiente de Herbalife.",
-    "metaKeywords": "sobre nosotros, Herbalife, distribuidor independiente, Herbal Kapıda, nutrición",
+    "metaDescription": "{brand} — distribuidor independiente de Herbal Kapıda.",
+    "metaKeywords": "sobre nosotros, Herbal Kapıda, distribuidor independiente, Herbal Kapıda, nutrición",
     "ctaSets": "Ver packs",
     "storyEyebrow": "Nuestra historia",
     "pillarsEyebrow": "Por qué nosotros",
@@ -740,14 +740,14 @@
     "galleryTitle": "Selección de la galería",
     "galleryLead": "Productos, packs y momentos de vida — haz clic para ampliar.",
     "galleryEmpty": "Aún no hay imágenes en la galería.",
-    "metaKeywords": "medios Herbalife, Instagram, nutrición, vida saludable",
+    "metaKeywords": "medios Herbal Kapıda, Instagram, nutrición, vida saludable",
     "kicker": "Medios",
     "title": "Galería",
     "emptyMessage": "No hay historias activas por ahora."
   },
   "seo": {
     "aboutTitle": "Sobre nosotros",
-    "aboutJsonLdDescription": "{brand} — distribuidor independiente de Herbalife.",
+    "aboutJsonLdDescription": "{brand} — distribuidor independiente de Herbal Kapıda.",
     "products": "Productos",
     "productsDescription": "Packs de nutrición, sets y productos Formula. Garantía de distribuidor independiente.",
     "blog": "Artículos",
@@ -773,7 +773,7 @@
     "keywordsBlog": [
       "articles",
       "nutrition",
-      "Herbalife"
+      "Herbal Kapıda"
     ]
   },
   "legalSeo": {
@@ -890,7 +890,7 @@
   "coachingPage": {
     "metaTitle": "Coaching y asesoría nutricional",
     "metaDescription": "Coaching personal, seguimiento de comidas y WhatsApp — {brand}.",
-    "metaKeywords": "coaching, nutrición, wellness, Herbalife",
+    "metaKeywords": "coaching, nutrición, wellness, Herbal Kapıda",
     "breadcrumbHome": "Inicio",
     "breadcrumbCoaching": "Coaching",
     "fallbackHeroEyebrow": "Asesoría nutricional",
@@ -1358,7 +1358,7 @@
     "fallbackItems": [
       {
         "question": "¿Los productos son originales?",
-        "answer": "Sí. Los productos vendidos son Herbalife originales. Este sitio pertenece a un distribuidor independiente de Herbalife Nutrition."
+        "answer": "Sí. Los productos vendidos son Herbal Kapıda originales. Este sitio pertenece a un distribuidor independiente de Herbal Kapıda Nutrition."
       },
       {
         "question": "¿Qué pack debo elegir?",
@@ -1374,7 +1374,7 @@
       }
     ],
     "metaTitle": "Preguntas frecuentes",
-    "metaKeywords": "preguntas frecuentes, envío, pago, devolución, Herbalife",
+    "metaKeywords": "preguntas frecuentes, envío, pago, devolución, Herbal Kapıda",
     "title": "Preguntas frecuentes",
     "stillNeedHelp": "¿Necesitas ayuda?",
     "contactCta": "Contactar",
@@ -1400,7 +1400,7 @@
     "reviewOnGoogle": "Valorar en Google",
     "reviewAria": "Abrir la página de reseñas de Google",
     "whatsappPrefill": "Hola, me gustaría dejar una reseña en Google.",
-    "metaKeywords": "reseña Google, Herbalife, Herbal Kapıda"
+    "metaKeywords": "reseña Google, Herbal Kapıda, Herbal Kapıda"
   },
   "legalPage": {
     "comingSoon": "Este texto legal se publicará pronto.",

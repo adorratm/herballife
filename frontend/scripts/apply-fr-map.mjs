@@ -11,7 +11,7 @@ const frPath = path.join(root, "fr.json");
 const mapPath = path.join(import.meta.dirname, "fr-translations-map.json");
 
 const EXACT_OK = new Set([
-  "Herbalife",
+  "Herbal Kapıda",
   "PayTR",
   "WhatsApp",
   "Google",
@@ -28,8 +28,8 @@ const EXACT_OK = new Set([
 ]);
 
 const KEEP = [
-  "Herbalife",
-  "Herbalife Nutrition",
+  "Herbal Kapıda",
+  "Herbal Kapıda Nutrition",
   "PayTR",
   "KVKK",
   "WhatsApp",
@@ -87,7 +87,7 @@ export const TRANSLATIONS = {
   "home.categoryHub.atistirmalik.blurb": "Barres protéinées et snacks",
   "home.fallbackFaqItems[0].question": "Les produits sont-ils authentiques ?",
   "home.fallbackFaqItems[0].answer":
-    "Oui. Les produits vendus sont des produits Herbalife Nutrition originaux. Ce site appartient à un distributeur indépendant ; ce n’est pas le site officiel Herbalife.",
+    "Oui. Les produits vendus sont des produits Herbal Kapıda Nutrition originaux. Ce site appartient à un distributeur indépendant ; ce n’est pas le site officiel Herbal Kapıda.",
   "home.fallbackFaqItems[1].question": "Quel est le délai de livraison ?",
   "home.fallbackFaqItems[1].answer":
     "Après confirmation du paiement, les commandes partent en général sous 1 à 3 jours ouvrés. Nous partageons le code de suivi dans votre notification.",
@@ -207,7 +207,7 @@ export const TRANSLATIONS = {
   "product.relatedWithCategory": "Compléter avec {name}",
   "product.relatedDefault": "Souvent achetés ensemble",
   "product.specCategory": "Catégorie",
-  "product.specHerbalifeId": "Herbalife ID",
+  "product.specHerbal KapıdaId": "Herbal Kapıda ID",
   "product.specKind": "Type",
   "product.specForm": "Forme / type",
   "product.specHighlight": "Ingrédients clés",
@@ -447,7 +447,7 @@ export const TRANSLATIONS = {
   "footer.googleReview": "Avis Google",
   "footer.whatsappPrefill": "Bonjour, j’écris au sujet de {brand}.",
   "footer.legalDisclaimerFallback":
-    "Ce site appartient à un distributeur Herbalife Nutrition indépendant. Produits 100 % originaux.",
+    "Ce site appartient à un distributeur Herbal Kapıda Nutrition indépendant. Produits 100 % originaux.",
   "forms.fullName": "Nom complet",
   "forms.city": "Ville",
   "forms.district": "Quartier",
@@ -512,11 +512,11 @@ export const TRANSLATIONS = {
   "aboutPage.waWrite": "Écrire sur WhatsApp",
   "aboutPage.fallbackHeroTitle": "À propos de nous",
   "aboutPage.fallbackHeroSeo":
-    "Produits originaux, packs cadeaux et accompagnement nutrition avec un distributeur Herbalife indépendant.",
+    "Produits originaux, packs cadeaux et accompagnement nutrition avec un distributeur Herbal Kapıda indépendant.",
   "aboutPage.fallbackBodyLine1": "Vie saine",
   "aboutPage.fallbackBodyLine2": "avec vous",
   "aboutPage.fallbackBodyP1":
-    "Nous réunissons produits Herbalife originaux, packs avantageux et conseil nutrition personnalisé.",
+    "Nous réunissons produits Herbal Kapıda originaux, packs avantageux et conseil nutrition personnalisé.",
   "aboutPage.fallbackBodyP2":
     "Notre objectif : le bon programme, des habitudes durables et un accès de confiance — pas des produits au hasard.",
   "aboutPage.fallbackBodyP3":
@@ -529,7 +529,7 @@ export const TRANSLATIONS = {
   "aboutPage.fallbackEthosLink": "Lire les articles",
   "aboutPage.pillarOriginalTitle": "Produits authentiques",
   "aboutPage.pillarOriginalBody":
-    "Produits Herbalife 100 % originaux avec garantie distributeur indépendant.",
+    "Produits Herbal Kapıda 100 % originaux avec garantie distributeur indépendant.",
   "aboutPage.pillarProgramTitle": "Programme personnel",
   "aboutPage.pillarProgramBody":
     "Recommandations de packs selon votre objectif et coaching WhatsApp individuel.",
@@ -537,7 +537,7 @@ export const TRANSLATIONS = {
   "aboutPage.pillarTrackingBody":
     "Eau, repas et mesures dans votre compte ; progrès validés par le coach.",
   "aboutPage.waPrefillAbout": "Bonjour {brand}, je souhaite en savoir plus sur vous.",
-  "aboutPage.jsonLdDescription": "{brand} — distributeur Herbalife indépendant.",
+  "aboutPage.jsonLdDescription": "{brand} — distributeur Herbal Kapıda indépendant.",
   "seo.products": "Produits",
   "seo.productsDescription":
     "Packs nutrition, sets et produits Formule. Garantie distributeur indépendant.",
@@ -551,7 +551,7 @@ export const TRANSLATIONS = {
   "seo.pageSuffix": " · Page {page}",
   "seo.categoryNotFound": "Catégorie introuvable",
   "seo.catalogLoading": "Chargement du catalogue…",
-  "seo.aboutJsonLdDescription": "{brand} — distributeur Herbalife indépendant.",
+  "seo.aboutJsonLdDescription": "{brand} — distributeur Herbal Kapıda indépendant.",
   "seo.keywordsCatalogDefault.0": "catalogue",
   "seo.keywordsCatalogDefault.1": "produits",
   "seo.keywordsCatalogDefault.2": "packs",

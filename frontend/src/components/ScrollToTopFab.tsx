@@ -47,10 +47,10 @@ export function ScrollToTopFab() {
       setLiftForCookie(!readCookieConsent());
     }
     syncCookieLift();
-    window.addEventListener("herbalife:cookie-consent", syncCookieLift);
+    window.addEventListener("herbalkapida:cookie-consent", syncCookieLift);
     window.addEventListener("storage", syncCookieLift);
     return () => {
-      window.removeEventListener("herbalife:cookie-consent", syncCookieLift);
+      window.removeEventListener("herbalkapida:cookie-consent", syncCookieLift);
       window.removeEventListener("storage", syncCookieLift);
     };
   }, []);

@@ -4,7 +4,7 @@ import { DEFAULT_SETTINGS } from "@/lib/cms";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: DEFAULT_SETTINGS.brand.name,
-    short_name: "Herbalife",
+    short_name: "Herbal Kapıda",
     description: DEFAULT_SETTINGS.seo.description,
     start_url: "/",
     display: "standalone",

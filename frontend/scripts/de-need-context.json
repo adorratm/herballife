@@ -43,9 +43,9 @@
     "en": "Ratio",
     "tr": "Oran"
   },
-  "product.specHerbalifeId": {
-    "en": "Herbalife ID",
-    "tr": "Herbalife ID"
+  "product.specHerbal KapıdaId": {
+    "en": "Herbal Kapıda ID",
+    "tr": "Herbal Kapıda ID"
   },
   "whatsapp.label": {
     "en": "WhatsApp",
@@ -128,8 +128,8 @@
     "tr": "Favorilerim"
   },
   "footer.membershipCta": {
-    "en": "Official Herbalife membership",
-    "tr": "Resmi Herbalife üyeliği"
+    "en": "Official Herbal Kapıda membership",
+    "tr": "Resmi Herbal Kapıda üyeliği"
   },
   "footer.map": {
     "en": "Map",
@@ -144,8 +144,8 @@
     "tr": "Merhaba, {brand} hakkında yazıyorum."
   },
   "footer.legalDisclaimerFallback": {
-    "en": "This site belongs to an independent Herbalife Nutrition distributor. Products are 100% original.",
-    "tr": "Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir. Ürünler %100 orijinaldir."
+    "en": "This site belongs to an independent Herbal Kapıda Nutrition distributor. Products are 100% original.",
+    "tr": "Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir. Ürünler %100 orijinaldir."
   },
   "locale.language": {
     "en": "Language",

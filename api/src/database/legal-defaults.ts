@@ -175,7 +175,7 @@ ${SELLER.email} · ${SELLER.phone}`,
   },
   'musteri-memnuniyeti': {
     title: 'Müşteri Memnuniyeti Politikası',
-    content: `${SELLER.name}, orijinal Herbalife ürünlerinde kalite, şeffaflık ve hızlı destek sunmayı taahhüt eder.
+    content: `${SELLER.name}, orijinal Herbal Kapıda ürünlerinde kalite, şeffaflık ve hızlı destek sunmayı taahhüt eder.
 
 1. İlkelerimiz
 - Sipariş ve teslimat süreçlerinde açık bilgilendirme

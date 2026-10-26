@@ -9,7 +9,7 @@ const en = JSON.parse(fs.readFileSync(path.join(messagesDir, "en.json"), "utf8")
 const es = JSON.parse(fs.readFileSync(path.join(messagesDir, "es.json"), "utf8"));
 
 const KEEP_IDENTICAL = new Set([
-  "Herbalife",
+  "Herbal Kapıda",
   "PayTR",
   "WhatsApp",
   "Google",

@@ -13,7 +13,7 @@ fs.mkdirSync(outDir, { recursive: true });
 const KEEP = [
   "PayTR",
   "KVKK",
-  "Herbalife",
+  "Herbal Kapıda",
   "MERSİS",
   "SSL",
   "3D Secure",

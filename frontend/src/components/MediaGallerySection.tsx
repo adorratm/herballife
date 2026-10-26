@@ -45,7 +45,7 @@ function MediaTile({
     <article className="media-tile group relative aspect-square overflow-hidden rounded-2xl border border-outline-variant bg-surface-container-low">
       <Image
         src={galleryImageUrl(item)}
-        alt={caption || "Herbalife medya"}
+        alt={caption || "Herbal Kapıda medya"}
         fill
         sizes="(max-width: 768px) 50vw, 25vw"
         className="object-cover transition duration-700 ease-out group-hover:scale-110 group-hover:brightness-110"

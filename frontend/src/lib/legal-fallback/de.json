@@ -21,7 +21,7 @@
   },
   "musteri-memnuniyeti": {
     "title": "Richtlinie zur Kundenzufriedenheit",
-    "content": "{{seller.name}} verpflichtet sich zu Qualität, Transparenz und schnellem Support für Original-Herbalife-Produkte.\n\nUnterstützung:\nE-Mail: {{seller.email}}\nTelefon: {{seller.phone}}\nÖffnungszeiten: {{seller.hours}}\n\nReklamationen: Senden Sie Ihre Bestellnummer; erste Antwort innerhalb von 3 Werktagen."
+    "content": "{{seller.name}} verpflichtet sich zu Qualität, Transparenz und schnellem Support für Original-Herbal Kapıda-Produkte.\n\nUnterstützung:\nE-Mail: {{seller.email}}\nTelefon: {{seller.phone}}\nÖffnungszeiten: {{seller.hours}}\n\nReklamationen: Senden Sie Ihre Bestellnummer; erste Antwort innerhalb von 3 Werktagen."
   },
   "guvenli-alisveris": {
     "title": "Sicheres Einkaufen",

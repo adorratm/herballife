@@ -825,10 +825,10 @@ const BLOG_I18N: Record<
       'Guía de packs ventajosos',
     ),
     seoDescription: pack(
-      'How to evaluate goal, gifts and program when choosing a Herbalife value set.',
-      'Ziel, Geschenk und Programm bei Herbalife-Vorteilsets bewerten.',
-      'Évaluer objectif, cadeau et programme pour un pack Herbalife.',
-      'Evaluar objetivo, regalo y programa al elegir un set Herbalife.',
+      'How to evaluate goal, gifts and program when choosing a Herbal Kapıda value set.',
+      'Ziel, Geschenk und Programm bei Herbal Kapıda-Vorteilsets bewerten.',
+      'Évaluer objectif, cadeau et programme pour un pack Herbal Kapıda.',
+      'Evaluar objetivo, regalo y programa al elegir un set Herbal Kapıda.',
     ),
   },
   'sabah-rutininde-protein-shake': {
@@ -953,10 +953,10 @@ const BLOG_I18N: Record<
       'Primera semana principiantes',
     ),
     seoDescription: pack(
-      'First-week routine with a Herbalife set: water, meals and coach tracking.',
-      'Erste Woche mit Herbalife-Set: Wasser, Mahlzeiten und Coach-Tracking.',
-      'Première semaine avec un pack Herbalife : eau, repas et suivi coach.',
-      'Primera semana con un set Herbalife: agua, comidas y seguimiento del coach.',
+      'First-week routine with a Herbal Kapıda set: water, meals and coach tracking.',
+      'Erste Woche mit Herbal Kapıda-Set: Wasser, Mahlzeiten und Coach-Tracking.',
+      'Première semaine avec un pack Herbal Kapıda : eau, repas et suivi coach.',
+      'Primera semana con un set Herbal Kapıda: agua, comidas y seguimiento del coach.',
     ),
   },
 };

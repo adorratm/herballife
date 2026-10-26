@@ -23,7 +23,7 @@ export default function OpenGraphImage() {
           Bağımsız Distribütör
         </div>
         <div style={{ fontSize: 72, lineHeight: 1.05, marginTop: 16, fontWeight: 700 }}>
-          Herbalife
+          Herbal Kapıda
         </div>
         <div style={{ fontSize: 28, marginTop: 20, color: "#eaf3ee", maxWidth: 800 }}>
           Doğal ürünler, kişisel koçluk.

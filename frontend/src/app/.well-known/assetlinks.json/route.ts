@@ -1,4 +1,4 @@
-const PACKAGE_NAME = "tr.herbalife.ops";
+const PACKAGE_NAME = "tr.herbalkapida.ops";
 
 export async function GET() {
   const fingerprints = (

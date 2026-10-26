@@ -139,7 +139,7 @@ export default async function ProductDetailPage({ params }: Props) {
   const specs = [
     [t("specCategory"), category?.name || null],
     ...(distributorCode
-      ? ([[t("specHerbalifeId"), distributorCode]] as const)
+      ? ([[t("specHerbal KapıdaId"), distributorCode]] as const)
       : []),
     [t("specKind"), kindLabel],
     [t("specForm"), product.process || null],

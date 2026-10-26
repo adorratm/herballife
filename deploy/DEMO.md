@@ -8,11 +8,11 @@ Bu stack **üç ayrı host** bekler. Ana `emrekilic.web.tr` server block’una *
 
 | Rol | Host | Proxy → |
 |-----|------|---------|
-| Vitrin | `herbalife.emrekilic.web.tr` | `127.0.0.1:3200` |
-| Admin | `admin.herbalife.emrekilic.web.tr` | `127.0.0.1:3201` |
-| API | `api.herbalife.emrekilic.web.tr` | `127.0.0.1:3202` |
+| Vitrin | `herbalkapida.emrekilic.web.tr` | `127.0.0.1:3200` |
+| Admin | `admin.herbalkapida.emrekilic.web.tr` | `127.0.0.1:3201` |
+| API | `api.herbalkapida.emrekilic.web.tr` | `127.0.0.1:3202` |
 
-Path tabanlı (`emrekilic.web.tr/herbalife`) **desteklenmez** (`basePath` yok).
+Path tabanlı (`emrekilic.web.tr/herbalkapida`) **desteklenmez** (`basePath` yok).
 
 ## DNS
 
@@ -21,12 +21,12 @@ Yalnızca bu üç A/AAAA kaydını ekleyin (aynı sunucu IP). Wildcard `*.emreki
 ## `deploy/.env` örneği
 
 ```env
-FRONTEND_URL=https://herbalife.emrekilic.web.tr
-ADMIN_URL=https://admin.herbalife.emrekilic.web.tr
-API_URL=https://api.herbalife.emrekilic.web.tr
-NEXT_PUBLIC_SITE_URL=https://herbalife.emrekilic.web.tr
-NEXT_PUBLIC_ADMIN_URL=https://admin.herbalife.emrekilic.web.tr
-NEXT_PUBLIC_API_URL=https://api.herbalife.emrekilic.web.tr
+FRONTEND_URL=https://herbalkapida.emrekilic.web.tr
+ADMIN_URL=https://admin.herbalkapida.emrekilic.web.tr
+API_URL=https://api.herbalkapida.emrekilic.web.tr
+NEXT_PUBLIC_SITE_URL=https://herbalkapida.emrekilic.web.tr
+NEXT_PUBLIC_ADMIN_URL=https://admin.herbalkapida.emrekilic.web.tr
+NEXT_PUBLIC_API_URL=https://api.herbalkapida.emrekilic.web.tr
 FRONTEND_HOST_PORT=3200
 ADMIN_HOST_PORT=3201
 API_HOST_PORT=3202
@@ -39,10 +39,10 @@ API_HOST_PORT=3202
 Her host için **ayrı** `server` bloğu oluşturun; `emrekilic.web.tr` config dosyasına include etmeyin.
 
 ```nginx
-# /etc/nginx/sites-available/herbalife.emrekilic.web.tr
+# /etc/nginx/sites-available/herbalkapida.emrekilic.web.tr
 server {
   listen 443 ssl http2;
-  server_name herbalife.emrekilic.web.tr;
+  server_name herbalkapida.emrekilic.web.tr;
   # ssl_certificate ... (certbot)
   location / {
     proxy_pass http://127.0.0.1:3200;
@@ -54,7 +54,7 @@ server {
 
 server {
   listen 443 ssl http2;
-  server_name admin.herbalife.emrekilic.web.tr;
+  server_name admin.herbalkapida.emrekilic.web.tr;
   location / {
     proxy_pass http://127.0.0.1:3201;
     proxy_set_header Host $host;
@@ -65,7 +65,7 @@ server {
 
 server {
   listen 443 ssl http2;
-  server_name api.herbalife.emrekilic.web.tr;
+  server_name api.herbalkapida.emrekilic.web.tr;
   client_max_body_size 25m;
   location / {
     proxy_pass http://127.0.0.1:3202;
@@ -76,20 +76,20 @@ server {
 }
 ```
 
-TLS: `certbot --nginx -d herbalife.emrekilic.web.tr -d admin.herbalife.emrekilic.web.tr -d api.herbalife.emrekilic.web.tr`
+TLS: `certbot --nginx -d herbalkapida.emrekilic.web.tr -d admin.herbalkapida.emrekilic.web.tr -d api.herbalkapida.emrekilic.web.tr`
 
 ## Ödeme (sunum)
 
 Canlı kart zorunlu değil:
 
 1. **PayTR anahtarları boş** → API otomatik **mock ödeme** kullanır; checkout sonrası `.../payments/paytr/mock-complete?...` ile sipariş `paid` olur.
-2. **PayTR test** → `PAYTR_TEST_MODE=1` + test merchant bilgileri; callback URL: `https://api.herbalife.emrekilic.web.tr/payments/paytr/callback`
+2. **PayTR test** → `PAYTR_TEST_MODE=1` + test merchant bilgileri; callback URL: `https://api.herbalkapida.emrekilic.web.tr/payments/paytr/callback`
 3. Seed zaten `DEMO-2026-001` / `DEMO-2026-002` ödenmiş siparişler oluşturur (admin’de gösterim için).
 
 ## Seed / demo hesap
 
 ```bash
-yarn workspace @herbalife/api seed
+yarn workspace @herbalkapida/api seed
 ```
 
 | Ne | Değer |
@@ -104,7 +104,7 @@ yarn workspace @herbalife/api seed
 
 1. DNS + TLS yalnızca üç alt alan için (parent block’a dokunma)
 2. `docker compose -f docker-compose.prod.yml up -d` (veya mevcut deploy script)
-3. `yarn workspace @herbalife/api seed`
+3. `yarn workspace @herbalkapida/api seed`
 4. Admin → Site Ayarları: marka adı, logo, Herbal Kapıda, telefon, WhatsApp
 5. Vitrin: ana sayfa → set → PDP → sepet → ödeme (mock) → teşekkür
 6. Hesabım → Beslenme takibi / ölçümler
@@ -118,6 +118,6 @@ CMS’ten değiştirilir (`brand.name`, `logoUrl`, `distributorName`). Logo URL 
 
 ## CORS / OAuth notları
 
-- Google OAuth callback: `https://api.herbalife.emrekilic.web.tr/auth/google/callback` (+ admin callback)
+- Google OAuth callback: `https://api.herbalkapida.emrekilic.web.tr/auth/google/callback` (+ admin callback)
 - S3 / CDN CORS: vitrin + admin origin’lerini ekleyin
 - WhatsApp: `WHATSAPP_PROVIDER=console` sunumda log’a yazar; Meta token varsa gerçek gönderim

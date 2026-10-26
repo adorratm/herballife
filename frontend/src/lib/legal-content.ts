@@ -29,12 +29,12 @@ const SEEDED_CONTACT = {
   email: DEFAULT_SETTINGS.contact.email,
   phone: DEFAULT_SETTINGS.contact.phone,
   hours: DEFAULT_SETTINGS.contact.hours,
-  website: "https://herbalife.com.tr",
+  website: "https://herbalkapida.com",
 } as const;
 
 export function sellerFromSettings(settings: SiteSettings): LegalSeller {
   const siteUrl = (
-    process.env.NEXT_PUBLIC_SITE_URL || "https://herbalife.com.tr"
+    process.env.NEXT_PUBLIC_SITE_URL || "https://herbalkapida.com"
   ).replace(/\/$/, "");
   return {
     name: settings.brand.name || DEFAULT_SETTINGS.brand.name,
@@ -290,7 +290,7 @@ ${seller.email} · ${seller.phone}`,
     },
     "musteri-memnuniyeti": {
       title: "Müşteri Memnuniyeti Politikası",
-      content: `${seller.name}, orijinal Herbalife ürünlerinde kalite, şeffaflık ve hızlı destek sunmayı taahhüt eder.
+      content: `${seller.name}, orijinal Herbal Kapıda ürünlerinde kalite, şeffaflık ve hızlı destek sunmayı taahhüt eder.
 
 1. İlkelerimiz
 - Sipariş ve teslimat süreçlerinde açık bilgilendirme

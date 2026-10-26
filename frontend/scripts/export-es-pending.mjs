@@ -6,7 +6,7 @@ const en = JSON.parse(fs.readFileSync(path.join(root, "en.json"), "utf8"));
 const es = JSON.parse(fs.readFileSync(path.join(root, "es.json"), "utf8"));
 
 const EXACT = new Set([
-  "Herbalife",
+  "Herbal Kapıda",
   "PayTR",
   "WhatsApp",
   "Google",

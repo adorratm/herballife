@@ -1,5 +1,5 @@
-export const COOKIE_CONSENT_KEY = "herbalife_cookie_consent";
-export const COOKIE_CONSENT_EVENT = "herbalife-cookie-consent";
+export const COOKIE_CONSENT_KEY = "herbalkapida_cookie_consent";
+export const COOKIE_CONSENT_EVENT = "herbalkapida-cookie-consent";
 
 export type CookieConsent = {
   necessary: boolean;

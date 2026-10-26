@@ -52,12 +52,12 @@ export default () => ({
   frontendUrl: resolvePublicUrl(
     process.env.FRONTEND_URL,
     'http://localhost:3000',
-    'https://herbalife.com.tr',
+    'https://herbalkapida.com',
   ),
   adminUrl: resolvePublicUrl(
     process.env.ADMIN_URL,
     'http://localhost:3001',
-    'https://admin.herbalife.com.tr',
+    'https://admin.herbalkapida.com',
   ),
   /**
    * @deprecated Auth/yetki için kullanılmaz — `admin_allowlist` tablosu + Kullanıcılar UI.
@@ -74,9 +74,9 @@ export default () => ({
   database: {
     host: process.env.DATABASE_HOST || 'localhost',
     port: parseInt(process.env.DATABASE_PORT || '5432', 10),
-    username: process.env.POSTGRES_USER || 'herbalife',
-    password: process.env.POSTGRES_PASSWORD || 'herbalife_secret',
-    name: process.env.POSTGRES_DB || 'herbalife',
+    username: process.env.POSTGRES_USER || 'herbalkapida',
+    password: process.env.POSTGRES_PASSWORD || 'herbalkapida_secret',
+    name: process.env.POSTGRES_DB || 'herbalkapida',
   },
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID || '',
@@ -90,7 +90,7 @@ export default () => ({
   },
   apple: {
     /** Virgülle: iOS bundle id ve isteğe bağlı Services ID */
-    clientIds: process.env.APPLE_CLIENT_ID || 'tr.herbalife.ops',
+    clientIds: process.env.APPLE_CLIENT_ID || 'tr.herbalkapida.ops',
   },
   payment: {
     /** Yalnızca PayTR */
@@ -219,13 +219,13 @@ export default () => ({
       mpopBaseUrl:
         process.env.HEPSIBURADA_MPOP_BASE_URL || 'https://mpop.hepsiburada.com',
       /** HB Developer Username (User-Agent); credentials.userAgent override eder */
-      userAgent: process.env.HEPSIBURADA_USER_AGENT || 'herbalife_dev',
+      userAgent: process.env.HEPSIBURADA_USER_AGENT || 'herbalkapida_dev',
       /** Opsiyonel; set edilirse webhook ?secret= veya x-webhook-secret ister */
       webhookSecret: process.env.HEPSIBURADA_WEBHOOK_SECRET || '',
     },
     n11: {
       baseUrl: process.env.N11_API_BASE_URL || 'https://api.n11.com',
-      integrator: process.env.N11_INTEGRATOR_NAME || 'Herbalife',
+      integrator: process.env.N11_INTEGRATOR_NAME || 'Herbal Kapıda',
     },
   },
   lowStock: {
@@ -243,6 +243,6 @@ export default () => ({
   instagram: {
     accessToken: process.env.INSTAGRAM_ACCESS_TOKEN || '',
     userId: process.env.INSTAGRAM_USER_ID || '',
-    username: process.env.INSTAGRAM_USERNAME || 'herbalife',
+    username: process.env.INSTAGRAM_USERNAME || 'herbalkapida',
   },
 });

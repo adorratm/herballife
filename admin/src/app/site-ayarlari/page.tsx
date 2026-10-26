@@ -934,7 +934,7 @@ export default function SiteSettingsPage() {
           {isTr ? (
             <label className="block text-sm">
               <span className="mono text-[10px] uppercase text-muted">
-                Herbalife ID / distribütör kodu
+                Herbal Kapıda ID / distribütör kodu
               </span>
               <input
                 value={brand.distributorCode}

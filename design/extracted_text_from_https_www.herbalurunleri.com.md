@@ -386,11 +386,11 @@ __
 
 # X
 
-## Bu internet sitesi Herbalife Nutrition Bağımsız Distribütörü tarafından yönetilmektedir: Mehmet COŞ
+## Bu internet sitesi Herbal Kapıda Nutrition Bağımsız Distribütörü tarafından yönetilmektedir: Mehmet COŞ
 
-MEVCUT MÜŞTERİ ? | HALİHAZIRDA HERBALIFE NUTRITION DİSTRİBÜTÖRÜ YA DA  AYRICAKLI MÜŞTERİ MİSİNİZ?  
+MEVCUT MÜŞTERİ ? | HALİHAZIRDA HERBAL KAPIDA NUTRITION DİSTRİBÜTÖRÜ YA DA  AYRICAKLI MÜŞTERİ MİSİNİZ?  
 ---|---  
-Kişisel Distribütörünüzle olan birebir ilişkiniz, beslenme hedeflerinize ulaşmanın anahtarıdır. Eğer Mehmet COŞ mevcut distribütörünüz değil ise, ürünlerinizi mevcut distribütörünüzden almanızı öneririz. Alternatif olarak, bu internet sitesine girmek için [buraya tıklayınız.](https://www.herbalurunleri.com/) | Kendi Distribütör hesabınız üzerinden sipariş vermek ve tüm haklarınızı almak için lütfen [myherbalife.com](https://www.myherbalife.com/) sitesini ziyaret ediniz.  
+Kişisel Distribütörünüzle olan birebir ilişkiniz, beslenme hedeflerinize ulaşmanın anahtarıdır. Eğer Mehmet COŞ mevcut distribütörünüz değil ise, ürünlerinizi mevcut distribütörünüzden almanızı öneririz. Alternatif olarak, bu internet sitesine girmek için [buraya tıklayınız.](https://www.herbalurunleri.com/) | Kendi Distribütör hesabınız üzerinden sipariş vermek ve tüm haklarınızı almak için lütfen [myherbalkapida.com](https://www.myherbalkapida.com/) sitesini ziyaret ediniz.  
   
 ### İndirim
 
@@ -416,7 +416,7 @@ Abone Ol
 
 [ ](https://www.herbalurunleri.com/)
 
-Herbalife Nutrition Bağımsız Distribütörü - 
+Herbal Kapıda Nutrition Bağımsız Distribütörü - 
 
   * **Adres:** HAMİDİYE MAH. YAVUZ KEMAL SK. NO: 8 İÇ KAPI NO: 3 GEMLİK/ BURSA
   * **Telefon:** 0507 886 2662

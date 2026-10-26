@@ -1,4 +1,4 @@
-# Herbal Kapıda (Herbalife mağaza + wellness + koç)
+# Herbal Kapıda (Herbal Kapıda mağaza + wellness + koç)
 
 Monorepo: NestJS API + Next.js vitrin + Next.js admin. Botanical Vitality tasarımı; marka/domain CMS ve env ile değiştirilebilir.
 
@@ -9,7 +9,7 @@ cp .env.example .env
 docker compose up -d postgres redis
 yarn install
 yarn migration:run   # veya geliştirmede synchronize açık
-yarn workspace @herbalife/api seed
+yarn workspace @herbalkapida/api seed
 yarn dev:api
 yarn dev:frontend
 yarn dev:admin
@@ -23,21 +23,23 @@ yarn dev:admin
 
 Toptan / B2B katalog kaldırıldı. Mağaza + wellness + koç paneli odaklıdır.
 
-## Production (GHCR + zero-downtime)
+## Production — herbalkapida.com (GHCR + zero-downtime)
 
-`main` push → image’lar **ghcr.io**’ya push → SSH ile sunucuda rolling deploy (`deploy/deploy.sh`).
+`main` push → **ghcr.io** image build/push → SSH rolling deploy (`deploy/deploy.sh`).  
+Varsayılan mail: **info@herbalkapida.com** · Domain: vitrin / `admin.` / `api.`herbalkapida.com
 
-1. GitHub → **Settings → Secrets** : `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` ([liste](deploy/SECRETS.md))
-2. Sunucuda Docker kurulu olsun; ilk deploy `deploy/.env` yoksa örnekten üretir (veya `DEPLOY_ENV` secret)
-3. Boş veritabanında **otomatik seed** (demo katalog / CMS)
+1. GitHub → **Settings → Secrets**: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` ([liste](deploy/SECRETS.md))
+2. Variables: `NEXT_PUBLIC_SITE_URL=https://herbalkapida.com` (+ API / admin)
+3. Sunucuda Docker + Nginx/TLS ([GO_LIVE.md](deploy/GO_LIVE.md)); `deploy/.env` yoksa örnekten üretilir
+4. Boş DB’de otomatik seed — dolu volume’daki mevcut veriler korunur
 
-Manuel: `bash deploy/deploy.sh` · Registry: `HERBALIFE_USE_REGISTRY=1 IMAGE_TAG=latest bash deploy/deploy.sh`
+Manuel: `bash deploy/deploy.sh` · Registry: `HERBAL_KAPIDA_USE_REGISTRY=1 IMAGE_TAG=latest bash deploy/deploy.sh`
 
 ## Sunum yayın
 
-Geçici hostlar: `herbalife.emrekilic.web.tr` / `admin.` / `api.` — **parent `emrekilic.web.tr` server block’una dokunmayın.**
+Geçici hostlar: `herbalkapida.emrekilic.web.tr` / `admin.` / `api.` — **parent `emrekilic.web.tr` server block’una dokunmayın.**
 
-Detay: [`deploy/DEMO.md`](deploy/DEMO.md) · Secrets: [`deploy/SECRETS.md`](deploy/SECRETS.md) · Canlı checklist: [`deploy/GO_LIVE.md`](deploy/GO_LIVE.md)
+Detay: [`deploy/SERVER_SETUP.md`](deploy/SERVER_SETUP.md) · [`deploy/SECRETS.md`](deploy/SECRETS.md) · [`deploy/GO_LIVE.md`](deploy/GO_LIVE.md) · [`deploy/DEMO.md`](deploy/DEMO.md)
 
 ## Yapı
 

@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     path: "/iletisim",
     settings,
     locale,
-    keywords: ["contact", location, "Herbalife", "coaching"].filter(Boolean),
+    keywords: ["contact", location, "Herbal Kapıda", "coaching"].filter(Boolean),
   });
 }
 

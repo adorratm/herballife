@@ -1,5 +1,5 @@
 {
-  "name": "@herbalife/api",
+  "name": "@herbalkapida/api",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -28,7 +28,7 @@
     "migrate:i18n": "ts-node -r tsconfig-paths/register src/database/migrate-i18n-cli.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.1156.0",
+    "@aws-sdk/client-s3": "3.1157.0",
     "@bull-board/api": "9.10.5",
     "@bull-board/express": "9.10.5",
     "@bull-board/nestjs": "9.10.5",
@@ -105,7 +105,7 @@
     "tsconfig-paths": "^4.2.0",
     "tsconfig-paths-webpack-plugin": "^4.2.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.72.0",
+    "typescript-eslint": "^8.72.1",
     "webpack-node-externals": "^3.0.0"
   },
   "jest": {

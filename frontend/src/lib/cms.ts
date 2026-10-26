@@ -118,7 +118,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     name: "Herbal Kapıda",
     slogan: "A healthier, happier life",
     tagline:
-      "Original Herbalife products and personalized nutrition support with an independent distributor.",
+      "Original Herbal Kapıda products and personalized nutrition support with an independent distributor.",
     established: "Since 2024",
     location: "Turkey",
     logoUrl: "",
@@ -126,7 +126,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     distributorTitle: "Independent Distributor",
     distributorCode: "",
     legalDisclaimer:
-      "This site belongs to an independent Herbalife Nutrition distributor. It is not the official Herbalife Nutrition website. Products are original Herbalife products.",
+      "This site belongs to an independent Herbal Kapıda Nutrition distributor. It is not the official Herbal Kapıda Nutrition website. Products are original Herbal Kapıda products.",
   },
   contact: {
     address: "Turkey",
@@ -138,12 +138,12 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     longitude: "",
   },
   seo: {
-    title: "Herbal Kapıda | Original Herbalife Products",
+    title: "Herbal Kapıda | Original Herbal Kapıda Products",
     description:
-      "Original Herbalife products, value bundles, and personalized nutrition coaching. Independent distributor Herbal Kapıda — herbalkapida.com.",
+      "Original Herbal Kapıda products, value bundles, and personalized nutrition coaching. Independent distributor Herbal Kapıda — herbalkapida.com.",
     keywords: [
       "Herbal Kapıda",
-      "Herbalife",
+      "Herbal Kapıda",
       "Formula 1",
       "weight management",
       "protein shake",
@@ -205,7 +205,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   },
   footer: {
     description:
-      "Herbal Kapıda ile orijinal Herbalife ürünleri, avantajlı setler ve birebir beslenme desteği.",
+      "Herbal Kapıda ile orijinal Herbal Kapıda ürünleri, avantajlı setler ve birebir beslenme desteği.",
     copyrightSuffix: "Bağımsız Distribütör",
   },
   promises: {
@@ -218,13 +218,13 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     supplementDisclaimer:
       "Bu ürünler gıda takviyesidir; hastalıkların teşhis, tedavi veya önlenmesi amacıyla kullanılmaz. Dengeli ve çeşitli beslenme ile sağlıklı yaşam tarzı önemlidir. Hamileler, emzirenler ve kronik rahatsızlığı olanlar kullanmadan önce hekimine danışmalıdır.",
     weightDisclaimer:
-      "Kilo kontrolü ve vücut kompozisyonu sonuçları kişiden kişiye değişir; tek başına ürün kullanımı yeterli değildir. Kalori alımı, fiziksel aktivite ve düzenli takip birlikte değerlendirilmelidir. Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir.",
+      "Kilo kontrolü ve vücut kompozisyonu sonuçları kişiden kişiye değişir; tek başına ürün kullanımı yeterli değildir. Kalori alımı, fiziksel aktivite ve düzenli takip birlikte değerlendirilmelidir. Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir.",
   },
   membership: {
-    ctaLabel: "Resmi Herbalife üyeliği",
-    ctaUrl: "https://www.myherbalife.com",
+    ctaLabel: "Resmi Herbal Kapıda üyeliği",
+    ctaUrl: "https://www.myherbalkapida.com",
     disclaimer:
-      "Herbalife Nutrition distribütörü olmak için kayıt yalnızca resmi myHerbalife platformu üzerinden yapılır. Bu site bağımsız bir distribütör sitesidir.",
+      "Herbal Kapıda Nutrition distribütörü olmak için kayıt yalnızca resmi myHerbal Kapıda platformu üzerinden yapılır. Bu site bağımsız bir distribütör sitesidir.",
   },
 };
 

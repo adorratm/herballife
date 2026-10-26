@@ -6,7 +6,7 @@ import path from "path";
 import { translate as gTranslate } from "@vitalets/google-translate-api";
 
 const KEEP = [
-  "Herbalife",
+  "Herbal Kapıda",
   "PayTR",
   "KVKK",
   "WhatsApp",
@@ -27,7 +27,7 @@ const SKIP_IDENTICAL = new Set([
   "nav.faq",
   "checkout.legalKvkkLink",
   "whatsapp.label",
-  "product.specHerbalifeId",
+  "product.specHerbal KapıdaId",
   "guestOrder.orderNumberPlaceholder",
   "notFoundPage.linkFaq",
   "legalSeo.kvkk.title",

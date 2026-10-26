@@ -34,7 +34,7 @@ const EMPTY_GALLERY: PublicGallery = {
   instagram: [],
   uploads: [],
   stories: [],
-  instagramProfile: "https://www.instagram.com/herbalife/",
+  instagramProfile: "https://www.instagram.com/herbalkapida/",
   instagramConfigured: false,
   instagramSyncedAt: null,
 };

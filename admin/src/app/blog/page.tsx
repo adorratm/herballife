@@ -96,7 +96,7 @@ const emptyForm = (): FormState => ({
   imagesByLocale: { en: '', de: '', fr: '', es: '' },
   translationTab: 'en',
   translations: emptyBlogTranslations(),
-  authorName: 'Herbalife',
+  authorName: 'Herbal Kapıda',
   tags: '',
   relatedProductSlugs: [],
   relatedCategorySlugs: [],

@@ -21,7 +21,7 @@
   },
   "musteri-memnuniyeti": {
     "title": "Política de satisfacción del cliente",
-    "content": "{{seller.name}} se compromete con la calidad, la transparencia y el soporte rápido para los productos originales Herbalife.\n\nSoporte:\nCorreo electrónico: {{seller.email}}\nTeléfono: {{seller.phone}}\nHorario: {{seller.hours}}\n\nQuejas: Envíe su número de pedido; respuesta inicial dentro de los 3 días hábiles."
+    "content": "{{seller.name}} se compromete con la calidad, la transparencia y el soporte rápido para los productos originales Herbal Kapıda.\n\nSoporte:\nCorreo electrónico: {{seller.email}}\nTeléfono: {{seller.phone}}\nHorario: {{seller.hours}}\n\nQuejas: Envíe su número de pedido; respuesta inicial dentro de los 3 días hábiles."
   },
   "guvenli-alisveris": {
     "title": "Compras Seguras",

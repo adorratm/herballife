@@ -7,7 +7,7 @@ import {
 import { getToken } from "@/lib/auth";
 import type { Cart } from "@/lib/types";
 
-const SESSION_KEY = "herbalife_cart_session";
+const SESSION_KEY = "herbalkapida_cart_session";
 
 function canUseDom() {
   return typeof window !== "undefined";

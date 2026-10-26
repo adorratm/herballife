@@ -220,10 +220,10 @@ export const DEFAULT_SEO_LABELS: SeoLabels = {
   blogTagTitle: "Articles · {tag}",
   blogTagDescription: "Posts tagged “{tag}” — {brand}.",
   pageSuffix: " · Page {page}",
-  aboutJsonLdDescription: "{brand} — independent Herbalife distributor.",
+  aboutJsonLdDescription: "{brand} — independent Herbal Kapıda distributor.",
   keywordsCatalogDefault: ["catalog", "products", "bundles", "sets"],
   keywordsCategoryExtra: ["product", "bundle"],
-  keywordsBlog: ["articles", "nutrition", "Herbalife"],
+  keywordsBlog: ["articles", "nutrition", "Herbal Kapıda"],
 };
 
 function fillSeoTemplate(

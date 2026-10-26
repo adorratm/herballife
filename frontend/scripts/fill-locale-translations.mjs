@@ -17,7 +17,7 @@ const BATCH_PER_LOCALE = Number(process.env.I18N_BATCH || 120);
 const DELAY_MS = Number(process.env.I18N_DELAY || 2500);
 
 const KEEP = [
-  "Herbalife",
+  "Herbal Kapıda",
   "PayTR",
   "KVKK",
   "WhatsApp",

@@ -17,8 +17,8 @@ t("(VAT included)", "(inkl. MwSt.)");
 t("+ Add new address", "+ Neue Adresse hinzufügen");
 t("+ New billing address", "+ Neue Rechnungsadresse");
 t(
-  "100% original Herbalife products with independent distributor assurance.",
-  "100 % original Herbalife-Produkte mit unabhängiger Vertriebspartner-Garantie.",
+  "100% original Herbal Kapıda products with independent distributor assurance.",
+  "100 % original Herbal Kapıda-Produkte mit unabhängiger Vertriebspartner-Garantie.",
 );
 t("14-day withdrawal right", "14-tägiges Widerrufsrecht");
 t("256-bit SSL", "256-Bit-SSL");
@@ -309,7 +309,7 @@ t(
 t("Herbal Kapıda · WhatsApp support", "Herbal Kapıda · WhatsApp-Support");
 t("Herbal Kapıda — We're here for you", "Herbal Kapıda — Wir sind für Sie da");
 t("Herbal Kapıda — WhatsApp line is open.", "Herbal Kapıda — WhatsApp-Leitung ist geöffnet.");
-t("Herbalife ID", "Herbalife ID");
+t("Herbal Kapıda ID", "Herbal Kapıda ID");
 t("Hi! Message us for product and bundle suggestions.", "Hi! Schreiben Sie uns für Produkt- und Set-Vorschläge.");
 t("Home", "Startseite");
 t("Home, Work", "Zuhause, Arbeit");
@@ -450,8 +450,8 @@ t(
 );
 t("Origin", "Herkunft");
 t(
-  "Original products, gift bundles, and personalized nutrition support with an independent Herbalife distributor.",
-  "Originalprodukte, Geschenk-Sets und persönliche Ernährungsbetreuung bei einem unabhängigen Herbalife-Vertriebspartner.",
+  "Original products, gift bundles, and personalized nutrition support with an independent Herbal Kapıda distributor.",
+  "Originalprodukte, Geschenk-Sets und persönliche Ernährungsbetreuung bei einem unabhängigen Herbal Kapıda-Vertriebspartner.",
 );
 t(
   "Our goal is not random shelf products — but the right program, sustainable habits, and trusted access.",
@@ -662,8 +662,8 @@ t(
   "Wasser, Mahlzeiten und Messungen in Ihrem Konto; Ihr Coach prüft und motiviert Sie.",
 );
 t(
-  "We bring original Herbalife products, value bundles, and one-to-one nutrition guidance together.",
-  "Wir verbinden original Herbalife-Produkte, Vorteilssets und persönliche Ernährungsberatung.",
+  "We bring original Herbal Kapıda products, value bundles, and one-to-one nutrition guidance together.",
+  "Wir verbinden original Herbal Kapıda-Produkte, Vorteilssets und persönliche Ernährungsberatung.",
 );
 t("We couldn't find that product", "Produkt nicht gefunden");
 t("Weight management", "Gewichtsmanagement");
@@ -707,14 +707,14 @@ t("returns policy", "Widerrufs- und Rückgaberichtlinie");
 t("sign in", "anmelden");
 t("text.", "Text.");
 t("with you", "mit Ihnen");
-t("{brand} — independent Herbalife distributor.", "{brand} — unabhängiger Herbalife-Vertriebspartner.");
+t("{brand} — independent Herbal Kapıda distributor.", "{brand} — unabhängiger Herbal Kapıda-Vertriebspartner.");
 t("{count} items", "{count} Artikel");
 t("{count} products", "{count} Produkte");
 t("{count} reviews", "{count} Bewertungen");
 t("{days}-day returns", "{days}-Tage-Rückgabe");
 t(
-  "{distributor} · independent Herbalife distributor. This is not the official Herbalife website.",
-  "{distributor} · unabhängiger Herbalife-Vertriebspartner. Dies ist nicht die offizielle Herbalife-Website.",
+  "{distributor} · independent Herbal Kapıda distributor. This is not the official Herbal Kapıda website.",
+  "{distributor} · unabhängiger Herbal Kapıda-Vertriebspartner. Dies ist nicht die offizielle Herbal Kapıda-Website.",
 );
 t("{minutes} min read", "{minutes} Min. Lesezeit");
 t("{name} category →", "Kategorie {name} →");
@@ -723,7 +723,7 @@ t("{total} products · Page {page}/{totalPages}", "{total} Produkte · Seite {pa
 t("“{title}” will be permanently removed.", "„{title}“ wird dauerhaft entfernt.");
 t("← Continue shopping", "← Weiter einkaufen");
 t("✓ 14-day withdrawal / return right", "✓ 14-tägiges Widerrufs- / Rückgaberecht");
-t("✓ Original Herbalife products", "✓ Original Herbalife-Produkte");
+t("✓ Original Herbal Kapıda products", "✓ Original Herbal Kapıda-Produkte");
 t("✓ PayTR 256-bit secure payment", "✓ PayTR 256-Bit sichere Zahlung");
 
 fs.writeFileSync(

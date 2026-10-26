@@ -29,7 +29,7 @@ const PAIRS = [
   ["Frequently bought together", "Comprados juntos con frecuencia"],
   ["Complete with {name}", "Completa con {name}"],
   ["Often bought together", "Suele comprarse junto"],
-  ["Herbalife ID", "ID Herbalife"],
+  ["Herbal Kapıda ID", "ID Herbal Kapıda"],
   ["Type", "Tipo"],
   ["Form / type", "Forma / tipo"],
   ["Key ingredients", "Ingredientes clave"],
@@ -400,8 +400,8 @@ const PAIRS = [
   ["Hello, I have a question beyond the FAQ.", "Hola, tengo una pregunta más allá de las FAQ."],
   ["Frequently asked questions", "Preguntas frecuentes"],
   [
-    "Yes. Products sold are original Herbalife products. This site belongs to an independent Herbalife Nutrition distributor.",
-    "Sí. Los productos son originales Herbalife. Este sitio pertenece a un distribuidor independiente de Herbalife Nutrition.",
+    "Yes. Products sold are original Herbal Kapıda products. This site belongs to an independent Herbal Kapıda Nutrition distributor.",
+    "Sí. Los productos son originales Herbal Kapıda. Este sitio pertenece a un distribuidor independiente de Herbal Kapıda Nutrition.",
   ],
   [
     "We offer gift bundles for your goal (weight, sport, general wellness). Free product advice is available on WhatsApp.",
@@ -496,7 +496,7 @@ const PAIRS = [
   [" · Page {page}", " · Página {page}"],
   ["Category not found", "Categoría no encontrada"],
   ["Loading catalog…", "Cargando catálogo…"],
-  ["{brand} — independent Herbalife distributor.", "{brand} — distribuidor Herbalife independiente."],
+  ["{brand} — independent Herbal Kapıda distributor.", "{brand} — distribuidor Herbal Kapıda independiente."],
   ["catalog", "catálogo"],
   ["products", "productos"],
   ["bundles", "packs"],
@@ -507,14 +507,14 @@ const PAIRS = [
   ["nutrition", "nutrición"],
   ["About us", "Sobre nosotros"],
   [
-    "Original products, gift bundles, and personalized nutrition support with an independent Herbalife distributor.",
-    "Productos originales, packs con regalo y apoyo nutricional personalizado con un distribuidor Herbalife independiente.",
+    "Original products, gift bundles, and personalized nutrition support with an independent Herbal Kapıda distributor.",
+    "Productos originales, packs con regalo y apoyo nutricional personalizado con un distribuidor Herbal Kapıda independiente.",
   ],
   ["Healthy living", "Vida saludable"],
   ["with you", "contigo"],
   [
-    "We bring original Herbalife products, value bundles, and one-to-one nutrition guidance together.",
-    "Reunimos productos Herbalife originales, packs ventajosos y asesoría nutricional personalizada.",
+    "We bring original Herbal Kapıda products, value bundles, and one-to-one nutrition guidance together.",
+    "Reunimos productos Herbal Kapıda originales, packs ventajosos y asesoría nutricional personalizada.",
   ],
   [
     "Our goal is not random shelf products — but the right program, sustainable habits, and trusted access.",
@@ -531,8 +531,8 @@ const PAIRS = [
   ],
   ["Read articles", "Leer artículos"],
   [
-    "100% original Herbalife products with independent distributor assurance.",
-    "Productos Herbalife 100 % originales con garantía de distribuidor independiente.",
+    "100% original Herbal Kapıda products with independent distributor assurance.",
+    "Productos Herbal Kapıda 100 % originales con garantía de distribuidor independiente.",
   ],
   ["Personal program", "Programa personal"],
   [

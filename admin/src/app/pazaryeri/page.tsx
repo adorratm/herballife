@@ -12,9 +12,9 @@ const CREDENTIAL_HINTS: Record<string, string> = {
   trendyol:
     '{\n  "apiKey": "",\n  "apiSecret": "",\n  "sellerId": "",\n  "storeFrontCode": "TR",\n  "brandId": "",\n  "categoryId": ""\n}',
   trendyol_go_market:
-    '{\n  "apiKey": "",\n  "apiSecret": "",\n  "sellerId": "",\n  "storeId": "",\n  "token": "",\n  "brandId": "",\n  "categoryId": "",\n  "integratorName": "Herbalife",\n  "executorEmail": "integration@herbalife.local",\n  "integrationReferenceCode": ""\n}',
+    '{\n  "apiKey": "",\n  "apiSecret": "",\n  "sellerId": "",\n  "storeId": "",\n  "token": "",\n  "brandId": "",\n  "categoryId": "",\n  "integratorName": "Herbal Kapıda",\n  "executorEmail": "integration@herbalkapida.local",\n  "integrationReferenceCode": ""\n}',
   hepsiburada:
-    '{\n  "merchantId": "",\n  "username": "",\n  "password": "",\n  "userAgent": "herbalife_dev",\n  "brand": "",\n  "barcode": "",\n  "attributes": {}\n}',
+    '{\n  "merchantId": "",\n  "username": "",\n  "password": "",\n  "userAgent": "herbalkapida_dev",\n  "brand": "",\n  "barcode": "",\n  "attributes": {}\n}',
   n11: '{\n  "appKey": "",\n  "appSecret": "",\n  "categoryId": "",\n  "shipmentTemplate": ""\n}',
 };
 

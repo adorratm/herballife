@@ -29,8 +29,8 @@ export function useWhatsAppFabState(): WhatsAppFabLayout {
         popupHeightPx: visible ? Math.max(0, Number(detail?.heightPx) || 0) : 0,
       });
     }
-    window.addEventListener("herbalife:wa-popup", onPopup);
-    return () => window.removeEventListener("herbalife:wa-popup", onPopup);
+    window.addEventListener("herbalkapida:wa-popup", onPopup);
+    return () => window.removeEventListener("herbalkapida:wa-popup", onPopup);
   }, []);
 
   return state;

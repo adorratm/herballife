@@ -45,7 +45,7 @@ import { Cart } from '@entities/cart.entity';
 
 const DEFAULT_ORDER_CHANNELS: NotificationChannelName[] = ['email', 'whatsapp'];
 
-const DEFAULT_ORDER_ALERT_EMAIL = 'info@herbalife.com.tr';
+const DEFAULT_ORDER_ALERT_EMAIL = 'info@herbalkapida.com';
 
 @Injectable()
 export class NotificationsService {

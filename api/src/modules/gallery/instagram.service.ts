@@ -29,7 +29,7 @@ export class InstagramService {
 
   profileUrl(): string {
     const username =
-      this.config.get<string>('instagram.username') || 'herbalife';
+      this.config.get<string>('instagram.username') || 'herbalkapida';
     return `https://www.instagram.com/${username.replace(/^@/, '')}/`;
   }
 

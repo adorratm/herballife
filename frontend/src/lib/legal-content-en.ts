@@ -132,7 +132,7 @@ ${seller.email} · ${seller.phone}`,
     },
     "musteri-memnuniyeti": {
       title: "Customer Satisfaction Policy",
-      content: `${seller.name} commits to quality, transparency, and fast support for original Herbalife products.
+      content: `${seller.name} commits to quality, transparency, and fast support for original Herbal Kapıda products.
 
 1. Principles
 Clear order and delivery information; hygienic packaging; timely responses; full consumer rights compliance.

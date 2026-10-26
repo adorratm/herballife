@@ -82,7 +82,7 @@
       "title": "3 adımda sağlıklı rutine",
       "body": "Alışverişten takibe — süreç sade, destek sürekli.",
       "cta": "WhatsApp ile başla",
-      "disclaimer": "{distributor} · bağımsız Herbalife distribütörü. Bu site resmi Herbalife sitesi değildir.",
+      "disclaimer": "{distributor} · bağımsız Herbal Kapıda distribütörü. Bu site resmi Herbal Kapıda sitesi değildir.",
       "step1Title": "Hedefini paylaş",
       "step1Body": "Kilo, enerji veya spor — WhatsApp’tan kısa bir görüşmeyle başlangıç noktanı netleştiriyoruz.",
       "step2Title": "Doğru seti seç",
@@ -130,7 +130,7 @@
     "fallbackFaqItems": [
       {
         "question": "Ürünler orijinal mi?",
-        "answer": "Evet. Satılan ürünler orijinal Herbalife Nutrition ürünleridir. Bu site bağımsız bir distribütöre aittir; resmi Herbalife sitesi değildir."
+        "answer": "Evet. Satılan ürünler orijinal Herbal Kapıda Nutrition ürünleridir. Bu site bağımsız bir distribütöre aittir; resmi Herbal Kapıda sitesi değildir."
       },
       {
         "question": "Kargo ne kadar sürer?",
@@ -168,7 +168,7 @@
     "faqEyebrow": "Merak edilenler",
     "faqAllLink": "Tüm sorular",
     "membershipEyebrow": "Distribütör olmak ister misiniz?",
-    "membershipFallbackTitle": "Resmi Herbalife üyeliği",
+    "membershipFallbackTitle": "Resmi Herbal Kapıda üyeliği",
     "newsletterTitle": "Kampanya bülteni",
     "newsletterBody": "Set fırsatları, hediyeli paketler ve wellness ipuçları — spam'sız, yalnızca değerli haberler."
   },
@@ -197,7 +197,7 @@
     "emailSaveError": "E-posta kaydedilemedi.",
     "trustPaytr": "✓ PayTR 256 bit güvenli ödeme",
     "trustReturn": "✓ 14 gün cayma / iade hakkı",
-    "trustOriginal": "✓ Orijinal Herbalife ürünleri",
+    "trustOriginal": "✓ Orijinal Herbal Kapıda ürünleri",
     "upsellEyebrow": "Distribütör önerisi",
     "upsellTitle": "Birlikte tercih edilenler",
     "added": "Sepete eklendi",
@@ -323,7 +323,7 @@
     "relatedWithCategory": "{name} ile tamamla",
     "relatedDefault": "Sık birlikte alınanlar",
     "specCategory": "Kategori",
-    "specHerbalifeId": "Herbalife ID",
+    "specHerbal KapıdaId": "Herbal Kapıda ID",
     "specKind": "Tür",
     "specForm": "Form / tip",
     "specHighlight": "İçerik vurgusu",
@@ -351,11 +351,11 @@
     "paymentNotice": "Ödeme bildirimi",
     "bankAccounts": "Banka hesapları",
     "myFavorites": "Favorilerim",
-    "membershipCta": "Resmi Herbalife üyeliği",
+    "membershipCta": "Resmi Herbal Kapıda üyeliği",
     "map": "Harita",
     "googleReview": "Google Yorum",
     "whatsappPrefill": "Merhaba, {brand} hakkında yazıyorum.",
-    "legalDisclaimerFallback": "Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir. Ürünler %100 orijinaldir."
+    "legalDisclaimerFallback": "Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir. Ürünler %100 orijinaldir."
   },
   "benefits": {
     "sameDayTitle": "{cutoff}'a kadar sipariş — aynı gün kargo",
@@ -721,7 +721,7 @@
     "fallbackItems": [
       {
         "question": "Ürünler orijinal mi?",
-        "answer": "Evet. Satılan ürünler orijinal Herbalife ürünleridir. Bu site bağımsız bir Herbalife Nutrition distribütörüne aittir."
+        "answer": "Evet. Satılan ürünler orijinal Herbal Kapıda ürünleridir. Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir."
       },
       {
         "question": "Hangi paketi seçmeliyim?",
@@ -744,7 +744,7 @@
         "answer": "Açılmamış ürünlerde yasal süre içinde iade mümkündür. Detaylar için İptal & İade sayfasını inceleyin veya bize yazın."
       }
     ],
-    "metaKeywords": "sss, sıkça sorulan sorular, kargo, Herbalife, paket"
+    "metaKeywords": "sss, sıkça sorulan sorular, kargo, Herbal Kapıda, paket"
   },
   "mediaPage": {
     "metaTitle": "Medya",
@@ -763,7 +763,7 @@
     "galleryLead": "Ürün, paket ve yaşam anları — tıklayınca büyük görünüm.",
     "galleryEmpty": "Henüz galeri görseli eklenmedi.",
     "fallbackSubtitle": "Ürünler, paketler ve sağlıklı yaşam anlarından kareler. Instagram paylaşımlarımız ve seçilmiş görseller.",
-    "metaKeywords": "Herbalife medya, Instagram, beslenme, sağlıklı yaşam"
+    "metaKeywords": "Herbal Kapıda medya, Instagram, beslenme, sağlıklı yaşam"
   },
   "reviewsPage": {
     "metaTitle": "Google’da Değerlendir",
@@ -783,7 +783,7 @@
     "reviewOnGoogle": "Google’da değerlendir",
     "reviewAria": "Google’da değerlendir — QR kodu tarayın",
     "whatsappPrefill": "Merhaba, Google yorum linki için yazıyorum.",
-    "metaKeywords": "Google yorum, Herbalife, Herbal Kapıda"
+    "metaKeywords": "Google yorum, Herbal Kapıda, Herbal Kapıda"
   },
   "seo": {
     "products": "Ürünler",
@@ -799,7 +799,7 @@
     "aboutTitle": "Hakkımızda",
     "categoryNotFound": "Kategori bulunamadı",
     "catalogLoading": "Katalog yükleniyor…",
-    "aboutJsonLdDescription": "{brand} — bağımsız Herbalife distribütörü.",
+    "aboutJsonLdDescription": "{brand} — bağımsız Herbal Kapıda distribütörü.",
     "keywordsCatalogDefault": [
       "katalog",
       "ürün",
@@ -813,17 +813,17 @@
     "keywordsBlog": [
       "yazılar",
       "beslenme",
-      "Herbalife"
+      "Herbal Kapıda"
     ]
   },
   "aboutPage": {
     "fallbackHeroTitle": "Hakkımızda",
-    "fallbackHeroSeo": "Herbal Kapıda — bağımsız Herbalife distribütörü ile orijinal ürünler, avantajlı setler ve kişiselleştirilmiş beslenme desteği.",
-    "metaDescription": "{brand} — bağımsız Herbalife distribütörü.",
-    "metaKeywords": "hakkımızda, Herbalife, bağımsız distribütör, Herbal Kapıda, beslenme",
+    "fallbackHeroSeo": "Herbal Kapıda — bağımsız Herbal Kapıda distribütörü ile orijinal ürünler, avantajlı setler ve kişiselleştirilmiş beslenme desteği.",
+    "metaDescription": "{brand} — bağımsız Herbal Kapıda distribütörü.",
+    "metaKeywords": "hakkımızda, Herbal Kapıda, bağımsız distribütör, Herbal Kapıda, beslenme",
     "fallbackBodyLine1": "Sağlıklı yaşam",
     "fallbackBodyLine2": "yanınızda",
-    "fallbackBodyP1": "Herbal Kapıda olarak orijinal Herbalife ürünlerini, avantajlı paketleri ve birebir beslenme danışmanlığını bir arada sunuyoruz.",
+    "fallbackBodyP1": "Herbal Kapıda olarak orijinal Herbal Kapıda ürünlerini, avantajlı paketleri ve birebir beslenme danışmanlığını bir arada sunuyoruz.",
     "fallbackBodyP2": "Amacımız raflara rastgele ürün koymak değil; hedefinize uygun program, sürdürülebilir alışkanlıklar ve güvenilir ürün erişimi sağlamaktır.",
     "fallbackBodyP3": "Ürün seçimi, set önerisi veya wellness takibi için WhatsApp ve iletişim kanallarımızdan bize ulaşabilirsiniz.",
     "ctaProducts": "Ürünleri İncele",
@@ -839,7 +839,7 @@
     "fallbackEthosQuote": "Sürdürülebilir sonuçlar; doğru ürün, düzenli takip ve kişisel rehberlikle gelir.",
     "fallbackEthosLink": "Yazıları oku",
     "pillarOriginalTitle": "Orijinal ürün",
-    "pillarOriginalBody": "Bağımsız distribütör güvencesiyle %100 orijinal Herbalife ürünleri.",
+    "pillarOriginalBody": "Bağımsız distribütör güvencesiyle %100 orijinal Herbal Kapıda ürünleri.",
     "pillarProgramTitle": "Kişisel program",
     "pillarProgramBody": "Hedefinize göre set önerisi ve WhatsApp üzerinden birebir danışmanlık.",
     "pillarTrackingTitle": "Sağlık takibi",
@@ -851,7 +851,7 @@
     "email": "E-posta",
     "waWrite": "WhatsApp'tan yaz",
     "waPrefillAbout": "Merhaba {brand}, hakkınızda bilgi almak istiyorum.",
-    "jsonLdDescription": "{brand} — bağımsız Herbalife distribütörü."
+    "jsonLdDescription": "{brand} — bağımsız Herbal Kapıda distribütörü."
   },
   "locale": {
     "language": "Dil",
@@ -1129,7 +1129,7 @@
   "coachingPage": {
     "metaTitle": "Koçluk & Beslenme Danışmanlığı",
     "metaDescription": "Kişisel beslenme koçluğu, öğün takibi ve WhatsApp desteği — {brand}.",
-    "metaKeywords": "koçluk, beslenme danışmanlığı, wellness, Herbalife",
+    "metaKeywords": "koçluk, beslenme danışmanlığı, wellness, Herbal Kapıda",
     "breadcrumbHome": "Ana sayfa",
     "breadcrumbCoaching": "Koçluk",
     "fallbackHeroEyebrow": "Beslenme danışmanlığı",

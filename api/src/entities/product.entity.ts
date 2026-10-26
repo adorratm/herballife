@@ -72,7 +72,7 @@ export class Product extends BaseEntity {
   @Column({ name: 'varietal', type: 'varchar', length: 120, nullable: true })
   varietal!: string | null;
 
-  /** Herbalife lot / parti numarası */
+  /** Herbal Kapıda lot / parti numarası */
   @Column({ name: 'batch_id', type: 'varchar', length: 80, nullable: true })
   batchId!: string | null;
 

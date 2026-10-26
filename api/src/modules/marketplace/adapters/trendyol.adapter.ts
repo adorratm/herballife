@@ -44,7 +44,7 @@ export class TrendyolAdapter implements IMarketplaceAdapter {
     );
     return {
       Authorization: basicAuthHeader(apiKey, apiSecret),
-      'User-Agent': `${sellerId} - Herbalife`,
+      'User-Agent': `${sellerId} - Herbal Kapıda`,
       storeFrontCode: this.storeFrontCode(credentials),
       sellerId,
     };
