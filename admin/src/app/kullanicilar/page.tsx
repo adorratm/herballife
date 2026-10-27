@@ -22,6 +22,7 @@ type AllowlistRow = {
   email: string;
   active: boolean;
   note: string | null;
+  protected?: boolean;
 };
 
 const ROLE_LABELS: Record<Role, string> = {
@@ -32,6 +33,15 @@ const ROLE_LABELS: Record<Role, string> = {
 };
 
 const ROLE_OPTIONS: Role[] = ['customer', 'staff', 'accountant', 'admin'];
+
+const PROTECTED_ADMIN_EMAILS = new Set([
+  'emrekilic19983@gmail.com',
+  'info@herbalkapida.com',
+]);
+
+function isProtectedAdmin(email: string) {
+  return PROTECTED_ADMIN_EMAILS.has(email.toLowerCase().trim());
+}
 
 function displayName(u: ManagedUser) {
   return [u.firstName, u.lastName].filter(Boolean).join(' ') || u.email;
@@ -287,7 +297,9 @@ export default function UsersAdminPage() {
             İzin listesine ekle
           </button>
           <ul className="mt-2 max-h-40 space-y-2 overflow-auto text-sm">
-            {allowlist.map((a) => (
+            {allowlist.map((a) => {
+              const locked = a.protected || isProtectedAdmin(a.email);
+              return (
               <li
                 key={a.id}
                 className="flex items-center justify-between gap-2 border-b border-border-muted/40 pb-2"
@@ -297,8 +309,13 @@ export default function UsersAdminPage() {
                   <span className="ml-2 text-xs text-muted">
                     {a.active ? 'aktif' : 'pasif'}
                   </span>
+                  {locked ? (
+                    <span className="ml-2 rounded bg-accent/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-accent">
+                      kilitli
+                    </span>
+                  ) : null}
                 </span>
-                {a.active ? (
+                {a.active && !locked ? (
                   <button
                     type="button"
                     disabled={busyId === a.id}
@@ -307,9 +324,12 @@ export default function UsersAdminPage() {
                   >
                     Çıkar
                   </button>
+                ) : locked ? (
+                  <span className="text-[10px] text-muted">silinemez</span>
                 ) : null}
               </li>
-            ))}
+              );
+            })}
           </ul>
         </form>
       </div>
@@ -367,20 +387,29 @@ export default function UsersAdminPage() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((u) => (
+              {rows.map((u) => {
+                const locked = isProtectedAdmin(u.email);
+                return (
                 <tr key={u.id} className="border-b border-border-muted/40">
                   <td className="px-3 py-3">
                     <p className="font-medium">{displayName(u)}</p>
-                    <p className="text-xs text-muted">{u.email}</p>
+                    <p className="text-xs text-muted">
+                      {u.email}
+                      {locked ? (
+                        <span className="ml-2 rounded bg-accent/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-accent">
+                          kilitli
+                        </span>
+                      ) : null}
+                    </p>
                   </td>
                   <td className="px-3 py-3">
                     <select
                       value={u.role}
-                      disabled={busyId === u.id}
+                      disabled={busyId === u.id || locked}
                       onChange={(e) =>
                         void setRole(u.id, e.target.value as Role)
                       }
-                      className="border border-border-muted bg-background px-2 py-1 text-sm"
+                      className="border border-border-muted bg-background px-2 py-1 text-sm disabled:opacity-60"
                     >
                       {ROLE_OPTIONS.map((r) => (
                         <option key={r} value={r}>
@@ -397,17 +426,22 @@ export default function UsersAdminPage() {
                     )}
                   </td>
                   <td className="px-3 py-3">
-                    <button
-                      type="button"
-                      disabled={busyId === u.id}
-                      onClick={() => void toggleActive(u)}
-                      className="text-xs text-muted hover:text-accent"
-                    >
-                      {u.isActive ? 'Pasifleştir' : 'Aktifleştir'}
-                    </button>
+                    {locked ? (
+                      <span className="text-[10px] text-muted">silinemez</span>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={busyId === u.id}
+                        onClick={() => void toggleActive(u)}
+                        className="text-xs text-muted hover:text-accent"
+                      >
+                        {u.isActive ? 'Pasifleştir' : 'Aktifleştir'}
+                      </button>
+                    )}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
           {!rows.length ? (

@@ -4,6 +4,7 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -15,6 +16,10 @@ import { createHash, randomBytes } from 'crypto';
 import { User, AuthProvider, UserRole, OPS_ROLES } from '@entities/user.entity';
 import { UserIdentity } from '@entities/user-identity.entity';
 import { AdminAllowlist } from '@entities/admin-allowlist.entity';
+import {
+  PROTECTED_ADMIN_EMAILS,
+  isProtectedAdminEmail,
+} from '@modules/auth/protected-admins';
 import {
   ForgotPasswordDto,
   LoginDto,
@@ -73,7 +78,7 @@ function isSyntheticAppleEmail(email: string): boolean {
 }
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit {
   private readonly logger = new Logger(AuthService.name);
 
   constructor(
@@ -82,6 +87,31 @@ export class AuthService {
     private readonly config: ConfigService,
     private readonly notifications: NotificationsService,
   ) {}
+
+  async onModuleInit() {
+    try {
+      await this.ensureProtectedAdmins();
+    } catch (err) {
+      this.logger.warn(
+        `Protected admin allowlist bootstrap atlandı: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+    }
+  }
+
+  /** Sabit yönetici e-postalarını allowlist’te tut (silinemez). */
+  async ensureProtectedAdmins() {
+    for (const email of PROTECTED_ADMIN_EMAILS) {
+      await this.ensureAllowlist(email, 'Kilitli yönetici (sistem)');
+      const user = await this.em.findOne(User, { where: { email } });
+      if (user && user.role !== UserRole.ADMIN) {
+        user.role = UserRole.ADMIN;
+        user.isActive = true;
+        await this.em.save(user);
+      }
+    }
+  }
 
   async register(dto: RegisterDto): Promise<AuthTokens> {
     const email = dto.email.toLowerCase().trim();
@@ -366,6 +396,15 @@ export class AuthService {
       }
     }
 
+    if (
+      isProtectedAdminEmail(user.email) &&
+      (nextRole !== UserRole.ADMIN || nextActive === false)
+    ) {
+      throw new ForbiddenException(
+        'Bu hesap kilitli yöneticidir; rol/aktiflik değiştirilemez',
+      );
+    }
+
     if (wasAdmin && (nextRole !== UserRole.ADMIN || nextActive === false)) {
       const adminCount = await this.em.count(User, {
         where: { role: UserRole.ADMIN, isActive: true },
@@ -392,7 +431,13 @@ export class AuthService {
   }
 
   async listAllowlist() {
-    return this.em.find(AdminAllowlist, { order: { email: 'ASC' } });
+    const rows = await this.em.find(AdminAllowlist, {
+      order: { email: 'ASC' },
+    });
+    return rows.map((row) => ({
+      ...row,
+      protected: isProtectedAdminEmail(row.email),
+    }));
   }
 
   async addAllowlist(dto: {
@@ -431,6 +476,11 @@ export class AuthService {
   async updateAllowlist(id: string, dto: { active?: boolean; note?: string }) {
     const row = await this.em.findOne(AdminAllowlist, { where: { id } });
     if (!row) throw new NotFoundException('Allowlist kaydı yok');
+    if (isProtectedAdminEmail(row.email) && dto.active === false) {
+      throw new ForbiddenException(
+        'Bu e-posta kilitli yöneticidir; izin listesinden çıkarılamaz',
+      );
+    }
     if (dto.active !== undefined) row.active = dto.active;
     if (dto.note !== undefined) row.note = dto.note;
     await this.em.save(row);
@@ -450,7 +500,7 @@ export class AuthService {
         await this.em.save(user);
       }
     }
-    return row;
+    return { ...row, protected: isProtectedAdminEmail(row.email) };
   }
 
   async removeAllowlist(id: string) {
@@ -477,8 +527,12 @@ export class AuthService {
   }
 
   private async setAllowlistActive(email: string, active: boolean) {
+    const normalized = email.toLowerCase().trim();
+    if (!active && isProtectedAdminEmail(normalized)) {
+      return;
+    }
     const row = await this.em.findOne(AdminAllowlist, {
-      where: { email: email.toLowerCase().trim() },
+      where: { email: normalized },
     });
     if (!row) return;
     row.active = active;

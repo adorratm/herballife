@@ -36,6 +36,7 @@ import { apiStockImage } from '../common/stock-images';
 import { herbalProductImage } from '@database/herbal-product-images';
 import { migrateI18nContent } from '@database/migrate-i18n-content';
 import { migrateCmsI18n } from '@database/migrate-cms-i18n';
+import { PROTECTED_ADMIN_EMAILS } from '@modules/auth/protected-admins';
 
 config({ path: join(process.cwd(), '..', '.env') });
 config();
@@ -71,30 +72,35 @@ async function seed() {
   await ensureSchemaForSeed();
   const em = AppDataSource.manager;
 
-  const adminEmail = (process.env.ADMIN_ALLOWLIST || '')
-    .split(',')[0]
-    .trim()
-    .toLowerCase();
+  const protectedAdmins = [...PROTECTED_ADMIN_EMAILS];
+  const fromEnv = (process.env.ADMIN_ALLOWLIST || '')
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  const bootstrapEmails = Array.from(
+    new Set([...protectedAdmins, ...fromEnv]),
+  );
 
-  // İsteğe bağlı bootstrap: env doluysa ilk admin satırını DB’ye yazar.
-  // Günlük yetki yönetimi Kullanıcılar / admin_allowlist üzerinden yapılır.
-  if (adminEmail) {
+  for (const adminEmail of bootstrapEmails) {
     let allow = await em.findOne(AdminAllowlist, {
       where: { email: adminEmail },
     });
+    const locked = protectedAdmins.includes(adminEmail as (typeof PROTECTED_ADMIN_EMAILS)[number]);
     if (!allow) {
       allow = em.create(AdminAllowlist, {
         email: adminEmail,
         active: true,
-        note: 'Seed bootstrap (ADMIN_ALLOWLIST)',
+        note: locked
+          ? 'Kilitli yönetici (sistem)'
+          : 'Seed bootstrap (ADMIN_ALLOWLIST)',
       });
       await em.save(allow);
       console.log('Admin allowlist (seed bootstrap):', adminEmail);
+    } else if (locked) {
+      allow.active = true;
+      if (!allow.note) allow.note = 'Kilitli yönetici (sistem)';
+      await em.save(allow);
     }
-  } else {
-    console.log(
-      'ADMIN_ALLOWLIST boş — admin bootstrap atlandı; admin’i Kullanıcılar ekranından ekleyin',
-    );
   }
 
   /** herbalurunleri.com / design vitrin kategorileri */
@@ -912,9 +918,9 @@ async function seed() {
       const placeholders = [
         '',
         'Türkiye',
-        'Türkiye — [Yayın öncesi gerçek adres]',
-        '+90 500 000 00 00',
-        '+90 532 000 00 01',
+        'Türkiye — Adetepe Mahallesi 73 Sokak No 3 Daire 9 Buca Izmir',
+        '+90 505 142 07 10',
+        '+90 505 142 07 10',
       ];
       for (const field of [
         'address',
