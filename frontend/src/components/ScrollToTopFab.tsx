@@ -7,14 +7,14 @@ import { useWhatsAppFabState } from "@/hooks/useWhatsAppFabState";
 import { readCookieConsent } from "@/lib/cookie-consent";
 
 const SHOW_AFTER = 380;
-/** WA butonu ile ok arası */
+/** WA butonu ile ok arası (popup kapalıyken) */
 const GAP_PX = 16;
-/** Bildirim / panel ile ok arası — balonun altında kalmasın */
-const POPUP_CLEARANCE_PX = 20;
+/** Bildirim / panel ile ok arası — popup’a yakın dursun */
+const POPUP_CLEARANCE_PX = 12;
 /** WhatsApp FAB yüksekliği (h-11.5 ≈ 46) + stack gap-3 (12) */
 const WA_BUTTON_PX = 58;
-/** Ölçüm gelmeden önce güvenli minimum bildirim yüksekliği */
-const POPUP_MIN_PX = 100;
+/** Ölçüm gelmeden önce yedek (kısa tanıtım balonu) */
+const POPUP_FALLBACK_PX = 72;
 
 function waBottomPx(isMobile: boolean, cookieLift: boolean): number {
   if (isMobile) {
@@ -75,10 +75,14 @@ export function ScrollToTopFab() {
   }
 
   const base = waBottomPx(isMobile, liftForCookie);
-  const popupBlock = popupVisible
-    ? Math.max(popupHeightPx, POPUP_MIN_PX) + POPUP_CLEARANCE_PX
-    : 0;
-  const bottomPx = base + WA_BUTTON_PX + popupBlock + GAP_PX;
+  // Popup açıkken: WA butonu + gap-3 + balon yüksekliği + kısa boşluk
+  // Kapalıyken: WA butonu + GAP_PX (eski konum)
+  const aboveWa = popupVisible
+    ? WA_BUTTON_PX +
+      (popupHeightPx > 0 ? popupHeightPx : POPUP_FALLBACK_PX) +
+      POPUP_CLEARANCE_PX
+    : WA_BUTTON_PX + GAP_PX;
+  const bottomPx = base + aboveWa;
 
   return (
     <button

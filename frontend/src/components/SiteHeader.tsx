@@ -425,7 +425,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                 alt={logoText}
                 width={200}
                 height={56}
-                className="h-9 w-auto max-w-[9.5rem] shrink-0 object-contain object-left sm:h-10 sm:max-w-[11rem] xl:max-w-[13rem]"
+                className="h-9 w-auto max-w-38 shrink-0 object-contain object-left sm:h-10 sm:max-w-44 xl:max-w-52"
                 priority
               />
             ) : (
@@ -641,13 +641,6 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
             >
               {authed ? tNav("account") : tNav("login")}
             </Link>
-
-            <div className="lg:hidden">
-              <LocaleCurrencyControls
-                compact
-                localization={settings.localization}
-              />
-            </div>
 
             <button
               type="button"
