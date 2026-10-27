@@ -650,7 +650,7 @@ export default function CheckoutPage() {
       >
         <div className="min-w-0 space-y-6 sm:space-y-8 lg:col-span-8">
           <Reveal fill={false} variant="left">
-          <section className="panel-motion industrial-border relative z-[1] min-w-0 bg-white p-4 sm:p-6 md:p-8">
+          <section className="panel-motion industrial-border relative z-1 min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-display text-2xl">{tCheckout("contactHeading")}</h2>
               {contactComplete ? (
@@ -694,7 +694,7 @@ export default function CheckoutPage() {
           </Reveal>
 
           <Reveal fill={false} variant="left" delay={40}>
-          <section className="panel-motion industrial-border relative z-[1] min-w-0 bg-white p-4 sm:p-6 md:p-8">
+          <section className="panel-motion industrial-border relative z-1 min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <h2 className="mb-6 font-display text-2xl">
               {tCheckout("deliveryMethodHeading")}
             </h2>
@@ -766,7 +766,7 @@ export default function CheckoutPage() {
 
           {!isPickup ? (
           <Reveal fill={false} variant="left" delay={70}>
-          <section className="panel-motion industrial-border relative z-[1] min-w-0 bg-white p-4 sm:p-6 md:p-8">
+          <section className="panel-motion industrial-border relative z-1 min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-display text-2xl">{tCheckout("shippingAddressHeading")}</h2>
               {addressComplete ? (
@@ -922,7 +922,7 @@ export default function CheckoutPage() {
           ) : null}
 
           <Reveal fill={false} variant="left" delay={120}>
-          <section className="panel-motion industrial-border relative z-[1] min-w-0 bg-white p-4 sm:p-6 md:p-8">
+          <section className="panel-motion industrial-border relative z-1 min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
               <h2 className="font-display text-2xl">{tCheckout("billingAddressHeading")}</h2>
               <Check
@@ -1123,7 +1123,7 @@ export default function CheckoutPage() {
 
           {!isPickup ? (
           <Reveal fill={false} variant="left" delay={160}>
-          <section className="panel-motion industrial-border relative z-[1] min-w-0 bg-white p-4 sm:p-6 md:p-8">
+          <section className="panel-motion industrial-border relative z-1 min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <h2 className="mb-6 font-display text-2xl">{tCheckout("shippingProviderHeading")}</h2>
             <div className="space-y-3">
               {providers.map((p) => (
@@ -1156,7 +1156,7 @@ export default function CheckoutPage() {
 
         <aside className="min-w-0 lg:col-span-4">
           {/* sticky yalnızca masaüstü: mobilde footer/menü üstüne binmesin */}
-          <div className="relative z-[1] border border-outline-variant/30 bg-white p-4 panel-motion sm:p-6 lg:sticky lg:top-28 lg:z-10">
+          <div className="relative z-1 border border-outline-variant/30 bg-white p-4 panel-motion sm:p-6 lg:sticky lg:top-28 lg:z-10">
             <h2 className="mb-6 font-display text-2xl">{tCheckout("summaryHeading")}</h2>
             <div className="mb-6 space-y-2">
               <label className="field-label">{tCheckout("couponLabel")}</label>
