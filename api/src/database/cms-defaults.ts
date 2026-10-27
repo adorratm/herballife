@@ -111,6 +111,76 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     rightLinkLabel: 'myherbalife.com',
     rightLinkUrl: 'https://www.myherbalife.com',
     closeLabel: 'Kapat',
+    translations: {
+      en: {
+        distributorName: 'Büşra Özberk',
+        headline:
+          'This website is operated by an Independent Herbalife Nutrition Distributor: Büşra Özberk',
+        leftTitle: 'EXISTING CUSTOMER?',
+        leftBody:
+          'A one-to-one relationship with your Personal Distributor is essential to reaching your nutrition goals. If Büşra Özberk is not your current distributor, we recommend purchasing your products from your current distributor. To find your current Distributor,',
+        leftLinkLabel: 'click here.',
+        leftLinkUrl: 'https://www.herbalife.com/en-gb/',
+        rightTitle:
+          'ARE YOU ALREADY A HERBALIFE NUTRITION DISTRIBUTOR OR PREFERRED CUSTOMER?',
+        rightBody:
+          'If you already have your own Distributor account, please place orders and enjoy full benefits at',
+        rightLinkLabel: 'myherbalife.com',
+        rightLinkUrl: 'https://www.myherbalife.com',
+        closeLabel: 'Close',
+      },
+      de: {
+        distributorName: 'Büşra Özberk',
+        headline:
+          'Diese Website wird von einem unabhängigen Herbalife Nutrition Distributor betrieben: Büşra Özberk',
+        leftTitle: 'BESTEHENDER KUNDE?',
+        leftBody:
+          'Eine persönliche Beziehung zu Ihrem Distributor ist entscheidend, um Ihre Ernährungsziele zu erreichen. Wenn Büşra Özberk nicht Ihr aktueller Distributor ist, empfehlen wir, Ihre Produkte bei Ihrem aktuellen Distributor zu kaufen. Um Ihren aktuellen Distributor zu finden,',
+        leftLinkLabel: 'klicken Sie hier.',
+        leftLinkUrl: 'https://www.herbalife.com/de-de/',
+        rightTitle:
+          'SIND SIE BEREITS HERBALIFE NUTRITION DISTRIBUTOR ODER PREFERRED CUSTOMER?',
+        rightBody:
+          'Wenn Sie bereits ein eigenes Distributor-Konto haben, bestellen Sie bitte und nutzen Sie alle Vorteile unter',
+        rightLinkLabel: 'myherbalife.com',
+        rightLinkUrl: 'https://www.myherbalife.com',
+        closeLabel: 'Schließen',
+      },
+      fr: {
+        distributorName: 'Büşra Özberk',
+        headline:
+          'Ce site est géré par un Distributeur indépendant Herbalife Nutrition : Büşra Özberk',
+        leftTitle: 'CLIENT EXISTANT ?',
+        leftBody:
+          'La relation individuelle avec votre Distributeur personnel est essentielle pour atteindre vos objectifs nutritionnels. Si Büşra Özberk n’est pas votre distributeur actuel, nous vous recommandons d’acheter vos produits auprès de votre distributeur actuel. Pour trouver votre Distributeur actuel,',
+        leftLinkLabel: 'cliquez ici.',
+        leftLinkUrl: 'https://www.herbalife.com/fr-fr/',
+        rightTitle:
+          'ÊTES-VOUS DÉJÀ DISTRIBUTEUR HERBALIFE NUTRITION OU CLIENT PRIVILÉGIÉ ?',
+        rightBody:
+          'Si vous avez déjà votre propre compte Distributeur, veuillez passer commande et bénéficier de tous vos droits sur',
+        rightLinkLabel: 'myherbalife.com',
+        rightLinkUrl: 'https://www.myherbalife.com',
+        closeLabel: 'Fermer',
+      },
+      es: {
+        distributorName: 'Büşra Özberk',
+        headline:
+          'Este sitio web es administrado por un Distribuidor Independiente de Herbalife Nutrition: Büşra Özberk',
+        leftTitle: '¿CLIENTE ACTUAL?',
+        leftBody:
+          'La relación personal con su Distribuidor es fundamental para alcanzar sus objetivos de nutrición. Si Büşra Özberk no es su distribuidor actual, le recomendamos comprar sus productos a su distribuidor actual. Para encontrar a su Distribuidor actual,',
+        leftLinkLabel: 'haga clic aquí.',
+        leftLinkUrl: 'https://www.herbalife.com/es-es/',
+        rightTitle:
+          '¿YA ES DISTRIBUIDOR DE HERBALIFE NUTRITION O CLIENTE PREFERENTE?',
+        rightBody:
+          'Si ya tiene su propia cuenta de Distribuidor, realice sus pedidos y disfrute de todos los beneficios en',
+        rightLinkLabel: 'myherbalife.com',
+        rightLinkUrl: 'https://www.myherbalife.com',
+        closeLabel: 'Cerrar',
+      },
+    },
   },
   whatsapp: {
     enabled: true,

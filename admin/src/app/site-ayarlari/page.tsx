@@ -92,6 +92,128 @@ type FormLocale = (typeof FORM_LOCALES)[number];
 const EXTRA_LOCALES = ['en', 'de', 'fr', 'es'] as const;
 type ExtraLocale = (typeof EXTRA_LOCALES)[number];
 
+type WelcomePopupText = {
+  distributorName: string;
+  headline: string;
+  leftTitle: string;
+  leftBody: string;
+  leftLinkLabel: string;
+  leftLinkUrl: string;
+  rightTitle: string;
+  rightBody: string;
+  rightLinkLabel: string;
+  rightLinkUrl: string;
+  closeLabel: string;
+};
+
+type WelcomePopupFields = {
+  enabled: boolean;
+  delayMs: string;
+  frequency: 'once' | 'session' | 'always';
+  showOnPaths: string;
+  excludePaths: string;
+  storageKey: string;
+} & WelcomePopupText;
+
+const DEFAULT_WELCOME_POPUP_TEXT: WelcomePopupText = {
+  distributorName: 'Büşra Özberk',
+  headline:
+    'Bu internet sitesi Herbalife Nutrition Bağımsız Distribütörü tarafından yönetilmektedir: Büşra Özberk',
+  leftTitle: 'MEVCUT MÜŞTERİ ?',
+  leftBody:
+    'Beslenme hedeflerinize ulaşmada kişisel Distribütörünüzle kuracağınız birebir ilişki çok önemlidir. Eğer Büşra Özberk mevcut distribütörünüz değil ise, ürünlerinizi mevcut distribütörünüzden almanızı öneririz. Mevcut Distribütörünüzü bulmak için',
+  leftLinkLabel: 'buraya tıklayınız.',
+  leftLinkUrl: 'https://www.herbalife.com/tr-tr/',
+  rightTitle:
+    'HALİHAZIRDA HERBALIFE NUTRITION DİSTRİBÜTÖRÜ YA DA AYRICALIKLI MÜŞTERİ MİSİNİZ?',
+  rightBody:
+    'Eğer kendi Distribütör hesabınız varsa, lütfen sipariş vermek ve tüm haklardan yararlanmak için',
+  rightLinkLabel: 'myherbalife.com',
+  rightLinkUrl: 'https://www.myherbalife.com',
+  closeLabel: 'Kapat',
+};
+
+const WELCOME_POPUP_I18N: Record<ExtraLocale, WelcomePopupText> = {
+  en: {
+    distributorName: 'Büşra Özberk',
+    headline:
+      'This website is operated by an Independent Herbalife Nutrition Distributor: Büşra Özberk',
+    leftTitle: 'EXISTING CUSTOMER?',
+    leftBody:
+      'A one-to-one relationship with your Personal Distributor is essential to reaching your nutrition goals. If Büşra Özberk is not your current distributor, we recommend purchasing your products from your current distributor. To find your current Distributor,',
+    leftLinkLabel: 'click here.',
+    leftLinkUrl: 'https://www.herbalife.com/en-gb/',
+    rightTitle:
+      'ARE YOU ALREADY A HERBALIFE NUTRITION DISTRIBUTOR OR PREFERRED CUSTOMER?',
+    rightBody:
+      'If you already have your own Distributor account, please place orders and enjoy full benefits at',
+    rightLinkLabel: 'myherbalife.com',
+    rightLinkUrl: 'https://www.myherbalife.com',
+    closeLabel: 'Close',
+  },
+  de: {
+    distributorName: 'Büşra Özberk',
+    headline:
+      'Diese Website wird von einem unabhängigen Herbalife Nutrition Distributor betrieben: Büşra Özberk',
+    leftTitle: 'BESTEHENDER KUNDE?',
+    leftBody:
+      'Eine persönliche Beziehung zu Ihrem Distributor ist entscheidend, um Ihre Ernährungsziele zu erreichen. Wenn Büşra Özberk nicht Ihr aktueller Distributor ist, empfehlen wir, Ihre Produkte bei Ihrem aktuellen Distributor zu kaufen. Um Ihren aktuellen Distributor zu finden,',
+    leftLinkLabel: 'klicken Sie hier.',
+    leftLinkUrl: 'https://www.herbalife.com/de-de/',
+    rightTitle:
+      'SIND SIE BEREITS HERBALIFE NUTRITION DISTRIBUTOR ODER PREFERRED CUSTOMER?',
+    rightBody:
+      'Wenn Sie bereits ein eigenes Distributor-Konto haben, bestellen Sie bitte und nutzen Sie alle Vorteile unter',
+    rightLinkLabel: 'myherbalife.com',
+    rightLinkUrl: 'https://www.myherbalife.com',
+    closeLabel: 'Schließen',
+  },
+  fr: {
+    distributorName: 'Büşra Özberk',
+    headline:
+      'Ce site est géré par un Distributeur indépendant Herbalife Nutrition : Büşra Özberk',
+    leftTitle: 'CLIENT EXISTANT ?',
+    leftBody:
+      'La relation individuelle avec votre Distributeur personnel est essentielle pour atteindre vos objectifs nutritionnels. Si Büşra Özberk n’est pas votre distributeur actuel, nous vous recommandons d’acheter vos produits auprès de votre distributeur actuel. Pour trouver votre Distributeur actuel,',
+    leftLinkLabel: 'cliquez ici.',
+    leftLinkUrl: 'https://www.herbalife.com/fr-fr/',
+    rightTitle:
+      'ÊTES-VOUS DÉJÀ DISTRIBUTEUR HERBALIFE NUTRITION OU CLIENT PRIVILÉGIÉ ?',
+    rightBody:
+      'Si vous avez déjà votre propre compte Distributeur, veuillez passer commande et bénéficier de tous vos droits sur',
+    rightLinkLabel: 'myherbalife.com',
+    rightLinkUrl: 'https://www.myherbalife.com',
+    closeLabel: 'Fermer',
+  },
+  es: {
+    distributorName: 'Büşra Özberk',
+    headline:
+      'Este sitio web es administrado por un Distribuidor Independiente de Herbalife Nutrition: Büşra Özberk',
+    leftTitle: '¿CLIENTE ACTUAL?',
+    leftBody:
+      'La relación personal con su Distribuidor es fundamental para alcanzar sus objetivos de nutrición. Si Büşra Özberk no es su distribuidor actual, le recomendamos comprar sus productos a su distribuidor actual. Para encontrar a su Distribuidor actual,',
+    leftLinkLabel: 'haga clic aquí.',
+    leftLinkUrl: 'https://www.herbalife.com/es-es/',
+    rightTitle:
+      '¿YA ES DISTRIBUIDOR DE HERBALIFE NUTRITION O CLIENTE PREFERENTE?',
+    rightBody:
+      'Si ya tiene su propia cuenta de Distribuidor, realice sus pedidos y disfrute de todos los beneficios en',
+    rightLinkLabel: 'myherbalife.com',
+    rightLinkUrl: 'https://www.myherbalife.com',
+    closeLabel: 'Cerrar',
+  },
+};
+
+const DEFAULT_WELCOME_POPUP: WelcomePopupFields = {
+  enabled: true,
+  delayMs: '600',
+  frequency: 'once',
+  showOnPaths: '/',
+  excludePaths: '/giris, /kayit, /odeme, /auth',
+  storageKey: 'hk_welcome_popup_v1',
+  ...DEFAULT_WELCOME_POPUP_TEXT,
+};
+
 type LocaleBundle = {
   brand: Pick<
     BrandFields,
@@ -109,6 +231,7 @@ type LocaleBundle = {
   footer: FooterFields;
   whatsapp: { greeting: string; presets: WhatsAppPresetRow[] };
   navigation: Navigation;
+  welcomePopup: WelcomePopupText;
 };
 
 const DEFAULT_ANALYTICS: AnalyticsSettings = {
@@ -156,7 +279,7 @@ const DEFAULT_WHATSAPP: WhatsAppSettings = {
   ],
 };
 
-function emptyLocaleBundle(): LocaleBundle {
+function emptyLocaleBundle(loc?: ExtraLocale): LocaleBundle {
   return {
     brand: {
       name: '',
@@ -176,15 +299,18 @@ function emptyLocaleBundle(): LocaleBundle {
       presets: DEFAULT_WHATSAPP.presets.map((p) => ({ ...p })),
     },
     navigation: { header: [], footerNav: [], footerLegal: [] },
+    welcomePopup: loc
+      ? { ...WELCOME_POPUP_I18N[loc] }
+      : { ...DEFAULT_WELCOME_POPUP_TEXT },
   };
 }
 
 function initialLocaleBundles(): Record<ExtraLocale, LocaleBundle> {
   return {
-    en: emptyLocaleBundle(),
-    de: emptyLocaleBundle(),
-    fr: emptyLocaleBundle(),
-    es: emptyLocaleBundle(),
+    en: emptyLocaleBundle('en'),
+    de: emptyLocaleBundle('de'),
+    fr: emptyLocaleBundle('fr'),
+    es: emptyLocaleBundle('es'),
   };
 }
 
@@ -271,6 +397,10 @@ function readLocaleBundles(
     string,
     Record<string, unknown>
   >;
+  const welcomePopupT = (map.welcomePopup?.translations || {}) as Record<
+    string,
+    Record<string, unknown>
+  >;
 
   const trNavRoot = omitTranslations(
     (map.navigation || {}) as Record<string, unknown>,
@@ -291,6 +421,8 @@ function readLocaleBundles(
     const f = footerT[loc] || {};
     const w = whatsappT[loc] || {};
     const n = navigationT[loc] || {};
+    const wp = welcomePopupT[loc] || {};
+    const wpFallback = WELCOME_POPUP_I18N[loc];
     const wa = asWhatsApp({
       greeting: w.greeting || trWa.greeting,
       presets: Array.isArray(w.presets) && w.presets.length ? w.presets : trWa.presets,
@@ -340,6 +472,21 @@ function readLocaleBundles(
           ? footerLegal
           : trNav.footerLegal.map((l) => ({ ...l })),
       },
+      welcomePopup: {
+        distributorName: String(
+          wp.distributorName || wpFallback.distributorName,
+        ),
+        headline: String(wp.headline || wpFallback.headline),
+        leftTitle: String(wp.leftTitle || wpFallback.leftTitle),
+        leftBody: String(wp.leftBody || wpFallback.leftBody),
+        leftLinkLabel: String(wp.leftLinkLabel || wpFallback.leftLinkLabel),
+        leftLinkUrl: String(wp.leftLinkUrl || wpFallback.leftLinkUrl),
+        rightTitle: String(wp.rightTitle || wpFallback.rightTitle),
+        rightBody: String(wp.rightBody || wpFallback.rightBody),
+        rightLinkLabel: String(wp.rightLinkLabel || wpFallback.rightLinkLabel),
+        rightLinkUrl: String(wp.rightLinkUrl || wpFallback.rightLinkUrl),
+        closeLabel: String(wp.closeLabel || wpFallback.closeLabel),
+      },
     };
   }
   return out;
@@ -351,50 +498,6 @@ const LOCALE_LABELS: Record<FormLocale, string> = {
   de: 'DE',
   fr: 'FR',
   es: 'ES',
-};
-
-type WelcomePopupFields = {
-  enabled: boolean;
-  delayMs: string;
-  frequency: 'once' | 'session' | 'always';
-  showOnPaths: string;
-  excludePaths: string;
-  storageKey: string;
-  distributorName: string;
-  headline: string;
-  leftTitle: string;
-  leftBody: string;
-  leftLinkLabel: string;
-  leftLinkUrl: string;
-  rightTitle: string;
-  rightBody: string;
-  rightLinkLabel: string;
-  rightLinkUrl: string;
-  closeLabel: string;
-};
-
-const DEFAULT_WELCOME_POPUP: WelcomePopupFields = {
-  enabled: true,
-  delayMs: '600',
-  frequency: 'once',
-  showOnPaths: '/',
-  excludePaths: '/giris, /kayit, /odeme, /auth',
-  storageKey: 'hk_welcome_popup_v1',
-  distributorName: 'Büşra Özberk',
-  headline:
-    'Bu internet sitesi Herbalife Nutrition Bağımsız Distribütörü tarafından yönetilmektedir: Büşra Özberk',
-  leftTitle: 'MEVCUT MÜŞTERİ ?',
-  leftBody:
-    'Beslenme hedeflerinize ulaşmada kişisel Distribütörünüzle kuracağınız birebir ilişki çok önemlidir. Eğer Büşra Özberk mevcut distribütörünüz değil ise, ürünlerinizi mevcut distribütörünüzden almanızı öneririz. Mevcut Distribütörünüzü bulmak için',
-  leftLinkLabel: 'buraya tıklayınız.',
-  leftLinkUrl: 'https://www.herbalife.com/tr-tr/',
-  rightTitle:
-    'HALİHAZIRDA HERBALIFE NUTRITION DİSTRİBÜTÖRÜ YA DA AYRICALIKLI MÜŞTERİ MİSİNİZ?',
-  rightBody:
-    'Eğer kendi Distribütör hesabınız varsa, lütfen sipariş vermek ve tüm haklardan yararlanmak için',
-  rightLinkLabel: 'myherbalife.com',
-  rightLinkUrl: 'https://www.myherbalife.com',
-  closeLabel: 'Kapat',
 };
 
 type SettingsSection =
@@ -514,6 +617,27 @@ export default function SiteSettingsPage() {
     () => (isTr ? navigation : localeBundles[formLocale].navigation),
     [isTr, navigation, localeBundles, formLocale],
   );
+  const welcomePopupView = useMemo(() => {
+    if (isTr) return welcomePopup;
+    return { ...welcomePopup, ...localeBundles[formLocale].welcomePopup };
+  }, [isTr, welcomePopup, localeBundles, formLocale]);
+
+  function patchWelcomePopupText(patch: Partial<WelcomePopupText>) {
+    if (isTr) {
+      setWelcomePopup((s) => ({ ...s, ...patch }));
+      return;
+    }
+    setLocaleBundles((prev) => {
+      const cur = prev[formLocale];
+      return {
+        ...prev,
+        [formLocale]: {
+          ...cur,
+          welcomePopup: { ...cur.welcomePopup, ...patch },
+        },
+      };
+    });
+  }
 
   function patchBrand(
     patch: Partial<BrandFields> | ((prev: BrandFields) => BrandFields),
@@ -948,6 +1072,28 @@ export default function SiteSettingsPage() {
                 closeLabel:
                   welcomePopup.closeLabel.trim() ||
                   DEFAULT_WELCOME_POPUP.closeLabel,
+                translations: Object.fromEntries(
+                  EXTRA_LOCALES.map((loc) => {
+                    const copy =
+                      localeBundles[loc].welcomePopup || WELCOME_POPUP_I18N[loc];
+                    return [
+                      loc,
+                      {
+                        distributorName: copy.distributorName.trim(),
+                        headline: copy.headline.trim(),
+                        leftTitle: copy.leftTitle.trim(),
+                        leftBody: copy.leftBody.trim(),
+                        leftLinkLabel: copy.leftLinkLabel.trim(),
+                        leftLinkUrl: copy.leftLinkUrl.trim(),
+                        rightTitle: copy.rightTitle.trim(),
+                        rightBody: copy.rightBody.trim(),
+                        rightLinkLabel: copy.rightLinkLabel.trim(),
+                        rightLinkUrl: copy.rightLinkUrl.trim(),
+                        closeLabel: copy.closeLabel.trim(),
+                      },
+                    ];
+                  }),
+                ),
               },
               group: 'welcomePopup',
             },
@@ -1227,100 +1373,116 @@ export default function SiteSettingsPage() {
         {settingsSection === 'popup' ? (
         <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
           <legend className="mono px-2 text-xs uppercase text-muted">
-            Karşılama / distribütör popup
+            Karşılama / distribütör popup ({LOCALE_LABELS[formLocale]})
           </legend>
           <p className="text-xs text-muted">
-            İlk açılışta gösterilen yasal bilgilendirme. Zamanlama, sıklık ve
-            hangi sayfalarda çıkacağı buradan yönetilir.
+            Metinler dil sekmesine göre kaydedilir. Zamanlama / yollar yalnızca
+            TR’den yönetilir.
           </p>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={welcomePopup.enabled}
-              onChange={(e) =>
-                setWelcomePopup((s) => ({ ...s, enabled: e.target.checked }))
-              }
-            />
-            Popup aktif
-          </label>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <label className="block text-sm">
-              <span className="mono text-[10px] uppercase text-muted">
-                Gecikme (ms)
-              </span>
-              <input
-                value={welcomePopup.delayMs}
-                onChange={(e) =>
-                  setWelcomePopup((s) => ({ ...s, delayMs: e.target.value }))
-                }
-                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-              />
-            </label>
-            <label className="block text-sm">
-              <span className="mono text-[10px] uppercase text-muted">
-                Sıklık
-              </span>
-              <select
-                value={welcomePopup.frequency}
-                onChange={(e) =>
-                  setWelcomePopup((s) => ({
-                    ...s,
-                    frequency: e.target.value as WelcomePopupFields['frequency'],
-                  }))
-                }
-                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-              >
-                <option value="once">Bir kez (localStorage)</option>
-                <option value="session">Oturum başına</option>
-                <option value="always">Her ziyarette</option>
-              </select>
-            </label>
-            <label className="block text-sm">
-              <span className="mono text-[10px] uppercase text-muted">
-                Storage key
-              </span>
-              <input
-                value={welcomePopup.storageKey}
-                onChange={(e) =>
-                  setWelcomePopup((s) => ({
-                    ...s,
-                    storageKey: e.target.value,
-                  }))
-                }
-                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-              />
-            </label>
-          </div>
-          <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">
-              Gösterilecek yollar (virgülle, boş = tümü; örn. /)
-            </span>
-            <input
-              value={welcomePopup.showOnPaths}
-              onChange={(e) =>
-                setWelcomePopup((s) => ({
-                  ...s,
-                  showOnPaths: e.target.value,
-                }))
-              }
-              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-            />
-          </label>
-          <label className="block text-sm">
-            <span className="mono text-[10px] uppercase text-muted">
-              Hariç tutulan yollar (virgülle)
-            </span>
-            <input
-              value={welcomePopup.excludePaths}
-              onChange={(e) =>
-                setWelcomePopup((s) => ({
-                  ...s,
-                  excludePaths: e.target.value,
-                }))
-              }
-              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-            />
-          </label>
+          {isTr ? (
+            <>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={welcomePopup.enabled}
+                  onChange={(e) =>
+                    setWelcomePopup((s) => ({
+                      ...s,
+                      enabled: e.target.checked,
+                    }))
+                  }
+                />
+                Popup aktif
+              </label>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <label className="block text-sm">
+                  <span className="mono text-[10px] uppercase text-muted">
+                    Gecikme (ms)
+                  </span>
+                  <input
+                    value={welcomePopup.delayMs}
+                    onChange={(e) =>
+                      setWelcomePopup((s) => ({
+                        ...s,
+                        delayMs: e.target.value,
+                      }))
+                    }
+                    className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+                  />
+                </label>
+                <label className="block text-sm">
+                  <span className="mono text-[10px] uppercase text-muted">
+                    Sıklık
+                  </span>
+                  <select
+                    value={welcomePopup.frequency}
+                    onChange={(e) =>
+                      setWelcomePopup((s) => ({
+                        ...s,
+                        frequency: e.target
+                          .value as WelcomePopupFields['frequency'],
+                      }))
+                    }
+                    className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+                  >
+                    <option value="once">Bir kez (localStorage)</option>
+                    <option value="session">Oturum başına</option>
+                    <option value="always">Her ziyarette</option>
+                  </select>
+                </label>
+                <label className="block text-sm">
+                  <span className="mono text-[10px] uppercase text-muted">
+                    Storage key
+                  </span>
+                  <input
+                    value={welcomePopup.storageKey}
+                    onChange={(e) =>
+                      setWelcomePopup((s) => ({
+                        ...s,
+                        storageKey: e.target.value,
+                      }))
+                    }
+                    className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+                  />
+                </label>
+              </div>
+              <label className="block text-sm">
+                <span className="mono text-[10px] uppercase text-muted">
+                  Gösterilecek yollar (virgülle, boş = tümü; örn. /)
+                </span>
+                <input
+                  value={welcomePopup.showOnPaths}
+                  onChange={(e) =>
+                    setWelcomePopup((s) => ({
+                      ...s,
+                      showOnPaths: e.target.value,
+                    }))
+                  }
+                  className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+                />
+              </label>
+              <label className="block text-sm">
+                <span className="mono text-[10px] uppercase text-muted">
+                  Hariç tutulan yollar (virgülle)
+                </span>
+                <input
+                  value={welcomePopup.excludePaths}
+                  onChange={(e) =>
+                    setWelcomePopup((s) => ({
+                      ...s,
+                      excludePaths: e.target.value,
+                    }))
+                  }
+                  className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+                />
+              </label>
+            </>
+          ) : (
+            <p className="rounded-lg border border-border-muted bg-surface-high px-3 py-2 text-xs text-muted">
+              Zamanlama ayarları TR sekmesindedir. Burada yalnızca{' '}
+              {LOCALE_LABELS[formLocale]} metinlerini düzenliyorsunuz.
+            </p>
+          )}
           {(
             [
               ['distributorName', 'Distribütör adı'],
@@ -1340,20 +1502,22 @@ export default function SiteSettingsPage() {
               <span className="mono text-[10px] uppercase text-muted">
                 {label}
               </span>
-              {key.endsWith('Body') || key === 'headline' || key === 'rightTitle' ? (
+              {key.endsWith('Body') ||
+              key === 'headline' ||
+              key === 'rightTitle' ? (
                 <textarea
-                  value={welcomePopup[key]}
+                  value={welcomePopupView[key]}
                   onChange={(e) =>
-                    setWelcomePopup((s) => ({ ...s, [key]: e.target.value }))
+                    patchWelcomePopupText({ [key]: e.target.value })
                   }
                   rows={key.endsWith('Body') ? 4 : 2}
                   className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
                 />
               ) : (
                 <input
-                  value={welcomePopup[key]}
+                  value={welcomePopupView[key]}
                   onChange={(e) =>
-                    setWelcomePopup((s) => ({ ...s, [key]: e.target.value }))
+                    patchWelcomePopupText({ [key]: e.target.value })
                   }
                   className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
                 />

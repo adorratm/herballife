@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/Checkbox';
 import { AdminListThumb } from '@/components/AdminListThumb';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { GalleryMediaField } from '@/components/GalleryMediaField';
+import { MediaUpload } from '@/components/MediaUpload';
 import type { Product } from '@/lib/types';
 
 type ItemRule = { position: number; discountPercent: number };
@@ -767,24 +768,23 @@ export default function CampaignsPage() {
                 }
               />
               {!form.useSharedImage ? (
-                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                <div className="mt-3 grid gap-4 sm:grid-cols-2">
                   {LOCALE_TABS.map(({ key, label }) => (
-                    <label key={key} className="block text-sm">
-                      <span className="text-xs text-muted">Banner ({label})</span>
-                      <input
-                        value={form.imagesByLocale[key]}
-                        onChange={(e) =>
-                          setForm((f) => ({
-                            ...f,
-                            imagesByLocale: {
-                              ...f.imagesByLocale,
-                              [key]: e.target.value,
-                            },
-                          }))
-                        }
-                        className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-                      />
-                    </label>
+                    <MediaUpload
+                      key={key}
+                      label={`Banner (${label})`}
+                      value={form.imagesByLocale[key]}
+                      onChange={(url) =>
+                        setForm((f) => ({
+                          ...f,
+                          imagesByLocale: {
+                            ...f.imagesByLocale,
+                            [key]: url,
+                          },
+                        }))
+                      }
+                      folder="campaigns"
+                    />
                   ))}
                 </div>
               ) : null}

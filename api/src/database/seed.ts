@@ -977,10 +977,11 @@ async function seed() {
         console.log('Site setting whatsapp: updated');
       }
     } else if (key === 'welcomePopup') {
-      const popup = { ...(exists.value || {}) };
+      const popup = { ...(exists.value || {}) } as Record<string, unknown>;
       const defaults = value as Record<string, unknown>;
       let changed = false;
       for (const [field, defVal] of Object.entries(defaults)) {
+        if (field === 'translations') continue;
         if (popup[field] === undefined || popup[field] === '') {
           popup[field] = defVal;
           changed = true;
@@ -993,6 +994,34 @@ async function seed() {
         popup.distributorName = defaults.distributorName;
         popup.headline = defaults.headline;
         popup.leftBody = defaults.leftBody;
+        changed = true;
+      }
+      const defT = (defaults.translations || {}) as Record<
+        string,
+        Record<string, unknown>
+      >;
+      const curT = {
+        ...((popup.translations || {}) as Record<
+          string,
+          Record<string, unknown>
+        >),
+      };
+      for (const [loc, block] of Object.entries(defT)) {
+        if (!block) continue;
+        const prev = curT[loc] || {};
+        const headline = typeof prev.headline === 'string' ? prev.headline : '';
+        const needs =
+          !headline ||
+          /Bağımsız Distribütörü|MEVCUT MÜŞTERİ/i.test(headline);
+        if (needs) {
+          curT[loc] = { ...prev, ...block };
+          changed = true;
+        } else {
+          curT[loc] = { ...block, ...prev };
+        }
+      }
+      if (JSON.stringify(curT) !== JSON.stringify(popup.translations || {})) {
+        popup.translations = curT;
         changed = true;
       }
       if (changed) {

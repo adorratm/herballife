@@ -1325,26 +1325,23 @@ function ProductsPageInner() {
               />
             </div>
             {!form.useSharedImage ? (
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <div className="mt-3 grid gap-4 sm:grid-cols-2">
                 {LOCALE_TABS.map(({ key, label }) => (
-                  <label key={key} className="block text-sm">
-                    <span className="mono text-[10px] uppercase text-muted">
-                      Görsel URL ({label})
-                    </span>
-                    <input
-                      value={form.imagesByLocale[key]}
-                      onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          imagesByLocale: {
-                            ...f.imagesByLocale,
-                            [key]: e.target.value,
-                          },
-                        }))
-                      }
-                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-                    />
-                  </label>
+                  <MediaUpload
+                    key={key}
+                    label={`Görsel (${label})`}
+                    value={form.imagesByLocale[key]}
+                    onChange={(url) =>
+                      setForm((f) => ({
+                        ...f,
+                        imagesByLocale: {
+                          ...f.imagesByLocale,
+                          [key]: url,
+                        },
+                      }))
+                    }
+                    folder="products"
+                  />
                 ))}
               </div>
             ) : null}

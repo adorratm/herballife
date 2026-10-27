@@ -21,6 +21,7 @@ const CMS_I18N_SETTING_KEYS = [
   'membership',
   'promises',
   'contact',
+  'welcomePopup',
 ] as const;
 
 function loadFrontendMessageLocales(): { locales: Record<string, unknown> } {
