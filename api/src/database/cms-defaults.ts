@@ -304,10 +304,10 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
       'Kilo kontrolü ve vücut kompozisyonu sonuçları kişiden kişiye değişir; tek başına ürün kullanımı yeterli değildir. Kalori alımı, fiziksel aktivite ve düzenli takip birlikte değerlendirilmelidir. Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir.',
   },
   membership: {
-    ctaLabel: 'Resmi Herbal Kapıda üyeliği',
-    ctaUrl: 'https://www.myherbalkapida.com',
+    ctaLabel: 'Resmi Herbalife üyeliği',
+    ctaUrl: 'https://www.myherbalife.com',
     disclaimer:
-      'Herbal Kapıda Nutrition distribütörü olmak için kayıt yalnızca resmi myHerbal Kapıda platformu üzerinden yapılır. Bu site bağımsız bir distribütör sitesidir.',
+      'Herbalife Nutrition distribütörü olmak için kayıt yalnızca resmi myHerbalife platformu üzerinden yapılır. Bu site bağımsız bir distribütör sitesidir.',
   },
 };
 

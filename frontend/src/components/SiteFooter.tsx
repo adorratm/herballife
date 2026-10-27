@@ -29,7 +29,7 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
   const { brand, contact, footer, navigation, social, whatsapp, legal, membership } =
     settings;
   const distributorCode = brand.distributorCode?.trim();
-  const membershipUrl = membership?.ctaUrl?.trim() || "https://www.myherbalkapida.com";
+  const membershipUrl = membership?.ctaUrl?.trim() || "https://www.myherbalife.com";
   const membershipLabel =
     membership?.ctaLabel?.trim() || tFooter("membershipCta");
   const waPhone = resolveWhatsAppPhone({

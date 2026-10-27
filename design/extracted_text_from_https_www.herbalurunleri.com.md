@@ -390,7 +390,7 @@ __
 
 MEVCUT MÜŞTERİ ? | HALİHAZIRDA HERBAL KAPIDA NUTRITION DİSTRİBÜTÖRÜ YA DA  AYRICAKLI MÜŞTERİ MİSİNİZ?  
 ---|---  
-Kişisel Distribütörünüzle olan birebir ilişkiniz, beslenme hedeflerinize ulaşmanın anahtarıdır. Eğer Mehmet COŞ mevcut distribütörünüz değil ise, ürünlerinizi mevcut distribütörünüzden almanızı öneririz. Alternatif olarak, bu internet sitesine girmek için [buraya tıklayınız.](https://www.herbalurunleri.com/) | Kendi Distribütör hesabınız üzerinden sipariş vermek ve tüm haklarınızı almak için lütfen [myherbalkapida.com](https://www.myherbalkapida.com/) sitesini ziyaret ediniz.  
+Kişisel Distribütörünüzle olan birebir ilişkiniz, beslenme hedeflerinize ulaşmanın anahtarıdır. Eğer Mehmet COŞ mevcut distribütörünüz değil ise, ürünlerinizi mevcut distribütörünüzden almanızı öneririz. Alternatif olarak, bu internet sitesine girmek için [buraya tıklayınız.](https://www.herbalurunleri.com/) | Kendi Distribütör hesabınız üzerinden sipariş vermek ve tüm haklarınızı almak için lütfen [myherbalife.com](https://www.myherbalife.com/) sitesini ziyaret ediniz.  
   
 ### İndirim
 

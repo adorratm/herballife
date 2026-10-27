@@ -555,13 +555,13 @@ export default async function HomePage() {
             <a
               href={
                 settings.membership?.ctaUrl?.trim() ||
-                "https://www.myherbalkapida.com"
+                "https://www.myherbalife.com"
               }
               target="_blank"
               rel="noopener noreferrer"
               className="btn-cta mt-6 inline-flex px-6 py-3 text-sm"
             >
-              myHerbal Kapıda.com →
+              myHerbalife.com →
             </a>
           </div>
         </section>
