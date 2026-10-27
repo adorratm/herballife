@@ -46,12 +46,27 @@ if [[ ! -f deploy/.env ]]; then
   log "deploy/.env oluşturuldu — yayından önce gözden geçirin"
 fi
 
+# Windows CRLF ile yapıştırılmış secret'lar auth'u kırar
+if command -v sed >/dev/null 2>&1; then
+  sed -i 's/\r$//' deploy/.env 2>/dev/null || true
+fi
+
 set -a
 # shellcheck disable=SC1091
 source deploy/.env
 set +a
 
+# Kaynak sonrası da kırp (source CRLF bırakabilir)
+POSTGRES_USER="${POSTGRES_USER:-herbalkapida}"
+POSTGRES_USER="${POSTGRES_USER%$'\r'}"
+POSTGRES_PASSWORD="${POSTGRES_PASSWORD%$'\r'}"
+POSTGRES_DB="${POSTGRES_DB:-herbalkapida}"
+POSTGRES_DB="${POSTGRES_DB%$'\r'}"
+export POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB
+
 [[ -n "${POSTGRES_PASSWORD:-}" ]] || die "POSTGRES_PASSWORD boş (deploy/.env)"
+[[ "${POSTGRES_PASSWORD}" != "degistir-guclu-sifre" ]] || \
+  die "POSTGRES_PASSWORD hâlâ örnek değer — deploy/.env veya GitHub DEPLOY_ENV secret'ını güncelleyin"
 
 mkdir -p frontend/public/downloads deploy/artifacts
 
@@ -100,6 +115,9 @@ run_api_oneshot() {
     -e NODE_ENV=production \
     -e DATABASE_HOST=postgres \
     -e DATABASE_PORT=5432 \
+    -e POSTGRES_USER="${POSTGRES_USER}" \
+    -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+    -e POSTGRES_DB="${POSTGRES_DB}" \
     -e REDIS_URL=redis://redis:6379 \
     -e DATABASE_SYNCHRONIZE=false \
     -e DATABASE_MIGRATIONS_RUN=false \
@@ -221,13 +239,27 @@ tag_exists "${LOCAL_API}:next" || die "${LOCAL_API}:next yok"
 tag_exists "${LOCAL_FE}:next" || die "${LOCAL_FE}:next yok"
 tag_exists "${LOCAL_ADMIN}:next" || die "${LOCAL_ADMIN}:next yok"
 
-# ── 3) Migration (eski API ayakta kalır) ──────────────────────────────────────
+# ── 3) DB kimlik doğrulama (migrate öncesi net hata) ─────────────────────────
+log "Postgres kimlik doğrulama kontrolü (user=${POSTGRES_USER})"
+if ! "${COMPOSE[@]}" exec -T postgres \
+  env PGPASSWORD="${POSTGRES_PASSWORD}" \
+  psql -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -tAc "SELECT 1" >/dev/null 2>&1; then
+  die "Postgres auth başarısız (user=${POSTGRES_USER}). deploy/.env POSTGRES_PASSWORD, volume'daki şifreyle uyuşmuyor.
+  Düzeltme (sunucuda, volume şifresini .env'e çekmek için):
+    docker exec -it herbalkapida-prod-postgres psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c \"ALTER USER ${POSTGRES_USER} WITH PASSWORD '\${POSTGRES_PASSWORD}';\"
+  veya boş DB kabul ediyorsanız volume'u silip yeniden oluşturun:
+    docker compose -f docker-compose.prod.yml --env-file deploy/.env down
+    docker volume rm herbalkapida-prod_herbalkapida_postgres_data
+  Sonra POSTGRES_PASSWORD'ü GitHub DEPLOY_ENV + deploy/.env'de aynı tutup yeniden deploy edin."
+fi
+
+# ── 4) Migration (eski API ayakta kalır) ──────────────────────────────────────
 log "Migration one-shot (yeni image)"
 if ! run_api_oneshot "${LOCAL_API}:next" node dist/migrate.js; then
   die "Migration başarısız — çalışan container'lara dokunulmadı"
 fi
 
-# ── 4) Seed (boş DB veya SEED_ON_DEPLOY=1) ────────────────────────────────────
+# ── 5) Seed (boş DB veya SEED_ON_DEPLOY=1) ────────────────────────────────────
 should_seed=0
 if [[ "${SEED_ON_DEPLOY:-0}" == "1" ]]; then
   should_seed=1
@@ -258,7 +290,7 @@ if [[ "$should_seed" == "1" ]]; then
   run_api_oneshot "${LOCAL_API}:next" node dist/seed.js || die "Seed başarısız"
 fi
 
-# ── 5) Rolling recreate ───────────────────────────────────────────────────────
+# ── 6) Rolling recreate ───────────────────────────────────────────────────────
 # İlk deploy'da live yoksa next→live
 for name in "$LOCAL_API" "$LOCAL_FE" "$LOCAL_ADMIN"; do
   if ! tag_exists "${name}:live"; then

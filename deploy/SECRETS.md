@@ -77,7 +77,7 @@ Nginx / TLS checklist: [GO_LIVE.md](./GO_LIVE.md). Geçici sunum: [DEMO.md](./DE
 
 1. GHCR: `ghcr.io/<owner>/herbalkapida/{api,frontend,admin}:sha-…` + `:latest`
 2. Sunucuya compose + `deploy.sh` kopyalanır
-3. `deploy/.env` yoksa `DEPLOY_ENV` veya örnek dosya (`info@herbalkapida.com` mail varsayılanları)
+3. `DEPLOY_ENV` secret doluysa her deploy’da `deploy/.env` güncellenir (yoksa ilk kez örnek dosya). `POSTGRES_PASSWORD` volume ile birebir aynı olmalı — şifreyi secret’ta değiştirirseniz DB’de de `ALTER USER` gerekir.
 4. Pull → migrate → **boş DB ise seed** (mevcut katalog / CMS verileri)
 5. api → frontend → admin sırayla recreate + health; fail → `:rollback`
 

@@ -232,15 +232,22 @@ jobs:
             cd "$DEPLOY_PATH"
             chmod +x deploy/deploy.sh 2>/dev/null || true
 
-            if [ ! -f deploy/.env ]; then
-              if [ -n "${DEPLOY_ENV_CONTENT:-}" ]; then
-                printf '%s\n' "$DEPLOY_ENV_CONTENT" > deploy/.env
-                echo "deploy/.env DEPLOY_ENV secret'tan yazıldı"
-              else
-                cp deploy/.env.production.example deploy/.env
-                echo "deploy/.env örnekten oluşturuldu — JWT/DB şifrelerini güncelleyin"
+            # DEPLOY_ENV secret doluysa her deploy'da güncelle (GitHub = kaynak).
+            # Yoksa yalnızca ilk kez örnek dosyadan oluştur.
+            if [ -n "${DEPLOY_ENV_CONTENT:-}" ]; then
+              if [ -f deploy/.env ]; then
+                cp -a deploy/.env "deploy/.env.bak.$(date +%Y%m%d%H%M%S)" || true
               fi
+              printf '%s\n' "$DEPLOY_ENV_CONTENT" > deploy/.env
+              # Windows CRLF → LF (şifre auth kırılmasın)
+              sed -i 's/\r$//' deploy/.env || true
               chmod 600 deploy/.env
+              echo "deploy/.env DEPLOY_ENV secret'tan yazıldı/güncellendi"
+            elif [ ! -f deploy/.env ]; then
+              cp deploy/.env.production.example deploy/.env
+              sed -i 's/\r$//' deploy/.env || true
+              chmod 600 deploy/.env
+              echo "deploy/.env örnekten oluşturuldu — JWT/DB şifrelerini güncelleyin"
             fi
 
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
