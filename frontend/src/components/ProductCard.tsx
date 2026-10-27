@@ -53,19 +53,17 @@ export function ProductCard({
 
   return (
     <article
-      className={`group card-motion relative flex h-full flex-col border border-outline-variant bg-white shadow-sm ${
+      className={`group card-motion relative flex h-full min-w-0 flex-col overflow-hidden border border-outline-variant bg-white shadow-sm ${
         compact ? "rounded-lg p-1.5" : "rounded-xl p-2.5"
       }`}
     >
       <div className={`absolute z-10 ${compact ? "right-1.5 top-1.5" : "right-2.5 top-2.5"}`}>
         <FavoriteButton productId={product.id} size="sm" />
       </div>
-      <Link href={productHref(product.slug)} className="flex flex-1 flex-col">
+      <Link href={productHref(product.slug)} className="flex min-w-0 flex-1 flex-col">
         <div
-          className={`card-media-shine relative overflow-hidden rounded-lg ${
-            compact
-              ? "mb-1.5 aspect-square min-h-36"
-              : "mb-2 aspect-square min-h-44 sm:min-h-52"
+          className={`card-media-shine relative w-full min-w-0 overflow-hidden rounded-lg aspect-square ${
+            compact ? "mb-1.5" : "mb-2"
           }`}
           style={{
             background:
@@ -77,7 +75,7 @@ export function ProductCard({
             src={img}
             alt={product.name}
             fill
-            className="object-contain p-3 drop-shadow-[0_10px_18px_rgba(18,40,28,0.12)] transition-transform duration-500 ease-out group-hover:scale-[1.06]"
+            className="object-contain p-2.5 drop-shadow-[0_10px_18px_rgba(18,40,28,0.12)] transition-transform duration-500 ease-out group-hover:scale-[1.06] sm:p-3"
             sizes={compact ? "(max-width: 768px) 33vw, 15vw" : "(max-width: 768px) 45vw, 18vw"}
           />
         </div>
