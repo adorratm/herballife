@@ -42,13 +42,43 @@ export async function fetchCart(): Promise<Cart | null> {
   return getCart(sessionId, getToken());
 }
 
+/** Sepet değiştiğinde (ekle/güncelle/sil/boşalt) rozetleri anında güncellemek için. */
+const CART_EVENT = "herbal:cart-changed";
+
+let cartVersion = 0;
+
+/** Her sepet yayınında artar; yarış durumunda eski fetch sonucunu atmak için. */
+export function getCartVersion() {
+  return cartVersion;
+}
+
+/** Güncel sepeti tüm dinleyicilere (SiteHeader, MobileBottomNav…) bildirir. */
+export function emitCartChanged(cart: Cart | null | undefined) {
+  cartVersion += 1;
+  if (!canUseDom()) return;
+  window.dispatchEvent(
+    new CustomEvent(CART_EVENT, { detail: { count: cartItemCount(cart) } }),
+  );
+}
+
+/** Sepet adedi değiştiğinde çağrılır. Dönen fonksiyon aboneliği kaldırır. */
+export function subscribeCart(cb: (count: number) => void) {
+  if (!canUseDom()) return () => undefined;
+  function onChange(e: Event) {
+    const count = (e as CustomEvent<{ count?: number }>).detail?.count;
+    if (typeof count === "number") cb(count);
+  }
+  window.addEventListener(CART_EVENT, onChange);
+  return () => window.removeEventListener(CART_EVENT, onChange);
+}
+
 export async function cartAddItem(payload: {
   productId: string;
   variantId?: string | null;
   quantity?: number;
 }) {
   const sessionId = getCartSessionId();
-  return addCartItem(
+  const cart = await addCartItem(
     sessionId,
     {
       productId: payload.productId,
@@ -57,16 +87,22 @@ export async function cartAddItem(payload: {
     },
     getToken(),
   );
+  emitCartChanged(cart);
+  return cart;
 }
 
 export async function cartUpdateQuantity(itemId: string, quantity: number) {
   const sessionId = getCartSessionId();
-  return updateCartItem(sessionId, itemId, quantity, getToken());
+  const cart = await updateCartItem(sessionId, itemId, quantity, getToken());
+  emitCartChanged(cart);
+  return cart;
 }
 
 export async function cartRemoveItem(itemId: string) {
   const sessionId = getCartSessionId();
-  return removeCartItem(sessionId, itemId, getToken());
+  const cart = await removeCartItem(sessionId, itemId, getToken());
+  emitCartChanged(cart);
+  return cart;
 }
 
 export function cartItemCount(cart: Cart | null | undefined) {

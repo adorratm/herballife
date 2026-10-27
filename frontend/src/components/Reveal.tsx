@@ -17,6 +17,13 @@ type RevealProps = {
   delay?: number;
   threshold?: number;
   variant?: RevealVariant;
+  /**
+   * true (varsayılan): `h-full` — grid hücresinde eşit yükseklik için.
+   * false: içerik yüksekliği. Stretch edilmiş grid/flex sütunları içinde
+   * (ör. checkout formu) ardışık Reveal'lerde false OLMALI; aksi halde her biri
+   * sütun yüksekliğinin %100'ü olur, taşar ve footer/menü üstüne biner.
+   */
+  fill?: boolean;
 };
 
 /**
@@ -29,11 +36,18 @@ export function Reveal({
   delay = 0,
   threshold = 0.1,
   variant = "up",
+  fill = true,
 }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  // fill=false (form/checkout): opacity:0 ile alt içerik/footer görünmesin diye
+  // hemen görünür başla — yalnızca hafif giriş animasyonu istenen kart grid’lerinde IO kullan.
+  const [visible, setVisible] = useState(!fill);
 
   useEffect(() => {
+    if (!fill) {
+      setVisible(true);
+      return;
+    }
     const el = ref.current;
     if (!el) return;
 
@@ -61,7 +75,7 @@ export function Reveal({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [threshold]);
+  }, [threshold, fill]);
 
   const style = {
     ["--reveal-delay" as string]: `${delay}ms`,
@@ -71,7 +85,7 @@ export function Reveal({
     <div
       ref={ref}
       data-variant={variant}
-      className={`reveal h-full${visible ? " is-visible" : ""}${className ? ` ${className}` : ""}`}
+      className={`reveal${fill ? " h-full" : ""}${visible ? " is-visible" : ""}${className ? ` ${className}` : ""}`}
       style={style}
     >
       {children}

@@ -608,9 +608,9 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="page-shell bg-surface py-10 md:py-14">
-      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
+    <div className="page-shell min-w-0 overflow-x-hidden bg-surface py-6 sm:py-10 md:py-14">
+      <div className="mb-6 flex min-w-0 flex-col gap-4 sm:mb-8 md:flex-row md:items-center md:justify-between">
+        <div className="min-w-0">
           <p className="mb-1 text-xs text-on-surface-variant">
             <Link href="/sepet" className="hover:text-primary">
               {tCart("title")}
@@ -620,7 +620,7 @@ export default function CheckoutPage() {
               {tCheckout("breadcrumbDelivery")}
             </span>
           </p>
-          <h1 className="font-display text-3xl text-on-surface md:text-4xl">
+          <h1 className="font-display text-2xl text-on-surface sm:text-3xl md:text-4xl">
             {tCheckout("titleDeliveryPayment")}
           </h1>
           {user ? (
@@ -646,11 +646,11 @@ export default function CheckoutPage() {
       <form
         id="checkout-form"
         onSubmit={onSubmit}
-        className="mt-12 grid grid-cols-1 gap-10 pb-24 lg:grid-cols-12 lg:pb-0"
+        className="mt-6 grid grid-cols-1 gap-6 pb-28 sm:mt-10 sm:gap-10 lg:mt-12 lg:grid-cols-12 lg:pb-0"
       >
-        <div className="space-y-8 lg:col-span-8">
-          <Reveal variant="left">
-          <section className="panel-motion industrial-border bg-surface-container-low p-6 md:p-8">
+        <div className="min-w-0 space-y-6 sm:space-y-8 lg:col-span-8">
+          <Reveal fill={false} variant="left">
+          <section className="panel-motion industrial-border relative z-[1] min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-display text-2xl">{tCheckout("contactHeading")}</h2>
               {contactComplete ? (
@@ -664,7 +664,7 @@ export default function CheckoutPage() {
               ) : null}
             </div>
             {!panelContact && contactComplete ? (
-              <p className="font-meta text-xs uppercase text-secondary">
+              <p className="wrap-break-word font-meta text-xs uppercase text-secondary">
                 {form.customerName} · {form.customerPhone} · {form.customerEmail}
               </p>
             ) : (
@@ -693,14 +693,14 @@ export default function CheckoutPage() {
           </section>
           </Reveal>
 
-          <Reveal variant="left" delay={40}>
-          <section className="panel-motion industrial-border bg-surface-container-low p-6 md:p-8">
+          <Reveal fill={false} variant="left" delay={40}>
+          <section className="panel-motion industrial-border relative z-[1] min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <h2 className="mb-6 font-display text-2xl">
               {tCheckout("deliveryMethodHeading")}
             </h2>
             <div className="space-y-3">
               <label
-                className={`flex cursor-pointer items-center justify-between border px-4 py-4 font-meta text-xs uppercase ${
+                className={`flex cursor-pointer items-center justify-between gap-3 wrap-break-word border px-3 py-3 font-meta text-xs uppercase sm:px-4 sm:py-4 ${
                   deliveryMethod === "cargo"
                     ? "border-primary text-primary"
                     : "border-outline-variant/30 text-secondary"
@@ -717,7 +717,7 @@ export default function CheckoutPage() {
                 </span>
               </label>
               <label
-                className={`flex cursor-pointer items-start justify-between gap-4 border px-4 py-4 font-meta text-xs uppercase ${
+                className={`flex cursor-pointer items-start justify-between gap-3 wrap-break-word border px-3 py-3 font-meta text-xs uppercase sm:gap-4 sm:px-4 sm:py-4 ${
                   deliveryMethod === "pickup"
                     ? "border-primary text-primary"
                     : "border-outline-variant/30 text-secondary"
@@ -765,8 +765,8 @@ export default function CheckoutPage() {
           </Reveal>
 
           {!isPickup ? (
-          <Reveal variant="left" delay={70}>
-          <section className="panel-motion industrial-border bg-surface-container-low p-6 md:p-8">
+          <Reveal fill={false} variant="left" delay={70}>
+          <section className="panel-motion industrial-border relative z-[1] min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-display text-2xl">{tCheckout("shippingAddressHeading")}</h2>
               {addressComplete ? (
@@ -780,7 +780,7 @@ export default function CheckoutPage() {
               ) : null}
             </div>
             {!panelAddress && addressComplete ? (
-              <p className="font-meta text-xs uppercase text-secondary">
+              <p className="wrap-break-word font-meta text-xs uppercase text-secondary">
                 {form.shipping.district}, {form.shipping.city} ·{" "}
                 {form.shipping.addressLine}
               </p>
@@ -805,7 +805,7 @@ export default function CheckoutPage() {
                       <button
                         type="button"
                         onClick={() => selectSavedShipping(addr)}
-                        className={`w-full text-left font-meta text-[11px] uppercase ${
+                        className={`w-full wrap-break-word text-left font-meta text-[11px] uppercase ${
                           selected ? "text-primary" : "text-secondary"
                         }`}
                       >
@@ -921,8 +921,8 @@ export default function CheckoutPage() {
           </Reveal>
           ) : null}
 
-          <Reveal variant="left" delay={120}>
-          <section className="panel-motion industrial-border bg-surface-container-low p-6 md:p-8">
+          <Reveal fill={false} variant="left" delay={120}>
+          <section className="panel-motion industrial-border relative z-[1] min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
               <h2 className="font-display text-2xl">{tCheckout("billingAddressHeading")}</h2>
               <Check
@@ -962,7 +962,7 @@ export default function CheckoutPage() {
                           <button
                             type="button"
                             onClick={() => selectSavedBilling(addr)}
-                            className={`w-full text-left font-meta text-[11px] uppercase ${
+                            className={`w-full wrap-break-word text-left font-meta text-[11px] uppercase ${
                               selected ? "text-primary" : "text-secondary"
                             }`}
                           >
@@ -1122,14 +1122,14 @@ export default function CheckoutPage() {
           </Reveal>
 
           {!isPickup ? (
-          <Reveal variant="left" delay={160}>
-          <section className="panel-motion industrial-border bg-surface-container-low p-6 md:p-8">
+          <Reveal fill={false} variant="left" delay={160}>
+          <section className="panel-motion industrial-border relative z-[1] min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <h2 className="mb-6 font-display text-2xl">{tCheckout("shippingProviderHeading")}</h2>
             <div className="space-y-3">
               {providers.map((p) => (
                 <label
                   key={p.code}
-                  className={`flex cursor-pointer items-center justify-between border px-4 py-4 font-meta text-xs uppercase ${
+                  className={`flex cursor-pointer items-center justify-between gap-3 wrap-break-word border px-3 py-3 font-meta text-xs uppercase sm:px-4 sm:py-4 ${
                     form.shippingProvider === p.code
                       ? "border-primary text-primary"
                       : "border-outline-variant/30 text-secondary"
@@ -1154,9 +1154,9 @@ export default function CheckoutPage() {
 
         </div>
 
-        <aside className="lg:col-span-4">
-          {/* sticky: Reveal transform kullanma */}
-          <div className="sticky top-28 z-10 border border-outline-variant/30 bg-surface-container-low p-6 panel-motion">
+        <aside className="min-w-0 lg:col-span-4">
+          {/* sticky yalnızca masaüstü: mobilde footer/menü üstüne binmesin */}
+          <div className="relative z-[1] border border-outline-variant/30 bg-white p-4 panel-motion sm:p-6 lg:sticky lg:top-28 lg:z-10">
             <h2 className="mb-6 font-display text-2xl">{tCheckout("summaryHeading")}</h2>
             <div className="mb-6 space-y-2">
               <label className="field-label">{tCheckout("couponLabel")}</label>
@@ -1301,7 +1301,7 @@ export default function CheckoutPage() {
         </aside>
       </form>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-outline-variant/30 bg-surface-container-lowest p-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-outline-variant/30 bg-surface-container-lowest px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(0,0,0,0.08)] lg:hidden">
         <div className="page-shell flex items-center gap-3">
           <div className="min-w-0 flex-1">
             <p className="font-meta text-[10px] uppercase text-secondary">{tCheckout("total")}</p>
@@ -1334,7 +1334,7 @@ function SelectedAddressSummary({
 }) {
   const tCheckout = useTranslations("checkout");
   return (
-    <div className="border border-outline-variant/20 bg-surface-container px-4 py-4 font-meta text-xs leading-relaxed text-on-surface">
+    <div className="wrap-break-word border border-outline-variant/20 bg-surface-container px-4 py-4 font-meta text-xs leading-relaxed text-on-surface">
       {address ? (
         <p className="mb-2 text-[10px] uppercase tracking-widest text-primary">
           {address.title}

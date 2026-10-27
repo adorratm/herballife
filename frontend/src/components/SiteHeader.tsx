@@ -9,7 +9,7 @@ import { SiteSearch } from "@/components/SiteSearch";
 import { NotificationBell } from "@/components/NotificationBell";
 import { DealStripCountdown } from "@/components/PromoCountdown";
 import { isAuthenticated, loginHref } from "@/lib/auth";
-import { cartItemCount, fetchCart } from "@/lib/cart";
+import { useCartCount } from "@/hooks/useCartCount";
 import type { SiteSettings } from "@/lib/cms";
 import { DEFAULT_SETTINGS } from "@/lib/cms";
 import {
@@ -50,7 +50,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
   const [open, setOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [count, setCount] = useState(0);
+  const count = useCartCount();
   const [favCount, setFavCount] = useState(0);
   const [authed, setAuthed] = useState(false);
   const catRef = useRef<HTMLDivElement>(null);
@@ -131,9 +131,6 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
 
   useEffect(() => {
     setAuthed(isAuthenticated());
-    fetchCart()
-      .then((cart) => setCount(cartItemCount(cart)))
-      .catch(() => undefined);
     void ensureWishlistIds();
     return subscribeWishlist((ids) => setFavCount(ids.size));
   }, [pathname]);

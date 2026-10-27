@@ -63,7 +63,7 @@ function FailureContent() {
         <p className="font-meta text-xs uppercase tracking-widest text-error">
           {t("kicker")}
         </p>
-        <h1 className="mt-3 font-display text-4xl md:text-6xl">
+        <h1 className="mt-3 font-display text-3xl sm:text-4xl md:text-6xl">
           {t("title")}
         </h1>
         <p className="mt-4 font-meta text-xs uppercase leading-relaxed text-secondary">
@@ -71,8 +71,8 @@ function FailureContent() {
         </p>
       </div>
 
-      <Reveal className="mt-10 max-w-xl" delay={60}>
-        <div className="industrial-border bg-surface-container-low p-6 md:p-8">
+      <Reveal fill={false} className="mt-10 max-w-xl" delay={60}>
+        <div className="industrial-border bg-surface-container-low p-4 sm:p-6 md:p-8">
           {orderNumber ? (
             <div className="mb-4">
               <p className="font-meta text-[10px] uppercase text-secondary">
@@ -102,12 +102,12 @@ function FailureContent() {
                 type="button"
                 disabled={retrying}
                 onClick={() => void onRetry()}
-                className="btn-cta px-6 py-3 text-xs disabled:opacity-50"
+                className="btn-cta px-5 py-3 text-xs sm:px-6 disabled:opacity-50"
               >
                 {retrying ? t("redirecting") : t("retry")}
               </button>
             ) : (
-              <Link href="/urunler" className="btn-cta px-6 py-3 text-xs">
+              <Link href="/urunler" className="btn-cta px-5 py-3 text-xs sm:px-6">
                 {t("newOrder")}
               </Link>
             )}

@@ -157,9 +157,9 @@ export default function CartPage() {
   const subtotal = cartSubtotal(cart);
 
   return (
-    <div className="page-shell min-h-screen bg-surface py-10 md:py-14">
-      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
+    <div className="page-shell min-h-screen min-w-0 overflow-x-hidden bg-surface py-6 sm:py-10 md:py-14">
+      <div className="mb-6 flex min-w-0 flex-col gap-4 sm:mb-8 md:flex-row md:items-center md:justify-between">
+        <div className="min-w-0">
           <p className="mb-1 text-xs text-on-surface-variant">
             <Link href="/" className="hover:text-primary">
               {tCommon("home")}
@@ -167,7 +167,7 @@ export default function CartPage() {
             <span className="mx-1">/</span>
             <span className="font-semibold text-on-surface">{t("title")}</span>
           </p>
-          <h1 className="font-display text-3xl text-on-surface md:text-4xl">
+          <h1 className="font-display text-2xl text-on-surface sm:text-3xl md:text-4xl">
             {t("pageTitle")}
           </h1>
         </div>
@@ -183,7 +183,7 @@ export default function CartPage() {
       {loading ? (
         <p className="text-sm text-on-surface-variant">{tCommon("loading")}</p>
       ) : !count ? (
-        <div className="rounded-xl bg-surface-container-lowest p-10 shadow-sm">
+        <div className="rounded-xl bg-surface-container-lowest p-6 shadow-sm sm:p-10">
           <p className="text-sm text-on-surface-variant">{t("empty")}</p>
           <Link href="/urunler" className="btn-cta mt-6 inline-block px-6 py-3">
             {t("emptyAction")}
@@ -191,12 +191,12 @@ export default function CartPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          <div className="space-y-4 lg:col-span-8">
+          <div className="min-w-0 space-y-4 lg:col-span-8">
             <FreeShippingBanner subtotal={subtotal} />
 
             <div className="rounded-xl bg-surface-container-lowest p-4 shadow-sm md:p-6">
-              <div className="mb-4 flex items-center justify-between border-b border-surface-container pb-4">
-                <div className="flex items-center gap-2">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-surface-container pb-4">
+                <div className="flex flex-wrap items-center gap-2">
                   <h2 className="font-display text-xl">{t("itemsHeading")}</h2>
                   <span className="rounded-full bg-surface-container px-2 py-0.5 text-[11px] font-bold text-primary">
                     {t("itemCount", { count })}
@@ -220,7 +220,7 @@ export default function CartPage() {
                   );
                   const productLeft = (
                     <>
-                      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-surface-container-low">
+                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-surface-container-low sm:h-24 sm:w-24">
                         <Image
                           src={img}
                           alt={name}
@@ -273,21 +273,21 @@ export default function CartPage() {
                       {productSlug ? (
                         <Link
                           href={productHref(productSlug)}
-                          className="flex min-w-0 items-center gap-4 transition-opacity hover:opacity-90"
+                          className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-90 sm:gap-4"
                         >
                           {productLeft}
                         </Link>
                       ) : (
-                        <div className="flex min-w-0 items-center gap-4">
+                        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                           {productLeft}
                         </div>
                       )}
-                      <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:flex-col sm:items-end">
+                      <div className="flex w-full min-w-0 items-center justify-between gap-3 sm:w-auto sm:flex-col sm:items-end">
                         <div className="flex items-center rounded-full bg-surface-container-low px-2 py-1 shadow-sm">
                           <button
                             type="button"
                             disabled={busy === item.id}
-                            className="flex h-7 w-7 items-center justify-center rounded-full bg-surface-container-lowest"
+                            className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-container-lowest"
                             onClick={() =>
                               changeQty(item.id, item.quantity - 1)
                             }
@@ -300,7 +300,7 @@ export default function CartPage() {
                           <button
                             type="button"
                             disabled={busy === item.id}
-                            className="flex h-7 w-7 items-center justify-center rounded-full bg-surface-container-lowest"
+                            className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-container-lowest"
                             onClick={() =>
                               changeQty(item.id, item.quantity + 1)
                             }
@@ -322,8 +322,8 @@ export default function CartPage() {
             </div>
 
             {suggested.length > 0 ? (
-              <Reveal>
-                <div className="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
+              <Reveal fill={false}>
+                <div className="rounded-xl bg-surface-container-lowest p-4 shadow-sm sm:p-5">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">
                     {t("upsellEyebrow")}
                   </p>
@@ -375,8 +375,8 @@ export default function CartPage() {
             ) : null}
           </div>
 
-          <aside className="lg:col-span-4">
-            <div className="sticky top-28 rounded-xl bg-surface-container-lowest p-6 shadow-sm">
+          <aside className="min-w-0 lg:col-span-4">
+            <div className="rounded-xl bg-surface-container-lowest p-4 shadow-sm sm:p-6 lg:sticky lg:top-28">
               <h2 className="mb-4 font-display text-xl">{t("orderSummary")}</h2>
               <div className="space-y-3 border-b border-surface-container pb-4 text-sm">
                 <div className="flex justify-between text-on-surface-variant">

@@ -4,7 +4,7 @@ import { Link, toLinkHref, usePathname } from "@/i18n/routing";
 import { Home, Package, ShoppingBag, Heart, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { cartItemCount, fetchCart } from "@/lib/cart";
+import { useCartCount } from "@/hooks/useCartCount";
 import { isAuthenticated, loginHref } from "@/lib/auth";
 import {
   ensureWishlistIds,
@@ -34,15 +34,12 @@ export function MobileBottomNav() {
   const pathname = usePathname();
   const tNav = useTranslations("nav");
   const tCart = useTranslations("cart");
-  const [count, setCount] = useState(0);
+  const count = useCartCount();
   const [favCount, setFavCount] = useState(0);
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
     setAuthed(isAuthenticated());
-    fetchCart()
-      .then((c) => setCount(cartItemCount(c)))
-      .catch(() => undefined);
     void ensureWishlistIds();
     return subscribeWishlist((ids) => setFavCount(ids.size));
   }, [pathname]);
@@ -51,6 +48,9 @@ export function MobileBottomNav() {
     if (item.href === "/sepet") return tCart("title");
     return tNav(item.labelKey);
   }
+
+  // Ödeme formunda kendi sabit "Öde" çubuğu var; alt nav ile üst üste binmesin
+  if (pathname === "/odeme" || pathname.startsWith("/odeme/")) return null;
 
   return (
     <nav

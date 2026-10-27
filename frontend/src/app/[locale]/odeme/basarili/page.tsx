@@ -76,7 +76,7 @@ function SuccessContent() {
         <p className="text-xs font-semibold uppercase tracking-wide text-primary">
           {t("kicker")}
         </p>
-        <h1 className="mt-3 font-display text-4xl md:text-5xl">
+        <h1 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl">
           {t("title")}
         </h1>
         <p className="mt-4 text-base leading-relaxed text-on-surface-variant">
@@ -88,8 +88,8 @@ function SuccessContent() {
         </p>
       </div>
 
-      <Reveal className="mt-10 max-w-xl" delay={60}>
-        <div className="industrial-border bg-surface-container-low p-6 md:p-8">
+      <Reveal fill={false} className="mt-10 max-w-xl" delay={60}>
+        <div className="industrial-border bg-surface-container-low p-4 sm:p-6 md:p-8">
           {orderNumber ? (
             <div className="mb-6">
               <p className="font-meta text-[10px] uppercase text-secondary">
@@ -107,7 +107,7 @@ function SuccessContent() {
             {loggedIn && orderId ? (
               <Link
                 href={orderHref(orderId)}
-                className="btn-cta px-6 py-3 text-xs"
+                className="btn-cta px-5 py-3 text-xs sm:px-6"
               >
                 {t("orderDetail")}
               </Link>
@@ -118,7 +118,7 @@ function SuccessContent() {
                     ? `/siparis-sorgula?orderNumber=${encodeURIComponent(orderNumber)}`
                     : "/siparis-sorgula",
                 )}
-                className="btn-cta px-6 py-3 text-xs"
+                className="btn-cta px-5 py-3 text-xs sm:px-6"
               >
                 {t("lookupOrder")}
               </Link>
