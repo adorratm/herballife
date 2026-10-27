@@ -13,13 +13,19 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "tr",
     icons: [
       {
-        src: "/icon",
-        sizes: "32x32",
+        src: "/favicon.ico",
+        sizes: "16x16 32x32 48x48",
+        type: "image/x-icon",
+        purpose: "any",
+      },
+      {
+        src: "/icon.png",
+        sizes: "64x64",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/apple-icon",
+        src: "/apple-icon.png",
         sizes: "180x180",
         type: "image/png",
         purpose: "any",
