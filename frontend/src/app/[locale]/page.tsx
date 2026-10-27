@@ -274,7 +274,10 @@ export default async function HomePage() {
 
       <section className="border-b border-outline-variant/30 bg-white py-8 md:py-10">
         <div className="page-shell">
-          <BenefitsBar promises={settings.promises} />
+          <BenefitsBar
+            promises={settings.promises}
+            freeShippingOver={settings.shipping?.freeShippingOver}
+          />
         </div>
       </section>
 

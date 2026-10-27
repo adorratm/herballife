@@ -26,6 +26,8 @@ env:
 permissions:
   contents: read
   packages: write
+  # type=gha cache yazımı için (yoksa blob not_found / cache export fail)
+  actions: write
 
 jobs:
   build:
@@ -108,8 +110,9 @@ jobs:
           tags: |
             ${{ steps.meta.outputs.prefix }}/api:${{ steps.meta.outputs.version }}
             ${{ steps.meta.outputs.prefix }}/api:latest
+          # ignore-error: image push başarılıysa cache export hatası job’u düşürmesin
           cache-from: type=gha,scope=api
-          cache-to: type=gha,mode=max,scope=api
+          cache-to: type=gha,mode=min,scope=api,ignore-error=true
 
       - name: Build & push Frontend
         uses: docker/build-push-action@v6
@@ -134,7 +137,7 @@ jobs:
             AWS_REGION=${{ steps.args.outputs.region }}
             AWS_CDN_URL=${{ steps.args.outputs.aws_cdn }}
           cache-from: type=gha,scope=frontend
-          cache-to: type=gha,mode=max,scope=frontend
+          cache-to: type=gha,mode=min,scope=frontend,ignore-error=true
 
       - name: Build & push Admin
         uses: docker/build-push-action@v6
@@ -151,7 +154,7 @@ jobs:
             NEXT_PUBLIC_SITE_URL=${{ steps.args.outputs.site }}
             NEXT_PUBLIC_CDN_URL=${{ steps.args.outputs.cdn }}
           cache-from: type=gha,scope=admin
-          cache-to: type=gha,mode=max,scope=admin
+          cache-to: type=gha,mode=min,scope=admin,ignore-error=true
 
   deploy:
     name: Zero-downtime deploy

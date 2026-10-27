@@ -1,12 +1,46 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { getApiBase } from "@/lib/api";
 import { formatMoney } from "@/lib/format";
 import { freeShippingThreshold } from "@/lib/shipping";
 
-export function FreeShippingBanner({ subtotal }: { subtotal: number }) {
+type Props = {
+  subtotal: number;
+  /** CMS `shipping.freeShippingOver` — yoksa API’den okunur */
+  freeShippingOver?: number | null;
+};
+
+export function FreeShippingBanner({ subtotal, freeShippingOver }: Props) {
   const t = useTranslations("freeShippingBanner");
-  const threshold = freeShippingThreshold();
+  const [cmsOver, setCmsOver] = useState<number | null | undefined>(
+    freeShippingOver,
+  );
+
+  useEffect(() => {
+    if (freeShippingOver != null) {
+      setCmsOver(freeShippingOver);
+      return;
+    }
+    let cancelled = false;
+    void fetch(`${getApiBase()}/cms/settings`, { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: Record<string, Record<string, unknown>> | null) => {
+        if (cancelled || !data) return;
+        const shipping = data.shipping as
+          | { freeShippingOver?: number }
+          | undefined;
+        const n = Number(shipping?.freeShippingOver);
+        setCmsOver(Number.isFinite(n) ? n : null);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [freeShippingOver]);
+
+  const threshold = freeShippingThreshold(cmsOver);
   if (threshold <= 0) return null;
 
   const reached = subtotal >= threshold;

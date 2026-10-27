@@ -1234,6 +1234,11 @@ export default function SiteSettingsPage() {
                 onChange={(url) => setBrand((s) => ({ ...s, logoUrl: url }))}
                 folder="brand"
               />
+              <p className="mt-1.5 text-[11px] leading-relaxed text-muted">
+                Siyah zeminli PNG/JPG yüklenirse arka plan otomatik şeffafa
+                çevrilir. Kaydet’i unutmayın — header’da ID rozeti logo ile
+                birlikte görünür.
+              </p>
             </div>
           ) : (
             <p className="text-xs text-muted">

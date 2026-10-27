@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { Link, toLinkHref, usePathname } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { AppImage as Image } from "@/components/AppImage";
 import { SiteSearch } from "@/components/SiteSearch";
 import { NotificationBell } from "@/components/NotificationBell";
 import { DealStripCountdown } from "@/components/PromoCountdown";
@@ -64,6 +64,9 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
   const logoText = brand.logoUrl
     ? brand.name
     : brand.name?.trim() || "Herbal Kapıda";
+  const freeShipOver = freeShippingThreshold(
+    settings.shipping?.freeShippingOver,
+  );
   const phone = settings.contact.phone;
   const catActive = pathname.startsWith("/urunler");
   const pageLinks = nav.filter((item) => item.href !== "/urunler");
@@ -380,9 +383,9 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
         <div className="hidden bg-primary text-on-primary lg:block">
           <div className="page-shell flex items-center justify-between gap-4 py-2 text-[13px]">
             <p className="font-semibold text-on-primary">
-              {freeShippingThreshold() > 0
+              {freeShipOver > 0
                 ? tHeader("freeShippingBanner", {
-                    amount: formatMoney(freeShippingThreshold()),
+                    amount: formatMoney(freeShipOver),
                   })
                 : tHeader("shippingBannerShort")}
             </p>
@@ -417,15 +420,15 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
         <div className="page-shell grid grid-cols-[1fr_auto] items-center gap-2 py-2.5 sm:py-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-2 xl:gap-3 xl:py-3.5">
           <Link
             href="/"
-            className="flex min-w-0 items-center gap-2.5 justify-self-start lg:max-w-44 xl:max-w-60 2xl:max-w-none"
+            className="flex min-w-0 items-center gap-2.5 justify-self-start lg:max-w-sm xl:max-w-md 2xl:max-w-xl"
           >
             {brand.logoUrl ? (
               <Image
                 src={brand.logoUrl}
                 alt={logoText}
-                width={200}
-                height={56}
-                className="h-9 w-auto max-w-38 shrink-0 object-contain object-left sm:h-10 sm:max-w-44 xl:max-w-52"
+                width={360}
+                height={100}
+                className="h-14 w-auto max-w-[min(100%,16rem)] shrink-0 bg-transparent object-contain object-left sm:h-16 sm:max-w-72 md:h-18 md:max-w-80 lg:h-20 lg:max-w-96 xl:max-w-md"
                 priority
               />
             ) : (
@@ -433,29 +436,29 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                 {logoText}
               </span>
             )}
-            {brand.logoUrl ? (
-              <span className="min-w-0 lg:hidden xl:block">
-                <span className="block truncate text-[11px] font-medium text-on-surface-variant sm:text-xs">
-                  {brand.distributorName}
-                </span>
-              </span>
-            ) : (
-              <span className="min-w-0">
-                <span className="flex min-w-0 items-center gap-1.5">
+            <span className="min-w-0">
+              <span className="flex min-w-0 flex-wrap items-center gap-1.5">
+                {!brand.logoUrl ? (
                   <span className="truncate font-display text-base font-bold tracking-tight text-on-surface sm:text-lg xl:text-xl">
                     {logoText}
                   </span>
-                  {brand.distributorCode?.trim() ? (
-                    <span className="shrink-0 rounded-full border border-primary/25 bg-primary-fixed px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-wide text-primary sm:text-[10px]">
-                      ID {brand.distributorCode.trim()}
-                    </span>
-                  ) : null}
-                </span>
-                <span className="mt-0.5 block truncate text-[11px] font-medium text-on-surface-variant sm:text-xs">
+                ) : null}
+                {brand.distributorCode?.trim() ? (
+                  <span className="shrink-0 rounded-full border border-primary/25 bg-primary-fixed px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-wide text-primary sm:text-[10px]">
+                    ID {brand.distributorCode.trim()}
+                  </span>
+                ) : null}
+              </span>
+              {brand.distributorName?.trim() ? (
+                <span
+                  className={`mt-0.5 block truncate text-[11px] font-medium text-on-surface-variant sm:text-xs ${
+                    brand.logoUrl ? "lg:hidden xl:block" : ""
+                  }`}
+                >
                   {brand.distributorName}
                 </span>
-              </span>
-            )}
+              ) : null}
+            </span>
           </Link>
 
           <nav className="hidden min-w-0 items-center justify-center gap-0 lg:flex xl:gap-0.5">

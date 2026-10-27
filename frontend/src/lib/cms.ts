@@ -167,7 +167,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
       "Original Herbal Kapıda products and personalized nutrition support with an independent distributor.",
     established: "Since 2024",
     location: "Buca / İzmir",
-    logoUrl: "/brand/logo.jpg",
+    logoUrl: "/brand/logo.png",
     distributorName: "Büşra Özberk",
     distributorTitle: "Independent Distributor",
     distributorCode: "",
@@ -274,10 +274,15 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     disclaimer:
       "Herbalife Nutrition distribütörü olmak için kayıt yalnızca resmi Herbalife platformu üzerinden yapılır. Bu site bağımsız bir distribütör sitesidir.",
   },
+  /** freeShippingOver yoksa vitrin env yedeğine düşer */
+  shipping: {
+    defaultFee: 89.9,
+  },
   welcomePopup: { ...DEFAULT_WELCOME_POPUP },
 };
 
-const CMS_REVALIDATE = 60;
+/** Kısa TTL; admin kayıt sonrası /api/revalidate ile hemen de temizlenir */
+const CMS_REVALIDATE = 15;
 
 function mergeSettings(
   raw: Record<string, Record<string, unknown>> | null,
@@ -314,7 +319,10 @@ function mergeSettings(
       ...(raw.membership as SiteSettings["membership"]),
     },
     localization: raw.localization as SiteSettings["localization"],
-    shipping: raw.shipping as SiteSettings["shipping"],
+    shipping: {
+      ...DEFAULT_SETTINGS.shipping,
+      ...(raw.shipping as SiteSettings["shipping"]),
+    },
     analytics: raw.analytics as SiteSettings["analytics"],
     welcomePopup: {
       ...DEFAULT_WELCOME_POPUP,

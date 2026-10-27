@@ -6,6 +6,10 @@ import {
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { MediaAsset } from '@entities/media-asset.entity';
+import {
+  knockOutNearBlackToPng,
+  shouldProcessBrandLogo,
+} from '@modules/media/image-process';
 import { StorageService } from '@modules/storage/storage.service';
 
 const ALLOWED_MIME = new Set([
@@ -41,15 +45,30 @@ export class MediaService {
       throw new BadRequestException('Dosya boyutu 10MB sınırını aşıyor');
     }
 
-    const key = this.storage.buildKey(folder, file.originalname);
-    const uploaded = await this.storage.upload(file.buffer, key, file.mimetype);
+    let buffer = file.buffer;
+    let mimeType = file.mimetype;
+    let filename = file.originalname;
+
+    if (shouldProcessBrandLogo(folder, mimeType)) {
+      try {
+        const processed = await knockOutNearBlackToPng(buffer);
+        buffer = processed.buffer;
+        mimeType = processed.mimeType;
+        filename = filename.replace(/\.[a-zA-Z0-9]+$/, '') + processed.ext;
+      } catch {
+        /* sharp yoksa veya görsel bozuksa orijinali kullan */
+      }
+    }
+
+    const key = this.storage.buildKey(folder, filename);
+    const uploaded = await this.storage.upload(buffer, key, mimeType);
 
     const asset = this.em.create(MediaAsset, {
-      filename: file.originalname,
+      filename,
       storageKey: uploaded.key,
       url: uploaded.url,
-      mimeType: file.mimetype,
-      size: file.size,
+      mimeType,
+      size: buffer.length,
       alt: alt || null,
       provider: uploaded.provider,
     });

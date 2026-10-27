@@ -453,7 +453,28 @@ export class CmsService {
       }
       saved.push(await this.em.save(row));
     }
+    void this.notifyFrontendCmsRevalidate();
     return saved;
+  }
+
+  /** Vitrin ISR önbelleğini temizle — logo / kargo eşiği anında görünsün */
+  private async notifyFrontendCmsRevalidate(): Promise<void> {
+    const base = (process.env.FRONTEND_URL || '').replace(/\/$/, '');
+    const secret =
+      process.env.REVALIDATE_SECRET || process.env.JWT_SECRET || '';
+    if (!base || !secret) return;
+    try {
+      await fetch(`${base}/api/revalidate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-revalidate-secret': secret,
+        },
+        body: JSON.stringify({ scope: 'cms' }),
+      });
+    } catch {
+      /* vitrin kapalıysa sessizce geç */
+    }
   }
 
   async getPublicSections(

@@ -8,7 +8,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
       'Bağımsız distribütör rehberliğinde orijinal Herbal Kapıda ürünleri ve kişiselleştirilmiş beslenme desteği.',
     established: '2024’ten beri',
     location: 'Buca / İzmir',
-    logoUrl: '/brand/logo.jpg',
+    logoUrl: '/brand/logo.png',
     distributorName: 'Büşra Özberk',
     distributorTitle: 'Bağımsız Distribütör',
     distributorCode: '',

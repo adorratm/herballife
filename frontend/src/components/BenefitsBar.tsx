@@ -25,15 +25,17 @@ type Props = {
   className?: string;
   phone?: string;
   promises?: SitePromises;
+  freeShippingOver?: number | null;
 };
 
 export async function BenefitsBar({
   className = "",
   phone: _phone,
   promises,
+  freeShippingOver,
 }: Props) {
   const t = await getTranslations("benefits");
-  const threshold = freeShippingThreshold();
+  const threshold = freeShippingThreshold(freeShippingOver);
   const returnDays = promises?.returnDays ?? 14;
   const sameDay =
     promises?.sameDayShipping !== false &&
