@@ -423,30 +423,39 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
               <Image
                 src={brand.logoUrl}
                 alt={logoText}
-                width={44}
-                height={44}
-                className="h-10 w-10 shrink-0 rounded-xl object-cover ring-2 ring-primary/15 sm:h-11 sm:w-11"
+                width={200}
+                height={56}
+                className="h-9 w-auto max-w-[9.5rem] shrink-0 object-contain object-left sm:h-10 sm:max-w-[11rem] xl:max-w-[13rem]"
+                priority
               />
             ) : (
               <span className="flex h-10 min-w-10 shrink-0 items-center justify-center rounded-xl bg-primary px-2 text-[11px] font-bold leading-tight text-on-primary sm:h-11 sm:min-w-11 sm:px-2.5 sm:text-xs">
                 {logoText}
               </span>
             )}
-            <span className="min-w-0">
-              <span className="flex min-w-0 items-center gap-1.5">
-                <span className="truncate font-display text-base font-bold tracking-tight text-on-surface sm:text-lg xl:text-xl">
-                  {logoText}
+            {brand.logoUrl ? (
+              <span className="min-w-0 lg:hidden xl:block">
+                <span className="block truncate text-[11px] font-medium text-on-surface-variant sm:text-xs">
+                  {brand.distributorName}
                 </span>
-                {brand.distributorCode?.trim() ? (
-                  <span className="shrink-0 rounded-full border border-primary/25 bg-primary-fixed px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-wide text-primary sm:text-[10px]">
-                    ID {brand.distributorCode.trim()}
+              </span>
+            ) : (
+              <span className="min-w-0">
+                <span className="flex min-w-0 items-center gap-1.5">
+                  <span className="truncate font-display text-base font-bold tracking-tight text-on-surface sm:text-lg xl:text-xl">
+                    {logoText}
                   </span>
-                ) : null}
+                  {brand.distributorCode?.trim() ? (
+                    <span className="shrink-0 rounded-full border border-primary/25 bg-primary-fixed px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-wide text-primary sm:text-[10px]">
+                      ID {brand.distributorCode.trim()}
+                    </span>
+                  ) : null}
+                </span>
+                <span className="mt-0.5 block truncate text-[11px] font-medium text-on-surface-variant sm:text-xs">
+                  {brand.distributorName}
+                </span>
               </span>
-              <span className="mt-0.5 block truncate text-[11px] font-medium text-on-surface-variant sm:text-xs">
-                {brand.distributorName}
-              </span>
-            </span>
+            )}
           </Link>
 
           <nav className="hidden min-w-0 items-center justify-center gap-0 lg:flex xl:gap-0.5">

@@ -264,9 +264,9 @@ export default async function AboutPage() {
             </div>
           </div>
 
-          <div className="hero-media relative lg:col-span-6">
-            <div className="relative mx-auto aspect-6/5 w-full max-w-176">
-              <div className="absolute bottom-[-3%] left-[18%] z-10 aspect-square h-[70%] -translate-x-1/2">
+          <div className="hero-media relative w-full min-w-0 lg:col-span-6">
+            <div className="relative mx-auto aspect-6/5 w-full max-w-full overflow-hidden sm:max-w-176">
+              <div className="absolute bottom-0 left-[18%] z-10 aspect-square h-[58%] max-h-full -translate-x-1/2 sm:bottom-[-3%] sm:h-[70%]">
                 <Image
                   src="/images/cutouts/formul-2-vitamin.png"
                   alt=""
@@ -275,7 +275,7 @@ export default async function AboutPage() {
                   sizes="(max-width: 1024px) 50vw, 30rem"
                 />
               </div>
-              <div className="absolute bottom-[-3%] left-[84%] z-10 aspect-square h-[66%] -translate-x-1/2">
+              <div className="absolute bottom-0 left-[80%] z-10 aspect-square h-[54%] max-h-full -translate-x-1/2 sm:bottom-[-3%] sm:left-[84%] sm:h-[66%]">
                 <Image
                   src="/images/cutouts/multi-fiber.png"
                   alt=""
@@ -284,7 +284,7 @@ export default async function AboutPage() {
                   sizes="(max-width: 1024px) 50vw, 28rem"
                 />
               </div>
-              <div className="absolute bottom-[-3%] left-1/2 z-20 aspect-square h-full -translate-x-1/2">
+              <div className="absolute bottom-0 left-1/2 z-20 aspect-square h-[92%] max-h-full -translate-x-1/2 sm:bottom-[-3%] sm:h-full">
                 <Image
                   src="/images/cutouts/thermo-complete.png"
                   alt={brand.name}

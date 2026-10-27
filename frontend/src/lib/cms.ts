@@ -96,6 +96,52 @@ export type SiteSettings = {
     yandexMetrikaId?: string;
     tiktokPixelId?: string;
   };
+  welcomePopup?: WelcomePopupSettings;
+};
+
+export type WelcomePopupSettings = {
+  enabled: boolean;
+  delayMs: number;
+  /** once = localStorage, session = sessionStorage, always = her ziyaret */
+  frequency: "once" | "session" | "always";
+  showOnPaths: string[];
+  excludePaths: string[];
+  storageKey: string;
+  distributorName: string;
+  headline: string;
+  leftTitle: string;
+  leftBody: string;
+  leftLinkLabel: string;
+  leftLinkUrl: string;
+  rightTitle: string;
+  rightBody: string;
+  rightLinkLabel: string;
+  rightLinkUrl: string;
+  closeLabel: string;
+};
+
+export const DEFAULT_WELCOME_POPUP: WelcomePopupSettings = {
+  enabled: true,
+  delayMs: 600,
+  frequency: "once",
+  showOnPaths: ["/"],
+  excludePaths: ["/giris", "/kayit", "/odeme", "/auth"],
+  storageKey: "hk_welcome_popup_v1",
+  distributorName: "Büşra Özberk",
+  headline:
+    "Bu internet sitesi Herbalife Nutrition Bağımsız Distribütörü tarafından yönetilmektedir: Büşra Özberk",
+  leftTitle: "MEVCUT MÜŞTERİ ?",
+  leftBody:
+    "Beslenme hedeflerinize ulaşmada kişisel Distribütörünüzle kuracağınız birebir ilişki çok önemlidir. Eğer Büşra Özberk mevcut distribütörünüz değil ise, ürünlerinizi mevcut distribütörünüzden almanızı öneririz. Mevcut Distribütörünüzü bulmak için",
+  leftLinkLabel: "buraya tıklayınız.",
+  leftLinkUrl: "https://www.herbalife.com/tr-tr/",
+  rightTitle:
+    "HALİHAZIRDA HERBALIFE NUTRITION DİSTRİBÜTÖRÜ YA DA AYRICALIKLI MÜŞTERİ MİSİNİZ?",
+  rightBody:
+    "Eğer kendi Distribütör hesabınız varsa, lütfen sipariş vermek ve tüm haklardan yararlanmak için",
+  rightLinkLabel: "myherbalife.com",
+  rightLinkUrl: "https://www.myherbalife.com",
+  closeLabel: "Kapat",
 };
 
 export type ContentSection = {
@@ -120,37 +166,39 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     tagline:
       "Original Herbal Kapıda products and personalized nutrition support with an independent distributor.",
     established: "Since 2024",
-    location: "Turkey",
-    logoUrl: "",
-    distributorName: "Herbal Kapıda",
+    location: "Buca / İzmir",
+    logoUrl: "/brand/logo.jpg",
+    distributorName: "Büşra Özberk",
     distributorTitle: "Independent Distributor",
     distributorCode: "",
     legalDisclaimer:
-      "This site belongs to an independent Herbal Kapıda Nutrition distributor. It is not the official Herbal Kapıda Nutrition website. Products are original Herbal Kapıda products.",
+      "This site belongs to an independent Herbalife Nutrition / Herbal Kapıda distributor. It is not the official Herbalife website. Products are original Herbalife products.",
   },
   contact: {
-    address: "Turkey",
+    address: "Adatepe Mahallesi 73 Sokak No: 3 Daire: 9 Buca / İzmir",
     email: "info@herbalkapida.com",
-    phone: "+90 500 000 00 00",
+    phone: "+90 505 142 07 10",
     hours: "Mon — Sun / 09:00 — 20:00",
-    locationLabel: "Turkey",
+    locationLabel: "Buca / İzmir",
     latitude: "",
     longitude: "",
   },
   seo: {
-    title: "Herbal Kapıda | Original Herbal Kapıda Products",
+    title: "Herbal Kapıda | Büşra Özberk — Independent Distributor",
     description:
-      "Original Herbal Kapıda products, value bundles, and personalized nutrition coaching. Independent distributor Herbal Kapıda — herbalkapida.com.",
+      "Original Herbalife / Herbal Kapıda products, value bundles, and personalized nutrition coaching. Independent distributor Büşra Özberk — herbalkapida.com.",
     keywords: [
       "Herbal Kapıda",
-      "Herbal Kapıda",
+      "Herbalife",
+      "Büşra Özberk",
       "Formula 1",
       "weight management",
       "protein shake",
       "bundles",
       "nutrition",
+      "Izmir",
     ],
-    ogImage: stockImage("og"),
+    ogImage: "/brand/og.jpg",
   },
   navigation: {
     header: [
@@ -226,6 +274,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     disclaimer:
       "Herbal Kapıda Nutrition distribütörü olmak için kayıt yalnızca resmi myHerbal Kapıda platformu üzerinden yapılır. Bu site bağımsız bir distribütör sitesidir.",
   },
+  welcomePopup: { ...DEFAULT_WELCOME_POPUP },
 };
 
 const CMS_REVALIDATE = 60;
@@ -267,6 +316,20 @@ function mergeSettings(
     localization: raw.localization as SiteSettings["localization"],
     shipping: raw.shipping as SiteSettings["shipping"],
     analytics: raw.analytics as SiteSettings["analytics"],
+    welcomePopup: {
+      ...DEFAULT_WELCOME_POPUP,
+      ...(raw.welcomePopup as Partial<WelcomePopupSettings>),
+      showOnPaths: Array.isArray(
+        (raw.welcomePopup as WelcomePopupSettings | undefined)?.showOnPaths,
+      )
+        ? (raw.welcomePopup as WelcomePopupSettings).showOnPaths
+        : DEFAULT_WELCOME_POPUP.showOnPaths,
+      excludePaths: Array.isArray(
+        (raw.welcomePopup as WelcomePopupSettings | undefined)?.excludePaths,
+      )
+        ? (raw.welcomePopup as WelcomePopupSettings).excludePaths
+        : DEFAULT_WELCOME_POPUP.excludePaths,
+    },
   };
 }
 

@@ -14,8 +14,9 @@ import { SiteFooterGate } from "@/components/SiteFooterGate";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { WhatsAppChatGate } from "@/components/WhatsAppChatGate";
+import { WelcomePopup } from "@/components/WelcomePopup";
 import { routing } from "@/i18n/routing";
-import { getSiteSettings } from "@/lib/cms";
+import { DEFAULT_WELCOME_POPUP, getSiteSettings } from "@/lib/cms";
 import {
   JsonLd,
   buildSiteMetadata,
@@ -99,7 +100,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <head>
         {mediaBase ? <link rel="preconnect" href={mediaBase} /> : null}
       </head>
-      <body className="flex min-h-full flex-col bg-background text-on-background antialiased">
+      <body className="flex min-h-full flex-col overflow-x-hidden bg-background text-on-background antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <LocaleAlternatesProvider>
             <PanelGoogleTags />
@@ -126,6 +127,9 @@ export default async function LocaleLayout({ children, params }: Props) {
             <ScrollToTopFab />
             <CartToastHost />
             <CookieBannerGate />
+            <WelcomePopup
+              settings={settings.welcomePopup || DEFAULT_WELCOME_POPUP}
+            />
             <AnalyticsScripts />
             <SiteTour />
           </LocaleAlternatesProvider>

@@ -4,10 +4,10 @@
  */
 
 const SELLER = {
-  name: 'Herbal Kapıda (Bağımsız Distribütör)',
-  address: 'Türkiye',
+  name: 'Büşra Özberk (Herbal Kapıda — Bağımsız Distribütör)',
+  address: 'Adatepe Mahallesi 73 Sokak No: 3 Daire: 9 Buca / İzmir',
   email: 'info@herbalkapida.com',
-  phone: '+90 500 000 00 00',
+  phone: '+90 505 142 07 10',
   hours: 'Pzt — Paz / 09:00 — 20:00',
   website: 'https://herbalkapida.com',
   taxOffice: '[Vergi dairesi — güncellenecek]',

@@ -353,11 +353,56 @@ const LOCALE_LABELS: Record<FormLocale, string> = {
   es: 'ES',
 };
 
+type WelcomePopupFields = {
+  enabled: boolean;
+  delayMs: string;
+  frequency: 'once' | 'session' | 'always';
+  showOnPaths: string;
+  excludePaths: string;
+  storageKey: string;
+  distributorName: string;
+  headline: string;
+  leftTitle: string;
+  leftBody: string;
+  leftLinkLabel: string;
+  leftLinkUrl: string;
+  rightTitle: string;
+  rightBody: string;
+  rightLinkLabel: string;
+  rightLinkUrl: string;
+  closeLabel: string;
+};
+
+const DEFAULT_WELCOME_POPUP: WelcomePopupFields = {
+  enabled: true,
+  delayMs: '600',
+  frequency: 'once',
+  showOnPaths: '/',
+  excludePaths: '/giris, /kayit, /odeme, /auth',
+  storageKey: 'hk_welcome_popup_v1',
+  distributorName: 'Büşra Özberk',
+  headline:
+    'Bu internet sitesi Herbalife Nutrition Bağımsız Distribütörü tarafından yönetilmektedir: Büşra Özberk',
+  leftTitle: 'MEVCUT MÜŞTERİ ?',
+  leftBody:
+    'Beslenme hedeflerinize ulaşmada kişisel Distribütörünüzle kuracağınız birebir ilişki çok önemlidir. Eğer Büşra Özberk mevcut distribütörünüz değil ise, ürünlerinizi mevcut distribütörünüzden almanızı öneririz. Mevcut Distribütörünüzü bulmak için',
+  leftLinkLabel: 'buraya tıklayınız.',
+  leftLinkUrl: 'https://www.herbalife.com/tr-tr/',
+  rightTitle:
+    'HALİHAZIRDA HERBALIFE NUTRITION DİSTRİBÜTÖRÜ YA DA AYRICALIKLI MÜŞTERİ MİSİNİZ?',
+  rightBody:
+    'Eğer kendi Distribütör hesabınız varsa, lütfen sipariş vermek ve tüm haklardan yararlanmak için',
+  rightLinkLabel: 'myherbalife.com',
+  rightLinkUrl: 'https://www.myherbalife.com',
+  closeLabel: 'Kapat',
+};
+
 type SettingsSection =
   | 'marka'
   | 'seo'
   | 'iletisim'
   | 'whatsapp'
+  | 'popup'
   | 'teknik'
   | 'navigasyon';
 
@@ -366,6 +411,7 @@ const SETTINGS_SECTIONS: { key: SettingsSection; label: string }[] = [
   { key: 'seo', label: 'SEO' },
   { key: 'iletisim', label: 'İletişim' },
   { key: 'whatsapp', label: 'WhatsApp' },
+  { key: 'popup', label: 'Karşılama popup' },
   { key: 'teknik', label: 'Kargo & analitik' },
   { key: 'navigasyon', label: 'Menü & footer' },
 ];
@@ -401,6 +447,8 @@ export default function SiteSettingsPage() {
     keywords: '',
     ogImage: '',
   });
+  const [welcomePopup, setWelcomePopup] =
+    useState<WelcomePopupFields>(DEFAULT_WELCOME_POPUP);
   const [social, setSocial] = useState<Social>({
     instagram: '',
     facebook: '',
@@ -675,6 +723,47 @@ export default function SiteSettingsPage() {
                 : DEFAULT_SHIPPING.freeShippingOver,
           });
         }
+        if (map.welcomePopup) {
+          const p = map.welcomePopup as Record<string, unknown>;
+          setWelcomePopup({
+            enabled: p.enabled !== false,
+            delayMs: String(p.delayMs ?? DEFAULT_WELCOME_POPUP.delayMs),
+            frequency:
+              p.frequency === 'session' || p.frequency === 'always'
+                ? p.frequency
+                : 'once',
+            showOnPaths: Array.isArray(p.showOnPaths)
+              ? p.showOnPaths.map(String).join(', ')
+              : DEFAULT_WELCOME_POPUP.showOnPaths,
+            excludePaths: Array.isArray(p.excludePaths)
+              ? p.excludePaths.map(String).join(', ')
+              : DEFAULT_WELCOME_POPUP.excludePaths,
+            storageKey: String(
+              p.storageKey || DEFAULT_WELCOME_POPUP.storageKey,
+            ),
+            distributorName: String(
+              p.distributorName || DEFAULT_WELCOME_POPUP.distributorName,
+            ),
+            headline: String(p.headline || DEFAULT_WELCOME_POPUP.headline),
+            leftTitle: String(p.leftTitle || DEFAULT_WELCOME_POPUP.leftTitle),
+            leftBody: String(p.leftBody || DEFAULT_WELCOME_POPUP.leftBody),
+            leftLinkLabel: String(
+              p.leftLinkLabel || DEFAULT_WELCOME_POPUP.leftLinkLabel,
+            ),
+            leftLinkUrl: String(
+              p.leftLinkUrl || DEFAULT_WELCOME_POPUP.leftLinkUrl,
+            ),
+            rightTitle: String(p.rightTitle || DEFAULT_WELCOME_POPUP.rightTitle),
+            rightBody: String(p.rightBody || DEFAULT_WELCOME_POPUP.rightBody),
+            rightLinkLabel: String(
+              p.rightLinkLabel || DEFAULT_WELCOME_POPUP.rightLinkLabel,
+            ),
+            rightLinkUrl: String(
+              p.rightLinkUrl || DEFAULT_WELCOME_POPUP.rightLinkUrl,
+            ),
+            closeLabel: String(p.closeLabel || DEFAULT_WELCOME_POPUP.closeLabel),
+          });
+        }
         setLocaleBundles(readLocaleBundles(map));
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Ayarlar yüklenemedi');
@@ -828,6 +917,39 @@ export default function SiteSettingsPage() {
                 freeShippingOver: Number(shipping.freeShippingOver) || 0,
               },
               group: 'shipping',
+            },
+            {
+              key: 'welcomePopup',
+              value: {
+                enabled: welcomePopup.enabled,
+                delayMs: Number(welcomePopup.delayMs) || 0,
+                frequency: welcomePopup.frequency,
+                showOnPaths: welcomePopup.showOnPaths
+                  .split(',')
+                  .map((s) => s.trim())
+                  .filter(Boolean),
+                excludePaths: welcomePopup.excludePaths
+                  .split(',')
+                  .map((s) => s.trim())
+                  .filter(Boolean),
+                storageKey:
+                  welcomePopup.storageKey.trim() ||
+                  DEFAULT_WELCOME_POPUP.storageKey,
+                distributorName: welcomePopup.distributorName.trim(),
+                headline: welcomePopup.headline.trim(),
+                leftTitle: welcomePopup.leftTitle.trim(),
+                leftBody: welcomePopup.leftBody.trim(),
+                leftLinkLabel: welcomePopup.leftLinkLabel.trim(),
+                leftLinkUrl: welcomePopup.leftLinkUrl.trim(),
+                rightTitle: welcomePopup.rightTitle.trim(),
+                rightBody: welcomePopup.rightBody.trim(),
+                rightLinkLabel: welcomePopup.rightLinkLabel.trim(),
+                rightLinkUrl: welcomePopup.rightLinkUrl.trim(),
+                closeLabel:
+                  welcomePopup.closeLabel.trim() ||
+                  DEFAULT_WELCOME_POPUP.closeLabel,
+              },
+              group: 'welcomePopup',
             },
           ],
         },
@@ -1100,6 +1222,145 @@ export default function SiteSettingsPage() {
           ))}
         </fieldset>
         </>
+        ) : null}
+
+        {settingsSection === 'popup' ? (
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            Karşılama / distribütör popup
+          </legend>
+          <p className="text-xs text-muted">
+            İlk açılışta gösterilen yasal bilgilendirme. Zamanlama, sıklık ve
+            hangi sayfalarda çıkacağı buradan yönetilir.
+          </p>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={welcomePopup.enabled}
+              onChange={(e) =>
+                setWelcomePopup((s) => ({ ...s, enabled: e.target.checked }))
+              }
+            />
+            Popup aktif
+          </label>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <label className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                Gecikme (ms)
+              </span>
+              <input
+                value={welcomePopup.delayMs}
+                onChange={(e) =>
+                  setWelcomePopup((s) => ({ ...s, delayMs: e.target.value }))
+                }
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                Sıklık
+              </span>
+              <select
+                value={welcomePopup.frequency}
+                onChange={(e) =>
+                  setWelcomePopup((s) => ({
+                    ...s,
+                    frequency: e.target.value as WelcomePopupFields['frequency'],
+                  }))
+                }
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              >
+                <option value="once">Bir kez (localStorage)</option>
+                <option value="session">Oturum başına</option>
+                <option value="always">Her ziyarette</option>
+              </select>
+            </label>
+            <label className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                Storage key
+              </span>
+              <input
+                value={welcomePopup.storageKey}
+                onChange={(e) =>
+                  setWelcomePopup((s) => ({
+                    ...s,
+                    storageKey: e.target.value,
+                  }))
+                }
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              />
+            </label>
+          </div>
+          <label className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              Gösterilecek yollar (virgülle, boş = tümü; örn. /)
+            </span>
+            <input
+              value={welcomePopup.showOnPaths}
+              onChange={(e) =>
+                setWelcomePopup((s) => ({
+                  ...s,
+                  showOnPaths: e.target.value,
+                }))
+              }
+              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              Hariç tutulan yollar (virgülle)
+            </span>
+            <input
+              value={welcomePopup.excludePaths}
+              onChange={(e) =>
+                setWelcomePopup((s) => ({
+                  ...s,
+                  excludePaths: e.target.value,
+                }))
+              }
+              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+            />
+          </label>
+          {(
+            [
+              ['distributorName', 'Distribütör adı'],
+              ['headline', 'Üst başlık'],
+              ['leftTitle', 'Sol başlık'],
+              ['leftBody', 'Sol metin'],
+              ['leftLinkLabel', 'Sol link yazısı'],
+              ['leftLinkUrl', 'Sol link URL'],
+              ['rightTitle', 'Sağ başlık'],
+              ['rightBody', 'Sağ metin'],
+              ['rightLinkLabel', 'Sağ link yazısı'],
+              ['rightLinkUrl', 'Sağ link URL'],
+              ['closeLabel', 'Kapat etiketi'],
+            ] as const
+          ).map(([key, label]) => (
+            <label key={key} className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                {label}
+              </span>
+              {key.endsWith('Body') || key === 'headline' || key === 'rightTitle' ? (
+                <textarea
+                  value={welcomePopup[key]}
+                  onChange={(e) =>
+                    setWelcomePopup((s) => ({ ...s, [key]: e.target.value }))
+                  }
+                  rows={key.endsWith('Body') ? 4 : 2}
+                  className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+                />
+              ) : (
+                <input
+                  value={welcomePopup[key]}
+                  onChange={(e) =>
+                    setWelcomePopup((s) => ({ ...s, [key]: e.target.value }))
+                  }
+                  className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+                />
+              )}
+            </label>
+          ))}
+        </fieldset>
         ) : null}
 
         {settingsSection === 'whatsapp' ? (

@@ -3,6 +3,7 @@
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { oauthUrl } from "@/lib/api";
 import {
   loginHref,
@@ -55,7 +56,9 @@ export function AuthShell({
       >
         {error ? (
           <div className="mb-6 border border-error/40 bg-error/10 px-4 py-3 font-meta text-xs uppercase text-error">
-            {error}
+            {/invalid_client/i.test(error)
+              ? "Google OAuth Client ID geçersiz (401). Sunucu GOOGLE_CLIENT_ID / SECRET ve Console redirect URI’lerini kontrol edin."
+              : error}
           </div>
         ) : null}
         {children}
@@ -91,13 +94,11 @@ export function OAuthLinks({ nextPath }: { nextPath?: string }) {
       <p className="mb-4 font-meta text-[10px] uppercase tracking-widest text-on-surface-variant">
         {t("socialLogin")}
       </p>
-      <a
+      <GoogleSignInButton
         href={oauthUrl("google")}
+        label={t("googleContinue")}
         onClick={() => rememberAuthNext(next)}
-        className="oauth-chip block border border-outline-variant/40 px-4 py-3 text-center font-meta text-[11px] uppercase tracking-widest text-secondary hover:border-primary hover:text-primary"
-      >
-        {t("googleContinue")}
-      </a>
+      />
     </div>
   );
 }

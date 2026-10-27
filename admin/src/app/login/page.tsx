@@ -3,11 +3,14 @@
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { adminGoogleLoginUrl } from '@/lib/api';
+import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 
 const ERROR_HINTS: Record<string, string> = {
   allowlist:
     'Bu e-posta yönetici izin listesinde değil. Yetkili bir hesap kullanın.',
   denied: 'Google ile giriş iptal edildi veya reddedildi.',
+  invalid_client:
+    'Google OAuth Client ID bulunamadı (401 invalid_client). Sunucu deploy/.env içindeki GOOGLE_CLIENT_ID / SECRET değerlerini Google Cloud Console ile eşleştirin; redirect URI: https://api.herbalkapida.com/auth/google/admin/callback',
 };
 
 function LoginInner() {
@@ -16,7 +19,9 @@ function LoginInner() {
   const error = raw
     ? /allowlist/i.test(raw)
       ? ERROR_HINTS.allowlist
-      : decodeURIComponent(raw)
+      : /invalid_client/i.test(raw)
+        ? ERROR_HINTS.invalid_client
+        : decodeURIComponent(raw)
     : null;
 
   return (
@@ -52,12 +57,12 @@ function LoginInner() {
             {error}
           </p>
         ) : null}
-        <a
-          href={adminGoogleLoginUrl()}
-          className="admin-btn admin-btn-primary mt-8 w-full py-3 text-sm"
-        >
-          Google ile Giriş
-        </a>
+        <div className="mt-8">
+          <GoogleSignInButton
+            href={adminGoogleLoginUrl()}
+            label="Google ile Giriş"
+          />
+        </div>
       </div>
     </div>
   );

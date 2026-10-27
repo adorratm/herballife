@@ -1261,6 +1261,27 @@ select:disabled {
 }
 .hero-media {
   animation: media-in 0.9s var(--motion-ease) 160ms both;
+  max-width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+}
+.hero-media > .relative {
+  max-width: 100%;
+}
+@media (max-width: 640px) {
+  .hero-media > .relative {
+    max-height: min(68vw, 18.5rem);
+  }
+}
+/* Mobilde içerik görsellerinin yatay taşmasını kes (ikon SVG’lere dokunma) */
+img,
+video {
+  max-width: 100%;
+}
+.hero-media img,
+.card-media-shine img,
+.product-stage img {
+  max-width: none; /* absolute fill / object-contain parent’a göre */
 }
 
 /* Blog / hikaye okuma tipografisi */

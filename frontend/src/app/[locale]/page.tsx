@@ -221,9 +221,9 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="hero-media relative lg:col-span-6">
-            <div className="relative mx-auto aspect-6/5 w-full max-w-176">
-              <div className="absolute bottom-[-3%] left-[17%] z-10 aspect-square h-[58%] -translate-x-1/2">
+          <div className="hero-media relative w-full min-w-0 lg:col-span-6">
+            <div className="relative mx-auto aspect-6/5 w-full max-w-full overflow-hidden sm:max-w-176">
+              <div className="absolute bottom-0 left-[18%] z-10 aspect-square h-[52%] max-h-full -translate-x-1/2 sm:bottom-[-3%] sm:h-[58%]">
                 {/* eslint-disable-next-line @next/next/no-img-element -- hero LCP: kesin eager */}
                 <img
                   src="/images/cutouts/bitkisel-cay.png"
@@ -235,7 +235,7 @@ export default async function HomePage() {
                   className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_22px_rgba(0,0,0,0.22)]"
                 />
               </div>
-              <div className="absolute bottom-[-3%] left-[82%] z-10 aspect-square h-[88%] -translate-x-1/2">
+              <div className="absolute bottom-0 left-[80%] z-10 aspect-square h-[72%] max-h-full -translate-x-1/2 sm:bottom-[-3%] sm:left-[82%] sm:h-[88%]">
                 {/* eslint-disable-next-line @next/next/no-img-element -- hero LCP: kesin eager */}
                 <img
                   src="/images/cutouts/herbal-aloe.png"
@@ -247,7 +247,7 @@ export default async function HomePage() {
                   className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_22px_rgba(0,0,0,0.22)]"
                 />
               </div>
-              <div className="absolute bottom-[-3%] left-1/2 z-20 aspect-square h-full -translate-x-1/2">
+              <div className="absolute bottom-0 left-1/2 z-20 aspect-square h-[92%] max-h-full -translate-x-1/2 sm:bottom-[-3%] sm:h-full">
                 {/* eslint-disable-next-line @next/next/no-img-element -- hero LCP: kesin eager */}
                 <img
                   src="/images/cutouts/formul-1-shake.png"

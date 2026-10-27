@@ -84,7 +84,7 @@ export function ProductGallery({ images, alt, badge }: Props) {
           aria-label={tAria("enlargeImage", { alt })}
           onClick={() => setLightbox(true)}
           onKeyDown={onStageKey}
-          className="product-stage group relative flex min-h-80 flex-1 cursor-zoom-in items-center justify-center overflow-hidden rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:min-h-96 lg:min-h-112 xl:min-h-128"
+          className="product-stage group relative flex min-h-64 w-full max-w-full flex-1 cursor-zoom-in items-center justify-center overflow-hidden rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:min-h-80 md:min-h-96 lg:min-h-112 xl:min-h-128"
         >
           <div className="product-stage-glow" aria-hidden />
           <div className="product-stage-ring" aria-hidden />

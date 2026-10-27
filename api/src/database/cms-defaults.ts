@@ -7,38 +7,39 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     tagline:
       'Bağımsız distribütör rehberliğinde orijinal Herbal Kapıda ürünleri ve kişiselleştirilmiş beslenme desteği.',
     established: '2024’ten beri',
-    location: 'Türkiye',
-    logoUrl: '',
-    distributorName: 'Herbal Kapıda',
+    location: 'Buca / İzmir',
+    logoUrl: '/brand/logo.jpg',
+    distributorName: 'Büşra Özberk',
     distributorTitle: 'Bağımsız Distribütör',
     distributorCode: '',
     legalDisclaimer:
-      'Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir. Herbal Kapıda Nutrition resmi sitesi değildir. Ürünler orijinal Herbal Kapıda ürünleridir.',
+      'Bu site bağımsız bir Herbalife Nutrition / Herbal Kapıda distribütörüne aittir. Resmi Herbalife sitesi değildir. Ürünler orijinal Herbalife ürünleridir.',
   },
   contact: {
-    address: 'Türkiye — [Yayın öncesi gerçek adres]',
+    address: 'Adatepe Mahallesi 73 Sokak No: 3 Daire: 9 Buca / İzmir',
     email: 'info@herbalkapida.com',
-    phone: '+90 500 000 00 00',
-    hours:
-      'Pzt — Paz / 09:00 — 20:00 · DEMO: Admin → Site Ayarları’ndan telefon, e-posta ve WhatsApp’ı güncelleyin',
-    locationLabel: 'Türkiye',
+    phone: '+90 505 142 07 10',
+    hours: 'Pzt — Paz / 09:00 — 20:00',
+    locationLabel: 'Buca / İzmir',
     latitude: '',
     longitude: '',
   },
   seo: {
-    title: 'Herbal Kapıda | Orijinal Herbal Kapıda Ürünleri',
+    title: 'Herbal Kapıda | Büşra Özberk — Bağımsız Distribütör',
     description:
-      'Orijinal Herbal Kapıda ürünleri, avantajlı setler ve kişiselleştirilmiş beslenme danışmanlığı. Bağımsız distribütör Herbal Kapıda — herbalkapida.com.',
+      'Orijinal Herbalife / Herbal Kapıda ürünleri, avantajlı setler ve kişiselleştirilmiş beslenme danışmanlığı. Bağımsız distribütör Büşra Özberk — herbalkapida.com.',
     keywords: [
       'Herbal Kapıda',
-      'Herbal Kapıda',
+      'Herbalife',
+      'Büşra Özberk',
       'Formül 1',
       'kilo kontrolü',
       'protein shake',
       'avantajlı setler',
       'beslenme',
+      'İzmir',
     ],
-    ogImage: '',
+    ogImage: '/brand/og.jpg',
   },
   navigation: {
     header: [
@@ -88,10 +89,33 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     googleMaps: '',
     googleReviewUrl: '',
   },
+  welcomePopup: {
+    enabled: true,
+    delayMs: 600,
+    frequency: 'once', // once | session | always
+    showOnPaths: ['/'], // boş = tüm sayfalar; locale öneki yok
+    excludePaths: ['/giris', '/kayit', '/odeme', '/auth'],
+    storageKey: 'hk_welcome_popup_v1',
+    distributorName: 'Büşra Özberk',
+    headline:
+      'Bu internet sitesi Herbalife Nutrition Bağımsız Distribütörü tarafından yönetilmektedir: Büşra Özberk',
+    leftTitle: 'MEVCUT MÜŞTERİ ?',
+    leftBody:
+      'Beslenme hedeflerinize ulaşmada kişisel Distribütörünüzle kuracağınız birebir ilişki çok önemlidir. Eğer Büşra Özberk mevcut distribütörünüz değil ise, ürünlerinizi mevcut distribütörünüzden almanızı öneririz. Mevcut Distribütörünüzü bulmak için',
+    leftLinkLabel: 'buraya tıklayınız.',
+    leftLinkUrl: 'https://www.herbalife.com/tr-tr/',
+    rightTitle:
+      'HALİHAZIRDA HERBALIFE NUTRITION DİSTRİBÜTÖRÜ YA DA AYRICALIKLI MÜŞTERİ MİSİNİZ?',
+    rightBody:
+      'Eğer kendi Distribütör hesabınız varsa, lütfen sipariş vermek ve tüm haklardan yararlanmak için',
+    rightLinkLabel: 'myherbalife.com',
+    rightLinkUrl: 'https://www.myherbalife.com',
+    closeLabel: 'Kapat',
+  },
   whatsapp: {
     enabled: true,
-    phone: '',
-    greeting: 'Merhaba — Herbal Kapıda. Size nasıl yardımcı olabiliriz?',
+    phone: '+905051420710',
+    greeting: 'Merhaba — Büşra Özberk / Herbal Kapıda. Size nasıl yardımcı olabiliriz?',
     presets: [
       {
         label: 'Sipariş durumu',

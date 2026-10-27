@@ -856,6 +856,7 @@ async function seed() {
         'distributorTitle',
         'distributorCode',
         'legalDisclaimer',
+        'location',
       ]) {
         if (brand[field] === undefined || brand[field] === '') {
           brand[field] = defaults[field];
@@ -872,17 +873,146 @@ async function seed() {
         brand.name = defaults.name;
         changed = true;
       }
-      for (const emineField of ['distributorName', 'distributorTitle', 'name']) {
-        const v = brand[emineField];
-        if (typeof v === 'string' && /emine/i.test(v)) {
-          brand[emineField] = defaults[emineField];
-          changed = true;
+      for (const staleField of ['distributorName', 'distributorTitle', 'name']) {
+        const v = brand[staleField];
+        if (
+          typeof v === 'string' &&
+          (/emine/i.test(v) ||
+            /mehmet/i.test(v) ||
+            /co[sş]/i.test(v) ||
+            v === 'Herbal Kapıda')
+        ) {
+          if (staleField === 'distributorName' || /emine|mehmet|co[sş]/i.test(v)) {
+            brand[staleField] = defaults[staleField];
+            changed = true;
+          }
         }
+      }
+      if (
+        typeof brand.distributorName === 'string' &&
+        (brand.distributorName === 'Herbal Kapıda' ||
+          /mehmet|co[sş]|emine/i.test(brand.distributorName))
+      ) {
+        brand.distributorName = defaults.distributorName;
+        changed = true;
+      }
+      if (!brand.logoUrl) {
+        brand.logoUrl = defaults.logoUrl;
+        changed = true;
       }
       if (changed) {
         exists.value = brand;
         await em.save(exists);
         console.log('Site setting brand: updated');
+      }
+    } else if (key === 'contact') {
+      const contact = { ...(exists.value || {}) };
+      const defaults = value as Record<string, unknown>;
+      let changed = false;
+      const placeholders = [
+        '',
+        'Türkiye',
+        'Türkiye — [Yayın öncesi gerçek adres]',
+        '+90 500 000 00 00',
+        '+90 532 000 00 01',
+      ];
+      for (const field of [
+        'address',
+        'phone',
+        'hours',
+        'locationLabel',
+        'email',
+      ]) {
+        const cur = contact[field];
+        if (
+          cur === undefined ||
+          (typeof cur === 'string' && placeholders.includes(cur.trim()))
+        ) {
+          contact[field] = defaults[field];
+          changed = true;
+        }
+      }
+      if (changed) {
+        exists.value = contact;
+        await em.save(exists);
+        console.log('Site setting contact: updated');
+      }
+    } else if (key === 'seo') {
+      const seo = { ...(exists.value || {}) };
+      const defaults = value as Record<string, unknown>;
+      let changed = false;
+      if (!seo.ogImage) {
+        seo.ogImage = defaults.ogImage;
+        changed = true;
+      }
+      if (changed) {
+        exists.value = seo;
+        await em.save(exists);
+        console.log('Site setting seo: updated');
+      }
+    } else if (key === 'whatsapp') {
+      const wa = { ...(exists.value || {}) } as Record<string, unknown>;
+      const defaults = value as Record<string, unknown>;
+      let changed = false;
+      if (!wa.phone || wa.phone === '') {
+        wa.phone = defaults.phone;
+        changed = true;
+      }
+      if (
+        typeof wa.greeting === 'string' &&
+        /emine|mehmet|co[sş]/i.test(wa.greeting)
+      ) {
+        wa.greeting = defaults.greeting;
+        changed = true;
+      }
+      if (changed) {
+        exists.value = wa;
+        await em.save(exists);
+        console.log('Site setting whatsapp: updated');
+      }
+    } else if (key === 'welcomePopup') {
+      const popup = { ...(exists.value || {}) };
+      const defaults = value as Record<string, unknown>;
+      let changed = false;
+      for (const [field, defVal] of Object.entries(defaults)) {
+        if (popup[field] === undefined || popup[field] === '') {
+          popup[field] = defVal;
+          changed = true;
+        }
+      }
+      if (
+        typeof popup.distributorName === 'string' &&
+        /mehmet|co[sş]|emine/i.test(popup.distributorName)
+      ) {
+        popup.distributorName = defaults.distributorName;
+        popup.headline = defaults.headline;
+        popup.leftBody = defaults.leftBody;
+        changed = true;
+      }
+      if (changed) {
+        exists.value = popup;
+        await em.save(exists);
+        console.log('Site setting welcomePopup: updated');
+      }
+    } else if (key === 'whatsapp') {
+      const wa = { ...(exists.value || {}) } as Record<string, unknown>;
+      const defaults = value as Record<string, unknown>;
+      let changed = false;
+      if (!wa.phone) {
+        wa.phone = defaults.phone;
+        changed = true;
+      }
+      if (
+        typeof wa.greeting === 'string' &&
+        /emine|mehmet|co[sş]/i.test(wa.greeting)
+      ) {
+        wa.greeting = defaults.greeting;
+        changed = true;
+      }
+      if (changed) {
+        exists.value = wa;
+        await em.save(exists);
+        console.log('Site setting whatsapp: updated');
       }
     } else if (key === 'navigation') {
       const nav = (exists.value || {}) as {
