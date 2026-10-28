@@ -26,9 +26,10 @@ export class CreateLegalDocumentDto {
   @IsBoolean()
   isPublished?: boolean;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ example: 'tr' })
   @IsOptional()
   @IsString()
+  @MaxLength(10)
   locale?: string;
 }
 

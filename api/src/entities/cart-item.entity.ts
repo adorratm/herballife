@@ -27,6 +27,10 @@ export class CartItem extends BaseEntity {
   @Column({ name: 'variant_id', type: 'uuid', nullable: true })
   variantId!: string | null;
 
+  /** Kullanıcının seçtiği varyant / aroma / shaker özeti (ör. "550 g · Çikolata") */
+  @Column({ name: 'selection_label', type: 'varchar', length: 255, nullable: true })
+  selectionLabel!: string | null;
+
   @Column({ type: 'int', default: 1 })
   quantity!: number;
 

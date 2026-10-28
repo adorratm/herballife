@@ -3,7 +3,7 @@
  * Şirket unvanı, vergi no ve MERSİS bilgilerini canlıya çıkmadan önce güncelleyin.
  */
 
-const SELLER = {
+export const LEGAL_SELLER = {
   name: 'Büşra Özberk (Herbal Kapıda — Bağımsız Distribütör)',
   address: 'Adatepe Mahallesi 73 Sokak No: 3 Daire: 9 Buca / İzmir',
   email: 'info@herbalkapida.com',
@@ -14,6 +14,8 @@ const SELLER = {
   taxNumber: '',
   mersis: '[MERSİS No — güncellenecek]',
 };
+
+const SELLER = LEGAL_SELLER;
 
 export const LEGAL_DEFAULTS: Record<
   string,

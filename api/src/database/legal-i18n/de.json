@@ -1,0 +1,38 @@
+{
+  "kvkk": {
+    "title": "KVKK Datenschutzerklärung",
+    "content": "{{seller.name}} verarbeitet personenbezogene Daten gemäß dem türkischen Gesetz Nr. 6698 zum Schutz personenbezogener Daten (KVKK). Die Daten werden nur bei Bedarf für Bestellungen, Lieferung, Kundenbetreuung, Zahlungen und gesetzliche Verpflichtungen verwendet.\n\nDatenverantwortlicher: {{seller.name}}\nAdresse: {{seller.address}}\nKontakt: {{seller.email}} · {{seller.phone}}\n\nIhre Rechte: Gemäß KVKK Art. 11 Sie können Zugriff, Berichtigung, Löschung, Einschränkung und Einspruch beantragen und eine Beschwerde einreichen. Senden Sie Anfragen an {{seller.email}}."
+  },
+  "cerez-politikasi": {
+    "title": "Cookie-Richtlinie",
+    "content": "Diese Cookie-Richtlinie erläutert, wie {{seller.name}} Cookies auf {{seller.website}} im Einklang mit KVKK und den geltenden Regeln verwendet.\n\n1. Was sind Cookies?\nKleine Textdateien, die von Ihrem Browser gespeichert werden, um Sitzungen, Warenkörbe, Sicherheit und Leistungsmessung zu verwalten.\n\n2. Von uns verwendete Typen\na) Unbedingt erforderlich: Kernfunktionen der Website (Sitzung, Warenkorb, Sicherheit, Sprache).\nb) Funktional: Präferenzen merken.\nc) Analyse/Leistung: anonyme oder pseudonyme Nutzungsstatistiken; Kein Marketing-Profiling ohne Einwilligung.\nd) Zahlung/Sicherheit: PayTR und ähnliche Anbieter können ihre eigenen Sicherheitscookies für 3D Secure und Betrugsprävention setzen.\n\n3. Cookies verwalten\nSie können Cookies in den Browsereinstellungen löschen oder blockieren. Das Blockieren erforderlicher Cookies kann zu Problemen mit dem Warenkorb, der Anmeldung und dem Bezahlen führen.\n\n4. Dritte\nMobilfunkanbieter, PayTR, E-Mail/SMS, Analyse- und Hosting-Partner dürfen Cookies nur verwenden, wenn dies für die Bereitstellung des Dienstes erforderlich ist.\n\n6. Kontakt\nCookie- und KVKK-Anfragen: {{seller.email}}"
+  },
+  "mesafeli-satis": {
+    "title": "Fernabsatzvertrag",
+    "content": "Dieser Fernabsatzvertrag wird gemäß dem türkischen Verbraucherschutzgesetz Nr. 6502 zwischen dem unten aufgeführten Verkäufer und dem Käufer geschlossen, der online eine Bestellung aufgibt.\n\nVerkäufer: {{seller.name}}\nAdresse: {{seller.address}}\nTelefon: {{seller.phone}}\nE-Mail: {{seller.email}}\nWeb: {{seller.website}}\nFinanzamt / Nr: {{seller.taxOffice}} / {{seller.taxNumber}}\nMERSİS: {{seller.mersis}}\n\nBetreff: Verkauf und Lieferung der auf der Website bestellten Produkte zu dem in der Bestellübersicht angegebenen Preis.\n\nZahlung: Kartenzahlungen über PayTR; Kartendaten werden nicht auf unseren Servern gespeichert.\n\nWiderruf: 14 Tage ab Lieferung ohne Angabe von Gründen (Ausnahmen gemäß Verordnung).\n\nVerkäufer: {{seller.name}}"
+  },
+  "on-bilgilendirme": {
+    "title": "Informationsformular vor Vertragsabschluss",
+    "content": "Gemäß dem türkischen Gesetz Nr. 6502 werden die folgenden Informationen bereitgestellt, bevor Sie eine Bestellung aufgeben.\n\nVERKÄUFER\n{{seller.name}}\n{{seller.address}}\nTel.: {{seller.phone}} · E-Mail: {{seller.email}}\nSteuer: {{seller.taxOffice}} / {{seller.taxNumber}}\n\nGESAMTPREIS\nProduktpreis, Rabatte, Versand und Steuern werden als Gesamtsumme vor der Zahlung angezeigt.\n\nZAHLUNG\nSichere Kartenzahlung über PayTR.\n\nRÜCKZUG\n14 Tage ab Lieferung; Ausnahmen sind im Fernabsatzvertrag und in den Rückgabebestimmungen aufgeführt.\n\nBESCHWERDEN\n{{seller.email}} · {{seller.phone}}."
+  },
+  "iptal-iade": {
+    "title": "Stornierungs- und Rückgabebedingungen",
+    "content": "{{seller.name}} folgt dem türkischen Verbraucherrecht und der Verordnung über Fernabsatzverträge.\n\n1. Stornierung der Bestellung\nSenden Sie vor der Zahlung oder vor dem Versand eine E-Mail an {{seller.email}}, um zu stornieren.\n\n2. Widerrufsfrist (14 Tage)\nAb Lieferdatum können Sie ohne Angabe von Gründen über {{seller.email}} zurücktreten.\n\n3. Vom Umtausch ausgeschlossene Artikel\nGeöffnete Lebensmittel/Nahrungsergänzungsmittel, deren Weiterverkauf aus hygienischen Gründen nicht möglich ist; personalisierte Waren; gebrauchte oder beschädigte Gegenstände (ausgenommen Mängel).\n\n5. Rückerstattungen\nInnerhalb von 14 Tagen nach Erhalt und Prüfung der Rücksendung über die ursprüngliche Zahlungsmethode.\n\n7. Kontakt\n{{seller.name}} · {{seller.address}}\n{{seller.email}} · {{seller.phone}}"
+  },
+  "musteri-memnuniyeti": {
+    "title": "Richtlinie zur Kundenzufriedenheit",
+    "content": "{{seller.name}} verpflichtet sich zu Qualität, Transparenz und schnellem Support für Original-Herbal Kapıda-Produkte.\n\nUnterstützung:\nE-Mail: {{seller.email}}\nTelefon: {{seller.phone}}\nÖffnungszeiten: {{seller.hours}}\n\nReklamationen: Senden Sie Ihre Bestellnummer; erste Antwort innerhalb von 3 Werktagen."
+  },
+  "guvenli-alisveris": {
+    "title": "Sicheres Einkaufen",
+    "content": "Das Einkaufen bei {{seller.name}} ist durch technische, rechtliche und betriebliche Maßnahmen geschützt.\n\n1. PayTR Zahlungen\nKartenzahlungen über PayTR. Kartennummern werden nicht auf unseren Servern gespeichert. SSL/TLS-Verschlüsselung; 3D Secure unterstützt.\n\n3. Persönliche Daten\nBestell- und Lieferdaten werden unter KVKK verarbeitet.\n\n7. Unterstützung\nSicherheitsbedenken: {{seller.email}}"
+  },
+  "aydinlatma-metni": {
+    "title": "Datenschutzerklärung (KVKK Art. 10)",
+    "content": "Unter KVKK Kunst. 10, {{seller.name}} informiert Sie über die Verarbeitung personenbezogener Daten:\n\n1. Controller\n{{seller.name}}\n{{seller.address}}\n{{seller.email}} · {{seller.phone}}\n\n7. Ihre Rechte (KVKK Art. 11)\nZugriff, Berichtigung, Löschung, Einschränkung, Widerspruch, Schadensersatzanspruch. Bewerben: {{seller.email}}"
+  },
+  "gizlilik": {
+    "title": "Datenschutzrichtlinie",
+    "content": "{{seller.name}} respektiert Ihre Privatsphäre. In dieser Richtlinie wird erläutert, wie wir Daten von Besuchern, Mitgliedern und Kunden sammeln, verwenden und schützen.\n\n3. Teilen\nNur mit Partnern, die zur Leistungserbringung benötigt werden (PayTR, Spediteure) und Behörden bei Bedarf. Wir verkaufen Ihre Daten nicht.\n\n7. Kontakt\n{{seller.email}} · {{seller.phone}}\n{{seller.address}}"
+  }
+}

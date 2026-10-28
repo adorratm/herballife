@@ -1,0 +1,38 @@
+{
+  "kvkk": {
+    "title": "KVKK Avis de confidentialité",
+    "content": "{{seller.name}} traite les données personnelles en vertu de la loi turque n° 6698 sur la protection des données personnelles (KVKK). Les données sont utilisées uniquement si nécessaire pour les commandes, la livraison, le support client, les paiements et les obligations légales.\n\nResponsable du traitement : {{seller.name}}\nAdresse : {{seller.address}}\nPersonne-ressource : {{seller.email}} · {{seller.phone}}\n\nVos droits : En vertu du KVKK Art. 11, vous pouvez demander l'accès, la rectification, la suppression, la restriction, l'opposition et déposer une plainte. Envoyez les demandes à {{seller.email}}."
+  },
+  "cerez-politikasi": {
+    "title": "Politique en matière de cookies",
+    "content": "Cette politique en matière de cookies explique comment {{seller.name}} utilise les cookies sur {{seller.website}}, conformément au KVKK et aux règles applicables.\n\n1. Que sont les cookies ?\nPetits fichiers texte stockés par votre navigateur pour conserver les sessions, les paniers, la sécurité et mesurer les performances.\n\n2. Types que nous utilisons\na) Strictement nécessaire : fonctions principales du site (session, panier, sécurité, langue).\nb) Fonctionnel : mémoriser les préférences.\nc) Analytics/performance : statistiques d'utilisation anonymes ou pseudonymes ; pas de profilage marketing sans consentement.\nd) Paiement/sécurité : PayTR et les fournisseurs similaires peuvent définir leurs propres cookies de sécurité pour 3D Secure et la prévention de la fraude.\n\n3. Gestion des cookies\nVous pouvez supprimer ou bloquer les cookies dans les paramètres du navigateur. Le blocage des cookies requis peut interrompre le panier, la connexion et le paiement.\n\n4. Tiers\nLes opérateurs, PayTR, les e-mails/SMS, les analyses et les partenaires d'hébergement peuvent utiliser des cookies uniquement dans la mesure nécessaire pour fournir le service.\n\n6. Contacter\nCookies et requêtes KVKK : {{seller.email}}"
+  },
+  "mesafeli-satis": {
+    "title": "Contrat de vente à distance",
+    "content": "Ce contrat de vente à distance est conclu en vertu de la loi turque sur la protection des consommateurs n° 6502 entre le vendeur ci-dessous et l'acheteur passant une commande en ligne.\n\nVendeur : {{seller.name}}\nAdresse : {{seller.address}}\nTéléphone : {{seller.phone}}\nCourriel : {{seller.email}}\nWeb : {{seller.website}}\nBureau des impôts / N° : {{seller.taxOffice}} / {{seller.taxNumber}}\nMERSIS : {{seller.mersis}}\n\nObjet : Vente et livraison des produits commandés sur le site Internet au prix indiqué dans le récapitulatif de la commande.\n\nPaiement : Paiements par carte via PayTR ; les données de la carte ne sont pas stockées sur nos serveurs.\n\nRétractation : 14 jours à compter de la livraison sans indication de motif (exceptions prévues au Règlement).\n\nVendeur : {{seller.name}}"
+  },
+  "on-bilgilendirme": {
+    "title": "Formulaire d'informations pré-contrat",
+    "content": "Conformément à la loi turque n° 6502, les informations suivantes sont fournies avant votre commande.\n\nVENDEUR\n{{seller.name}}\n{{seller.address}}\nTél : {{seller.phone}} · Courriel : {{seller.email}}\nTaxe : {{seller.taxOffice}} / {{seller.taxNumber}}\n\nPRIX TOTAL\nLe prix du produit, les remises, les frais d'expédition et les taxes sont indiqués comme total avant le paiement.\n\nPAIEMENT\nPaiement sécurisé par carte via PayTR.\n\nRETRAIT\n14 jours à compter de la livraison ; les exceptions sont répertoriées dans le contrat de vente à distance et la politique de retour.\n\nPLAINTES\n{{seller.email}} · {{seller.phone}}."
+  },
+  "iptal-iade": {
+    "title": "Politique d'annulation et de retour",
+    "content": "{{seller.name}} suit la loi turque sur la consommation et le règlement sur les contrats à distance.\n\n1. Annulation de commande\nAvant le paiement ou avant l'expédition, envoyez un e-mail à {{seller.email}} pour annuler.\n\n2. Retrait (14 jours)\nA compter de la date de livraison, rétractez sans motif via {{seller.email}}.\n\n3. Articles non retournables\nAliments/compléments ouverts dont l'hygiène empêche la revente ; produits personnalisés; articles utilisés ou endommagés (sauf défauts).\n\n5. Remboursements\nDans les 14 jours suivant la réception et l'inspection du retour, vers le mode de paiement d'origine.\n\n7. Contacter\n{{seller.name}} · {{seller.address}}\n{{seller.email}} · {{seller.phone}}"
+  },
+  "musteri-memnuniyeti": {
+    "title": "Politique de satisfaction client",
+    "content": "{{seller.name}} s'engage à assurer la qualité, la transparence et un support rapide pour les produits Herbal Kapıda originaux.\n\nPrise en charge :\nCourriel : {{seller.email}}\nTéléphone : {{seller.phone}}\nHoraires : {{seller.hours}}\n\nRéclamations : Envoyez votre numéro de commande ; première réponse sous 3 jours ouvrés."
+  },
+  "guvenli-alisveris": {
+    "title": "Achats sécurisés",
+    "content": "Les achats chez {{seller.name}} sont protégés par des mesures techniques, juridiques et opérationnelles.\n\n1. Paiements PayTR\nPaiements par carte via PayTR. Les numéros de carte ne sont pas stockés sur nos serveurs. Cryptage SSL/TLS ; 3D Secure pris en charge.\n\n3. Données personnelles\nDonnées de commande et de livraison traitées sous KVKK.\n\n7. Assistance\nProblèmes de sécurité : {{seller.email}}"
+  },
+  "aydinlatma-metni": {
+    "title": "Avis de confidentialité (KVKK Art. 10)",
+    "content": "En vertu de KVKK Art. 10, {{seller.name}} vous informe sur le traitement des données personnelles :\n\n1. Contrôleur\n{{seller.name}}\n{{seller.address}}\n{{seller.email}} · {{seller.phone}}\n\n7. Vos droits (KVKK Art. 11)\nAccès, rectification, effacement, restriction, opposition, réclamation de dommages et intérêts. Postuler : {{seller.email}}"
+  },
+  "gizlilik": {
+    "title": "politique de confidentialité",
+    "content": "{{seller.name}} respecte votre vie privée. Cette politique explique comment nous collectons, utilisons et protégeons les données des visiteurs, des membres et des clients.\n\n3. Partage\nUniquement avec les partenaires nécessaires à l'exécution du service (PayTR, transporteurs) et les autorités lorsque cela est nécessaire. Nous ne vendons pas vos données.\n\n7. Contacter\n{{seller.email}} · {{seller.phone}}\n{{seller.address}}"
+  }
+}

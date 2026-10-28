@@ -186,10 +186,11 @@ export class OrdersService {
           variantId: item.variantId,
           productName: item.product?.name || 'Ürün',
           variantLabel:
-            formatOrderVariantLabel(
-              item.variant,
-              (dto.locale || 'tr').trim().toLowerCase().slice(0, 10) || 'tr',
-            ) ?? null,
+            (item.selectionLabel?.trim() ||
+              formatOrderVariantLabel(
+                item.variant,
+                (dto.locale || 'tr').trim().toLowerCase().slice(0, 10) || 'tr',
+              )) ?? null,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
           lineTotal: (Number(item.unitPrice) * item.quantity).toFixed(2),

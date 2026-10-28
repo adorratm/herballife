@@ -13,6 +13,8 @@ type Props = {
   variantId?: string | null;
   /** Toast / analytics için seçilen varyant etiketi (ör. 550 g) */
   variantLabel?: string | null;
+  /** Sepette kalıcı gösterilecek seçim özeti (aroma/shaker dahil) */
+  selectionLabel?: string | null;
   label?: string;
   className?: string;
   disabled?: boolean;
@@ -27,6 +29,7 @@ export function AddToCartButton({
   productId,
   variantId,
   variantLabel,
+  selectionLabel,
   label,
   className,
   disabled = false,
@@ -47,9 +50,12 @@ export function AddToCartButton({
     setLoading(true);
     setError(null);
     try {
+      const labelForCart =
+        selectionLabel?.trim() || variantLabel?.trim() || null;
       await cartAddItem({
         productId,
         variantId,
+        selectionLabel: labelForCart,
         quantity: 1,
       });
       trackAddToCart({
@@ -59,7 +65,7 @@ export function AddToCartButton({
         quantity: 1,
       });
       setAdded(true);
-      emitCartToast(productName, variantLabel);
+      emitCartToast(productName, labelForCart);
       onAdded?.();
       window.setTimeout(() => setAdded(false), 1600);
       if (goToCart) router.push("/sepet" as const);

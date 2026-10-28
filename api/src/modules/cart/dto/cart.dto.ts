@@ -1,5 +1,13 @@
 import { Transform } from 'class-transformer';
-import { IsEmail, IsInt, IsOptional, IsUUID, Min } from 'class-validator';
+import {
+  IsEmail,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  Min,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 function emptyToUndefined({ value }: { value: unknown }) {
@@ -17,6 +25,15 @@ export class AddCartItemDto {
   @IsOptional()
   @IsUUID()
   variantId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Seçilen varyant / aroma / shaker özet etiketi',
+  })
+  @Transform(emptyToUndefined)
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  selectionLabel?: string;
 
   @ApiProperty({ minimum: 1, default: 1 })
   @IsInt()

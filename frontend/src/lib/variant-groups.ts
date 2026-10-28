@@ -110,3 +110,16 @@ export function formatVariantDisplayLabel(
   if (!key) return label;
   return `${variantCategoryLabel(variant, locale)} · ${label}`;
 }
+
+/** Sepet / ödeme satırı: kayıtlı seçim veya varyant etiketi */
+export function cartLineSelectionLabel(
+  item: {
+    selectionLabel?: string | null;
+    variant?: ProductVariant | null;
+  },
+  locale: string = "tr",
+): string | null {
+  const saved = item.selectionLabel?.trim();
+  if (saved) return saved;
+  return formatVariantDisplayLabel(item.variant, locale);
+}

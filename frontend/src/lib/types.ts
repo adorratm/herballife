@@ -148,6 +148,8 @@ export type CartItem = {
   cartId: string;
   productId: string;
   variantId: string | null;
+  /** Aroma / shaker / varyant özeti */
+  selectionLabel?: string | null;
   quantity: number;
   unitPrice: string;
   product?: Product;

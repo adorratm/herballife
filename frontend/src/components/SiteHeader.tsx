@@ -94,7 +94,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
     };
   }
 
-  /** CMS Türkçe etiketleri locale mesajlarıyla değiştir (TR dışı dilde TR menü kalmasın) */
+  /** CMS / site-nav İngilizce fallback etiketlerini locale mesajlarıyla değiştir */
   function navLabel(href: string, fallback: string): string {
     const map: Record<string, string> = {
       "/urunler": tNav("products"),
@@ -107,8 +107,13 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
       "/sepet": tNav("cart"),
       "/hesabim": tNav("account"),
       "/hesabim/favoriler": tNav("favorites"),
+      "/hesabim/takip": tNav("nutritionTracking"),
+      "/hesabim/olcumler": tNav("measurements"),
+      "/hesabim/rapor": tNav("progressReport"),
+      "/hesabim/bildirimler": tNav("notifications"),
       "/giris": tNav("login"),
       "/siparis-sorgula": tHeader("orderLookup"),
+      "/takip": tNav("cargoTracking"),
       "/odeme-bildirimi": tHeader("paymentNotice"),
       "/banka-hesaplari": tHeader("bankAccounts"),
       "/kocluk": tNav("coaching"),

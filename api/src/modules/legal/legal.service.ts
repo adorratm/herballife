@@ -9,6 +9,10 @@ import {
   CreateCookieConsentDto,
 } from '@modules/legal/dto/legal.dto';
 import { LEGAL_DEFAULTS } from '@database/legal-defaults';
+import {
+  LEGAL_LOCALES,
+  getLegalDefaultsForLocale,
+} from '@database/legal-i18n-defaults';
 
 function isPlaceholderContent(content: string | null | undefined): boolean {
   const c = (content || '').trim();
@@ -17,13 +21,22 @@ function isPlaceholderContent(content: string | null | undefined): boolean {
   return false;
 }
 
+function normalizeLocale(localeRaw?: string | null): string {
+  return (
+    String(localeRaw || 'tr')
+      .trim()
+      .toLowerCase()
+      .split(/[-_]/)[0] || 'tr'
+  );
+}
+
 @Injectable()
 export class LegalService {
   constructor(@InjectEntityManager() private readonly em: EntityManager) {}
 
   async listAllAdmin(): Promise<LegalDocument[]> {
     return this.em.find(LegalDocument, {
-      order: { slug: 'ASC', publishedAt: 'DESC' },
+      order: { slug: 'ASC', locale: 'ASC', publishedAt: 'DESC' },
     });
   }
 
@@ -31,10 +44,7 @@ export class LegalService {
     slug: string,
     localeRaw?: string | null,
   ): Promise<LegalDocument> {
-    const locale = String(localeRaw || 'tr')
-      .trim()
-      .toLowerCase()
-      .split(/[-_]/)[0] || 'tr';
+    const locale = normalizeLocale(localeRaw);
 
     const byLocale = await this.em.find(LegalDocument, {
       where: { slug, isPublished: true, locale },
@@ -69,7 +79,7 @@ export class LegalService {
       version: dto.version,
       isPublished: publish,
       publishedAt: publish ? new Date() : null,
-      locale: dto.locale ?? 'tr',
+      locale: normalizeLocale(dto.locale),
     });
     return this.em.save(doc);
   }
@@ -84,6 +94,9 @@ export class LegalService {
     }
     const wasPublished = doc.isPublished;
     Object.assign(doc, dto);
+    if (dto.locale != null) {
+      doc.locale = normalizeLocale(dto.locale);
+    }
     if (dto.isPublished === true && !wasPublished) {
       doc.publishedAt = new Date();
     }
@@ -102,11 +115,15 @@ export class LegalService {
   }
 
   /**
-   * Varsayılan yönetmelik metinlerini DB’ye yazar.
+   * Varsayılan yönetmelik metinlerini DB’ye yazar (TR + diğer diller).
    * force=false: yalnızca eksik veya seed placeholder kayıtları doldurur.
    * force=true: tüm varsayılan slug’ları günceller.
+   * locales: yalnızca bu dilleri senkronize et (varsayılan: tümü).
    */
-  async syncDefaults(force = false): Promise<{
+  async syncDefaults(
+    force = false,
+    locales?: string[] | null,
+  ): Promise<{
     created: string[];
     updated: string[];
     skipped: string[];
@@ -115,37 +132,86 @@ export class LegalService {
     const updated: string[] = [];
     const skipped: string[] = [];
 
-    for (const [slug, meta] of Object.entries(LEGAL_DEFAULTS)) {
-      const existing = await this.em.findOne(LegalDocument, {
-        where: { slug },
-        order: { createdAt: 'ASC' },
-      });
+    const wanted = (locales?.length ? locales : [...LEGAL_LOCALES]).map(
+      normalizeLocale,
+    );
 
-      if (!existing) {
-        await this.em.save(
-          this.em.create(LegalDocument, {
-            slug,
-            title: meta.title,
-            content: meta.content,
-            version: '1.0',
-            isPublished: true,
-            publishedAt: new Date(),
-            locale: 'tr',
-          }),
-        );
-        created.push(slug);
+    for (const locale of wanted) {
+      if (locale === 'tr') {
+        for (const [slug, meta] of Object.entries(LEGAL_DEFAULTS)) {
+          const key = `${slug}@${locale}`;
+          const existing = await this.em.findOne(LegalDocument, {
+            where: { slug, locale },
+            order: { createdAt: 'ASC' },
+          });
+
+          if (!existing) {
+            await this.em.save(
+              this.em.create(LegalDocument, {
+                slug,
+                title: meta.title,
+                content: meta.content,
+                version: '1.0',
+                isPublished: true,
+                publishedAt: new Date(),
+                locale: 'tr',
+              }),
+            );
+            created.push(key);
+            continue;
+          }
+
+          if (force || isPlaceholderContent(existing.content)) {
+            existing.title = meta.title;
+            existing.content = meta.content;
+            existing.locale = 'tr';
+            existing.isPublished = true;
+            existing.publishedAt = existing.publishedAt || new Date();
+            await this.em.save(existing);
+            updated.push(key);
+          } else {
+            skipped.push(key);
+          }
+        }
         continue;
       }
 
-      if (force || isPlaceholderContent(existing.content)) {
-        existing.title = meta.title;
-        existing.content = meta.content;
-        existing.isPublished = true;
-        existing.publishedAt = existing.publishedAt || new Date();
-        await this.em.save(existing);
-        updated.push(slug);
-      } else {
-        skipped.push(slug);
+      const pack = getLegalDefaultsForLocale(locale);
+      if (!pack) continue;
+
+      for (const [slug, meta] of Object.entries(pack)) {
+        const key = `${slug}@${locale}`;
+        const existing = await this.em.findOne(LegalDocument, {
+          where: { slug, locale },
+          order: { createdAt: 'ASC' },
+        });
+
+        if (!existing) {
+          await this.em.save(
+            this.em.create(LegalDocument, {
+              slug,
+              title: meta.title,
+              content: meta.content,
+              version: '1.0',
+              isPublished: true,
+              publishedAt: new Date(),
+              locale,
+            }),
+          );
+          created.push(key);
+          continue;
+        }
+
+        if (force || isPlaceholderContent(existing.content)) {
+          existing.title = meta.title;
+          existing.content = meta.content;
+          existing.isPublished = true;
+          existing.publishedAt = existing.publishedAt || new Date();
+          await this.em.save(existing);
+          updated.push(key);
+        } else {
+          skipped.push(key);
+        }
       }
     }
 

@@ -348,6 +348,7 @@ export async function addCartItem(
   payload: {
     productId: string;
     variantId?: string | null;
+    selectionLabel?: string | null;
     quantity: number;
   },
   token?: string | null,

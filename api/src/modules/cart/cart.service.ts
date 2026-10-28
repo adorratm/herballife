@@ -17,13 +17,18 @@ const CART_RELATIONS = {
   items: { product: true, variant: true },
 } as const;
 
+function normLabel(v: string | null | undefined) {
+  return (v || '').trim() || null;
+}
+
 function sameCartLine(
-  a: Pick<CartItem, 'productId' | 'variantId'>,
-  b: Pick<CartItem, 'productId' | 'variantId'>,
+  a: Pick<CartItem, 'productId' | 'variantId' | 'selectionLabel'>,
+  b: Pick<CartItem, 'productId' | 'variantId' | 'selectionLabel'>,
 ): boolean {
   return (
     a.productId === b.productId &&
-    (a.variantId ?? null) === (b.variantId ?? null)
+    (a.variantId ?? null) === (b.variantId ?? null) &&
+    normLabel(a.selectionLabel) === normLabel(b.selectionLabel)
   );
 }
 
@@ -208,9 +213,10 @@ export class CartService {
     }
 
     const qtyToAdd = dto.quantity;
+    const selectionLabel = normLabel(dto.selectionLabel);
 
-    const existing = cart.items?.find(
-      (i) => i.productId === product.id && (i.variantId ?? null) === variantId,
+    const existing = cart.items?.find((i) =>
+      sameCartLine(i, { productId: product.id, variantId, selectionLabel }),
     );
 
     const nextQty = (existing?.quantity ?? 0) + qtyToAdd;
@@ -225,12 +231,16 @@ export class CartService {
     if (existing) {
       existing.quantity = nextQty;
       existing.unitPrice = unitPrice;
+      if (selectionLabel && !existing.selectionLabel) {
+        existing.selectionLabel = selectionLabel;
+      }
       await this.em.save(existing);
     } else {
       const item = this.em.create(CartItem, {
         cartId: cart.id,
         productId: product.id,
         variantId,
+        selectionLabel,
         quantity: qtyToAdd,
         unitPrice,
       });

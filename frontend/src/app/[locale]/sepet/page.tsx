@@ -21,6 +21,7 @@ import { getProductsPaged, setCartGuestEmail } from "@/lib/api";
 import { useActiveCurrency } from "@/hooks/useActiveCurrency";
 import { getToken, isAuthenticated, loginHref } from "@/lib/auth";
 import { formatMoney, productImage } from "@/lib/format";
+import { cartLineSelectionLabel } from "@/lib/variant-groups";
 import { toggleWishlistProduct } from "@/lib/wishlist";
 import type { Cart, Product } from "@/lib/types";
 
@@ -46,6 +47,10 @@ export default function CartPage() {
   const [emailMsg, setEmailMsg] = useState<string | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [upsells, setUpsells] = useState<Product[]>([]);
+  const [pendingRemove, setPendingRemove] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   async function reload() {
     setLoading(true);
@@ -121,11 +126,14 @@ export default function CartPage() {
     }
   }
 
-  async function remove(itemId: string) {
+  async function confirmRemove() {
+    if (!pendingRemove) return;
+    const itemId = pendingRemove.id;
     setBusy(itemId);
     setError(null);
     try {
       setCart(await cartRemoveItem(itemId));
+      setPendingRemove(null);
     } catch {
       setError(t("removeError"));
     } finally {
@@ -218,7 +226,8 @@ export default function CartPage() {
                     item.product?.imageUrl,
                     productSlug || item.productId,
                   );
-                  const productLeft = (
+                  const selection = cartLineSelectionLabel(item, intlLocale);
+                  const productMeta = (
                     <>
                       <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-surface-container-low sm:h-24 sm:w-24">
                         <Image
@@ -236,33 +245,12 @@ export default function CartPage() {
                         <h3 className="truncate text-sm font-semibold text-on-surface">
                           {name}
                         </h3>
-                          {item.variant?.weightLabel ? (
-                            <p className="mt-1 text-xs text-on-surface-variant">
-                              {item.variant.weightLabel}
-                            </p>
-                          ) : null}
-                          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                            <button
-                              type="button"
-                              disabled={busy === item.id}
-                              onClick={() => void remove(item.id)}
-                              className="text-error hover:underline"
-                            >
-                              {t("remove")}
-                            </button>
-                            <span className="text-outline-variant">·</span>
-                            <button
-                              type="button"
-                              disabled={busy === item.id}
-                              onClick={() =>
-                                void moveToFavorites(item.id, item.productId)
-                              }
-                              className="text-on-surface-variant hover:text-primary"
-                            >
-                              {t("moveToFavorites")}
-                            </button>
-                          </div>
-                        </div>
+                        {selection ? (
+                          <p className="mt-1 text-xs text-on-surface-variant">
+                            {selection}
+                          </p>
+                        ) : null}
+                      </div>
                     </>
                   );
                   return (
@@ -270,18 +258,43 @@ export default function CartPage() {
                       key={item.id}
                       className="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between"
                     >
-                      {productSlug ? (
-                        <Link
-                          href={productHref(productSlug)}
-                          className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-90 sm:gap-4"
-                        >
-                          {productLeft}
-                        </Link>
-                      ) : (
-                        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-                          {productLeft}
+                      <div className="flex min-w-0 flex-1 flex-col gap-2">
+                        {productSlug ? (
+                          <Link
+                            href={productHref(productSlug)}
+                            className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-90 sm:gap-4"
+                          >
+                            {productMeta}
+                          </Link>
+                        ) : (
+                          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+                            {productMeta}
+                          </div>
+                        )}
+                        <div className="flex flex-wrap items-center gap-2 pl-[5.5rem] text-xs sm:pl-[7rem]">
+                          <button
+                            type="button"
+                            disabled={busy === item.id}
+                            onClick={() =>
+                              setPendingRemove({ id: item.id, name })
+                            }
+                            className="text-error hover:underline"
+                          >
+                            {t("remove")}
+                          </button>
+                          <span className="text-outline-variant">·</span>
+                          <button
+                            type="button"
+                            disabled={busy === item.id}
+                            onClick={() =>
+                              void moveToFavorites(item.id, item.productId)
+                            }
+                            className="text-on-surface-variant hover:text-primary"
+                          >
+                            {t("moveToFavorites")}
+                          </button>
                         </div>
-                      )}
+                      </div>
                       <div className="flex w-full min-w-0 items-center justify-between gap-3 sm:w-auto sm:flex-col sm:items-end">
                         <div className="flex items-center rounded-full bg-surface-container-low px-2 py-1 shadow-sm">
                           <button
@@ -323,47 +336,47 @@ export default function CartPage() {
 
             {suggested.length > 0 ? (
               <Reveal fill={false}>
-                <div className="rounded-xl bg-surface-container-lowest p-4 shadow-sm sm:p-5">
+                <div className="rounded-xl bg-surface-container-lowest p-3 shadow-sm sm:p-4">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">
                     {t("upsellEyebrow")}
                   </p>
-                  <h2 className="mt-1 font-display text-xl">
+                  <h2 className="mt-0.5 font-display text-base sm:text-lg">
                     {t("upsellTitle")}
                   </h2>
-                  <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 *:min-w-0">
+                  <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 *:min-w-0">
                     {suggested.map((p) => (
                       <div
                         key={p.id}
-                        className="flex flex-col rounded-xl border border-surface-container p-3"
+                        className="flex flex-col rounded-lg border border-surface-container p-2"
                       >
                         <Link href={productHref(p.slug)} className="group">
-                          <div className="relative mb-2 aspect-square overflow-hidden rounded-lg bg-surface-container-low">
+                          <div className="relative mb-1.5 aspect-[5/4] overflow-hidden rounded-md bg-surface-container-low">
                             <Image
                               src={productImage(p.imageUrl, p.slug)}
                               alt={p.name}
                               fill
                               className="object-cover transition group-hover:scale-105"
-                              sizes="180px"
+                              sizes="120px"
                             />
                           </div>
-                          <p className="line-clamp-2 text-sm font-semibold">
+                          <p className="line-clamp-2 text-[11px] font-semibold leading-snug">
                             {p.name}
                           </p>
-                          <p className="mt-1 text-sm text-primary">
+                          <p className="mt-0.5 text-xs font-semibold text-primary">
                             {formatMoney(
                               p.salePrice ?? p.basePrice,
                               p.currency,
                             )}
                           </p>
                         </Link>
-                        <div className="mt-2">
+                        <div className="mt-1.5">
                           <AddToCartButton
                             productId={p.id}
                             productName={p.name}
                             price={Number(p.salePrice ?? p.basePrice)}
                             label={tCommon("add")}
                             goToCart={false}
-                            className="btn-ghost w-full py-2 text-xs"
+                            className="btn-ghost w-full py-1.5 text-[11px]"
                             onAdded={() => void reload()}
                           />
                         </div>
@@ -428,6 +441,58 @@ export default function CartPage() {
           </aside>
         </div>
       )}
+
+      {pendingRemove ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <button
+            type="button"
+            aria-label={t("closeDialog")}
+            className="absolute inset-0 bg-deep-carbon/80"
+            onClick={() => {
+              if (busy !== pendingRemove.id) setPendingRemove(null);
+            }}
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cart-remove-title"
+            className="relative w-full max-w-md border border-outline-variant/40 bg-surface-container-high p-6 shadow-xl"
+          >
+            <p className="font-meta text-[10px] uppercase tracking-widest text-secondary">
+              {t("removeConfirmEyebrow")}
+            </p>
+            <h3
+              id="cart-remove-title"
+              className="mt-2 font-display text-2xl text-on-surface"
+            >
+              {t("removeConfirmTitle")}
+            </h3>
+            <p className="mt-3 font-meta text-xs leading-relaxed text-secondary">
+              {t("removeConfirmBody", { name: pendingRemove.name })}
+            </p>
+            <div className="mt-6 flex flex-wrap justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setPendingRemove(null)}
+                disabled={busy === pendingRemove.id}
+                className="btn-ghost px-6 py-3 text-xs"
+              >
+                {t("removeConfirmCancel")}
+              </button>
+              <button
+                type="button"
+                onClick={() => void confirmRemove()}
+                disabled={busy === pendingRemove.id}
+                className="bg-error px-6 py-3 font-meta text-xs uppercase text-deep-carbon disabled:opacity-50"
+              >
+                {busy === pendingRemove.id
+                  ? t("removing")
+                  : t("removeConfirmAction")}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

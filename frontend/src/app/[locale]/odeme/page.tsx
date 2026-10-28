@@ -31,6 +31,7 @@ import {
 import { formatMoney } from "@/lib/format";
 import { calculateOrderTotals } from "@/lib/pricing";
 import { trackBeginCheckout } from "@/lib/analytics";
+import { cartLineSelectionLabel } from "@/lib/variant-groups";
 import type {
   Address,
   Cart,
@@ -1107,7 +1108,9 @@ export default function CheckoutPage() {
             <h2 className="mb-6 font-display text-2xl">{tCheckout("summaryHeading")}</h2>
             {cart?.items?.length ? (
               <ul className="mb-5 max-h-48 space-y-2.5 overflow-y-auto border-b border-outline-variant/20 pb-4">
-                {cart.items.map((item) => (
+                {cart.items.map((item) => {
+                  const selection = cartLineSelectionLabel(item, locale);
+                  return (
                   <li
                     key={item.id}
                     className="flex items-start justify-between gap-2 text-sm"
@@ -1120,9 +1123,9 @@ export default function CheckoutPage() {
                           ×{item.quantity}
                         </span>
                       </p>
-                      {item.variant?.weightLabel ? (
+                      {selection ? (
                         <p className="mt-0.5 text-[11px] text-primary">
-                          {item.variant.weightLabel}
+                          {selection}
                         </p>
                       ) : null}
                     </div>
@@ -1130,7 +1133,8 @@ export default function CheckoutPage() {
                       {formatMoney(Number(item.unitPrice) * item.quantity)}
                     </span>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
             ) : null}
             <div className="mb-6 space-y-2">

@@ -59,37 +59,29 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
         <Reveal>
           <div className="surface-panel overflow-hidden p-5 md:p-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-3.5">
                 <span
-                  className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary to-[#0f5c38] text-on-primary shadow-[0_6px_16px_rgba(21,122,76,0.35)] ring-2 ring-primary/20 ring-offset-2 ring-offset-white"
+                  className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-primary/15 bg-[#f3faf5]"
                   aria-hidden
                 >
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="drop-shadow-sm"
-                  >
-                    <path
-                      d="M12 3l2.2 4.45 4.91.71-3.55 3.46.84 4.89L12 14.4l-4.4 2.31.84-4.89L4.89 8.16l4.91-.71L12 3z"
-                      fill="currentColor"
-                      opacity="0.25"
-                    />
-                    <path
-                      d="M7.5 12.2l2.7 2.7 6.3-6.4"
-                      stroke="currentColor"
-                      strokeWidth="2.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/leaf.png"
+                    alt=""
+                    width={36}
+                    height={36}
+                    className="h-9 w-9 object-contain"
+                  />
                   <span className="sr-only">{tFooter("approvedBadge")}</span>
                 </span>
                 <div>
                   <p className="flex flex-wrap items-center gap-2 text-sm font-bold text-on-surface">
                     {tFooter("distributorTrustTitle")}
-                    <span className="rounded-full bg-primary-fixed px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+                    <span className="inline-flex items-center gap-1 rounded-md border border-primary/20 bg-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+                      <span
+                        className="h-1.5 w-1.5 rounded-full bg-primary"
+                        aria-hidden
+                      />
                       {tFooter("approvedBadge")}
                     </span>
                   </p>

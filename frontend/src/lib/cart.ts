@@ -75,6 +75,7 @@ export function subscribeCart(cb: (count: number) => void) {
 export async function cartAddItem(payload: {
   productId: string;
   variantId?: string | null;
+  selectionLabel?: string | null;
   quantity?: number;
 }) {
   const sessionId = getCartSessionId();
@@ -83,6 +84,7 @@ export async function cartAddItem(payload: {
     {
       productId: payload.productId,
       variantId: payload.variantId ?? null,
+      selectionLabel: payload.selectionLabel ?? null,
       quantity: payload.quantity ?? 1,
     },
     getToken(),

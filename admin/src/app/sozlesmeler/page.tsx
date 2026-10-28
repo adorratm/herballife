@@ -8,19 +8,29 @@ import { DataTable } from '@/components/DataTable';
 import type { LegalDocument } from '@/lib/types';
 import { RichTextEditor } from '@/components/RichTextEditor';
 
+const LOCALES = [
+  { code: 'tr', label: 'Türkçe' },
+  { code: 'en', label: 'English' },
+  { code: 'de', label: 'Deutsch' },
+  { code: 'fr', label: 'Français' },
+  { code: 'es', label: 'Español' },
+] as const;
+
 type FormState = {
   id?: string;
   slug: string;
   title: string;
   content: string;
   version: string;
+  locale: string;
 };
 
-const emptyForm = (): FormState => ({
+const emptyForm = (locale = 'tr'): FormState => ({
   slug: '',
   title: '',
   content: '',
   version: '1.0',
+  locale,
 });
 
 function LegalPageInner() {
@@ -29,6 +39,7 @@ function LegalPageInner() {
 
   const [rows, setRows] = useState<LegalDocument[]>([]);
   const [form, setForm] = useState<FormState>(emptyForm());
+  const [listLocale, setListLocale] = useState<string>('all');
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -38,13 +49,20 @@ function LegalPageInner() {
   const openedFromQuery = useRef(false);
 
   const visible = useMemo(() => {
-    if (!filterQ) return rows;
-    return rows.filter(
+    let list = rows;
+    if (listLocale !== 'all') {
+      list = list.filter(
+        (d) => (d.locale || 'tr').toLowerCase() === listLocale,
+      );
+    }
+    if (!filterQ) return list;
+    return list.filter(
       (d) =>
         d.title.toLowerCase().includes(filterQ) ||
-        d.slug.toLowerCase().includes(filterQ),
+        d.slug.toLowerCase().includes(filterQ) ||
+        (d.locale || '').toLowerCase().includes(filterQ),
     );
-  }, [rows, filterQ]);
+  }, [rows, filterQ, listLocale]);
 
   useEffect(() => {
     openedFromQuery.current = false;
@@ -85,7 +103,9 @@ function LegalPageInner() {
   }, []);
 
   function startCreate() {
-    setForm(emptyForm());
+    setForm(
+      emptyForm(listLocale !== 'all' ? listLocale : 'tr'),
+    );
     setEditing(true);
   }
 
@@ -96,6 +116,19 @@ function LegalPageInner() {
       title: doc.title,
       content: doc.content,
       version: doc.version,
+      locale: doc.locale || 'tr',
+    });
+    setEditing(true);
+  }
+
+  function startLocaleCopy(doc: LegalDocument, locale: string) {
+    setForm({
+      id: undefined,
+      slug: doc.slug,
+      title: doc.title,
+      content: doc.content,
+      version: doc.version,
+      locale,
     });
     setEditing(true);
   }
@@ -110,6 +143,7 @@ function LegalPageInner() {
       title: form.title,
       content: form.content,
       version: form.version,
+      locale: form.locale || 'tr',
       isPublished: true,
     };
     try {
@@ -127,7 +161,7 @@ function LegalPageInner() {
       }
       setEditing(false);
       setForm(emptyForm());
-      setMessage('Kaydedildi');
+      setMessage(`Kaydedildi (${payload.locale.toUpperCase()})`);
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Kayıt başarısız');
@@ -154,7 +188,10 @@ function LegalPageInner() {
     }
   }
 
-  async function syncDefaults(force = false) {
+  async function syncDefaults(opts: {
+    force?: boolean;
+    locales?: string[];
+  } = {}) {
     setError(null);
     setMessage(null);
     setSaving(true);
@@ -165,7 +202,10 @@ function LegalPageInner() {
         skipped: string[];
       }>('/legal/documents/sync-defaults', {
         method: 'POST',
-        body: { force },
+        body: {
+          force: Boolean(opts.force),
+          locales: opts.locales,
+        },
       });
       const parts = [
         result.created.length
@@ -192,17 +232,29 @@ function LegalPageInner() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted">
-          Yasal belge editörü — sitede görünen metinler buradan yönetilir
+          Yasal belge editörü — her dil için ayrı kayıt tutun (TR / EN / DE /
+          FR / ES)
         </p>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
             disabled={saving}
-            onClick={() => void syncDefaults(false)}
+            onClick={() => void syncDefaults({ locales: ['tr'] })}
             className="btn-motion border border-border-muted px-4 py-2 text-sm text-foreground hover:bg-background disabled:opacity-50"
-            title="Eksik veya örnek içerikli belgeleri doldurur"
+            title="Eksik TR metinlerini doldurur"
           >
-            Varsayılan metinleri yükle
+            TR varsayılanları
+          </button>
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() =>
+              void syncDefaults({ locales: ['en', 'de', 'fr', 'es'] })
+            }
+            className="btn-motion border border-border-muted px-4 py-2 text-sm text-foreground hover:bg-background disabled:opacity-50"
+            title="Mevcut metinlerin EN/DE/FR/ES çevirilerini oluşturur"
+          >
+            Diğer dillere çevir
           </button>
           <button
             type="button"
@@ -212,6 +264,34 @@ function LegalPageInner() {
             Yeni belge
           </button>
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setListLocale('all')}
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+            listLocale === 'all'
+              ? 'bg-accent text-white'
+              : 'border border-border-muted text-muted'
+          }`}
+        >
+          Tümü
+        </button>
+        {LOCALES.map((l) => (
+          <button
+            key={l.code}
+            type="button"
+            onClick={() => setListLocale(l.code)}
+            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+              listLocale === l.code
+                ? 'bg-accent text-white'
+                : 'border border-border-muted text-muted'
+            }`}
+          >
+            {l.label}
+          </button>
+        ))}
       </div>
 
       {error ? (
@@ -230,7 +310,24 @@ function LegalPageInner() {
           onSubmit={onSubmit}
           className="grid gap-3 border border-border-muted bg-surface p-4"
         >
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid gap-3 md:grid-cols-4">
+            <label className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">Dil</span>
+              <select
+                required
+                value={form.locale}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, locale: e.target.value }))
+                }
+                className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+              >
+                {LOCALES.map((l) => (
+                  <option key={l.code} value={l.code}>
+                    {l.label} ({l.code})
+                  </option>
+                ))}
+              </select>
+            </label>
             <label className="block text-sm">
               <span className="mono text-[10px] uppercase text-muted">
                 Kısa ad (URL)
@@ -287,7 +384,7 @@ function LegalPageInner() {
               />
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               type="submit"
               disabled={saving}
@@ -317,6 +414,15 @@ function LegalPageInner() {
         onRowClick={(r) => startEdit(r)}
         columns={[
           {
+            key: 'locale',
+            header: 'Dil',
+            render: (r) => (
+              <span className="mono text-xs uppercase">
+                {r.locale || 'tr'}
+              </span>
+            ),
+          },
+          {
             key: 'slug',
             header: 'Kısa ad',
             render: (r) => <span className="mono text-xs">{r.slug}</span>,
@@ -336,7 +442,7 @@ function LegalPageInner() {
             key: 'actions',
             header: '',
             render: (r) => (
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={() => startEdit(r)}
@@ -344,6 +450,16 @@ function LegalPageInner() {
                 >
                   Düzenle
                 </button>
+                {(r.locale || 'tr') === 'tr' ? (
+                  <button
+                    type="button"
+                    onClick={() => startLocaleCopy(r, 'en')}
+                    className="text-xs text-muted hover:underline"
+                    title="Aynı slug ile başka dil kaydı oluştur"
+                  >
+                    + Dil
+                  </button>
+                ) : null}
                 {!r.isPublished ? (
                   <button
                     type="button"

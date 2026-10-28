@@ -58,8 +58,13 @@ export class LegalController {
   @ApiOperation({
     summary: 'Admin: varsayılan yasal metinleri DB’ye senkronize et',
   })
-  syncDefaults(@Body() body?: { force?: boolean }) {
-    return this.legalService.syncDefaults(Boolean(body?.force));
+  syncDefaults(
+    @Body() body?: { force?: boolean; locales?: string[] },
+  ) {
+    return this.legalService.syncDefaults(
+      Boolean(body?.force),
+      body?.locales,
+    );
   }
 
   @Roles(UserRole.ADMIN)
@@ -68,8 +73,13 @@ export class LegalController {
   @ApiOperation({
     summary: 'Admin: varsayılan yasal metinleri senkronize et (alias)',
   })
-  syncDefaultsAlias(@Body() body?: { force?: boolean }) {
-    return this.legalService.syncDefaults(Boolean(body?.force));
+  syncDefaultsAlias(
+    @Body() body?: { force?: boolean; locales?: string[] },
+  ) {
+    return this.legalService.syncDefaults(
+      Boolean(body?.force),
+      body?.locales,
+    );
   }
 
   @Roles(UserRole.ADMIN)

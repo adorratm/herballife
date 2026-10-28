@@ -12,7 +12,10 @@ import {
   resolveProductCompareAt,
 } from "@/lib/product-badges";
 import { sortByWeightLabel } from "@/lib/weight-sort";
-import { groupProductVariants } from "@/lib/variant-groups";
+import {
+  formatVariantDisplayLabel,
+  groupProductVariants,
+} from "@/lib/variant-groups";
 import type { Product, ProductVariant } from "@/lib/types";
 import {
   DEFAULT_WHATSAPP_PHONE,
@@ -98,6 +101,18 @@ export function ProductBuyBox({
 
   const selected: ProductVariant | undefined =
     variants.find((v) => v.id === variantId) || variants[0];
+
+  const selectionLabel = useMemo(() => {
+    const parts: string[] = [];
+    const variantPart =
+      formatVariantDisplayLabel(selected, locale) ||
+      selected?.weightLabel?.trim() ||
+      "";
+    if (variantPart) parts.push(variantPart);
+    if (aroma) parts.push(aroma);
+    if (showShaker && shaker) parts.push(shaker);
+    return parts.join(" · ") || null;
+  }, [selected, locale, aroma, showShaker, shaker]);
 
   const displayPrice =
     selected?.price ?? product.salePrice ?? product.basePrice;
@@ -293,7 +308,8 @@ export function ProductBuyBox({
           <AddToCartButton
             productId={product.id}
             variantId={selected?.id}
-            variantLabel={selected?.weightLabel}
+            variantLabel={selectionLabel}
+            selectionLabel={selectionLabel}
             disabled={outOfStock}
             productName={product.name}
             price={Number(displayPrice)}
