@@ -475,7 +475,7 @@ export default function CartPage() {
                 type="button"
                 onClick={() => setPendingRemove(null)}
                 disabled={busy === pendingRemove.id}
-                className="btn-ghost px-6 py-3 text-xs"
+                className="btn-ghost px-5 py-2.5 text-sm disabled:opacity-50"
               >
                 {t("removeConfirmCancel")}
               </button>
@@ -483,7 +483,7 @@ export default function CartPage() {
                 type="button"
                 onClick={() => void confirmRemove()}
                 disabled={busy === pendingRemove.id}
-                className="bg-error px-6 py-3 font-meta text-xs uppercase text-deep-carbon disabled:opacity-50"
+                className="rounded-full bg-error px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_-4px_rgba(186,26,26,0.45)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {busy === pendingRemove.id
                   ? t("removing")

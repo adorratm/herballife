@@ -11,7 +11,7 @@ import { DealStripCountdown } from "@/components/PromoCountdown";
 import { isAuthenticated, loginHref } from "@/lib/auth";
 import { useCartCount } from "@/hooks/useCartCount";
 import type { SiteSettings } from "@/lib/cms";
-import { DEFAULT_SETTINGS } from "@/lib/cms";
+import { DEFAULT_SETTINGS, filterNavByFeatures } from "@/lib/cms";
 import {
   ACCOUNT_LINKS,
   CATEGORY_CHIPS,
@@ -55,10 +55,13 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
   const [authed, setAuthed] = useState(false);
   const catRef = useRef<HTMLDivElement>(null);
   const catCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const nav = dedupeHeaderNav(
-    settings.navigation.header?.length
-      ? settings.navigation.header
-      : DEFAULT_HEADER_NAV,
+  const nav = filterNavByFeatures(
+    dedupeHeaderNav(
+      settings.navigation.header?.length
+        ? settings.navigation.header
+        : DEFAULT_HEADER_NAV,
+    ),
+    settings,
   );
   const brand = settings.brand;
   const logoText = brand.logoUrl

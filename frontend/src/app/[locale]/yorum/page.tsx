@@ -1,9 +1,13 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/Reveal";
-import { getSiteSettings } from "@/lib/cms";
+import {
+  getSiteSettings,
+  isGoogleReviewsPageEnabled,
+} from "@/lib/cms";
 import { buildPageMetadata } from "@/lib/seo";
 import {
   buildWhatsAppUrl,
@@ -19,6 +23,9 @@ export async function generateMetadata(): Promise<Metadata> {
     getSiteSettings(locale),
     getTranslations("reviewsPage"),
   ]);
+  if (!isGoogleReviewsPageEnabled(settings)) {
+    return { title: t("metaTitle"), robots: { index: false, follow: false } };
+  }
   return buildPageMetadata({
     title: t("metaTitle"),
     description: t("metaDescription", { brand: settings.brand.name }),
@@ -39,6 +46,7 @@ export default async function ReviewPage() {
     getTranslations("reviewsPage"),
     getTranslations("nav"),
   ]);
+  if (!isGoogleReviewsPageEnabled(settings)) notFound();
   const reviewUrl = settings.social.googleReviewUrl?.trim();
   const mapsUrl = settings.social.googleMaps?.trim();
   const target = reviewUrl || mapsUrl || DEFAULT_REVIEW_URL;

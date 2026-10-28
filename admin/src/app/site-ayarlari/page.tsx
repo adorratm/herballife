@@ -30,6 +30,10 @@ type Social = {
   googleReviewUrl: string;
 };
 
+type FeaturesSettings = {
+  googleReviewsPageEnabled: boolean;
+};
+
 type WhatsAppSettings = {
   enabled: boolean;
   phone: string;
@@ -558,6 +562,9 @@ export default function SiteSettingsPage() {
     googleMaps: '',
     googleReviewUrl: 'https://g.page/r/CdfE3W3I-W53EAI/review',
   });
+  const [features, setFeatures] = useState<FeaturesSettings>({
+    googleReviewsPageEnabled: false,
+  });
   const [whatsapp, setWhatsapp] = useState<WhatsAppSettings>(() =>
     asWhatsApp(null),
   );
@@ -807,6 +814,12 @@ export default function SiteSettingsPage() {
         }
         if (map.social)
           setSocial((s) => ({ ...s, ...(map.social as typeof s) }));
+        if (map.features) {
+          const f = map.features as Record<string, unknown>;
+          setFeatures({
+            googleReviewsPageEnabled: f.googleReviewsPageEnabled === true,
+          });
+        }
         setWhatsapp(asWhatsApp(omitTranslations(map.whatsapp as Record<string, unknown>)));
         if (map.footer) {
           const f = omitTranslations(map.footer as Record<string, unknown>);
@@ -1000,6 +1013,13 @@ export default function SiteSettingsPage() {
               group: 'seo',
             },
             { key: 'social', value: social, group: 'social' },
+            {
+              key: 'features',
+              value: {
+                googleReviewsPageEnabled: features.googleReviewsPageEnabled,
+              },
+              group: 'features',
+            },
             {
               key: 'whatsapp',
               value: {
@@ -1371,6 +1391,27 @@ export default function SiteSettingsPage() {
               />
             </label>
           ))}
+          <label className="flex items-start gap-2 rounded-lg border border-border-muted bg-surface-high px-3 py-3 text-sm">
+            <input
+              type="checkbox"
+              className="mt-0.5"
+              checked={features.googleReviewsPageEnabled}
+              onChange={(e) =>
+                setFeatures({
+                  googleReviewsPageEnabled: e.target.checked,
+                })
+              }
+            />
+            <span>
+              <span className="font-semibold text-foreground">
+                Google yorumlar sayfasını göster
+              </span>
+              <span className="mt-0.5 block text-xs text-muted">
+                Kapalıyken /yorum menüde görünmez ve doğrudan URL 404 döner.
+                Açınca header/footer menüsündeki Yorumlar linki de aktif olur.
+              </span>
+            </span>
+          </label>
         </fieldset>
         </>
         ) : null}

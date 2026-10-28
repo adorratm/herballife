@@ -919,8 +919,8 @@ async function seed() {
         '',
         'Türkiye',
         'Türkiye — Adetepe Mahallesi 73 Sokak No 3 Daire 9 Buca Izmir',
-        '+90 505 142 07 10',
-        '+90 505 142 07 10',
+        '+90 541 489 42 43',
+        '+90 541 489 42 43',
       ];
       for (const field of [
         'address',

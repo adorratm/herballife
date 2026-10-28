@@ -19,7 +19,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
   contact: {
     address: 'Adatepe Mahallesi 73 Sokak No: 3 Daire: 9 Buca / İzmir',
     email: 'info@herbalkapida.com',
-    phone: '+90 505 142 07 10',
+    phone: '+90 541 489 42 43',
     hours: 'Pzt — Paz / 09:00 — 20:00',
     locationLabel: 'Buca / İzmir',
     latitude: '',
@@ -90,6 +90,9 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     facebook: '',
     googleMaps: '',
     googleReviewUrl: '',
+  },
+  features: {
+    googleReviewsPageEnabled: false,
   },
   welcomePopup: {
     enabled: true,

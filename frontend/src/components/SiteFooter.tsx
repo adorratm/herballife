@@ -7,7 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { FooterNavLinks } from "@/components/FooterNavLinks";
 import { PaymentCardLogos } from "@/components/PaymentCardLogos";
 import type { SiteSettings } from "@/lib/cms";
-import { DEFAULT_SETTINGS } from "@/lib/cms";
+import { DEFAULT_SETTINGS, filterNavByFeatures } from "@/lib/cms";
 import {
   buildWhatsAppUrl,
   resolveWhatsAppPhone,
@@ -176,7 +176,7 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
             {tFooter("navigation")}
           </span>
           <FooterNavLinks
-            items={navigation.footerNav}
+            items={filterNavByFeatures(navigation.footerNav, settings)}
             className="text-on-surface-variant hover:text-primary"
           />
         </Reveal>

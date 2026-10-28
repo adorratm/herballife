@@ -7,7 +7,7 @@ export const LEGAL_SELLER = {
   name: 'Büşra Özberk (Herbal Kapıda — Bağımsız Distribütör)',
   address: 'Adatepe Mahallesi 73 Sokak No: 3 Daire: 9 Buca / İzmir',
   email: 'info@herbalkapida.com',
-  phone: '+90 505 142 07 10',
+  phone: '+90 541 489 42 43',
   hours: 'Pzt — Paz / 09:00 — 20:00',
   website: 'https://herbalkapida.com',
   taxOffice: '[Vergi dairesi — güncellenecek]',

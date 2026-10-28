@@ -5,6 +5,7 @@ import { getCategories } from "@/lib/catalog.server";
 import { fetchAllCatalogProducts } from "@/lib/catalog-feed";
 import { categoryCatalogPath } from "@/lib/catalog-paths";
 import { productImage } from "@/lib/format";
+import { getSiteSettings, isGoogleReviewsPageEnabled } from "@/lib/cms";
 import { localizedPath, SITE_URL } from "@/lib/seo";
 
 const STATIC_ROUTES: {
@@ -70,7 +71,13 @@ function withLocales(
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const entries: MetadataRoute.Sitemap = STATIC_ROUTES.flatMap((route) =>
+  const settings = await getSiteSettings("tr").catch(() => null);
+  const reviewsOn = settings
+    ? isGoogleReviewsPageEnabled(settings)
+    : false;
+  const entries: MetadataRoute.Sitemap = STATIC_ROUTES.filter(
+    (route) => reviewsOn || route.path !== "/yorum",
+  ).flatMap((route) =>
     withLocales(route.path, {
       lastModified: now,
       changeFrequency: route.changeFrequency,

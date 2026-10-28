@@ -97,6 +97,11 @@ export type SiteSettings = {
     tiktokPixelId?: string;
   };
   welcomePopup?: WelcomePopupSettings;
+  /** Vitrin sayfa / özellik anahtarları */
+  features?: {
+    /** Google yorumlar (/yorum) sayfası — kapalıysa menüde yok, URL 404 */
+    googleReviewsPageEnabled?: boolean;
+  };
 };
 
 export type WelcomePopupSettings = {
@@ -178,7 +183,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   contact: {
     address: "Adatepe Mahallesi 73 Sokak No: 3 Daire: 9 Buca / İzmir",
     email: "info@herbalkapida.com",
-    phone: "+90 505 142 07 10",
+    phone: "+90 541 489 42 43",
     hours: "Mon — Sun / 09:00 — 20:00",
     locationLabel: "Buca / İzmir",
     latitude: "",
@@ -281,7 +286,26 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     defaultFee: 89.9,
   },
   welcomePopup: { ...DEFAULT_WELCOME_POPUP },
+  features: {
+    googleReviewsPageEnabled: false,
+  },
 };
+
+export function isGoogleReviewsPageEnabled(settings: SiteSettings): boolean {
+  return settings.features?.googleReviewsPageEnabled === true;
+}
+
+/** /yorum (veya eski /reviews) linklerini özellik kapalıysa ayıkla */
+export function filterNavByFeatures(
+  items: NavLink[] | undefined,
+  settings: SiteSettings,
+): NavLink[] {
+  const list = items || [];
+  if (isGoogleReviewsPageEnabled(settings)) return list;
+  return list.filter(
+    (i) => i.href !== "/yorum" && i.href !== "/reviews",
+  );
+}
 
 /** Kısa TTL; admin kayıt sonrası /api/revalidate ile hemen de temizlenir */
 const CMS_REVALIDATE = 15;
@@ -339,6 +363,10 @@ function mergeSettings(
       )
         ? (raw.welcomePopup as WelcomePopupSettings).excludePaths
         : DEFAULT_WELCOME_POPUP.excludePaths,
+    },
+    features: {
+      ...DEFAULT_SETTINGS.features,
+      ...(raw.features as SiteSettings["features"]),
     },
   };
 }
