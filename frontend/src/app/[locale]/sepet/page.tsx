@@ -271,7 +271,7 @@ export default function CartPage() {
                             {productMeta}
                           </div>
                         )}
-                        <div className="flex flex-wrap items-center gap-2 pl-[5.5rem] text-xs sm:pl-[7rem]">
+                        <div className="flex flex-wrap items-center gap-2 pl-22 text-xs sm:pl-28">
                           <button
                             type="button"
                             disabled={busy === item.id}
@@ -350,7 +350,7 @@ export default function CartPage() {
                         className="flex flex-col rounded-lg border border-surface-container p-2"
                       >
                         <Link href={productHref(p.slug)} className="group">
-                          <div className="relative mb-1.5 aspect-[5/4] overflow-hidden rounded-md bg-surface-container-low">
+                          <div className="relative mb-1.5 aspect-5/4 overflow-hidden rounded-md bg-surface-container-low">
                             <Image
                               src={productImage(p.imageUrl, p.slug)}
                               alt={p.name}
