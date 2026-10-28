@@ -46,6 +46,25 @@ export class CheckoutController {
       user?.id,
       sessionId,
     );
+
+    // Kapıda ödeme / havale-EFT: PayTR başlatılmaz, doğrudan onay sayfasına yönlendirilir
+    const method = dto.paymentMethod;
+    if (method === 'cod' || method === 'bank_transfer') {
+      const qs = new URLSearchParams({
+        method,
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+      });
+      return {
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        provider: method,
+        paymentPageUrl: null,
+        redirectPath: `/odeme/basarili?${qs.toString()}`,
+        mock: false,
+      };
+    }
+
     const userIp = forwardedFor || req?.ip || req?.socket?.remoteAddress;
 
     try {

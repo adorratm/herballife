@@ -287,7 +287,17 @@
     "collapse": "Collapse",
     "edit": "Edit",
     "deliveryMethodHeading": "Delivery method",
-    "invalidCoupon": "Invalid coupon"
+    "invalidCoupon": "Invalid coupon",
+    "paymentMethodHeading": "Método de pago",
+    "payMethodPaytr": "Tarjeta de crédito / débito",
+    "payMethodPaytrDesc": "Pago seguro con tarjeta y 3D Secure mediante PayTR",
+    "payMethodCod": "Contra reembolso",
+    "payMethodCodDesc": "Pague al repartidor en efectivo o con tarjeta al recibir su pedido",
+    "payMethodBank": "Transferencia bancaria",
+    "payMethodBankDesc": "Realice una transferencia tras el pedido; lo preparamos cuando se confirme el pago",
+    "placeOrderCod": "Realizar pedido (contra reembolso)",
+    "placeOrderBank": "Realizar pedido (transferencia)",
+    "mobilePlaceOrder": "Realizar pedido"
   },
   "product": {
     "addToCart": "Añadir al carrito",
@@ -567,7 +577,13 @@
     "myAccount": "My account",
     "signIn": "Sign in",
     "continueShopping": "Continue shopping",
-    "trackShipment": "Shipment tracking"
+    "trackShipment": "Shipment tracking",
+    "codKicker": "Pedido recibido",
+    "codLead": "Hemos recibido su pedido y lo estamos preparando. Pagará en el momento de la entrega.",
+    "bankKicker": "Pedido recibido — pago pendiente",
+    "bankLead": "Su pedido ha sido creado. Envíe el importe a nuestras cuentas bancarias indicando su número de pedido en el concepto. Prepararemos su pedido cuando se confirme el pago.",
+    "bankAccountsLink": "Cuentas bancarias",
+    "paymentNoticeLink": "Enviar aviso de pago"
   },
   "paymentNotify": {
     "modalTitle": "Notification ready",
@@ -645,7 +661,13 @@
     "vat": "VAT",
     "total": "Total",
     "deliveryAddress": "Delivery address",
-    "billingAddress": "Billing address"
+    "billingAddress": "Billing address",
+    "paymentMethod": "Método de pago",
+    "paymentMethodPaytr": "Tarjeta (PayTR)",
+    "paymentMethodCod": "Contra reembolso",
+    "paymentMethodBank": "Transferencia bancaria",
+    "bankTransferHint": "Esperando su transferencia. Indique su número de pedido en el concepto.",
+    "bankAccountsLink": "Cuentas bancarias"
   },
   "notificationsPage": {
     "breadcrumb": "Account / Notifications",

@@ -287,7 +287,17 @@
     "redirecting": "Redirecting…",
     "mobilePay": "Pay securely",
     "selectedDefaultShipping": " · default delivery",
-    "selectedDefaultBilling": " · default billing"
+    "selectedDefaultBilling": " · default billing",
+    "paymentMethodHeading": "Payment method",
+    "payMethodPaytr": "Credit / debit card",
+    "payMethodPaytrDesc": "Secure card payment with 3D Secure via PayTR",
+    "payMethodCod": "Cash on delivery",
+    "payMethodCodDesc": "Pay the courier in cash or by card when your order is delivered",
+    "payMethodBank": "Bank transfer",
+    "payMethodBankDesc": "Send a bank transfer after placing your order; we prepare it once the payment is confirmed",
+    "placeOrderCod": "Place order (cash on delivery)",
+    "placeOrderBank": "Place order (bank transfer)",
+    "mobilePlaceOrder": "Place order"
   },
   "product": {
     "addToCart": "Add to cart",
@@ -948,7 +958,13 @@
     "myAccount": "My account",
     "signIn": "Sign in",
     "continueShopping": "Continue shopping",
-    "trackShipment": "Shipment tracking"
+    "trackShipment": "Shipment tracking",
+    "codKicker": "Order received",
+    "codLead": "Your order has been received and is being prepared. You will pay on delivery.",
+    "bankKicker": "Order received — awaiting payment",
+    "bankLead": "Your order has been created. Please send the amount to our bank accounts by transfer and include your order number in the description. We will prepare your order once the payment is confirmed.",
+    "bankAccountsLink": "Bank accounts",
+    "paymentNoticeLink": "Send payment notice"
   },
   "paymentNotify": {
     "modalTitle": "Notification ready",
@@ -1026,7 +1042,13 @@
     "vat": "VAT",
     "total": "Total",
     "deliveryAddress": "Delivery address",
-    "billingAddress": "Billing address"
+    "billingAddress": "Billing address",
+    "paymentMethod": "Payment method",
+    "paymentMethodPaytr": "Card (PayTR)",
+    "paymentMethodCod": "Cash on delivery",
+    "paymentMethodBank": "Bank transfer",
+    "bankTransferHint": "Waiting for your bank transfer. Include your order number in the transfer description.",
+    "bankAccountsLink": "Bank accounts"
   },
   "notificationsPage": {
     "breadcrumb": "Account / Notifications",

@@ -1,0 +1,19 @@
+source 1024x431
+dividerX=-1
+textEnd≈562
+leaf 563,181→564,0 n=0
+fallback 430,25→532,137
+raw 115x125
+leaf.png 115x120
+ico frontend/src/app/favicon.ico
+ico frontend/public/favicon.ico
+ico admin/src/app/favicon.ico
+ico assets/brand/favicon.ico
+png frontend/src/app/icon.png
+png frontend/src/app/apple-icon.png
+png admin/src/app/icon.png
+png admin/src/app/apple-icon.png
+png assets/brand/favicon-48.png
+png assets/brand/leaf-icon.png
+copied leaf assets
+done

@@ -46,12 +46,15 @@ function DropdownShell({
   trigger,
   open,
   onToggle,
+  menuAlign = "right",
   children,
 }: {
   label: string;
   trigger: React.ReactNode;
   open: boolean;
   onToggle: () => void;
+  /** Mobil menüde left — ekran dışına kaymayı önler */
+  menuAlign?: "left" | "right";
   children: React.ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -98,7 +101,11 @@ function DropdownShell({
         </svg>
       </button>
       {open ? (
-        <ul className="locale-dd__menu" role="listbox" aria-label={label}>
+        <ul
+          className={`locale-dd__menu locale-dd__menu--${menuAlign}`}
+          role="listbox"
+          aria-label={label}
+        >
           {children}
         </ul>
       ) : null}
@@ -109,9 +116,11 @@ function DropdownShell({
 export function LocaleCurrencyControls({
   compact,
   localization,
+  menuAlign = "right",
 }: {
   compact?: boolean;
   localization?: LocalizationConfig | null;
+  menuAlign?: "left" | "right";
 }) {
   const t = useTranslations("locale");
   const locale = useLocale() as AppLocale;
@@ -252,6 +261,7 @@ export function LocaleCurrencyControls({
     >
       <DropdownShell
         label={t("language")}
+        menuAlign={menuAlign}
         open={langOpen}
         onToggle={() => {
           setLangOpen((v) => !v);
@@ -284,6 +294,7 @@ export function LocaleCurrencyControls({
 
       <DropdownShell
         label={t("currency")}
+        menuAlign={menuAlign}
         open={curOpen}
         onToggle={() => {
           setCurOpen((v) => !v);

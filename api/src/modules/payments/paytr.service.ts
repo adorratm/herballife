@@ -99,6 +99,11 @@ export class PaytrService {
     if (!order.payment) {
       throw new BadRequestException('Siparişe bağlı ödeme kaydı yok');
     }
+    if (order.payment.provider !== 'paytr') {
+      throw new BadRequestException(
+        'Bu sipariş kart ile ödenmeyecek (kapıda ödeme / havale-EFT)',
+      );
+    }
 
     const merchantOid = this.buildMerchantOid(order);
     const frontend = (

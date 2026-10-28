@@ -108,6 +108,11 @@ export default function OrderDetailPage() {
   const shipments = order.shipments || [];
   const hint = orderStatusHint(order.status, tStatus);
   const discount = Number(order.discountAmount || 0);
+  function paymentMethodLabel(provider?: string | null): string {
+    if (provider === "cod") return t("paymentMethodCod");
+    if (provider === "bank_transfer") return t("paymentMethodBank");
+    return t("paymentMethodPaytr");
+  }
   const openReturn = returns.find((r) => r.status === "requested");
   const canRequestCancel =
     !openReturn &&
@@ -208,7 +213,18 @@ export default function OrderDetailPage() {
             {hint}
           </p>
         ) : null}
-        {order.status === "pending_payment" ? (
+        {order.status === "pending_payment" &&
+        order.payment?.provider === "bank_transfer" ? (
+          <p className="mt-4 font-meta text-xs uppercase leading-relaxed text-secondary">
+            {t("bankTransferHint")}{" "}
+            <Link href="/banka-hesaplari" className="text-primary underline">
+              {t("bankAccountsLink")}
+            </Link>
+          </p>
+        ) : null}
+        {order.status === "pending_payment" &&
+        order.payment?.provider !== "bank_transfer" &&
+        order.payment?.provider !== "cod" ? (
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <button
               type="button"
@@ -471,6 +487,12 @@ export default function OrderDetailPage() {
                 <div className="flex justify-between text-primary">
                   <span>{t("total")}</span>
                   <span>{formatMoney(order.total, order.currency)}</span>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <span>{t("paymentMethod")}</span>
+                  <span className="text-right text-on-surface">
+                    {paymentMethodLabel(order.payment?.provider)}
+                  </span>
                 </div>
               </div>
             </div>

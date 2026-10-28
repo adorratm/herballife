@@ -167,7 +167,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
       "Original Herbal Kapıda products and personalized nutrition support with an independent distributor.",
     established: "Since 2024",
     location: "Buca / İzmir",
-    logoUrl: "/brand/logo.png",
+    logoUrl:
+      "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/logo.webp",
     distributorName: "Büşra Özberk",
     distributorTitle: "Independent Distributor",
     distributorCode: "",
@@ -198,7 +199,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
       "nutrition",
       "Izmir",
     ],
-    ogImage: "/brand/og.jpg",
+    ogImage:
+      "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/og.webp",
   },
   navigation: {
     header: [

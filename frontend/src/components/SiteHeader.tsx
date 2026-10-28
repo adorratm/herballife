@@ -214,7 +214,10 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
               </div>
 
               <div className="shrink-0 border-b border-outline-variant px-4 py-4">
-                <LocaleCurrencyControls localization={settings.localization} />
+                <LocaleCurrencyControls
+                  localization={settings.localization}
+                  menuAlign="left"
+                />
               </div>
 
               {phone ? (

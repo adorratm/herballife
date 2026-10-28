@@ -1,29 +1,50 @@
+/**
+ * assets/brand/leaf.png (logo'dan çıkarılmış yaprak) → beyaz zemin favicon/icon.
+ * Yaprak yoksa önce: node scripts/extract-leaf-favicon.mjs
+ */
 const sharp = require("sharp");
 const fs = require("fs");
 const path = require("path");
 
 const root = path.resolve(__dirname, "..");
-const tmp = path.join(root, ".tmp-icons");
+const leafPath = path.join(root, "assets", "brand", "leaf.png");
 
-async function makePng(size, out) {
-  const fontSize = Math.round(size * 0.62);
-  const y = Math.round(size * 0.72);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
-  <rect width="100%" height="100%" fill="#131313"/>
-  <text x="50%" y="${y}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="${fontSize}" font-weight="700" fill="#ffb4a2">K</text>
-</svg>`;
-  await sharp(Buffer.from(svg)).png().toFile(out);
-  return out;
+async function whiteSquare(leafPng, size) {
+  const meta = await sharp(leafPng).metadata();
+  const pad = Math.round(size * 0.14);
+  const inner = size - pad * 2;
+  const scale = Math.min(inner / meta.width, inner / meta.height);
+  const w = Math.max(1, Math.round(meta.width * scale));
+  const h = Math.max(1, Math.round(meta.height * scale));
+  const resized = await sharp(leafPng)
+    .resize(w, h, { fit: "inside" })
+    .png()
+    .toBuffer();
+  return sharp({
+    create: {
+      width: size,
+      height: size,
+      channels: 3,
+      background: { r: 255, g: 255, b: 255 },
+    },
+  })
+    .composite([
+      {
+        input: resized,
+        left: Math.floor((size - w) / 2),
+        top: Math.floor((size - h) / 2),
+      },
+    ])
+    .png()
+    .toBuffer();
 }
 
-/** Minimal ICO writer (PNG-compressed images) */
 function pngsToIco(pngBuffers) {
   const count = pngBuffers.length;
   const headerSize = 6 + count * 16;
   let offset = headerSize;
   const entries = [];
   for (const png of pngBuffers) {
-    // IHDR is at bytes 16-23: width/height as uint32 BE
     const width = png.readUInt32BE(16);
     const height = png.readUInt32BE(20);
     entries.push({
@@ -35,53 +56,79 @@ function pngsToIco(pngBuffers) {
     });
     offset += png.length;
   }
-
-  const total = offset;
-  const out = Buffer.alloc(total);
-  // ICONDIR
+  const out = Buffer.alloc(offset);
   out.writeUInt16LE(0, 0);
-  out.writeUInt16LE(1, 2); // ICO
+  out.writeUInt16LE(1, 2);
   out.writeUInt16LE(count, 4);
-
   let entryPos = 6;
   for (const e of entries) {
     out.writeUInt8(e.width, entryPos);
     out.writeUInt8(e.height, entryPos + 1);
-    out.writeUInt8(0, entryPos + 2); // colors
+    out.writeUInt8(0, entryPos + 2);
     out.writeUInt8(0, entryPos + 3);
-    out.writeUInt16LE(1, entryPos + 4); // planes
-    out.writeUInt16LE(32, entryPos + 6); // bit count
+    out.writeUInt16LE(1, entryPos + 4);
+    out.writeUInt16LE(32, entryPos + 6);
     out.writeUInt32LE(e.size, entryPos + 8);
     out.writeUInt32LE(e.offset, entryPos + 12);
     entryPos += 16;
   }
-
-  for (const e of entries) {
-    e.png.copy(out, e.offset);
-  }
+  for (const e of entries) e.png.copy(out, e.offset);
   return out;
 }
 
 async function main() {
-  fs.mkdirSync(tmp, { recursive: true });
-  const pngPaths = [];
-  for (const size of [16, 32, 48]) {
-    pngPaths.push(await makePng(size, path.join(tmp, `icon-${size}.png`)));
+  if (!fs.existsSync(leafPath)) {
+    console.error("Eksik:", leafPath, "— önce node scripts/extract-leaf-favicon.mjs");
+    process.exit(1);
   }
+  const leafPng = fs.readFileSync(leafPath);
 
-  const pngBuffers = pngPaths.map((p) => fs.readFileSync(p));
-  const ico = pngsToIco(pngBuffers);
+  const icoPngs = [];
+  for (const s of [16, 32, 48]) icoPngs.push(await whiteSquare(leafPng, s));
+  const ico = pngsToIco(icoPngs);
 
-  const targets = [
+  for (const dest of [
     path.join(root, "frontend", "src", "app", "favicon.ico"),
+    path.join(root, "frontend", "public", "favicon.ico"),
     path.join(root, "admin", "src", "app", "favicon.ico"),
-  ];
-  for (const dest of targets) {
+    path.join(root, "admin", "public", "favicon.ico"),
+    path.join(root, "assets", "brand", "favicon.ico"),
+  ]) {
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.writeFileSync(dest, ico);
     console.log("wrote", dest, ico.length);
   }
 
-  fs.rmSync(tmp, { recursive: true, force: true });
+  const pngTargets = [
+    [64, path.join(root, "frontend", "src", "app", "icon.png")],
+    [180, path.join(root, "frontend", "src", "app", "apple-icon.png")],
+    [64, path.join(root, "admin", "src", "app", "icon.png")],
+    [180, path.join(root, "admin", "src", "app", "apple-icon.png")],
+    [48, path.join(root, "assets", "brand", "favicon-48.png")],
+  ];
+  for (const [size, dest] of pngTargets) {
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    await sharp(await whiteSquare(leafPng, size)).toFile(dest);
+    console.log("wrote", dest);
+  }
+
+  for (const dest of [
+    path.join(root, "frontend", "public", "leaf.png"),
+    path.join(root, "admin", "public", "leaf.png"),
+  ]) {
+    fs.copyFileSync(leafPath, dest);
+    console.log("wrote", dest);
+  }
+
+  for (const dyn of [
+    path.join(root, "admin", "src", "app", "icon.tsx"),
+    path.join(root, "admin", "src", "app", "apple-icon.tsx"),
+  ]) {
+    if (fs.existsSync(dyn)) {
+      fs.unlinkSync(dyn);
+      console.log("removed", dyn);
+    }
+  }
 }
 
 main().catch((err) => {

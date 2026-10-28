@@ -11,6 +11,8 @@ import { cartAddItem } from "@/lib/cart";
 type Props = {
   productId: string;
   variantId?: string | null;
+  /** Toast / analytics için seçilen varyant etiketi (ör. 550 g) */
+  variantLabel?: string | null;
   label?: string;
   className?: string;
   disabled?: boolean;
@@ -24,6 +26,7 @@ type Props = {
 export function AddToCartButton({
   productId,
   variantId,
+  variantLabel,
   label,
   className,
   disabled = false,
@@ -56,7 +59,7 @@ export function AddToCartButton({
         quantity: 1,
       });
       setAdded(true);
-      emitCartToast(productName);
+      emitCartToast(productName, variantLabel);
       onAdded?.();
       window.setTimeout(() => setAdded(false), 1600);
       if (goToCart) router.push("/sepet" as const);

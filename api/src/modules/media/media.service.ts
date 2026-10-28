@@ -7,7 +7,9 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { MediaAsset } from '@entities/media-asset.entity';
 import {
+  convertToWebp,
   knockOutNearBlackToPng,
+  shouldConvertToWebp,
   shouldProcessBrandLogo,
 } from '@modules/media/image-process';
 import { StorageService } from '@modules/storage/storage.service';
@@ -60,6 +62,18 @@ export class MediaService {
       }
     }
 
+    // Logo knockout (varsa) sonrası: GIF ve SVG hariç hepsi WebP (q≈82)
+    if (shouldConvertToWebp(mimeType)) {
+      try {
+        const webp = await convertToWebp(buffer);
+        buffer = webp.buffer;
+        mimeType = webp.mimeType;
+        filename = filename.replace(/\.[a-zA-Z0-9]+$/, '') + webp.ext;
+      } catch {
+        /* dönüştürme başarısızsa mevcut buffer'ı kullan */
+      }
+    }
+
     const key = this.storage.buildKey(folder, filename);
     const uploaded = await this.storage.upload(buffer, key, mimeType);
 
@@ -77,9 +91,17 @@ export class MediaService {
   }
 
   async listAll(): Promise<MediaAsset[]> {
-    return this.em.find(MediaAsset, {
+    const items = await this.em.find(MediaAsset, {
       order: { createdAt: 'DESC' },
     });
+    return items.map((item) => ({
+      ...item,
+      url: this.storage.resolvePublicUrl(
+        item.url,
+        item.storageKey,
+        item.provider,
+      ),
+    })) as MediaAsset[];
   }
 
   async remove(id: string): Promise<void> {

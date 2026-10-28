@@ -103,6 +103,11 @@ export function ProductCard({
           >
             {product.name}
           </h3>
+          {variant?.weightLabel ? (
+            <p className="truncate text-[10px] font-medium text-primary">
+              {variant.weightLabel}
+            </p>
+          ) : null}
           <div className="mt-auto flex min-h-5 flex-wrap items-baseline gap-1.5 pt-1">
             {hasDiscount ? (
               <span className="text-[10px] text-outline line-through">
@@ -141,6 +146,7 @@ export function ProductCard({
           <AddToCartButton
             productId={product.id}
             variantId={variant?.id}
+            variantLabel={variant?.weightLabel}
             productName={product.name}
             price={Number(price)}
             label={t("addToCart")}

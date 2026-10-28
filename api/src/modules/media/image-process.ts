@@ -57,6 +57,26 @@ export async function knockOutNearBlackToPng(
   return { buffer: png, mimeType: 'image/png', ext: '.png' };
 }
 
+export const WEBP_QUALITY = 82;
+
+/** GIF (animasyon) ve SVG (vektör) dışındaki tüm görseller WebP'ye çevrilir. */
+export function shouldConvertToWebp(mimeType: string) {
+  return mimeType !== 'image/gif' && mimeType !== 'image/svg+xml';
+}
+
+export async function convertToWebp(
+  buffer: Buffer,
+  quality = WEBP_QUALITY,
+): Promise<{ buffer: Buffer; mimeType: string; ext: string }> {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const sharp = require('sharp') as typeof import('sharp');
+  const out = await sharp(buffer, { animated: true })
+    .rotate() // EXIF yönünü uygula (metadata WebP çıktısında atılır)
+    .webp({ quality })
+    .toBuffer();
+  return { buffer: out, mimeType: 'image/webp', ext: '.webp' };
+}
+
 export function shouldProcessBrandLogo(folder: string, mimeType: string) {
   const f = (folder || '').toLowerCase();
   if (!f.includes('brand') && !f.includes('logo')) return false;

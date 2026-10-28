@@ -60,12 +60,38 @@ export function SiteFooter({ settings = DEFAULT_SETTINGS }: Props) {
           <div className="surface-panel overflow-hidden p-5 md:p-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex items-start gap-3">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-bold text-on-primary">
-                  {tFooter("approvedBadge")}
+                <span
+                  className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary to-[#0f5c38] text-on-primary shadow-[0_6px_16px_rgba(21,122,76,0.35)] ring-2 ring-primary/20 ring-offset-2 ring-offset-white"
+                  aria-hidden
+                >
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="drop-shadow-sm"
+                  >
+                    <path
+                      d="M12 3l2.2 4.45 4.91.71-3.55 3.46.84 4.89L12 14.4l-4.4 2.31.84-4.89L4.89 8.16l4.91-.71L12 3z"
+                      fill="currentColor"
+                      opacity="0.25"
+                    />
+                    <path
+                      d="M7.5 12.2l2.7 2.7 6.3-6.4"
+                      stroke="currentColor"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span className="sr-only">{tFooter("approvedBadge")}</span>
                 </span>
                 <div>
-                  <p className="text-sm font-bold text-on-surface">
+                  <p className="flex flex-wrap items-center gap-2 text-sm font-bold text-on-surface">
                     {tFooter("distributorTrustTitle")}
+                    <span className="rounded-full bg-primary-fixed px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+                      {tFooter("approvedBadge")}
+                    </span>
                   </p>
                   <CmsHtml
                     as="div"

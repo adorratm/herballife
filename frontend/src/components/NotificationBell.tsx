@@ -115,12 +115,12 @@ export function NotificationBell({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="relative text-primary transition-opacity hover:opacity-80"
+        className="relative flex h-10 w-10 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-container-low"
         aria-label={tAria("notifications")}
       >
         <BellIcon />
         {unread > 0 ? (
-          <span className="absolute -right-1.5 -top-1.5 min-w-4 rounded-full bg-cta px-1 text-center text-[9px] text-on-cta">
+          <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-on-primary">
             {unread > 9 ? "9+" : unread}
           </span>
         ) : null}
@@ -189,13 +189,19 @@ export function NotificationBell({
 
 function BellIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
         d="M6 9a6 6 0 1 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9Z"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="1.75"
+        strokeLinejoin="round"
       />
-      <path d="M10 20a2 2 0 0 0 4 0" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M10 20a2 2 0 0 0 4 0"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

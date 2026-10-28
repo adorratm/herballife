@@ -1,5 +1,5 @@
-/** Varsayılan iş hattı (kurumsal WA yokken / contact.phone boşken). */
-export const DEFAULT_WHATSAPP_PHONE = "+90 500 000 00 00";
+/** Son çare — tercihen CMS contact.phone / whatsapp.phone kullanın. */
+export const DEFAULT_WHATSAPP_PHONE = "";
 
 export type WhatsAppPreset = {
   label: string;

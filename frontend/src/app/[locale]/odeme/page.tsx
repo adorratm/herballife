@@ -31,14 +31,11 @@ import {
 import { formatMoney } from "@/lib/format";
 import { calculateOrderTotals } from "@/lib/pricing";
 import { trackBeginCheckout } from "@/lib/analytics";
-import { getSiteSettings, type SiteSettings } from "@/lib/cms";
-import {
-  STORE_PICKUP_CODE,
-} from "@/lib/shipping";
 import type {
   Address,
   Cart,
   CouponPreview,
+  PaymentMethod,
   ShippingProvider,
   User,
 } from "@/lib/types";
@@ -52,7 +49,28 @@ type AddressFields = {
 };
 
 type AddressMode = "saved" | "new";
-type DeliveryMethod = "cargo" | "pickup";
+
+const PAYMENT_METHOD_OPTIONS = [
+  {
+    value: "paytr",
+    labelKey: "payMethodPaytr",
+    descKey: "payMethodPaytrDesc",
+  },
+  {
+    value: "cod",
+    labelKey: "payMethodCod",
+    descKey: "payMethodCodDesc",
+  },
+  {
+    value: "bank_transfer",
+    labelKey: "payMethodBank",
+    descKey: "payMethodBankDesc",
+  },
+] as const satisfies ReadonlyArray<{
+  value: PaymentMethod;
+  labelKey: string;
+  descKey: string;
+}>;
 
 const emptyAddr = (): AddressFields => ({
   city: "",
@@ -94,11 +112,7 @@ export default function CheckoutPage() {
   const [newShippingTitle, setNewShippingTitle] = useState("");
   const [newBillingTitle, setNewBillingTitle] = useState("");
   const [defaultBusy, setDefaultBusy] = useState(false);
-  const [deliveryMethod, setDeliveryMethod] =
-    useState<DeliveryMethod>("cargo");
-  const [storeContact, setStoreContact] = useState<SiteSettings["contact"] | null>(
-    null,
-  );
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("paytr");
 
   const [form, setForm] = useState({
     customerName: "",
@@ -128,13 +142,11 @@ export default function CheckoutPage() {
       getShippingProviders(),
       token ? getMyAddresses(token) : Promise.resolve([] as Address[]),
       token ? getMe(token).catch(() => null) : Promise.resolve(null),
-      getSiteSettings(locale).catch(() => null),
-    ]).then(([cartData, providerData, addressData, me, settings]) => {
+    ]).then(([cartData, providerData, addressData, me]) => {
       setCart(cartData);
       setProviders(providerData);
       setAddresses(addressData);
       setUser(me);
-      if (settings?.contact) setStoreContact(settings.contact);
 
       if (cartData?.items?.length) {
         const subtotal = cartSubtotal(cartData);
@@ -249,21 +261,20 @@ export default function CheckoutPage() {
   );
 
   const addressComplete = useMemo(() => {
-    if (deliveryMethod === "pickup") return true;
     if (shippingMode === "saved" && shippingId) return true;
     return (
       form.shipping.addressLine.trim().length > 3 &&
       form.shipping.city.trim().length > 0 &&
       form.shipping.district.trim().length > 0
     );
-  }, [deliveryMethod, shippingMode, shippingId, form.shipping]);
+  }, [shippingMode, shippingId, form.shipping]);
 
   useEffect(() => {
-    if (contactComplete && !addressComplete && deliveryMethod === "cargo") {
+    if (contactComplete && !addressComplete) {
       setPanelContact(false);
       setPanelAddress(true);
     }
-  }, [contactComplete, addressComplete, deliveryMethod]);
+  }, [contactComplete, addressComplete]);
 
   function corporatePayload() {
     if (!corporateBilling) return {};
@@ -362,11 +373,7 @@ export default function CheckoutPage() {
     const token = getToken();
     if (!token || !user) return;
 
-    if (
-      deliveryMethod === "cargo" &&
-      shippingMode === "new" &&
-      saveShippingAddress
-    ) {
+    if (shippingMode === "new" && saveShippingAddress) {
       const created = await createAddress(token, {
         title: newShippingTitle.trim() || tCheckout("defaultShippingTitle"),
         fullName: form.customerName,
@@ -417,17 +424,12 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (
-      deliveryMethod === "cargo" &&
-      shippingMode === "saved" &&
-      !shippingId &&
-      addresses.length > 0
-    ) {
+    if (shippingMode === "saved" && !shippingId && addresses.length > 0) {
       setError(tCheckout("errSelectSavedAddress"));
       return;
     }
 
-    if (deliveryMethod === "cargo" && !form.shippingProvider) {
+    if (!form.shippingProvider) {
       setError(tCheckout("errSelectShippingProvider"));
       return;
     }
@@ -437,48 +439,27 @@ export default function CheckoutPage() {
       await persistNewAddressesIfNeeded();
 
       const sessionId = getCartSessionId();
-      const pickup = deliveryMethod === "pickup";
-      const shippingAddress = pickup
-        ? undefined
-        : {
-            fullName: form.customerName,
-            phone: form.customerPhone,
-            city: form.shipping.city,
-            district: form.shipping.district,
-            neighborhood: form.shipping.neighborhood,
-            addressLine: form.shipping.addressLine,
-            postalCode: form.shipping.postalCode,
-          };
-      const billingSource =
-        billingSame && !pickup
-          ? form.shipping
-          : billingSame && pickup
-            ? null
-            : form.billing;
+      const shippingAddress = {
+        fullName: form.customerName,
+        phone: form.customerPhone,
+        city: form.shipping.city,
+        district: form.shipping.district,
+        neighborhood: form.shipping.neighborhood,
+        addressLine: form.shipping.addressLine,
+        postalCode: form.shipping.postalCode,
+      };
+      const billingSource = billingSame ? form.shipping : form.billing;
       const corp = corporatePayload();
-      const billingAddress = billingSource
-        ? {
-            fullName: form.customerName,
-            phone: form.customerPhone,
-            city: billingSource.city,
-            district: billingSource.district,
-            neighborhood: billingSource.neighborhood,
-            addressLine: billingSource.addressLine,
-            postalCode: billingSource.postalCode,
-            ...corp,
-          }
-        : pickup
-          ? undefined
-          : {
-              fullName: form.customerName,
-              phone: form.customerPhone,
-              city: form.shipping.city,
-              district: form.shipping.district,
-              neighborhood: form.shipping.neighborhood,
-              addressLine: form.shipping.addressLine,
-              postalCode: form.shipping.postalCode,
-              ...corp,
-            };
+      const billingAddress = {
+        fullName: form.customerName,
+        phone: form.customerPhone,
+        city: billingSource.city,
+        district: billingSource.district,
+        neighborhood: billingSource.neighborhood,
+        addressLine: billingSource.addressLine,
+        postalCode: billingSource.postalCode,
+        ...corp,
+      };
 
       const result = await checkout(
         sessionId,
@@ -486,11 +467,10 @@ export default function CheckoutPage() {
           customerEmail: form.customerEmail,
           customerName: form.customerName,
           customerPhone: form.customerPhone,
-          ...(shippingAddress ? { shippingAddress } : {}),
-          ...(billingAddress ? { billingAddress } : {}),
-          shippingProvider: pickup
-            ? STORE_PICKUP_CODE
-            : form.shippingProvider,
+          shippingAddress,
+          billingAddress,
+          shippingProvider: form.shippingProvider,
+          paymentMethod,
           couponCode: couponPreview?.valid ? couponPreview.code : undefined,
           locale,
           legalAcceptances: {
@@ -522,7 +502,7 @@ export default function CheckoutPage() {
       }
 
       const { redirectToPayment } = await import("@/lib/payment-redirect");
-      if (!redirectToPayment(result)) {
+      if (!redirectToPayment(result, locale)) {
         setError(tCheckout("errPaymentRedirect"));
       }
     } catch (err) {
@@ -537,9 +517,8 @@ export default function CheckoutPage() {
   }
 
   const subtotal = cartSubtotal(cart);
-  const isPickup = deliveryMethod === "pickup";
   const selected = providers.find((p) => p.code === form.shippingProvider);
-  const shippingFee = isPickup ? 0 : Number(selected?.fee || 0);
+  const shippingFee = Number(selected?.fee || 0);
   const discountAmount = couponPreview?.valid
     ? Number(couponPreview.discountAmount)
     : 0;
@@ -608,7 +587,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="page-shell min-w-0 overflow-x-hidden bg-surface py-6 sm:py-10 md:py-14">
+    <div className="page-shell min-w-0 bg-surface py-6 sm:py-10 md:py-14">
       <div className="mb-6 flex min-w-0 flex-col gap-4 sm:mb-8 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0">
           <p className="mb-1 text-xs text-on-surface-variant">
@@ -698,73 +677,12 @@ export default function CheckoutPage() {
             <h2 className="mb-6 font-display text-2xl">
               {tCheckout("deliveryMethodHeading")}
             </h2>
-            <div className="space-y-3">
-              <label
-                className={`flex cursor-pointer items-center justify-between gap-3 wrap-break-word border px-3 py-3 font-meta text-xs uppercase sm:px-4 sm:py-4 ${
-                  deliveryMethod === "cargo"
-                    ? "border-primary text-primary"
-                    : "border-outline-variant/30 text-secondary"
-                }`}
-              >
-                <span className="flex items-center gap-3">
-                  <input
-                    type="radio"
-                    name="deliveryMethod"
-                    checked={deliveryMethod === "cargo"}
-                    onChange={() => setDeliveryMethod("cargo")}
-                  />
-                  {tCheckout("shipByCargo")}
-                </span>
-              </label>
-              <label
-                className={`flex cursor-pointer items-start justify-between gap-3 wrap-break-word border px-3 py-3 font-meta text-xs uppercase sm:gap-4 sm:px-4 sm:py-4 ${
-                  deliveryMethod === "pickup"
-                    ? "border-primary text-primary"
-                    : "border-outline-variant/30 text-secondary"
-                }`}
-              >
-                <span className="flex items-start gap-3">
-                  <input
-                    type="radio"
-                    name="deliveryMethod"
-                    className="mt-0.5"
-                    checked={deliveryMethod === "pickup"}
-                    onChange={() => setDeliveryMethod("pickup")}
-                  />
-                  <span>
-                    {tCheckout("pickupAtStore")}
-                    <span className="mt-1 block normal-case tracking-normal text-secondary">
-                      {tCheckout("pickupSubline")}
-                    </span>
-                  </span>
-                </span>
-                <span className="shrink-0">{formatMoney(0)}</span>
-              </label>
+            <div className="border border-primary px-3 py-3 font-meta text-xs uppercase text-primary sm:px-4 sm:py-4">
+              {tCheckout("shipByCargo")}
             </div>
-            {isPickup && storeContact ? (
-              <div className="mt-6 border border-outline-variant/30 bg-surface px-4 py-4 font-meta text-xs leading-relaxed text-secondary">
-                <p className="uppercase tracking-widest text-primary">
-                  {tCheckout("storeAddress")}
-                </p>
-                <p className="mt-2 normal-case tracking-normal text-on-surface">
-                  {storeContact.address}
-                </p>
-                {storeContact.hours ? (
-                  <p className="mt-2 normal-case tracking-normal">
-                    {tCheckout("storeHours")}: {storeContact.hours}
-                  </p>
-                ) : null}
-                {storeContact.phone ? (
-                  <p className="mt-1 normal-case tracking-normal">
-                    {tCheckout("storePhone")}: {storeContact.phone}
-                  </p>
-                ) : null}
-              </div>
-            ) : null}
           </section>
           </Reveal>
 
-          {!isPickup ? (
           <Reveal fill={false} variant="left" delay={70}>
           <section className="panel-motion industrial-border relative z-1 min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -919,7 +837,6 @@ export default function CheckoutPage() {
             )}
           </section>
           </Reveal>
-          ) : null}
 
           <Reveal fill={false} variant="left" delay={120}>
           <section className="panel-motion industrial-border relative z-1 min-w-0 bg-white p-4 sm:p-6 md:p-8">
@@ -936,7 +853,7 @@ export default function CheckoutPage() {
                 }}
                 label={
                   <span>
-                    {isPickup ? tCheckout("billingSamePickup") : tCheckout("billingSameDelivery")}
+                    {tCheckout("billingSameDelivery")}
                   </span>
                 }
               />
@@ -1076,9 +993,7 @@ export default function CheckoutPage() {
               </>
             ) : (
               <p className="font-meta text-xs uppercase text-secondary">
-                {isPickup
-                  ? tCheckout("billingNoSeparatePickup")
-                  : tCheckout("billingSameAsShipping")}
+                {tCheckout("billingSameAsShipping")}
               </p>
             )}
             <div className="mt-6 space-y-4 border-t border-outline-variant/20 pt-5">
@@ -1121,7 +1036,6 @@ export default function CheckoutPage() {
           </section>
           </Reveal>
 
-          {!isPickup ? (
           <Reveal fill={false} variant="left" delay={160}>
           <section className="panel-motion industrial-border relative z-1 min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <h2 className="mb-6 font-display text-2xl">{tCheckout("shippingProviderHeading")}</h2>
@@ -1150,14 +1064,75 @@ export default function CheckoutPage() {
             </div>
           </section>
           </Reveal>
-          ) : null}
+
+          <Reveal fill={false} variant="left" delay={200}>
+          <section className="panel-motion industrial-border relative z-1 min-w-0 bg-white p-4 sm:p-6 md:p-8">
+            <h2 className="mb-6 font-display text-2xl">
+              {tCheckout("paymentMethodHeading")}
+            </h2>
+            <div className="space-y-3">
+              {PAYMENT_METHOD_OPTIONS.map((opt) => (
+                <label
+                  key={opt.value}
+                  className={`flex cursor-pointer items-start gap-3 wrap-break-word border px-3 py-3 font-meta text-xs uppercase sm:px-4 sm:py-4 ${
+                    paymentMethod === opt.value
+                      ? "border-primary text-primary"
+                      : "border-outline-variant/30 text-secondary"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    className="mt-0.5"
+                    checked={paymentMethod === opt.value}
+                    onChange={() => setPaymentMethod(opt.value)}
+                  />
+                  <span>
+                    {tCheckout(opt.labelKey)}
+                    <span className="mt-1 block normal-case tracking-normal text-secondary">
+                      {tCheckout(opt.descKey)}
+                    </span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </section>
+          </Reveal>
 
         </div>
 
         <aside className="min-w-0 lg:col-span-4">
           {/* sticky yalnızca masaüstü: mobilde footer/menü üstüne binmesin */}
-          <div className="relative z-1 border border-outline-variant/30 bg-white p-4 panel-motion sm:p-6 lg:sticky lg:top-28 lg:z-10">
+          <div className="relative z-10 border border-outline-variant/30 bg-white p-4 panel-motion sm:p-6 lg:sticky lg:top-24">
             <h2 className="mb-6 font-display text-2xl">{tCheckout("summaryHeading")}</h2>
+            {cart?.items?.length ? (
+              <ul className="mb-5 max-h-48 space-y-2.5 overflow-y-auto border-b border-outline-variant/20 pb-4">
+                {cart.items.map((item) => (
+                  <li
+                    key={item.id}
+                    className="flex items-start justify-between gap-2 text-sm"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-medium text-on-surface">
+                        {item.product?.name || tCheckout("summaryHeading")}
+                        <span className="text-on-surface-variant">
+                          {" "}
+                          ×{item.quantity}
+                        </span>
+                      </p>
+                      {item.variant?.weightLabel ? (
+                        <p className="mt-0.5 text-[11px] text-primary">
+                          {item.variant.weightLabel}
+                        </p>
+                      ) : null}
+                    </div>
+                    <span className="shrink-0 font-semibold text-on-surface">
+                      {formatMoney(Number(item.unitPrice) * item.quantity)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
             <div className="mb-6 space-y-2">
               <label className="field-label">{tCheckout("couponLabel")}</label>
               <div className="flex gap-2">
@@ -1211,10 +1186,8 @@ export default function CheckoutPage() {
                 />
               ) : null}
               <Row
-                label={isPickup ? tCheckout("labelDelivery") : tCheckout("labelShipping")}
-                value={
-                  isPickup ? tCheckout("pickupFree") : formatMoney(shippingFee)
-                }
+                label={tCheckout("labelShipping")}
+                value={formatMoney(shippingFee)}
               />
               <Row
                 label={tCheckout("vatLine", { rate: totals.ratePercent, included: totals.taxIncluded ? tCheckout("vatIncluded") : "" })}
@@ -1295,7 +1268,13 @@ export default function CheckoutPage() {
               disabled={submitting}
               className="btn-cta mt-5 w-full py-4 text-xs"
             >
-              {submitting ? tCheckout("redirecting") : tCheckout("payWithPaytr")}
+              {submitting
+                ? tCheckout("redirecting")
+                : paymentMethod === "cod"
+                  ? tCheckout("placeOrderCod")
+                  : paymentMethod === "bank_transfer"
+                    ? tCheckout("placeOrderBank")
+                    : tCheckout("payWithPaytr")}
             </button>
           </div>
         </aside>
@@ -1313,7 +1292,11 @@ export default function CheckoutPage() {
             disabled={submitting}
             className="btn-cta shrink-0 px-5 py-3 text-xs"
           >
-            {submitting ? "…" : tCheckout("mobilePay")}
+            {submitting
+              ? "…"
+              : paymentMethod === "paytr"
+                ? tCheckout("mobilePay")
+                : tCheckout("mobilePlaceOrder")}
           </button>
         </div>
       </div>

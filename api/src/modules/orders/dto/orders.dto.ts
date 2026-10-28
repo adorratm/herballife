@@ -25,6 +25,9 @@ import {
 } from '@entities/return-request.entity';
 import { STORE_PICKUP_CODE } from '@common/constants/shipping';
 
+export const PAYMENT_METHODS = ['paytr', 'cod', 'bank_transfer'] as const;
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+
 function trimString({ value }: { value: unknown }) {
   return typeof value === 'string' ? value.trim() : value;
 }
@@ -146,6 +149,16 @@ export class CreateOrderDto {
   @IsOptional()
   @IsString()
   shippingProvider?: string;
+
+  @ApiPropertyOptional({
+    enum: PAYMENT_METHODS,
+    default: 'paytr',
+    description:
+      'Ödeme yöntemi: paytr (kart), cod (kapıda ödeme), bank_transfer (havale/EFT)',
+  })
+  @IsOptional()
+  @IsIn(PAYMENT_METHODS as unknown as string[])
+  paymentMethod?: PaymentMethod;
 
   @ApiPropertyOptional()
   @IsOptional()

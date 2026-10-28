@@ -1162,7 +1162,7 @@ __metadata:
     "@nestjs/passport": "npm:^12.0.0"
     "@nestjs/platform-express": "npm:^12.3.2"
     "@nestjs/platform-socket.io": "npm:^12.3.2"
-    "@nestjs/schematics": "npm:^12.0.11"
+    "@nestjs/schematics": "npm:^12.0.12"
     "@nestjs/swagger": "npm:^12.0.5"
     "@nestjs/testing": "npm:^12.3.2"
     "@nestjs/typeorm": "npm:^12.0.2"
@@ -1207,6 +1207,7 @@ __metadata:
     puppeteer: "npm:^25.16.0"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.2"
+    sharp: "npm:0.35.5"
     socket.io: "npm:^4.8.4"
     source-map-support: "npm:^0.5.21"
     supertest: "npm:^7.3.1"
@@ -1236,7 +1237,7 @@ __metadata:
     "@vitalets/google-translate-api": "npm:^9.2.1"
     eslint: "npm:^10.13.0"
     eslint-config-next: "npm:16.4.3"
-    lucide-react: "npm:^1.62.0"
+    lucide-react: "npm:^1.63.0"
     next: "npm:16.4.3"
     next-intl: "npm:^4.14.9"
     react: "npm:19.3.1"
@@ -2517,9 +2518,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/schematics@npm:^12.0.11":
-  version: 12.0.11
-  resolution: "@nestjs/schematics@npm:12.0.11"
+"@nestjs/schematics@npm:^12.0.12":
+  version: 12.0.12
+  resolution: "@nestjs/schematics@npm:12.0.12"
   dependencies:
     "@angular-devkit/core": "npm:22.2.4"
     "@angular-devkit/schematics": "npm:22.2.4"
@@ -2532,7 +2533,7 @@ __metadata:
   peerDependenciesMeta:
     prettier:
       optional: true
-  checksum: 10c0/8b5014c9fc999780b1b5a8020e33fdfd1f3ad8dbbdc1934dfa636678fa78419f5e9a1b7ba4835bcd714172401f3f6600ddc71b1f2209acb637d85745d3041f71
+  checksum: 10c0/e21ee8b079b04d8fe8101898c6402e7cbac38c8f244d64ae6e6ded76d3f73bdc7f83b2d3c8d478b00c76b93d2807b3bc89aab3f2ab7c206716ef202952a9de32
   languageName: node
   linkType: hard
 
@@ -9412,16 +9413,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lucide-react@npm:^1.62.0":
-  version: 1.62.0
-  resolution: "lucide-react@npm:1.62.0"
+"lucide-react@npm:^1.63.0":
+  version: 1.63.0
+  resolution: "lucide-react@npm:1.63.0"
   peerDependencies:
     "@types/react": "*"
     react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 10c0/58334df044a9f837ba2ddc77e7a3c34545fd7ca28d853882df94ba52de54821ed16f34f7ced373089a2972725beadb8b82ebb9b9d1dcbcd468f87d05949ee46d
+  checksum: 10c0/697becd36aea8f4242fc9c7a8bf4b8838c2432bd4fc08d29d29c1b08faf38e809e8e6d73013a586406e225f908278a2bc4c32f2a84f8b1a6a0174e95f51c8456
   languageName: node
   linkType: hard
 

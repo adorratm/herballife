@@ -6,11 +6,17 @@ import { useEffect, useState } from "react";
 
 const EVENT = "herbal:cart-toast";
 
-export function emitCartToast(productName?: string) {
+export function emitCartToast(
+  productName?: string,
+  variantLabel?: string | null,
+) {
   if (typeof window === "undefined") return;
   window.dispatchEvent(
     new CustomEvent(EVENT, {
-      detail: { name: productName || undefined },
+      detail: {
+        name: productName || undefined,
+        variantLabel: variantLabel?.trim() || undefined,
+      },
     }),
   );
 }
@@ -20,11 +26,15 @@ export function CartToastHost() {
   const tCommon = useTranslations("common");
   const [visible, setVisible] = useState(false);
   const [name, setName] = useState("");
+  const [variant, setVariant] = useState("");
 
   useEffect(() => {
     function onToast(e: Event) {
-      const detail = (e as CustomEvent<{ name?: string }>).detail;
+      const detail = (
+        e as CustomEvent<{ name?: string; variantLabel?: string }>
+      ).detail;
       setName(detail?.name || tCommon("product"));
+      setVariant(detail?.variantLabel || "");
       setVisible(true);
       window.setTimeout(() => setVisible(false), 3200);
     }
@@ -45,7 +55,10 @@ export function CartToastHost() {
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-bold text-on-surface">{tCart("added")}</p>
-        <p className="truncate text-xs text-on-surface-variant">{name}</p>
+        <p className="truncate text-xs text-on-surface-variant">
+          {name}
+          {variant ? ` · ${variant}` : ""}
+        </p>
       </div>
       <Link
         href="/sepet"

@@ -222,6 +222,10 @@ export type Order = {
   createdAt?: string;
   updatedAt?: string;
   shipments?: Shipment[];
+  payment?: {
+    provider: string;
+    status: string;
+  } | null;
 };
 
 export type ReturnRequestType = "cancel" | "return";
@@ -334,6 +338,8 @@ export type BlogQuery = {
   limit?: number;
 };
 
+export type PaymentMethod = "paytr" | "cod" | "bank_transfer";
+
 export type CheckoutPayload = {
   customerEmail: string;
   customerName: string;
@@ -360,6 +366,8 @@ export type CheckoutPayload = {
     taxOffice?: string;
   };
   shippingProvider: string;
+  /** Varsayılan: paytr */
+  paymentMethod?: PaymentMethod;
   couponCode?: string;
   /** Vitrin dili — sipariş e-postaları bu dile gider */
   locale?: string;
@@ -425,7 +433,9 @@ export type PaymentInitResponse = {
   orderId: string;
   orderNumber: string;
   provider?: string;
-  paymentPageUrl?: string;
+  paymentPageUrl?: string | null;
+  /** cod / bank_transfer için sunucunun önerdiği yönlendirme yolu */
+  redirectPath?: string | null;
   iframeUrl?: string | null;
   token?: string;
   checkoutFormContent?: string;

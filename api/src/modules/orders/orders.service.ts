@@ -29,6 +29,7 @@ import {
   ReviewReturnRequestDto,
   UpdateOrderStatusDto,
   AddressPayloadDto,
+  PaymentMethod,
 } from '@modules/orders/dto/orders.dto';
 import { NotificationsService } from '@modules/notifications/notifications.service';
 import { CouponsService } from '@modules/coupons/coupons.service';
@@ -68,9 +69,13 @@ export class OrdersService {
     dto: CreateOrderDto,
     userId?: string | null,
     sessionId?: string | null,
-    paymentProvider?: 'paytr',
+    paymentProvider?: PaymentMethod,
     options?: { notifyReceived?: boolean },
   ): Promise<Order> {
+    const provider: PaymentMethod =
+      dto.paymentMethod ?? paymentProvider ?? 'paytr';
+    const offlinePayment = provider === 'cod' || provider === 'bank_transfer';
+
     if (!userId && !sessionId) {
       throw new BadRequestException('Kullanıcı veya X-Session-Id gerekli');
     }
@@ -146,7 +151,11 @@ export class OrdersService {
       const created = tx.create(Order, {
         orderNumber,
         userId: userId ?? null,
-        status: OrderStatus.PENDING_PAYMENT,
+        // Kapıda ödeme: sipariş doğrudan hazırlanır. Havale/EFT: ödeme onayına kadar bekler.
+        status:
+          provider === 'cod'
+            ? OrderStatus.PROCESSING
+            : OrderStatus.PENDING_PAYMENT,
         customerEmail: dto.customerEmail.toLowerCase().trim(),
         customerName: dto.customerName,
         customerPhone: dto.customerPhone,
@@ -191,7 +200,7 @@ export class OrdersService {
 
       const payment = tx.create(Payment, {
         orderId: created.id,
-        provider: paymentProvider || 'paytr',
+        provider,
         status: PaymentStatus.PENDING,
         amount: total.toFixed(2),
         currency: 'TRY',
@@ -205,6 +214,11 @@ export class OrdersService {
         relations: { items: true, payment: true },
       });
     });
+
+    if (offlinePayment) {
+      // Online ödeme adımı yok: stok, kupon ve sepet sipariş oluşunca işlenir.
+      await this.finalizeOfflinePaymentOrder(order);
+    }
 
     try {
       if (options?.notifyReceived !== false) {
@@ -221,13 +235,40 @@ export class OrdersService {
     return order;
   }
 
+  /**
+   * Kapıda ödeme / havale-EFT siparişleri için PayTR başarı akışındaki yan etkileri uygular
+   * (stok düşümü, kupon kullanımı, sepet temizliği). Hatalar siparişi bozmaz, loglanır.
+   */
+  private async finalizeOfflinePaymentOrder(order: Order): Promise<void> {
+    const steps: Array<[string, () => Promise<unknown>]> = [
+      ['stock', () => this.inventory.decrementForPaidOrder(order.id)],
+      ['coupon', () => this.coupons.confirmRedemptionForPaidOrder(order.id)],
+      ['cart', () => this.cartService.clearCartById(order.sourceCartId)],
+    ];
+    for (const [name, run] of steps) {
+      try {
+        await run();
+      } catch (err) {
+        this.logger.error(
+          `Offline payment order ${order.id} ${name} step failed: ${
+            err instanceof Error ? err.message : String(err)
+          }`,
+        );
+      }
+    }
+  }
+
   async notifyOrderReceived(orderId: string) {
+    const order = await this.em.findOne(Order, {
+      where: { id: orderId },
+      select: { id: true, status: true },
+    });
     await this.notifications.enqueueOrderStatus(
       orderId,
       'order_received',
       ['email', 'whatsapp'],
       {
-        status: OrderStatus.PENDING_PAYMENT,
+        status: order?.status ?? OrderStatus.PENDING_PAYMENT,
       },
     );
     await this.notifications.enqueueOrderOpsAlert(orderId, 'received');
@@ -380,6 +421,20 @@ export class OrdersService {
       order.deliveredAt = new Date();
     }
     const saved = await this.em.save(order);
+
+    // Havale/EFT: admin PAID yapınca, kapıda ödeme: teslim edilince ödeme tahsil edilmiş sayılır.
+    const offlineProvider = order.payment?.provider;
+    if (
+      order.payment &&
+      order.payment.status === PaymentStatus.PENDING &&
+      ((offlineProvider === 'bank_transfer' &&
+        (dto.status === OrderStatus.PAID ||
+          dto.status === OrderStatus.DELIVERED)) ||
+        (offlineProvider === 'cod' && dto.status === OrderStatus.DELIVERED))
+    ) {
+      order.payment.status = PaymentStatus.SUCCESS;
+      await this.em.save(order.payment);
+    }
 
     if (previous !== dto.status) {
       try {

@@ -16,6 +16,9 @@ function SuccessContent() {
   const t = useTranslations("paymentSuccess");
   const params = useSearchParams();
   const orderId = params.get("orderId");
+  const rawMethod = params.get("method");
+  const method: "cod" | "bank_transfer" | null =
+    rawMethod === "cod" || rawMethod === "bank_transfer" ? rawMethod : null;
   const orderNumber =
     params.get("orderNumber") ||
     (typeof window !== "undefined"
@@ -74,13 +77,21 @@ function SuccessContent() {
           </span>
         </div>
         <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-          {t("kicker")}
+          {method === "cod"
+            ? t("codKicker")
+            : method === "bank_transfer"
+              ? t("bankKicker")
+              : t("kicker")}
         </p>
         <h1 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl">
           {t("title")}
         </h1>
         <p className="mt-4 text-base leading-relaxed text-on-surface-variant">
-          {t("lead")}
+          {method === "cod"
+            ? t("codLead")
+            : method === "bank_transfer"
+              ? t("bankLead")
+              : t("lead")}
         </p>
         <p className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-primary">
           <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
@@ -104,6 +115,19 @@ function SuccessContent() {
           )}
 
           <div className="flex flex-wrap gap-3">
+            {method === "bank_transfer" ? (
+              <>
+                <Link href="/banka-hesaplari" className="btn-cta px-5 py-3 text-xs sm:px-6">
+                  {t("bankAccountsLink")}
+                </Link>
+                <Link
+                  href="/odeme-bildirimi"
+                  className="border border-outline-variant/40 px-6 py-3 font-meta text-[10px] uppercase tracking-widest hover:border-primary"
+                >
+                  {t("paymentNoticeLink")}
+                </Link>
+              </>
+            ) : null}
             {loggedIn && orderId ? (
               <Link
                 href={orderHref(orderId)}

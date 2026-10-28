@@ -287,7 +287,17 @@
     "mobilePay": "Sicher bezahlen",
     "selectedDefaultShipping": " · Standard-Lieferung",
     "selectedDefaultBilling": " · Standard-Rechnung",
-    "invalidCoupon": "Ungültiger Gutschein"
+    "invalidCoupon": "Ungültiger Gutschein",
+    "paymentMethodHeading": "Zahlungsart",
+    "payMethodPaytr": "Kredit- / Debitkarte",
+    "payMethodPaytrDesc": "Sichere Kartenzahlung mit 3D Secure über PayTR",
+    "payMethodCod": "Nachnahme",
+    "payMethodCodDesc": "Bezahlen Sie bei Lieferung bar oder per Karte beim Kurier",
+    "payMethodBank": "Überweisung",
+    "payMethodBankDesc": "Überweisen Sie nach der Bestellung; wir bereiten die Bestellung nach Zahlungseingang vor",
+    "placeOrderCod": "Bestellen (Nachnahme)",
+    "placeOrderBank": "Bestellen (Überweisung)",
+    "mobilePlaceOrder": "Bestellen"
   },
   "product": {
     "addToCart": "In den Warenkorb",
@@ -702,7 +712,13 @@
     "myAccount": "Mein Konto",
     "signIn": "Anmelden",
     "continueShopping": "Weiter einkaufen",
-    "trackShipment": "Sendungsverfolgung"
+    "trackShipment": "Sendungsverfolgung",
+    "codKicker": "Bestellung erhalten",
+    "codLead": "Ihre Bestellung ist eingegangen und wird vorbereitet. Sie zahlen bei Lieferung.",
+    "bankKicker": "Bestellung erhalten — Zahlung ausstehend",
+    "bankLead": "Ihre Bestellung wurde angelegt. Bitte überweisen Sie den Betrag auf unsere Bankkonten und geben Sie Ihre Bestellnummer als Verwendungszweck an. Nach Zahlungseingang bereiten wir Ihre Bestellung vor.",
+    "bankAccountsLink": "Bankkonten",
+    "paymentNoticeLink": "Zahlungsmitteilung senden"
   },
   "paymentNotify": {
     "modalTitle": "Benachrichtigung bereit",
@@ -780,7 +796,13 @@
     "vat": "MwSt.",
     "total": "Gesamt",
     "deliveryAddress": "Lieferadresse",
-    "billingAddress": "Rechnungsadresse"
+    "billingAddress": "Rechnungsadresse",
+    "paymentMethod": "Zahlungsart",
+    "paymentMethodPaytr": "Karte (PayTR)",
+    "paymentMethodCod": "Nachnahme",
+    "paymentMethodBank": "Überweisung",
+    "bankTransferHint": "Ihre Überweisung steht noch aus. Geben Sie Ihre Bestellnummer als Verwendungszweck an.",
+    "bankAccountsLink": "Bankkonten"
   },
   "notificationsPage": {
     "breadcrumb": "Konto / Benachrichtigungen",

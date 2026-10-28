@@ -1,0 +1,254 @@
+[
+  {
+    "source": "frontend/public/brand/favicon.jpg",
+    "key": "brand/favicon.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/favicon.webp",
+    "bytes": 8688
+  },
+  {
+    "source": "frontend/public/brand/logo-source-transparent.png",
+    "key": "brand/logo-source-transparent.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/logo-source-transparent.webp",
+    "bytes": 12744
+  },
+  {
+    "source": "frontend/public/brand/logo-source.png",
+    "key": "brand/logo-source.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/logo-source.webp",
+    "bytes": 12912
+  },
+  {
+    "source": "frontend/public/brand/logo.jpg",
+    "key": "brand/logo.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/logo.webp",
+    "bytes": 28864
+  },
+  {
+    "source": "frontend/public/brand/og.jpg",
+    "key": "brand/og.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/og.webp",
+    "bytes": 32300
+  },
+  {
+    "source": "frontend/public/images/brand/logo-email.png",
+    "key": "brand/logo-email.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/logo-email.webp",
+    "bytes": 24782
+  },
+  {
+    "source": "assets/brand/adaptive-icon.png",
+    "key": "brand/adaptive-icon.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/adaptive-icon.webp",
+    "bytes": 5144
+  },
+  {
+    "source": "assets/brand/apple-icon.png",
+    "key": "brand/apple-icon.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/apple-icon.webp",
+    "bytes": 886
+  },
+  {
+    "source": "assets/brand/favicon-48.png",
+    "key": "brand/favicon-48.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/favicon-48.webp",
+    "bytes": 402
+  },
+  {
+    "source": "assets/brand/icon-1024.png",
+    "key": "brand/icon-1024.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/icon-1024.webp",
+    "bytes": 6740
+  },
+  {
+    "source": "assets/brand/icon-256.png",
+    "key": "brand/icon-256.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/icon-256.webp",
+    "bytes": 1532
+  },
+  {
+    "source": "assets/brand/icon.png",
+    "key": "brand/icon.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/icon.webp",
+    "bytes": 260
+  },
+  {
+    "source": "frontend/public/images/products/2026-paket-1-shaker-hediyeli.png",
+    "key": "products/2026-paket-1-shaker-hediyeli.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/2026-paket-1-shaker-hediyeli.webp",
+    "bytes": 28546
+  },
+  {
+    "source": "frontend/public/images/products/2026-paket-2-shaker-hediyeli.png",
+    "key": "products/2026-paket-2-shaker-hediyeli.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/2026-paket-2-shaker-hediyeli.webp",
+    "bytes": 30082
+  },
+  {
+    "source": "frontend/public/images/products/2026-paket-3-shaker-hediyeli.png",
+    "key": "products/2026-paket-3-shaker-hediyeli.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/2026-paket-3-shaker-hediyeli.webp",
+    "bytes": 30244
+  },
+  {
+    "source": "frontend/public/images/products/2026-paket-4-shaker-hediyeli.png",
+    "key": "products/2026-paket-4-shaker-hediyeli.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/2026-paket-4-shaker-hediyeli.webp",
+    "bytes": 30282
+  },
+  {
+    "source": "frontend/public/images/products/2026-paket-5-shaker-hediyeli.png",
+    "key": "products/2026-paket-5-shaker-hediyeli.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/2026-paket-5-shaker-hediyeli.webp",
+    "bytes": 30684
+  },
+  {
+    "source": "frontend/public/images/products/bitkisel-konsantre-caylar-klasik-50-g.png",
+    "key": "products/bitkisel-konsantre-caylar-klasik-50-g.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/bitkisel-konsantre-caylar-klasik-50-g.webp",
+    "bytes": 18528
+  },
+  {
+    "source": "frontend/public/images/products/formul-1-besleyici-shake-karisimi-ahududu-ve-beyaz-cikolata-aromali-500gr.png",
+    "key": "products/formul-1-besleyici-shake-karisimi-ahududu-ve-beyaz-cikolata-aromali-500gr.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/formul-1-besleyici-shake-karisimi-ahududu-ve-beyaz-cikolata-aromali-500gr.webp",
+    "bytes": 20702
+  },
+  {
+    "source": "frontend/public/images/products/formul-1-besleyici-shake-karisimi-cikolata-aromali-500-g.jpeg",
+    "key": "products/formul-1-besleyici-shake-karisimi-cikolata-aromali-500-g.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/formul-1-besleyici-shake-karisimi-cikolata-aromali-500-g.webp",
+    "bytes": 41400
+  },
+  {
+    "source": "frontend/public/images/products/formul-1-besleyici-shake-karisimi-muz-aromali-550-g.jpeg",
+    "key": "products/formul-1-besleyici-shake-karisimi-muz-aromali-550-g.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/formul-1-besleyici-shake-karisimi-muz-aromali-550-g.webp",
+    "bytes": 41400
+  },
+  {
+    "source": "frontend/public/images/products/formul-1-shake.png",
+    "key": "products/formul-1-shake.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/formul-1-shake.webp",
+    "bytes": 23218
+  },
+  {
+    "source": "frontend/public/images/products/formul-2-vitamin-ve-mineral-kompleks-erkekler-icin-60-tablet.png",
+    "key": "products/formul-2-vitamin-ve-mineral-kompleks-erkekler-icin-60-tablet.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/formul-2-vitamin-ve-mineral-kompleks-erkekler-icin-60-tablet.webp",
+    "bytes": 22940
+  },
+  {
+    "source": "frontend/public/images/products/formul-2-vitamin-ve-mineral-kompleks-kadinlar-icin-60-tablet.png",
+    "key": "products/formul-2-vitamin-ve-mineral-kompleks-kadinlar-icin-60-tablet.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/formul-2-vitamin-ve-mineral-kompleks-kadinlar-icin-60-tablet.webp",
+    "bytes": 23382
+  },
+  {
+    "source": "frontend/public/images/products/herbal-aloe-konsantre-icecek-473-ml.png",
+    "key": "products/herbal-aloe-konsantre-icecek-473-ml.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/herbal-aloe-konsantre-icecek-473-ml.webp",
+    "bytes": 16834
+  },
+  {
+    "source": "frontend/public/images/products/hl-skin-besleyici-el-ve-vucut-losyonu-147-ml.png",
+    "key": "products/hl-skin-besleyici-el-ve-vucut-losyonu-147-ml.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/hl-skin-besleyici-el-ve-vucut-losyonu-147-ml.webp",
+    "bytes": 4460
+  },
+  {
+    "source": "frontend/public/images/products/hl-skin-besleyici-goz-kremi-15-ml.png",
+    "key": "products/hl-skin-besleyici-goz-kremi-15-ml.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/hl-skin-besleyici-goz-kremi-15-ml.webp",
+    "bytes": 5098
+  },
+  {
+    "source": "frontend/public/images/products/hl-skin-yenileyici-jel-temizleyici-147-ml.png",
+    "key": "products/hl-skin-yenileyici-jel-temizleyici-147-ml.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/hl-skin-yenileyici-jel-temizleyici-147-ml.webp",
+    "bytes": 4814
+  },
+  {
+    "source": "frontend/public/images/products/kilo-alma-seti-shaker-hediyeli.png",
+    "key": "products/kilo-alma-seti-shaker-hediyeli.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/kilo-alma-seti-shaker-hediyeli.webp",
+    "bytes": 141038
+  },
+  {
+    "source": "frontend/public/images/products/multi-fiber-multi-fiber-lifli-ve-aromali-icecek-tozu-elma-204-g.png",
+    "key": "products/multi-fiber-multi-fiber-lifli-ve-aromali-icecek-tozu-elma-204-g.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/multi-fiber-multi-fiber-lifli-ve-aromali-icecek-tozu-elma-204-g.webp",
+    "bytes": 30672
+  },
+  {
+    "source": "frontend/public/images/products/paket-1.jpg",
+    "key": "products/paket-1.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/paket-1.webp",
+    "bytes": 23672
+  },
+  {
+    "source": "frontend/public/images/products/paket-2.jpg",
+    "key": "products/paket-2.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/paket-2.webp",
+    "bytes": 32382
+  },
+  {
+    "source": "frontend/public/images/products/paket-3.jpg",
+    "key": "products/paket-3.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/paket-3.webp",
+    "bytes": 25108
+  },
+  {
+    "source": "frontend/public/images/products/paket-4.jpg",
+    "key": "products/paket-4.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/paket-4.webp",
+    "bytes": 32518
+  },
+  {
+    "source": "frontend/public/images/products/shaker-tekli.jpg",
+    "key": "products/shaker-tekli.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/shaker-tekli.webp",
+    "bytes": 4188
+  },
+  {
+    "source": "frontend/public/images/products/thermo-complete-90-tablet.png",
+    "key": "products/thermo-complete-90-tablet.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/products/thermo-complete-90-tablet.webp",
+    "bytes": 25838
+  },
+  {
+    "source": "frontend/public/images/cutouts/bitkisel-cay.png",
+    "key": "cutouts/bitkisel-cay.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/cutouts/bitkisel-cay.webp",
+    "bytes": 19682
+  },
+  {
+    "source": "frontend/public/images/cutouts/formul-1-shake.png",
+    "key": "cutouts/formul-1-shake.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/cutouts/formul-1-shake.webp",
+    "bytes": 23892
+  },
+  {
+    "source": "frontend/public/images/cutouts/formul-2-vitamin.png",
+    "key": "cutouts/formul-2-vitamin.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/cutouts/formul-2-vitamin.webp",
+    "bytes": 25990
+  },
+  {
+    "source": "frontend/public/images/cutouts/herbal-aloe.png",
+    "key": "cutouts/herbal-aloe.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/cutouts/herbal-aloe.webp",
+    "bytes": 17356
+  },
+  {
+    "source": "frontend/public/images/cutouts/multi-fiber.png",
+    "key": "cutouts/multi-fiber.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/cutouts/multi-fiber.webp",
+    "bytes": 31178
+  },
+  {
+    "source": "frontend/public/images/cutouts/thermo-complete.png",
+    "key": "cutouts/thermo-complete.webp",
+    "url": "https://herbalkapida.s3.eu-central-1.amazonaws.com/cutouts/thermo-complete.webp",
+    "bytes": 26962
+  }
+]

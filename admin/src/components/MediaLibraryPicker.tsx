@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { api } from '@/lib/api';
+import { api, resolveMediaUrl } from '@/lib/api';
 import { Modal } from '@/components/Modal';
 
 export type MediaAsset = {
@@ -135,7 +135,8 @@ export function MediaLibraryPicker({
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={asset.url}
+                    src={resolveMediaUrl(asset.url)}
+                    loading="lazy"
                     alt={asset.filename}
                     className="aspect-square w-full object-cover"
                   />

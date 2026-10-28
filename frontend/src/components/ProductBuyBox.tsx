@@ -293,6 +293,7 @@ export function ProductBuyBox({
           <AddToCartButton
             productId={product.id}
             variantId={selected?.id}
+            variantLabel={selected?.weightLabel}
             disabled={outOfStock}
             productName={product.name}
             price={Number(displayPrice)}

@@ -1,5 +1,7 @@
 /** Referans mağaza + Botanical — tekrar etmeyen menü setleri */
 
+import { toCdnWebpUrl } from "@/lib/media-cdn";
+
 export type NavItem = { href: string; label: string };
 
 /** Üst ince şerit — sipariş/ödeme kısayolları (CMS menüde tekrarlanmaz) */
@@ -66,7 +68,7 @@ export const CATEGORY_CHIPS: (NavItem & {
     blurb: "Starter products",
     image: "/images/products/shaker-tekli.jpg",
   },
-];
+].map((chip) => ({ ...chip, image: toCdnWebpUrl(chip.image) }));
 
 /** Masaüstü CMS menü için varsayılan (tekrarsız) — SiteHeader navLabel() ile locale */
 export const DEFAULT_HEADER_NAV: NavItem[] = [

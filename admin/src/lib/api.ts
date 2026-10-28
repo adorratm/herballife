@@ -144,3 +144,26 @@ export async function uploadMedia(
   if (options?.folder) form.append('folder', options.folder);
   return apiFormData('/cms/admin/media/upload', form);
 }
+
+/**
+ * Medya URL'sini tarayıcıda güvenle gösterilecek mutlak URL'ye çevirir:
+ * göreli yollar API_URL'ye bağlanır; sayfa https iken http (localhost hariç)
+ * görseller https'e yükseltilir (mixed content engeli).
+ */
+export function resolveMediaUrl(url: string | null | undefined): string {
+  if (!url) return '';
+  let out = url.trim();
+  if (out.startsWith('//')) out = `https:${out}`;
+  if (!/^(https?:|data:|blob:)/i.test(out)) {
+    out = `${API_URL.replace(/\/$/, '')}/${out.replace(/^\//, '')}`;
+  }
+  if (
+    typeof window !== 'undefined' &&
+    window.location.protocol === 'https:' &&
+    /^http:\/\//i.test(out) &&
+    !/^http:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/i.test(out)
+  ) {
+    out = out.replace(/^http:/i, 'https:');
+  }
+  return out;
+}

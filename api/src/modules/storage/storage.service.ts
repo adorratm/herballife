@@ -114,6 +114,23 @@ export class StorageService {
     };
   }
 
+  /**
+   * Kayıtlı URL'yi her zaman mutlak URL'ye çevirir (göreli /uploads/... veya
+   * eski host ile kaydedilmiş yerel dosyalar için mevcut API_URL / CDN kullanılır).
+   */
+  resolvePublicUrl(url: string, key: string, provider: string): string {
+    if (provider === 'local') {
+      return `${this.apiUrl}/uploads/${key.replace(/\//g, '_')}`;
+    }
+    if (provider === 's3' && !/^https?:\/\//i.test(url)) {
+      return this.cdnUrl
+        ? `${this.cdnUrl}/${key}`
+        : `https://${this.bucket}.s3.${this.region}.amazonaws.com/${key}`;
+    }
+    if (/^https?:\/\//i.test(url)) return url;
+    return `${this.apiUrl}/${url.replace(/^\//, '')}`;
+  }
+
   async delete(key: string, provider: string): Promise<void> {
     if (provider === 's3' && this.s3) {
       await this.s3.send(

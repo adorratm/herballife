@@ -237,8 +237,18 @@ function BrandBlock() {
   return (
     <div className="border-b border-border-muted px-4 py-5">
       <div className="flex items-center gap-3">
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-sm font-bold text-white">
-          H
+        <span
+          className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white ring-1 ring-border-muted"
+          aria-hidden
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/leaf.png"
+            alt=""
+            width={28}
+            height={28}
+            className="h-7 w-7 object-contain"
+          />
         </span>
         <div className="min-w-0">
           <p className="truncate font-display text-base font-bold text-foreground">

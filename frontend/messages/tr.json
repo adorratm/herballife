@@ -287,7 +287,17 @@
     "redirecting": "Yönlendiriliyor…",
     "mobilePay": "Güvenli öde",
     "selectedDefaultShipping": " · varsayılan teslimat",
-    "selectedDefaultBilling": " · varsayılan fatura"
+    "selectedDefaultBilling": " · varsayılan fatura",
+    "paymentMethodHeading": "Ödeme yöntemi",
+    "payMethodPaytr": "Kredi / banka kartı",
+    "payMethodPaytrDesc": "PayTR güvenli ödeme altyapısı ile 3D Secure destekli kart ödemesi",
+    "payMethodCod": "Kapıda ödeme",
+    "payMethodCodDesc": "Siparişiniz teslim edilirken kuryeye nakit veya kartla ödersiniz",
+    "payMethodBank": "Havale / EFT",
+    "payMethodBankDesc": "Sipariş sonrası banka hesabımıza havale/EFT yapın; ödemeniz onaylanınca siparişiniz hazırlanır",
+    "placeOrderCod": "Siparişi Tamamla (Kapıda Ödeme)",
+    "placeOrderBank": "Siparişi Tamamla (Havale / EFT)",
+    "mobilePlaceOrder": "Siparişi tamamla"
   },
   "product": {
     "addToCart": "Sepete Ekle",
@@ -948,7 +958,13 @@
     "myAccount": "Hesabım",
     "signIn": "Giriş yap",
     "continueShopping": "Alışverişe devam",
-    "trackShipment": "Kargo takip"
+    "trackShipment": "Kargo takip",
+    "codKicker": "Sipariş alındı",
+    "codLead": "Siparişiniz alındı ve hazırlanmaya başladı. Ödemeyi teslimat sırasında kapıda yapacaksınız.",
+    "bankKicker": "Sipariş alındı — ödeme bekleniyor",
+    "bankLead": "Siparişiniz oluşturuldu. Lütfen sipariş numaranızı açıklamaya yazarak tutarı banka hesaplarımıza havale/EFT ile gönderin. Ödemeniz onaylandığında siparişiniz hazırlanacaktır.",
+    "bankAccountsLink": "Banka hesapları",
+    "paymentNoticeLink": "Ödeme bildirimi yap"
   },
   "paymentNotify": {
     "modalTitle": "Bildirim hazır",
@@ -1026,7 +1042,13 @@
     "vat": "KDV",
     "total": "Toplam",
     "deliveryAddress": "Teslimat adresi",
-    "billingAddress": "Fatura adresi"
+    "billingAddress": "Fatura adresi",
+    "paymentMethod": "Ödeme yöntemi",
+    "paymentMethodPaytr": "Kart (PayTR)",
+    "paymentMethodCod": "Kapıda ödeme",
+    "paymentMethodBank": "Havale / EFT",
+    "bankTransferHint": "Havale/EFT ödemeniz bekleniyor. Tutarı sipariş numaranızı açıklamaya yazarak gönderin.",
+    "bankAccountsLink": "Banka hesapları"
   },
   "notificationsPage": {
     "breadcrumb": "Hesap / Bildirimler",

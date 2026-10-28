@@ -287,7 +287,17 @@
     "collapse": "Collapse",
     "edit": "Edit",
     "deliveryMethodHeading": "Delivery method",
-    "invalidCoupon": "Invalid coupon"
+    "invalidCoupon": "Invalid coupon",
+    "paymentMethodHeading": "Mode de paiement",
+    "payMethodPaytr": "Carte bancaire",
+    "payMethodPaytrDesc": "Paiement sécurisé par carte avec 3D Secure via PayTR",
+    "payMethodCod": "Paiement à la livraison",
+    "payMethodCodDesc": "Payez le livreur en espèces ou par carte à la réception",
+    "payMethodBank": "Virement bancaire",
+    "payMethodBankDesc": "Effectuez un virement après la commande ; nous préparons le colis dès réception du paiement",
+    "placeOrderCod": "Commander (paiement à la livraison)",
+    "placeOrderBank": "Commander (virement)",
+    "mobilePlaceOrder": "Commander"
   },
   "product": {
     "addToCart": "Ajouter au panier",
@@ -567,7 +577,13 @@
     "myAccount": "My account",
     "signIn": "Sign in",
     "continueShopping": "Continue shopping",
-    "trackShipment": "Shipment tracking"
+    "trackShipment": "Shipment tracking",
+    "codKicker": "Commande reçue",
+    "codLead": "Votre commande a été reçue et est en préparation. Vous paierez à la livraison.",
+    "bankKicker": "Commande reçue — paiement en attente",
+    "bankLead": "Votre commande a été créée. Veuillez virer le montant sur nos comptes bancaires en indiquant votre numéro de commande en référence. Nous préparerons votre commande dès confirmation du paiement.",
+    "bankAccountsLink": "Comptes bancaires",
+    "paymentNoticeLink": "Envoyer un avis de paiement"
   },
   "paymentNotify": {
     "modalTitle": "Notification ready",
@@ -645,7 +661,13 @@
     "vat": "TVA",
     "total": "Total",
     "deliveryAddress": "Delivery address",
-    "billingAddress": "Billing address"
+    "billingAddress": "Billing address",
+    "paymentMethod": "Mode de paiement",
+    "paymentMethodPaytr": "Carte (PayTR)",
+    "paymentMethodCod": "Paiement à la livraison",
+    "paymentMethodBank": "Virement bancaire",
+    "bankTransferHint": "Votre virement est en attente. Indiquez votre numéro de commande en référence.",
+    "bankAccountsLink": "Comptes bancaires"
   },
   "notificationsPage": {
     "breadcrumb": "Account / Notifications",

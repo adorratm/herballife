@@ -2,7 +2,7 @@
 
 import { FormEvent, Suspense, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { api } from '@/lib/api';
+import { api, resolveMediaUrl } from '@/lib/api';
 import { MediaUpload } from '@/components/MediaUpload';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Reveal } from '@/components/Reveal';
@@ -128,7 +128,8 @@ function MediaPageInner() {
               <div className="panel-motion border border-border-muted bg-surface p-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={item.url}
+                  src={resolveMediaUrl(item.url)}
+                  loading="lazy"
                   alt={item.filename}
                   className="aspect-square w-full object-cover"
                 />

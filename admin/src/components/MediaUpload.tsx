@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { uploadMedia } from '@/lib/api';
+import { resolveMediaUrl, uploadMedia } from '@/lib/api';
 import { ImageDropZone } from '@/components/ImageDropZone';
 import { MediaLibraryPicker } from '@/components/MediaLibraryPicker';
 
@@ -54,7 +54,7 @@ export function MediaUpload({
           <div className="relative shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={value}
+              src={resolveMediaUrl(value)}
               alt=""
               className="h-28 w-28 border border-border-muted object-cover"
             />

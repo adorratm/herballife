@@ -1,0 +1,11 @@
+0: count=4042 box=487,85 76x85 aspect=0.89
+1: count=1523 box=460,55 31x113 aspect=0.27
+2: count=1428 box=520,24 54x48 aspect=1.13
+3: count=1424 box=572,49 40x63 aspect=0.63
+4: count=1364 box=573,6 39x58 aspect=0.67
+5: count=1169 box=709,60 33x47 aspect=0.70
+6: count=1167 box=709,121 41x47 aspect=0.87
+7: count=883 box=660,3 6x169 aspect=0.04
+8: count=477 box=745,74 23x34 aspect=0.68
+9: count=291 box=754,136 10x32 aspect=0.31
+10: count=122 box=753,121 12x12 aspect=1.00

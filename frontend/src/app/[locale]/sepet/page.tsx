@@ -84,7 +84,7 @@ export default function CartPage() {
   );
 
   const suggested = useMemo(
-    () => upsells.filter((p) => !cartProductIds.has(p.id)).slice(0, 3),
+    () => upsells.filter((p) => !cartProductIds.has(p.id)).slice(0, 4),
     [upsells, cartProductIds],
   );
 
@@ -330,7 +330,7 @@ export default function CartPage() {
                   <h2 className="mt-1 font-display text-xl">
                     {t("upsellTitle")}
                   </h2>
-                  <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 *:min-w-0">
                     {suggested.map((p) => (
                       <div
                         key={p.id}

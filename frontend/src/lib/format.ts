@@ -2,6 +2,7 @@ import {
   herbalImageForSlug,
   localProductFallback,
 } from "@/lib/herbal-images";
+import { toCdnWebpUrl } from "@/lib/media-cdn";
 import {
   isBrokenRemoteImageUrl,
   stockImage,
@@ -50,12 +51,12 @@ function isUsableImageUrl(url: string): boolean {
 
 export function productImage(url: string | null | undefined, seed = "product") {
   const bySlug = herbalImageForSlug(seed);
-  if (bySlug) return bySlug;
+  if (bySlug) return toCdnWebpUrl(bySlug);
 
   if (url && isUsableImageUrl(url)) {
-    return url.trim();
+    return toCdnWebpUrl(url.trim());
   }
-  return localProductFallback(seed);
+  return toCdnWebpUrl(localProductFallback(seed));
 }
 
 const BLOG_PLACEHOLDER_KEYS: StockImageKey[] = [
