@@ -199,29 +199,72 @@ jobs:
           echo "path=${P:-/opt/herbalkapida}" >> "$GITHUB_OUTPUT"
           echo "port=${PORT:-22}" >> "$GITHUB_OUTPUT"
 
-      # GitHub runner → VPS SSH bazen reset yiyor (fail2ban / ağ); SCP + SSH retry ile toparlanır.
+      # appleboy/scp|ssh composite oldu → wretry saramıyor.
+      # Native ssh + bash retry (Docker NAT handshake reset'ini de azaltır).
+      - name: Setup SSH agent
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_SSH_PASSPHRASE: ${{ secrets.DEPLOY_SSH_PASSPHRASE }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ steps.dest.outputs.port }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${DEPLOY_PORT}" -T 10 "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+          eval "$(ssh-agent -s)"
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+          if [ -n "${DEPLOY_SSH_PASSPHRASE:-}" ]; then
+            umask 077
+            PASS_FILE=$(mktemp)
+            printf '%s' "$DEPLOY_SSH_PASSPHRASE" > "$PASS_FILE"
+            printf '#!/bin/sh\ncat %q\n' "$PASS_FILE" > /tmp/ssh-askpass.sh
+            chmod 700 /tmp/ssh-askpass.sh
+            DISPLAY=:0 SSH_ASKPASS=/tmp/ssh-askpass.sh SSH_ASKPASS_REQUIRE=force ssh-add ~/.ssh/deploy_key
+            rm -f /tmp/ssh-askpass.sh "$PASS_FILE"
+          else
+            ssh-add ~/.ssh/deploy_key
+          fi
+
       - name: Sync files to server
-        uses: Wandalen/wretry.action@v3.5.0
-        with:
-          attempt_limit: 4
-          attempt_delay: 20000
-          action: appleboy/scp-action@v0.1.7
-          # toJSON: PEM key satırları nested YAML'ı kırmasın
-          with: |
-            host: ${{ secrets.DEPLOY_HOST }}
-            username: ${{ secrets.DEPLOY_USER }}
-            key: ${{ toJSON(secrets.DEPLOY_SSH_KEY) }}
-            port: ${{ steps.dest.outputs.port }}
-            passphrase: ${{ toJSON(secrets.DEPLOY_SSH_PASSPHRASE) }}
-            source: "docker-compose.prod.yml,deploy/deploy.sh,deploy/.env.production.example,docker/api.Dockerfile,docker/frontend.Dockerfile,docker/admin.Dockerfile,frontend/public/downloads/.gitkeep"
-            target: ${{ steps.dest.outputs.path }}
-            overwrite: true
-            timeout: 120s
-            command_timeout: 10m
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ steps.dest.outputs.port }}
+          TARGET: ${{ steps.dest.outputs.path }}
+        run: |
+          set -euo pipefail
+          SSH_OPTS=(-o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=30 -o ServerAliveInterval=15)
+          retry() {
+            local n=0
+            until "$@"; do
+              n=$((n + 1))
+              [ "$n" -ge 4 ] && { echo "::error::SSH/SCP 4 denemede başarısız"; return 1; }
+              echo "Bağlantı hatası — ${n}/4, 20s sonra tekrar..."
+              sleep 20
+            done
+          }
+          FILES=(
+            docker-compose.prod.yml
+            deploy/deploy.sh
+            deploy/.env.production.example
+            docker/api.Dockerfile
+            docker/frontend.Dockerfile
+            docker/admin.Dockerfile
+            frontend/public/downloads/.gitkeep
+          )
+          retry ssh "${SSH_OPTS[@]}" -p "$PORT" "${REMOTE_USER}@${HOST}" \
+            "mkdir -p '${TARGET}/deploy' '${TARGET}/frontend/public/downloads' '${TARGET}/docker'"
+          retry bash -c "set -o pipefail; tar czf - ${FILES[*]} | ssh ${SSH_OPTS[*]} -p \"$PORT\" \"${REMOTE_USER}@${HOST}\" \"cd '${TARGET}' && tar xzf -\""
 
       - name: Bootstrap + rolling deploy
-        uses: Wandalen/wretry.action@v3.5.0
         env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ steps.dest.outputs.port }}
           GHCR_TOKEN: ${{ secrets.GHCR_PULL_TOKEN != '' && secrets.GHCR_PULL_TOKEN || secrets.GITHUB_TOKEN }}
           GHCR_USER: ${{ secrets.GHCR_PULL_USER != '' && secrets.GHCR_PULL_USER || github.actor }}
           IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
@@ -230,43 +273,57 @@ jobs:
           DEPLOY_PATH: ${{ steps.dest.outputs.path }}
           DEPLOY_ENV_CONTENT: ${{ secrets.DEPLOY_ENV }}
           SEED_FLAG: ${{ github.event_name == 'workflow_dispatch' && inputs.seed && '1' || '0' }}
-        with:
-          attempt_limit: 3
-          attempt_delay: 15000
-          action: appleboy/ssh-action@v1.2.0
-          with: |
-            host: ${{ secrets.DEPLOY_HOST }}
-            username: ${{ secrets.DEPLOY_USER }}
-            key: ${{ toJSON(secrets.DEPLOY_SSH_KEY) }}
-            port: ${{ steps.dest.outputs.port }}
-            passphrase: ${{ toJSON(secrets.DEPLOY_SSH_PASSPHRASE) }}
-            envs: GHCR_TOKEN,GHCR_USER,IMAGE_TAG,GHCR_OWNER,GHCR_REPO,DEPLOY_PATH,DEPLOY_ENV_CONTENT,SEED_FLAG
-            script: |
-              set -euo pipefail
-              mkdir -p "$DEPLOY_PATH/deploy" "$DEPLOY_PATH/frontend/public/downloads" "$DEPLOY_PATH/docker"
-              cd "$DEPLOY_PATH"
-              chmod +x deploy/deploy.sh 2>/dev/null || true
+        run: |
+          set -euo pipefail
+          SSH_OPTS=(-o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=30 -o ServerAliveInterval=15)
+          retry() {
+            local n=0
+            until "$@"; do
+              n=$((n + 1))
+              [ "$n" -ge 3 ] && { echo "::error::Remote deploy 3 denemede başarısız"; return 1; }
+              echo "SSH hata — ${n}/3, 15s sonra tekrar..."
+              sleep 15
+            done
+          }
+          {
+            printf '#!/usr/bin/env bash\nset -euo pipefail\n'
+            printf 'export GHCR_TOKEN=%q\n' "$GHCR_TOKEN"
+            printf 'export GHCR_USER=%q\n' "$GHCR_USER"
+            printf 'export IMAGE_TAG=%q\n' "$IMAGE_TAG"
+            printf 'export GHCR_OWNER=%q\n' "$GHCR_OWNER"
+            printf 'export GHCR_REPO=%q\n' "$GHCR_REPO"
+            printf 'export DEPLOY_PATH=%q\n' "$DEPLOY_PATH"
+            printf 'export DEPLOY_ENV_CONTENT=%q\n' "$DEPLOY_ENV_CONTENT"
+            printf 'export SEED_FLAG=%q\n' "$SEED_FLAG"
+            cat <<'EOS'
+          mkdir -p "$DEPLOY_PATH/deploy" "$DEPLOY_PATH/frontend/public/downloads" "$DEPLOY_PATH/docker"
+          cd "$DEPLOY_PATH"
+          chmod +x deploy/deploy.sh 2>/dev/null || true
 
-              # DEPLOY_ENV secret doluysa her deploy'da güncelle (GitHub = kaynak).
-              # Yoksa yalnızca ilk kez örnek dosyadan oluştur.
-              if [ -n "${DEPLOY_ENV_CONTENT:-}" ]; then
-                if [ -f deploy/.env ]; then
-                  cp -a deploy/.env "deploy/.env.bak.$(date +%Y%m%d%H%M%S)" || true
-                fi
-                printf '%s\n' "$DEPLOY_ENV_CONTENT" > deploy/.env
-                # Windows CRLF → LF (şifre auth kırılmasın)
-                sed -i 's/\r$//' deploy/.env || true
-                chmod 600 deploy/.env
-                echo "deploy/.env DEPLOY_ENV secret'tan yazıldı/güncellendi"
-              elif [ ! -f deploy/.env ]; then
-                cp deploy/.env.production.example deploy/.env
-                sed -i 's/\r$//' deploy/.env || true
-                chmod 600 deploy/.env
-                echo "deploy/.env örnekten oluşturuldu — JWT/DB şifrelerini güncelleyin"
-              fi
+          if [ -n "${DEPLOY_ENV_CONTENT:-}" ]; then
+            if [ -f deploy/.env ]; then
+              cp -a deploy/.env "deploy/.env.bak.$(date +%Y%m%d%H%M%S)" || true
+            fi
+            printf '%s\n' "$DEPLOY_ENV_CONTENT" > deploy/.env
+            sed -i 's/\r$//' deploy/.env || true
+            chmod 600 deploy/.env
+            echo "deploy/.env DEPLOY_ENV secret'tan yazıldı/güncellendi"
+          elif [ ! -f deploy/.env ]; then
+            cp deploy/.env.production.example deploy/.env
+            sed -i 's/\r$//' deploy/.env || true
+            chmod 600 deploy/.env
+            echo "deploy/.env örnekten oluşturuldu — JWT/DB şifrelerini güncelleyin"
+          fi
 
-              echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
-              export HERBAL_KAPIDA_USE_REGISTRY=1
-              export IMAGE_TAG GHCR_OWNER GHCR_REPO
-              export SEED_ON_DEPLOY="${SEED_FLAG:-0}"
-              bash deploy/deploy.sh
+          echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+          export HERBAL_KAPIDA_USE_REGISTRY=1
+          export IMAGE_TAG GHCR_OWNER GHCR_REPO
+          export SEED_ON_DEPLOY="${SEED_FLAG:-0}"
+          bash deploy/deploy.sh
+          EOS
+          } > /tmp/remote-deploy.sh
+
+          retry scp "${SSH_OPTS[@]}" -P "$PORT" \
+            /tmp/remote-deploy.sh "${REMOTE_USER}@${HOST}:/tmp/herbal-remote-deploy.sh"
+          retry ssh "${SSH_OPTS[@]}" -p "$PORT" \
+            "${REMOTE_USER}@${HOST}" "bash /tmp/herbal-remote-deploy.sh; rm -f /tmp/herbal-remote-deploy.sh"
