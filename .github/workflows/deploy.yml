@@ -206,12 +206,13 @@ jobs:
           attempt_limit: 4
           attempt_delay: 20000
           action: appleboy/scp-action@v0.1.7
+          # toJSON: PEM key satırları nested YAML'ı kırmasın
           with: |
             host: ${{ secrets.DEPLOY_HOST }}
             username: ${{ secrets.DEPLOY_USER }}
-            key: ${{ secrets.DEPLOY_SSH_KEY }}
+            key: ${{ toJSON(secrets.DEPLOY_SSH_KEY) }}
             port: ${{ steps.dest.outputs.port }}
-            passphrase: ${{ secrets.DEPLOY_SSH_PASSPHRASE }}
+            passphrase: ${{ toJSON(secrets.DEPLOY_SSH_PASSPHRASE) }}
             source: "docker-compose.prod.yml,deploy/deploy.sh,deploy/.env.production.example,docker/api.Dockerfile,docker/frontend.Dockerfile,docker/admin.Dockerfile,frontend/public/downloads/.gitkeep"
             target: ${{ steps.dest.outputs.path }}
             overwrite: true
@@ -236,9 +237,9 @@ jobs:
           with: |
             host: ${{ secrets.DEPLOY_HOST }}
             username: ${{ secrets.DEPLOY_USER }}
-            key: ${{ secrets.DEPLOY_SSH_KEY }}
+            key: ${{ toJSON(secrets.DEPLOY_SSH_KEY) }}
             port: ${{ steps.dest.outputs.port }}
-            passphrase: ${{ secrets.DEPLOY_SSH_PASSPHRASE }}
+            passphrase: ${{ toJSON(secrets.DEPLOY_SSH_PASSPHRASE) }}
             envs: GHCR_TOKEN,GHCR_USER,IMAGE_TAG,GHCR_OWNER,GHCR_REPO,DEPLOY_PATH,DEPLOY_ENV_CONTENT,SEED_FLAG
             script: |
               set -euo pipefail
