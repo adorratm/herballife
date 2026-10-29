@@ -627,7 +627,12 @@ async function seed() {
         }),
       );
       console.log('Legal:', slug);
-    } else if (!exists.content || exists.content.includes('örnek içerik')) {
+    } else if (
+      !exists.content ||
+      exists.content.includes('örnek içerik') ||
+      /güncellenecek/i.test(exists.content) ||
+      exists.content.includes('500 000 00 00')
+    ) {
       exists.title = meta.title;
       exists.content = meta.content;
       exists.isPublished = true;
@@ -960,8 +965,13 @@ async function seed() {
       const wa = { ...(exists.value || {}) } as Record<string, unknown>;
       const defaults = value as Record<string, unknown>;
       let changed = false;
-      if (!wa.phone || wa.phone === '') {
-        wa.phone = defaults.phone;
+      const phoneStr = typeof wa.phone === 'string' ? wa.phone : '';
+      // Eski 505 WhatsApp / boş → contact.phone ile senkron (defaults.phone boş)
+      if (
+        !phoneStr ||
+        /505\s*142\s*0710|905051420710/.test(phoneStr.replace(/\s/g, ''))
+      ) {
+        wa.phone = defaults.phone ?? '';
         changed = true;
       }
       if (
@@ -975,6 +985,25 @@ async function seed() {
         exists.value = wa;
         await em.save(exists);
         console.log('Site setting whatsapp: updated');
+      }
+    } else if (key === 'promises') {
+      const promises = { ...(exists.value || {}) } as Record<string, unknown>;
+      const defaults = value as Record<string, unknown>;
+      let changed = false;
+      if (promises.returnDays === 30 || promises.returnDays == null) {
+        promises.returnDays = defaults.returnDays ?? 14;
+        changed = true;
+      }
+      for (const field of ['sameDayCutoff', 'sameDayShipping', 'freeCoaching']) {
+        if (promises[field] === undefined) {
+          promises[field] = defaults[field];
+          changed = true;
+        }
+      }
+      if (changed) {
+        exists.value = promises;
+        await em.save(exists);
+        console.log('Site setting promises: updated');
       }
     } else if (key === 'welcomePopup') {
       const popup = { ...(exists.value || {}) } as Record<string, unknown>;
@@ -1028,26 +1057,6 @@ async function seed() {
         exists.value = popup;
         await em.save(exists);
         console.log('Site setting welcomePopup: updated');
-      }
-    } else if (key === 'whatsapp') {
-      const wa = { ...(exists.value || {}) } as Record<string, unknown>;
-      const defaults = value as Record<string, unknown>;
-      let changed = false;
-      if (!wa.phone) {
-        wa.phone = defaults.phone;
-        changed = true;
-      }
-      if (
-        typeof wa.greeting === 'string' &&
-        /emine|mehmet|co[sş]/i.test(wa.greeting)
-      ) {
-        wa.greeting = defaults.greeting;
-        changed = true;
-      }
-      if (changed) {
-        exists.value = wa;
-        await em.save(exists);
-        console.log('Site setting whatsapp: updated');
       }
     } else if (key === 'navigation') {
       const nav = (exists.value || {}) as {
@@ -1116,6 +1125,7 @@ async function seed() {
       }
       if (nav.footerLegal) {
         const extras = [
+          { href: '/teslimat', label: 'Teslimat ve Kargo' },
           {
             href: '/musteri-memnuniyeti',
             label: 'Müşteri Memnuniyeti',

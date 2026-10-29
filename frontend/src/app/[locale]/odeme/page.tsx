@@ -1247,6 +1247,10 @@ export default function CheckoutPage() {
                     {tCheckout("legalInform")}{" "}
                     <Link href="/iptal-iade" className="text-primary underline">
                       {tCheckout("legalReturns")}
+                    </Link>
+                    {" · "}
+                    <Link href="/teslimat" className="text-primary underline">
+                      {tCheckout("legalDelivery")}
                     </Link>{" "}
                     {tCheckout("legalRead")}
                   </>

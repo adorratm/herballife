@@ -78,6 +78,22 @@ export type SiteSettings = {
     freeCoaching?: boolean;
     returnDays?: number;
   };
+  legalSeller?: {
+    legalName?: string;
+    taxOffice?: string;
+    taxNumber?: string;
+    mersis?: string;
+  };
+  bankAccounts?: {
+    accounts?: Array<{
+      bank: string;
+      holder: string;
+      iban: string;
+      branch?: string;
+      note?: string;
+      accountNumber?: string;
+    }>;
+  };
   legal?: {
     supplementDisclaimer?: string;
     weightDisclaimer?: string;
@@ -243,6 +259,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
       { href: "/mesafeli-satis", label: "Mesafeli Satış" },
       { href: "/on-bilgilendirme", label: "Ön Bilgilendirme" },
       { href: "/iptal-iade", label: "İade Politikası" },
+      { href: "/teslimat", label: "Teslimat ve Kargo" },
       { href: "/musteri-memnuniyeti", label: "Müşteri Memnuniyeti" },
       { href: "/guvenli-alisveris", label: "Güvenli Alışveriş" },
       { href: "/aydinlatma-metni", label: "Aydınlatma Metni" },
@@ -267,7 +284,25 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     sameDayCutoff: "13:00",
     sameDayShipping: true,
     freeCoaching: true,
-    returnDays: 30,
+    returnDays: 14,
+  },
+  legalSeller: {
+    legalName: "Büşra Özberk (Herbal Kapıda — Bağımsız Distribütör)",
+    taxOffice: "Buca Şirinyer Vergi Dairesi",
+    taxNumber: "6680530947",
+    mersis: "Uygulanmaz (şahıs işletmesi)",
+  },
+  bankAccounts: {
+    accounts: [
+      {
+        bank: "Ziraat Bankası",
+        holder: "Büşra Özberk",
+        iban: "TR85 0001 0007 1178 7067 9150 04",
+        branch: "0711 / BUCA / İZMİR ŞUBESİ",
+        note: "TL vadesiz",
+        accountNumber: "0711/78706791-5004",
+      },
+    ],
   },
   legal: {
     supplementDisclaimer:
@@ -335,6 +370,18 @@ function mergeSettings(
     promises: {
       ...DEFAULT_SETTINGS.promises,
       ...(raw.promises as SiteSettings["promises"]),
+    },
+    legalSeller: {
+      ...DEFAULT_SETTINGS.legalSeller,
+      ...(raw.legalSeller as SiteSettings["legalSeller"]),
+    },
+    bankAccounts: {
+      accounts:
+        (
+          raw.bankAccounts as SiteSettings["bankAccounts"] | undefined
+        )?.accounts?.length
+          ? (raw.bankAccounts as SiteSettings["bankAccounts"])!.accounts
+          : DEFAULT_SETTINGS.bankAccounts?.accounts,
     },
     legal: {
       ...DEFAULT_SETTINGS.legal,

@@ -36,16 +36,38 @@ export function sellerFromSettings(settings: SiteSettings): LegalSeller {
   const siteUrl = (
     process.env.NEXT_PUBLIC_SITE_URL || "https://herbalkapida.com"
   ).replace(/\/$/, "");
+  const legal = settings.legalSeller || DEFAULT_SETTINGS.legalSeller || {};
+  const distributorName = settings.brand.distributorName?.trim();
+  const brandName = settings.brand.name || DEFAULT_SETTINGS.brand.name;
+  const distributorTitle =
+    settings.brand.distributorTitle?.trim() || "Bağımsız Distribütör";
+  const defaultLegalName =
+    distributorName
+      ? `${distributorName} (${brandName} — ${distributorTitle})`
+      : brandName;
   return {
-    name: settings.brand.name || DEFAULT_SETTINGS.brand.name,
+    name:
+      legal.legalName?.trim() ||
+      defaultLegalName ||
+      DEFAULT_SETTINGS.legalSeller?.legalName ||
+      brandName,
     address: settings.contact.address || DEFAULT_SETTINGS.contact.address,
     email: settings.contact.email || DEFAULT_SETTINGS.contact.email,
     phone: settings.contact.phone || DEFAULT_SETTINGS.contact.phone,
     hours: settings.contact.hours || DEFAULT_SETTINGS.contact.hours,
     website: siteUrl,
-    taxOffice: "[Vergi dairesi — güncellenecek]",
-    taxNumber: "",
-    mersis: "[MERSİS No — güncellenecek]",
+    taxOffice:
+      legal.taxOffice?.trim() ||
+      DEFAULT_SETTINGS.legalSeller?.taxOffice ||
+      "",
+    taxNumber:
+      legal.taxNumber?.trim() ||
+      DEFAULT_SETTINGS.legalSeller?.taxNumber ||
+      "",
+    mersis:
+      legal.mersis?.trim() ||
+      DEFAULT_SETTINGS.legalSeller?.mersis ||
+      "Uygulanmaz (şahıs işletmesi)",
   };
 }
 
@@ -66,6 +88,9 @@ export function applyLiveSellerContact(
     "{{seller.phone}}": seller.phone,
     "{{seller.hours}}": seller.hours,
     "{{seller.website}}": seller.website,
+    "{{seller.taxOffice}}": seller.taxOffice,
+    "{{seller.taxNumber}}": seller.taxNumber,
+    "{{seller.mersis}}": seller.mersis,
     "{{contact.hours}}": seller.hours,
     "{{contact.address}}": seller.address,
     "{{contact.email}}": seller.email,
@@ -82,6 +107,10 @@ export function applyLiveSellerContact(
     [SEEDED_CONTACT.hours, seller.hours],
     [SEEDED_CONTACT.website, seller.website],
     [SEEDED_CONTACT.name, seller.name],
+    ["[Vergi dairesi — güncellenecek]", seller.taxOffice],
+    ["[MERSİS No — güncellenecek]", seller.mersis],
+    ["+90 500 000 00 00", seller.phone],
+    ["+905000000000", seller.phone.replace(/\s/g, "")],
   ];
   for (const [from, to] of seededPairs) {
     if (from && to && from !== to) {
@@ -276,7 +305,9 @@ Mesafeli satışlarda, ürünü teslim aldığınız tarihten itibaren 14 gün i
 - Kullanılmış, hasar görmüş veya eksik parçalı ürünler (ayıp halleri hariç)
 
 4. İade gönderimi
-Cayma onayından sonra ürünü, orijinal ambalajı bozulmamış ve yeniden satılabilir durumda, fatura/irsaliye ile birlikte satıcının bildirdiği adrese göndermeniz gerekir. Usulüne uygun caymalarda iade kargo bedeli politikamıza göre karşılanır; ayıplı üründe kargo satıcıya aittir.
+Cayma onayından sonra ürünü, orijinal ambalajı bozulmamış ve yeniden satılabilir durumda, fatura/irsaliye ile birlikte aşağıdaki iade adresine göndermeniz gerekir:
+${seller.address}
+Usulüne uygun caymalarda iade kargo bedeli politikamıza göre karşılanır; ayıplı üründe kargo satıcıya aittir.
 
 5. Ücret iadesi
 Ürün tarafımıza ulaştıktan ve kontrol edildikten sonra, ödemenin yapıldığı karta/yönteme en geç 14 gün içinde iade edilir. Banka süreçleri nedeniyle kartınıza yansıma süresi bankanıza göre değişebilir.
@@ -287,6 +318,35 @@ Kargo hasarı veya ayıp durumunda teslimatta tutanak tutturunuz ve 48 saat içi
 7. İletişim
 ${seller.name} · ${seller.address}
 ${seller.email} · ${seller.phone}`,
+    },
+    teslimat: {
+      title: "Teslimat ve Kargo Koşulları",
+      content: `${seller.name} olarak siparişlerinizin hazırlanması ve teslimatı aşağıdaki koşullara tabidir.
+
+1. Hazırlık süresi
+Ödeme onayı alınan siparişler stok durumuna göre genellikle 1–3 iş günü içinde kargoya verilir. Yoğun dönemlerde veya stok tedarikinde gecikme olması halinde alıcı bilgilendirilir.
+
+2. Kargo ve teslimat
+Teslimat, alıcının siparişte bildirdiği adrese, çalışan kargo firmaları aracılığıyla yapılır. Teslimat süresi, kargo firmasının operasyonuna ve adrese göre değişebilir.
+
+3. Kargo ücreti
+Kargo ücreti ödeme adımında gösterilir. Belirlenen sepet tutarının üzerinde ücretsiz kargo uygulanabilir; güncel eşik ödeme ekranında yer alır.
+
+4. Teslimatta kontrol
+Paket teslim alınırken ambalaj hasarı, ezik veya açılma varsa kargo görevlisi yanında tutanak tutturunuz ve 48 saat içinde ${seller.email} veya ${seller.phone} üzerinden bildiriniz.
+
+5. Teslim edilememe
+Alıcının adreste bulunamaması, yanlış/eksik adres veya reddedilen teslimatlarda kargonun iadesi sonrası yeniden gönderim koşulları ayrıca bildirilir; ek kargo ücreti doğabilir.
+
+6. İade adresi
+Cayma / iade gönderileri için adres:
+${seller.address}
+Ayrıntılar “İptal ve İade” sayfasındadır.
+
+7. İletişim
+${seller.name}
+${seller.email} · ${seller.phone}
+Çalışma saatleri: ${seller.hours}`,
     },
     "musteri-memnuniyeti": {
       title: "Müşteri Memnuniyeti Politikası",

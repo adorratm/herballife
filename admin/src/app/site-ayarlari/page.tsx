@@ -56,6 +56,52 @@ type ShippingSettings = {
   freeShippingOver: string;
 };
 
+type LegalSellerFields = {
+  legalName: string;
+  taxOffice: string;
+  taxNumber: string;
+  mersis: string;
+};
+
+type BankAccountRow = {
+  bank: string;
+  holder: string;
+  iban: string;
+  branch: string;
+  note: string;
+  accountNumber: string;
+};
+
+type PromisesSettings = {
+  returnDays: string;
+  sameDayCutoff: string;
+  sameDayShipping: boolean;
+  freeCoaching: boolean;
+};
+
+const DEFAULT_LEGAL_SELLER: LegalSellerFields = {
+  legalName: 'Büşra Özberk (Herbal Kapıda — Bağımsız Distribütör)',
+  taxOffice: 'Buca Şirinyer Vergi Dairesi',
+  taxNumber: '6680530947',
+  mersis: 'Uygulanmaz (şahıs işletmesi)',
+};
+
+const DEFAULT_BANK_ACCOUNT: BankAccountRow = {
+  bank: 'Ziraat Bankası',
+  holder: 'Büşra Özberk',
+  iban: 'TR85 0001 0007 1178 7067 9150 04',
+  branch: '0711 / BUCA / İZMİR ŞUBESİ',
+  note: 'TL vadesiz',
+  accountNumber: '0711/78706791-5004',
+};
+
+const DEFAULT_PROMISES: PromisesSettings = {
+  returnDays: '14',
+  sameDayCutoff: '13:00',
+  sameDayShipping: true,
+  freeCoaching: true,
+};
+
 type BrandFields = {
   name: string;
   slogan: string;
@@ -508,6 +554,7 @@ type SettingsSection =
   | 'marka'
   | 'seo'
   | 'iletisim'
+  | 'yasal'
   | 'whatsapp'
   | 'popup'
   | 'teknik'
@@ -517,6 +564,7 @@ const SETTINGS_SECTIONS: { key: SettingsSection; label: string }[] = [
   { key: 'marka', label: 'Marka' },
   { key: 'seo', label: 'SEO' },
   { key: 'iletisim', label: 'İletişim' },
+  { key: 'yasal', label: 'Yasal & banka' },
   { key: 'whatsapp', label: 'WhatsApp' },
   { key: 'popup', label: 'Karşılama popup' },
   { key: 'teknik', label: 'Kargo & analitik' },
@@ -583,6 +631,13 @@ export default function SiteSettingsPage() {
   const [shipping, setShipping] = useState<ShippingSettings>({
     ...DEFAULT_SHIPPING,
   });
+  const [legalSeller, setLegalSeller] =
+    useState<LegalSellerFields>(DEFAULT_LEGAL_SELLER);
+  const [bankAccounts, setBankAccounts] = useState<BankAccountRow[]>([
+    { ...DEFAULT_BANK_ACCOUNT },
+  ]);
+  const [promises, setPromises] =
+    useState<PromisesSettings>(DEFAULT_PROMISES);
   const [localeBundles, setLocaleBundles] =
     useState<Record<ExtraLocale, LocaleBundle>>(initialLocaleBundles);
   const [loading, setLoading] = useState(true);
@@ -860,6 +915,47 @@ export default function SiteSettingsPage() {
                 : DEFAULT_SHIPPING.freeShippingOver,
           });
         }
+        if (map.legalSeller) {
+          const ls = map.legalSeller as Record<string, unknown>;
+          setLegalSeller({
+            legalName: String(ls.legalName || DEFAULT_LEGAL_SELLER.legalName),
+            taxOffice: String(ls.taxOffice || DEFAULT_LEGAL_SELLER.taxOffice),
+            taxNumber: String(ls.taxNumber || DEFAULT_LEGAL_SELLER.taxNumber),
+            mersis: String(ls.mersis || DEFAULT_LEGAL_SELLER.mersis),
+          });
+        }
+        if (map.bankAccounts) {
+          const ba = map.bankAccounts as { accounts?: unknown };
+          if (Array.isArray(ba.accounts) && ba.accounts.length) {
+            setBankAccounts(
+              ba.accounts.map((row) => {
+                const r = (row || {}) as Record<string, unknown>;
+                return {
+                  bank: String(r.bank || ''),
+                  holder: String(r.holder || ''),
+                  iban: String(r.iban || ''),
+                  branch: String(r.branch || ''),
+                  note: String(r.note || ''),
+                  accountNumber: String(r.accountNumber || ''),
+                };
+              }),
+            );
+          }
+        }
+        if (map.promises) {
+          const p = map.promises as Record<string, unknown>;
+          setPromises({
+            returnDays:
+              p.returnDays != null
+                ? String(p.returnDays)
+                : DEFAULT_PROMISES.returnDays,
+            sameDayCutoff: String(
+              p.sameDayCutoff || DEFAULT_PROMISES.sameDayCutoff,
+            ),
+            sameDayShipping: p.sameDayShipping !== false,
+            freeCoaching: p.freeCoaching !== false,
+          });
+        }
         if (map.welcomePopup) {
           const p = map.welcomePopup as Record<string, unknown>;
           setWelcomePopup({
@@ -1061,6 +1157,42 @@ export default function SiteSettingsPage() {
                 freeShippingOver: Number(shipping.freeShippingOver) || 0,
               },
               group: 'shipping',
+            },
+            {
+              key: 'legalSeller',
+              value: {
+                legalName: legalSeller.legalName.trim(),
+                taxOffice: legalSeller.taxOffice.trim(),
+                taxNumber: legalSeller.taxNumber.trim(),
+                mersis: legalSeller.mersis.trim(),
+              },
+              group: 'legalSeller',
+            },
+            {
+              key: 'bankAccounts',
+              value: {
+                accounts: bankAccounts
+                  .map((a) => ({
+                    bank: a.bank.trim(),
+                    holder: a.holder.trim(),
+                    iban: a.iban.trim(),
+                    branch: a.branch.trim(),
+                    note: a.note.trim(),
+                    accountNumber: a.accountNumber.trim(),
+                  }))
+                  .filter((a) => a.iban),
+              },
+              group: 'bankAccounts',
+            },
+            {
+              key: 'promises',
+              value: {
+                returnDays: Number(promises.returnDays) || 14,
+                sameDayCutoff: promises.sameDayCutoff.trim() || '13:00',
+                sameDayShipping: promises.sameDayShipping,
+                freeCoaching: promises.freeCoaching,
+              },
+              group: 'promises',
             },
             {
               key: 'welcomePopup',
@@ -1319,6 +1451,124 @@ export default function SiteSettingsPage() {
             </p>
           )}
         </fieldset>
+        ) : null}
+
+        {settingsSection === 'yasal' ? (
+        <>
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            Yasal satıcı (mesafeli satış / KVKK)
+          </legend>
+          <p className="text-xs text-muted">
+            Bu alanlar yasal metinlerde satıcı kimliği olarak görünür. Tüm
+            dillerde ortaktır.
+          </p>
+          {(
+            [
+              ['legalName', 'Yasal unvan / işletme adı'],
+              ['taxOffice', 'Vergi dairesi'],
+              ['taxNumber', 'Vergi no'],
+              ['mersis', 'MERSİS (şahısta “Uygulanmaz”)'],
+            ] as const
+          ).map(([key, label]) => (
+            <label key={key} className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                {label}
+              </span>
+              <input
+                value={legalSeller[key]}
+                onChange={(e) =>
+                  setLegalSeller((s) => ({ ...s, [key]: e.target.value }))
+                }
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              />
+            </label>
+          ))}
+        </fieldset>
+
+        <fieldset className="space-y-4 rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            Banka hesapları (havale / EFT)
+          </legend>
+          <p className="text-xs text-muted">
+            /banka-hesaplari sayfasında listelenir. PayTR başvurusundaki IBAN ile
+            aynı olmalı.
+          </p>
+          {bankAccounts.map((acc, idx) => (
+            <div
+              key={idx}
+              className="space-y-3 rounded-lg border border-border-muted bg-surface-high p-4"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="mono text-[10px] uppercase text-muted">
+                  Hesap {idx + 1}
+                </span>
+                {bankAccounts.length > 1 ? (
+                  <button
+                    type="button"
+                    className="text-xs text-red-600 underline"
+                    onClick={() =>
+                      setBankAccounts((rows) =>
+                        rows.filter((_, i) => i !== idx),
+                      )
+                    }
+                  >
+                    Sil
+                  </button>
+                ) : null}
+              </div>
+              {(
+                [
+                  ['bank', 'Banka'],
+                  ['holder', 'Hesap sahibi'],
+                  ['iban', 'IBAN'],
+                  ['accountNumber', 'Hesap no'],
+                  ['branch', 'Şube'],
+                  ['note', 'Not'],
+                ] as const
+              ).map(([key, label]) => (
+                <label key={key} className="block text-sm">
+                  <span className="mono text-[10px] uppercase text-muted">
+                    {label}
+                  </span>
+                  <input
+                    value={acc[key]}
+                    onChange={(e) =>
+                      setBankAccounts((rows) =>
+                        rows.map((row, i) =>
+                          i === idx
+                            ? { ...row, [key]: e.target.value }
+                            : row,
+                        ),
+                      )
+                    }
+                    className="mt-1 w-full rounded-lg border border-border-muted bg-surface px-3 py-2"
+                  />
+                </label>
+              ))}
+            </div>
+          ))}
+          <button
+            type="button"
+            className="rounded-lg border border-border-muted px-3 py-2 text-sm"
+            onClick={() =>
+              setBankAccounts((rows) => [
+                ...rows,
+                {
+                  bank: '',
+                  holder: '',
+                  iban: '',
+                  branch: '',
+                  note: 'TL vadesiz',
+                  accountNumber: '',
+                },
+              ])
+            }
+          >
+            Hesap ekle
+          </button>
+        </fieldset>
+        </>
         ) : null}
 
         {settingsSection === 'iletisim' ? (
@@ -1600,7 +1850,11 @@ export default function SiteSettingsPage() {
                   onChange={(e) =>
                     setWhatsapp((s) => ({ ...s, phone: e.target.value }))
                   }
-                  placeholder={contact.phone || '+90 5xx xxx xx xx'}
+                  placeholder={
+                    contact.phone
+                      ? `Boş = iletişim telefonu (${contact.phone})`
+                      : '+90 541 489 42 43'
+                  }
                   className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
                 />
               </label>
@@ -1673,6 +1927,73 @@ export default function SiteSettingsPage() {
               />
             </label>
           </div>
+        </fieldset>
+
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            Vitrin vaatleri
+          </legend>
+          <p className="text-xs text-muted">
+            İade günü yasal metinlerle uyumlu olmalı (PayTR: 14 gün cayma).
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                İade / cayma günü
+              </span>
+              <input
+                type="number"
+                min={1}
+                max={30}
+                value={promises.returnDays}
+                onChange={(e) =>
+                  setPromises((s) => ({ ...s, returnDays: e.target.value }))
+                }
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                Aynı gün kargo kesim saati
+              </span>
+              <input
+                value={promises.sameDayCutoff}
+                onChange={(e) =>
+                  setPromises((s) => ({
+                    ...s,
+                    sameDayCutoff: e.target.value,
+                  }))
+                }
+                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+              />
+            </label>
+          </div>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={promises.sameDayShipping}
+              onChange={(e) =>
+                setPromises((s) => ({
+                  ...s,
+                  sameDayShipping: e.target.checked,
+                }))
+              }
+            />
+            Aynı gün / hızlı sevk vurgusu
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={promises.freeCoaching}
+              onChange={(e) =>
+                setPromises((s) => ({
+                  ...s,
+                  freeCoaching: e.target.checked,
+                }))
+              }
+            />
+            Ücretsiz koçluk vurgusu
+          </label>
         </fieldset>
 
         <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm lg:col-span-2">

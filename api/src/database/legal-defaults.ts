@@ -10,9 +10,9 @@ export const LEGAL_SELLER = {
   phone: '+90 541 489 42 43',
   hours: 'Pzt — Paz / 09:00 — 20:00',
   website: 'https://herbalkapida.com',
-  taxOffice: '[Vergi dairesi — güncellenecek]',
-  taxNumber: '',
-  mersis: '[MERSİS No — güncellenecek]',
+  taxOffice: 'Buca Şirinyer Vergi Dairesi',
+  taxNumber: '6680530947',
+  mersis: 'Uygulanmaz (şahıs işletmesi)',
 };
 
 const SELLER = LEGAL_SELLER;
@@ -163,7 +163,9 @@ Mesafeli satışlarda, ürünü teslim aldığınız tarihten itibaren 14 gün i
 - Kullanılmış, hasar görmüş veya eksik parçalı ürünler (ayıp halleri hariç)
 
 4. İade gönderimi
-Cayma onayından sonra ürünü, orijinal ambalajı bozulmamış ve yeniden satılabilir durumda, fatura/irsaliye ile birlikte satıcının bildirdiği adrese göndermeniz gerekir. Usulüne uygun caymalarda iade kargo bedeli politikamıza göre karşılanır; ayıplı üründe kargo satıcıya aittir.
+Cayma onayından sonra ürünü, orijinal ambalajı bozulmamış ve yeniden satılabilir durumda, fatura/irsaliye ile birlikte aşağıdaki iade adresine göndermeniz gerekir:
+${SELLER.address}
+Usulüne uygun caymalarda iade kargo bedeli politikamıza göre karşılanır; ayıplı üründe kargo satıcıya aittir.
 
 5. Ücret iadesi
 Ürün tarafımıza ulaştıktan ve kontrol edildikten sonra, ödemenin yapıldığı karta/yönteme en geç 14 gün içinde iade edilir. Banka süreçleri nedeniyle kartınıza yansıma süresi bankanıza göre değişebilir.
@@ -291,5 +293,34 @@ ${SELLER.email} · ${SELLER.phone}
 ${SELLER.address}
 
 KVKK aydınlatma metni ve çerez politikası bu belgenin ayrılmaz parçasıdır.`,
+  },
+  teslimat: {
+    title: 'Teslimat ve Kargo Koşulları',
+    content: `${SELLER.name} olarak siparişlerinizin hazırlanması ve teslimatı aşağıdaki koşullara tabidir.
+
+1. Hazırlık süresi
+Ödeme onayı alınan siparişler stok durumuna göre genellikle 1–3 iş günü içinde kargoya verilir. Yoğun dönemlerde veya stok tedarikinde gecikme olması halinde alıcı bilgilendirilir.
+
+2. Kargo ve teslimat
+Teslimat, alıcının siparişte bildirdiği adrese, çalışan kargo firmaları aracılığıyla yapılır. Teslimat süresi, kargo firmasının operasyonuna ve adrese göre değişebilir.
+
+3. Kargo ücreti
+Kargo ücreti ödeme adımında gösterilir. Belirlenen sepet tutarının üzerinde ücretsiz kargo uygulanabilir; güncel eşik site ayarlarında / ödeme ekranında yer alır.
+
+4. Teslimatta kontrol
+Paket teslim alınırken ambalaj hasarı, ezik veya açılma varsa kargo görevlisi yanında tutanak tutturunuz ve 48 saat içinde ${SELLER.email} veya ${SELLER.phone} üzerinden bildiriniz.
+
+5. Teslim edilememe
+Alıcının adreste bulunamaması, yanlış/eksik adres veya reddedilen teslimatlarda kargonun iadesi sonrası yeniden gönderim koşulları ayrıca bildirilir; ek kargo ücreti doğabilir.
+
+6. İade adresi
+Cayma / iade gönderileri için adres:
+${SELLER.address}
+Ayrıntılar “İptal ve İade” sayfasındadır.
+
+7. İletişim
+${SELLER.name}
+${SELLER.email} · ${SELLER.phone}
+Çalışma saatleri: ${SELLER.hours}`,
   },
 };

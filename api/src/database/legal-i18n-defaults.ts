@@ -78,8 +78,20 @@ COMPLAINTS: {{seller.email}} · {{seller.phone}}.`,
 1. Cancel before shipment via {{seller.email}}.
 2. Withdrawal: 14 days from delivery.
 3. Non-returnable: opened food/supplements, personalized or damaged goods (except defects).
-4. Refunds within 14 days after inspection.
-5. Contact: {{seller.email}} · {{seller.phone}}`,
+4. Return address: {{seller.address}}
+5. Refunds within 14 days after inspection.
+6. Contact: {{seller.email}} · {{seller.phone}}`,
+  },
+  teslimat: {
+    title: 'Delivery & Shipping Terms',
+    content: `{{seller.name}} ships paid orders usually within 1–3 business days.
+
+Delivery to the checkout address via carrier. Shipping fees shown at payment; free shipping may apply above threshold.
+
+Damaged packages: note with courier and contact {{seller.email}} · {{seller.phone}} within 48 hours.
+
+Return address: {{seller.address}}
+Hours: {{seller.hours}}`,
   },
   'musteri-memnuniyeti': {
     title: 'Customer Satisfaction Policy',
@@ -173,8 +185,20 @@ Beschwerden: {{seller.email}} · {{seller.phone}}.`,
 1. Stornierung vor Versand: {{seller.email}}
 2. Widerruf: 14 Tage ab Lieferung
 3. Ausgeschlossen: geöffnete Lebensmittel/Nahrungsergänzungsmittel, personalisierte oder beschädigte Waren
-4. Erstattung innerhalb von 14 Tagen nach Prüfung
-5. Kontakt: {{seller.email}} · {{seller.phone}}`,
+4. Rücksendeadresse: {{seller.address}}
+5. Erstattung innerhalb von 14 Tagen nach Prüfung
+6. Kontakt: {{seller.email}} · {{seller.phone}}`,
+  },
+  teslimat: {
+    title: 'Liefer- und Versandbedingungen',
+    content: `{{seller.name}} übergibt bezahlte Bestellungen in der Regel innerhalb von 1–3 Werktagen an den Versand.
+
+Lieferung an die Checkout-Adresse. Versandkosten und ggf. kostenloser Versand ab Schwellenwert an der Kasse.
+
+Beschädigte Pakete: beim Kurier vermerken und innerhalb von 48 Stunden {{seller.email}} · {{seller.phone}} kontaktieren.
+
+Rücksendeadresse: {{seller.address}}
+Öffnungszeiten: {{seller.hours}}`,
   },
   'musteri-memnuniyeti': {
     title: 'Richtlinie zur Kundenzufriedenheit',
@@ -268,8 +292,20 @@ Réclamations : {{seller.email}} · {{seller.phone}}.`,
 1. Annulation avant expédition : {{seller.email}}
 2. Rétractation : 14 jours après livraison
 3. Non retournables : denrées/compléments ouverts, biens personnalisés ou endommagés
-4. Remboursement sous 14 jours après contrôle
-5. Contact : {{seller.email}} · {{seller.phone}}`,
+4. Adresse de retour : {{seller.address}}
+5. Remboursement sous 14 jours après contrôle
+6. Contact : {{seller.email}} · {{seller.phone}}`,
+  },
+  teslimat: {
+    title: 'Conditions de livraison',
+    content: `{{seller.name}} confie les commandes payées au transporteur sous 1–3 jours ouvrés en général.
+
+Livraison à l'adresse du checkout. Frais et seuil de livraison gratuite à l'étape de paiement.
+
+Colis endommagé : constater avec le coursier et contacter {{seller.email}} · {{seller.phone}} sous 48 h.
+
+Adresse de retour : {{seller.address}}
+Horaires : {{seller.hours}}`,
   },
   'musteri-memnuniyeti': {
     title: 'Politique de satisfaction client',
@@ -363,8 +399,20 @@ Quejas: {{seller.email}} · {{seller.phone}}.`,
 1. Cancelar antes del envío: {{seller.email}}
 2. Desistimiento: 14 días desde la entrega
 3. No retornables: alimentos/suplementos abiertos, productos personalizados o dañados
-4. Reembolso en 14 días tras inspección
-5. Contacto: {{seller.email}} · {{seller.phone}}`,
+4. Dirección de devolución: {{seller.address}}
+5. Reembolso en 14 días tras inspección
+6. Contacto: {{seller.email}} · {{seller.phone}}`,
+  },
+  teslimat: {
+    title: 'Condiciones de entrega y envío',
+    content: `{{seller.name}} entrega los pedidos pagados al transportista en 1–3 días laborables en general.
+
+Envío a la dirección del checkout. Gastos y umbral de envío gratis en el pago.
+
+Paquete dañado: anótelo con el repartidor y contacte {{seller.email}} · {{seller.phone}} en 48 h.
+
+Dirección de devolución: {{seller.address}}
+Horario: {{seller.hours}}`,
   },
   'musteri-memnuniyeti': {
     title: 'Política de satisfacción del cliente',

@@ -10,6 +10,7 @@ const LEGAL_SLUGS = [
   "mesafeli-satis",
   "on-bilgilendirme",
   "iptal-iade",
+  "teslimat",
   "musteri-memnuniyeti",
   "guvenli-alisveris",
   "aydinlatma-metni",

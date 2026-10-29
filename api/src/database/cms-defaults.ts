@@ -80,6 +80,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
       { href: '/mesafeli-satis', label: 'Mesafeli Satış' },
       { href: '/on-bilgilendirme', label: 'Ön Bilgilendirme' },
       { href: '/iptal-iade', label: 'İade Politikası' },
+      { href: '/teslimat', label: 'Teslimat ve Kargo' },
       { href: '/musteri-memnuniyeti', label: 'Müşteri Memnuniyeti' },
       { href: '/guvenli-alisveris', label: 'Güvenli Alışveriş' },
       { href: '/aydinlatma-metni', label: 'Aydınlatma Metni' },
@@ -189,7 +190,8 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
   },
   whatsapp: {
     enabled: true,
-    phone: '+905051420710',
+    /** Boş = contact.phone (+90 541 489 42 43) kullanılır */
+    phone: '',
     greeting: 'Merhaba — Büşra Özberk / Herbal Kapıda. Size nasıl yardımcı olabiliriz?',
     presets: [
       {
@@ -300,7 +302,25 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     sameDayCutoff: '13:00',
     sameDayShipping: true,
     freeCoaching: true,
-    returnDays: 30,
+    returnDays: 14,
+  },
+  legalSeller: {
+    legalName: 'Büşra Özberk (Herbal Kapıda — Bağımsız Distribütör)',
+    taxOffice: 'Buca Şirinyer Vergi Dairesi',
+    taxNumber: '6680530947',
+    mersis: 'Uygulanmaz (şahıs işletmesi)',
+  },
+  bankAccounts: {
+    accounts: [
+      {
+        bank: 'Ziraat Bankası',
+        holder: 'Büşra Özberk',
+        iban: 'TR85 0001 0007 1178 7067 9150 04',
+        branch: '0711 / BUCA / İZMİR ŞUBESİ',
+        note: 'TL vadesiz',
+        accountNumber: '0711/78706791-5004',
+      },
+    ],
   },
   legal: {
     supplementDisclaimer:

@@ -32,7 +32,9 @@ export async function LegalPage({ slug }: Props) {
   const isPlaceholder =
     !apiContent ||
     apiContent.includes("örnek içerik") ||
-    /sample content/i.test(apiContent);
+    /sample content/i.test(apiContent) ||
+    /güncellenecek/i.test(apiContent) ||
+    apiContent.includes("500 000 00 00");
   const rawContent = isPlaceholder ? fallback.content : apiContent;
   const content = applyLiveSellerContact(rawContent, seller);
 

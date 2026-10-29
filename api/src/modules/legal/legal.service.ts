@@ -18,6 +18,8 @@ function isPlaceholderContent(content: string | null | undefined): boolean {
   const c = (content || '').trim();
   if (!c) return true;
   if (c.includes('örnek içerik')) return true;
+  if (/güncellenecek/i.test(c)) return true;
+  if (c.includes('500 000 00 00')) return true;
   return false;
 }
 

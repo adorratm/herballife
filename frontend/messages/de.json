@@ -284,6 +284,7 @@
     "legalKvkkRest": "Text.",
     "legalSecure": "Sicher einkaufen",
     "legalReturns": "Widerrufs- und Rückgaberichtlinie",
+    "legalDelivery": "Lieferbedingungen",
     "legalRead": "Ich habe gelesen:",
     "legalInform": "Informationen.",
     "paySecure": "Sichere PayTR-Zahlung",
@@ -940,6 +941,10 @@
       "title": "Stornierung & Rückgabe",
       "description": "Bedingungen für Stornierung, Widerruf und Rückgabe."
     },
+    "teslimat": {
+      "title": "Lieferung & Versand",
+      "description": "Vorbereitungszeit, Versand und Lieferbedingungen."
+    },
     "musteri-memnuniyeti": {
       "title": "Kundenzufriedenheit",
       "description": "Kundenzufriedenheitsrichtlinie und Support-Prozess."
@@ -1034,7 +1039,8 @@
     "step3Title": "Mitteilung senden",
     "step3Body": "Bestätigung per WhatsApp über das Zahlungsformular.",
     "accountHolder": "Kontoinhaber",
-    "disclaimerBefore": "Kontodaten sind Beispiele. Für die aktuelle IBAN kontaktieren Sie",
+    "accountNumber": "Kontonummer",
+    "disclaimerBefore": "Bitte geben Sie Ihre Bestellnummer bei der Überweisung an. Support:",
     "supportLine": "unseren Support",
     "disclaimerMiddle": "oder",
     "disclaimerAfter": "per WhatsApp.",

@@ -269,6 +269,7 @@
     "legalKvkkRest": "text.",
     "legalSecure": "Secure shopping",
     "legalReturns": "returns policy",
+    "legalDelivery": "delivery terms",
     "legalRead": "I have read the",
     "legalInform": "information.",
     "paySecure": "PayTR secure payment",
@@ -830,6 +831,10 @@
       "title": "Annulation et retours",
       "description": "Order cancellation, withdrawal, and return conditions."
     },
+    "teslimat": {
+      "title": "Livraison et expédition",
+      "description": "Délais de préparation, livraison et conditions d'expédition."
+    },
     "musteri-memnuniyeti": {
       "title": "Customer Satisfaction",
       "description": "Customer satisfaction policy and support process."
@@ -959,7 +964,8 @@
     "step3Title": "Envoyer l'avis",
     "step3Body": "Confirmez via WhatsApp avec le formulaire d'avis.",
     "accountHolder": "Titulaire",
-    "disclaimerBefore": "Les coordonnées sont des exemples. Pour l'IBAN actuel, contactez",
+    "accountNumber": "N° de compte",
+    "disclaimerBefore": "Indiquez votre n° de commande lors du virement. Support :",
     "supportLine": "notre support",
     "disclaimerMiddle": "ou",
     "disclaimerAfter": "sur WhatsApp.",

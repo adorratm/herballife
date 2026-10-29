@@ -260,6 +260,12 @@ const pathnamesBase = {
     fr: "/retours",
     es: "/devoluciones",
   },
+  "/teslimat": {
+    en: "/delivery",
+    de: "/lieferung",
+    fr: "/livraison",
+    es: "/entrega",
+  },
   "/aydinlatma-metni": {
     en: "/disclosure",
     de: "/offenlegung",

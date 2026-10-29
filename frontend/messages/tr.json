@@ -285,6 +285,7 @@
     "legalKvkkRest": "",
     "legalSecure": "Güvenli alışveriş",
     "legalReturns": "iade politikası",
+    "legalDelivery": "teslimat koşulları",
     "legalRead": "bilgilendirmelerini okudum.",
     "legalInform": "ve",
     "paySecure": "PayTR güvenli ödeme",
@@ -1104,6 +1105,10 @@
       "title": "İptal ve İade",
       "description": "Sipariş iptal, cayma hakkı ve iade koşulları."
     },
+    "teslimat": {
+      "title": "Teslimat ve Kargo",
+      "description": "Sipariş hazırlık süresi, kargo ve teslimat koşulları."
+    },
     "musteri-memnuniyeti": {
       "title": "Müşteri Memnuniyeti",
       "description": "Müşteri memnuniyeti politikası ve destek süreci."
@@ -1198,10 +1203,11 @@
     "step3Title": "Bildirim gönderin",
     "step3Body": "Ödeme bildirimi formuyla WhatsApp'tan teyit iletin.",
     "accountHolder": "Hesap sahibi",
-    "disclaimerBefore": "Hesap bilgileri örnek / yer tutucudur. Güncel IBAN için",
+    "accountNumber": "Hesap no",
+    "disclaimerBefore": "Havale sonrası sipariş numaranızı yazmayı unutmayın. Destek için",
     "supportLine": "destek hattımız",
     "disclaimerMiddle": "veya",
-    "disclaimerAfter": "üzerinden teyit alın.",
+    "disclaimerAfter": "üzerinden yazabilirsiniz.",
     "ctaPaymentNotice": "Ödeme bildirimi gönder",
     "ctaOrderLookup": "Sipariş sorgula",
     "waPrefill": "Merhaba, havale için güncel IBAN teyidi istiyorum."

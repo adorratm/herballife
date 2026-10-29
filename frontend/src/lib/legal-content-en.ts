@@ -118,7 +118,9 @@ From delivery date, withdraw without reason via ${seller.email} (order no., name
 Opened food/supplements where hygiene prevents resale; personalized goods; spoiled goods not stored properly; used or damaged items (except defects).
 
 4. Return shipment
-After approval, send items in resalable condition with invoice to the address we provide. Return shipping per our policy; defective items: seller pays shipping.
+After approval, send items in resalable condition with invoice to:
+${seller.address}
+Return shipping per our policy; defective items: seller pays shipping.
 
 5. Refunds
 Within 14 days after we receive and inspect the return, to the original payment method. Bank posting times may vary.
@@ -129,6 +131,34 @@ Note damage with the carrier and report within 48 hours to ${seller.email} with 
 7. Contact
 ${seller.name} · ${seller.address}
 ${seller.email} · ${seller.phone}`,
+    },
+    teslimat: {
+      title: "Delivery & Shipping Terms",
+      content: `${seller.name} prepares and ships orders under the following terms.
+
+1. Preparation
+Paid orders are usually handed to the carrier within 1–3 business days, subject to stock. Delays are communicated to the buyer.
+
+2. Delivery
+Shipments go to the address provided at checkout. Delivery time depends on the carrier and destination.
+
+3. Shipping fee
+Shipping fees are shown at checkout. Free shipping may apply above a cart threshold shown at payment.
+
+4. On delivery
+If the package is damaged, note it with the courier and contact ${seller.email} or ${seller.phone} within 48 hours.
+
+5. Failed delivery
+If the recipient is unavailable or the address is wrong, re-shipment may incur extra fees.
+
+6. Return address
+${seller.address}
+See the Cancellation & Returns page for details.
+
+7. Contact
+${seller.name}
+${seller.email} · ${seller.phone}
+Hours: ${seller.hours}`,
     },
     "musteri-memnuniyeti": {
       title: "Customer Satisfaction Policy",

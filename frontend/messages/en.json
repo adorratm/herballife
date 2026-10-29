@@ -285,6 +285,7 @@
     "legalKvkkRest": "text.",
     "legalSecure": "Secure shopping",
     "legalReturns": "returns policy",
+    "legalDelivery": "delivery terms",
     "legalRead": "I have read the",
     "legalInform": "information.",
     "paySecure": "PayTR secure payment",
@@ -1104,6 +1105,10 @@
       "title": "Cancellation & Returns",
       "description": "Order cancellation, withdrawal, and return conditions."
     },
+    "teslimat": {
+      "title": "Delivery & Shipping",
+      "description": "Order preparation time, shipping and delivery terms."
+    },
     "musteri-memnuniyeti": {
       "title": "Customer Satisfaction",
       "description": "Customer satisfaction policy and support process."
@@ -1198,7 +1203,8 @@
     "step3Title": "Send notification",
     "step3Body": "Confirm via WhatsApp using the payment notice form.",
     "accountHolder": "Account holder",
-    "disclaimerBefore": "Account details are sample placeholders. For the current IBAN, contact",
+    "accountNumber": "Account number",
+    "disclaimerBefore": "After your transfer, include your order number. For support, contact",
     "supportLine": "our support line",
     "disclaimerMiddle": "or",
     "disclaimerAfter": "via WhatsApp.",

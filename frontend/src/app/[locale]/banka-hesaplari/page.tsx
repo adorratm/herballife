@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { CopyIbanButton } from "@/components/CopyIbanButton";
 import { Reveal } from "@/components/Reveal";
-import { getSiteSettings } from "@/lib/cms";
+import { DEFAULT_SETTINGS, getSiteSettings } from "@/lib/cms";
 import { buildPageMetadata } from "@/lib/seo";
 import {
   buildWhatsAppUrl,
@@ -26,23 +26,6 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-const ACCOUNTS = [
-  {
-    bank: "Ziraat Bankası",
-    holder: "Herbal Kapıda",
-    iban: "TR00 0000 0000 0000 0000 0000 00",
-    branch: "Merkez",
-    note: "TL vadesiz",
-  },
-  {
-    bank: "Garanti BBVA",
-    holder: "Herbal Kapıda",
-    iban: "TR11 1111 1111 1111 1111 1111 11",
-    branch: "İnternet şubesi",
-    note: "TL vadesiz",
-  },
-];
-
 export default async function BankAccountsPage() {
   const locale = await getLocale();
   const [settings, t] = await Promise.all([
@@ -57,6 +40,11 @@ export default async function BankAccountsPage() {
     }),
     t("waPrefill"),
   );
+
+  const accounts =
+    settings.bankAccounts?.accounts?.filter((a) => a.iban?.trim()) ??
+    DEFAULT_SETTINGS.bankAccounts?.accounts ??
+    [];
 
   const steps = [
     { n: "1", title: t("step1Title"), body: t("step1Body") },
@@ -107,7 +95,7 @@ export default async function BankAccountsPage() {
 
       <section className="page-shell pb-10">
         <div className="grid gap-4 md:grid-cols-2">
-          {ACCOUNTS.map((a, i) => (
+          {accounts.map((a, i) => (
             <Reveal key={a.iban} delay={i * 80} variant="scale">
               <div className="card-motion relative rounded-2xl border border-[#ebece8] bg-surface-container-lowest p-6 shadow-sm">
                 <div className="shimmer-accent absolute inset-x-0 top-0 h-px" />
@@ -117,7 +105,7 @@ export default async function BankAccountsPage() {
                       {a.bank}
                     </p>
                     <p className="mt-1 text-xs text-on-surface-variant">
-                      {a.note} · {a.branch}
+                      {[a.note, a.branch].filter(Boolean).join(" · ")}
                     </p>
                   </div>
                   <span className="rounded-full bg-secondary-container/50 px-2.5 py-1 text-[10px] font-bold uppercase text-primary">
@@ -133,6 +121,16 @@ export default async function BankAccountsPage() {
                       {a.holder}
                     </dd>
                   </div>
+                  {a.accountNumber ? (
+                    <div>
+                      <dt className="text-xs text-on-surface-variant">
+                        {t("accountNumber")}
+                      </dt>
+                      <dd className="mt-1 font-mono text-sm text-on-surface">
+                        {a.accountNumber}
+                      </dd>
+                    </div>
+                  ) : null}
                   <div>
                     <dt className="text-xs text-on-surface-variant">IBAN</dt>
                     <dd className="mt-1 break-all font-mono text-base font-semibold tracking-wide text-on-surface">
