@@ -82,7 +82,7 @@
       "title": "A healthy routine in 3 steps",
       "body": "From shopping to tracking — simple process, ongoing support.",
       "cta": "Start on WhatsApp",
-      "disclaimer": "{distributor} · independent Herbal Kapıda distributor. This is not the official Herbal Kapıda website.",
+      "disclaimer": "{distributor} · Herbal Kapıda — independent Herbalife distributor. Not the official Herbalife website.",
       "step1Title": "Share your goal",
       "step1Body": "Weight, energy, or sport — we clarify your starting point in a short WhatsApp chat.",
       "step2Title": "Pick the right set",
@@ -130,7 +130,7 @@
     "fallbackFaqItems": [
       {
         "question": "Are the products genuine?",
-        "answer": "Yes. Products sold are original Herbal Kapıda Nutrition products. This site belongs to an independent distributor; not the official Herbal Kapıda site."
+        "answer": "Yes. Products sold are original Herbalife products. This site is an independent distributor store under the Herbal Kapıda brand; it is not the official Herbalife website."
       },
       {
         "question": "How long does shipping take?",
@@ -723,7 +723,7 @@
     "fallbackItems": [
       {
         "question": "Are the products genuine?",
-        "answer": "Yes. Products sold are original Herbal Kapıda products. This site belongs to an independent Herbal Kapıda Nutrition distributor."
+        "answer": "Yes. Products sold are original Herbalife products. This site is an independent distributor store under the Herbal Kapıda brand; it is not the official Herbalife website."
       },
       {
         "question": "Which bundle should I choose?",
@@ -869,7 +869,7 @@
     "map": "Map",
     "googleReview": "Google review",
     "whatsappPrefill": "Hello, I'm writing about {brand}.",
-    "legalDisclaimerFallback": "This site belongs to an independent Herbal Kapıda Nutrition distributor. Products are 100% original."
+    "legalDisclaimerFallback": "This site is operated under the Herbal Kapıda brand by an independent Herbalife distributor. Products sold are original Herbalife products."
   },
   "locale": {
     "language": "Language",

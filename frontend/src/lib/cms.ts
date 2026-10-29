@@ -194,7 +194,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     distributorTitle: "Independent Distributor",
     distributorCode: "",
     legalDisclaimer:
-      "This site belongs to an independent Herbalife Nutrition / Herbal Kapıda distributor. It is not the official Herbalife website. Products are original Herbalife products.",
+      "This site is operated under the Herbal Kapıda brand by an independent Herbalife distributor. It is not the official Herbalife website. Products sold are original Herbalife products.",
   },
   contact: {
     address: "Adatepe Mahallesi 73 Sokak No: 3 Daire: 9 Buca / İzmir",
@@ -277,7 +277,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   },
   footer: {
     description:
-      "Herbal Kapıda ile orijinal Herbal Kapıda ürünleri, avantajlı setler ve birebir beslenme desteği.",
+      "Herbal Kapıda ile orijinal Herbalife ürünleri, avantajlı setler ve birebir beslenme desteği.",
     copyrightSuffix: "Bağımsız Distribütör",
   },
   promises: {
@@ -308,13 +308,13 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     supplementDisclaimer:
       "Bu ürünler gıda takviyesidir; hastalıkların teşhis, tedavi veya önlenmesi amacıyla kullanılmaz. Dengeli ve çeşitli beslenme ile sağlıklı yaşam tarzı önemlidir. Hamileler, emzirenler ve kronik rahatsızlığı olanlar kullanmadan önce hekimine danışmalıdır.",
     weightDisclaimer:
-      "Kilo kontrolü ve vücut kompozisyonu sonuçları kişiden kişiye değişir; tek başına ürün kullanımı yeterli değildir. Kalori alımı, fiziksel aktivite ve düzenli takip birlikte değerlendirilmelidir. Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir.",
+      "Kilo kontrolü ve vücut kompozisyonu sonuçları kişiden kişiye değişir; tek başına ürün kullanımı yeterli değildir. Kalori alımı, fiziksel aktivite ve düzenli takip birlikte değerlendirilmelidir. Bu site Herbal Kapıda markasıyla yayınlanan bağımsız bir Herbalife distribütör sitesidir.",
   },
   membership: {
     ctaLabel: "Resmi Herbalife üyeliği",
     ctaUrl: "https://www.myherbalife.com",
     disclaimer:
-      "Herbalife Nutrition distribütörü olmak için kayıt yalnızca resmi Herbalife platformu üzerinden yapılır. Bu site bağımsız bir distribütör sitesidir.",
+      "Herbalife distribütörü olmak için kayıt yalnızca resmi myHerbalife platformu üzerinden yapılır. Bu site Herbal Kapıda markalı bağımsız bir satıcı sitesidir.",
   },
   /** freeShippingOver yoksa vitrin env yedeğine düşer */
   shipping: {

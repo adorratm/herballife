@@ -243,7 +243,7 @@ export const CMS_SETTING_LOCALE_BLOCKS: Partial<
       location: 'Türkiye',
       distributorTitle: 'Independent Distributor',
       legalDisclaimer:
-        'This site belongs to an independent Herbal Kapıda Nutrition distributor. It is not the official Herbal Kapıda website. Products are genuine Herbal Kapıda products.',
+        'This site is operated under the Herbal Kapıda brand by an independent Herbalife distributor. It is not the official Herbalife website. Products sold are original Herbalife products.',
     },
     de: {
       slogan: 'Ein gesünderes, glücklicheres Leben',
@@ -253,7 +253,7 @@ export const CMS_SETTING_LOCALE_BLOCKS: Partial<
       location: 'Türkei',
       distributorTitle: 'Unabhängiger Distributor',
       legalDisclaimer:
-        'Diese Website gehört einem unabhängigen Herbal Kapıda Nutrition Distributor. Es ist nicht die offizielle Herbal Kapıda-Website. Die Produkte sind original Herbal Kapıda-Produkte.',
+        'Diese Website wird unter der Marke Herbal Kapıda von einem unabhängigen Herbalife-Vertriebspartner betrieben. Es ist nicht die offizielle Herbalife-Website. Verkaufte Produkte sind original Herbalife-Produkte.',
     },
     fr: {
       slogan: 'Une vie plus saine, plus heureuse',
@@ -263,7 +263,7 @@ export const CMS_SETTING_LOCALE_BLOCKS: Partial<
       location: 'Turquie',
       distributorTitle: 'Distributeur indépendant',
       legalDisclaimer:
-        'Ce site appartient à un distributeur indépendant Herbal Kapıda Nutrition. Ce n’est pas le site officiel Herbal Kapıda. Les produits sont des produits Herbal Kapıda authentiques.',
+        'Ce site est exploité sous la marque Herbal Kapıda par un distributeur indépendant Herbalife. Ce n’est pas le site officiel Herbalife. Les produits vendus sont des produits Herbalife d’origine.',
     },
     es: {
       slogan: 'Una vida más sana y feliz',
@@ -273,7 +273,7 @@ export const CMS_SETTING_LOCALE_BLOCKS: Partial<
       location: 'Turquía',
       distributorTitle: 'Distribuidor independiente',
       legalDisclaimer:
-        'Este sitio pertenece a un distribuidor independiente de Herbal Kapıda Nutrition. No es el sitio oficial de Herbal Kapıda. Los productos son Herbal Kapıda originales.',
+        'Este sitio opera bajo la marca Herbal Kapıda como distribuidor independiente de Herbalife. No es el sitio oficial de Herbalife. Los productos vendidos son Herbalife originales.',
     },
   },
   seo: {
@@ -469,47 +469,47 @@ export const CMS_SETTING_LOCALE_BLOCKS: Partial<
       supplementDisclaimer:
         'These products are food supplements; they are not intended to diagnose, treat, or prevent disease. A balanced diet and healthy lifestyle matter. Pregnant or nursing women and people with chronic conditions should consult a physician before use.',
       weightDisclaimer:
-        'Weight management and body composition results vary by individual; product use alone is not enough. Calorie intake, physical activity, and consistent tracking should be considered together. This site belongs to an independent Herbal Kapıda Nutrition distributor.',
+        'Weight management and body composition results vary by individual; product use alone is not enough. Calorie intake, physical activity, and consistent tracking should be considered together. This site is an independent Herbalife distributor store under the Herbal Kapıda brand.',
     },
     de: {
       supplementDisclaimer:
         'Diese Produkte sind Nahrungsergänzungsmittel; sie dienen nicht der Diagnose, Behandlung oder Vorbeugung von Krankheiten. Ausgewogene Ernährung und ein gesunder Lebensstil sind wichtig. Schwangere, Stillende und Personen mit chronischen Erkrankungen sollten vor der Einnahme einen Arzt konsultieren.',
       weightDisclaimer:
-        'Ergebnisse bei Gewichtsmanagement und Körperzusammensetzung sind individuell; alleinige Produktnutzung reicht nicht aus. Kalorienaufnahme, Bewegung und regelmäßiges Tracking gehören zusammen. Diese Website gehört einem unabhängigen Herbal Kapıda Nutrition Distributor.',
+        'Ergebnisse bei Gewichtsmanagement und Körperzusammensetzung sind individuell; alleinige Produktnutzung reicht nicht aus. Kalorienaufnahme, Bewegung und regelmäßiges Tracking gehören zusammen. Diese Website ist ein unabhängiger Herbalife-Vertriebspartner unter der Marke Herbal Kapıda.',
     },
     fr: {
       supplementDisclaimer:
         'Ces produits sont des compléments alimentaires ; ils ne visent pas à diagnostiquer, traiter ou prévenir une maladie. Une alimentation équilibrée et un mode de vie sain sont essentiels. Femmes enceintes ou allaitantes et personnes atteintes de maladies chroniques : consultez un médecin avant utilisation.',
       weightDisclaimer:
-        'Les résultats en matière de poids et de composition corporelle varient selon les personnes ; l’usage des produits seul ne suffit pas. Apports caloriques, activité physique et suivi régulier doivent être envisagés ensemble. Ce site appartient à un distributeur indépendant Herbal Kapıda Nutrition.',
+        'Les résultats en matière de poids et de composition corporelle varient selon les personnes ; l’usage des produits seul ne suffit pas. Apports caloriques, activité physique et suivi régulier doivent être envisagés ensemble. Ce site est un magasin de distributeur indépendant Herbalife sous la marque Herbal Kapıda.',
     },
     es: {
       supplementDisclaimer:
         'Estos productos son complementos alimenticios; no están destinados a diagnosticar, tratar o prevenir enfermedades. Una dieta equilibrada y un estilo de vida saludable son importantes. Embarazadas, lactantes y personas con enfermedades crónicas deben consultar a un médico antes de usarlos.',
       weightDisclaimer:
-        'Los resultados de control de peso y composición corporal varían; el uso del producto por sí solo no basta. Ingesta calórica, actividad física y seguimiento regular deben considerarse juntos. Este sitio pertenece a un distribuidor independiente de Herbal Kapıda Nutrition.',
+        'Los resultados de control de peso y composición corporal varían; el uso del producto por sí solo no basta. Ingesta calórica, actividad física y seguimiento regular deben considerarse juntos. Este sitio es una tienda de distribuidor independiente Herbalife bajo la marca Herbal Kapıda.',
     },
   },
   membership: {
     en: {
       ctaLabel: 'Official Herbal Kapıda membership',
       disclaimer:
-        'To become a Herbal Kapıda Nutrition distributor, registration is only through the official myHerbal Kapıda platform. This site is an independent distributor website.',
+        'To become a Herbalife distributor, registration is only through the official myHerbalife platform. This site is an independent Herbal Kapıda storefront.',
     },
     de: {
       ctaLabel: 'Offizielle Herbal Kapıda-Mitgliedschaft',
       disclaimer:
-        'Die Registrierung als Herbal Kapıda Nutrition Distributor erfolgt nur über die offizielle myHerbal Kapıda-Plattform. Diese Website ist eine unabhängige Distributor-Website.',
+        'Die Registrierung als Herbalife-Distributor erfolgt nur über die offizielle myHerbalife-Plattform. Diese Website ist ein unabhängiger Herbal Kapıda-Shop.',
     },
     fr: {
       ctaLabel: 'Adhésion officielle Herbal Kapıda',
       disclaimer:
-        'Pour devenir distributeur Herbal Kapıda Nutrition, l’inscription se fait uniquement via la plateforme officielle myHerbal Kapıda. Ce site est un site de distributeur indépendant.',
+        'Pour devenir distributeur Herbalife, l’inscription se fait uniquement via la plateforme officielle myHerbalife. Ce site est une boutique indépendante Herbal Kapıda.',
     },
     es: {
       ctaLabel: 'Membresía oficial Herbal Kapıda',
       disclaimer:
-        'Para ser distribuidor de Herbal Kapıda Nutrition, el registro solo se realiza en la plataforma oficial myHerbal Kapıda. Este sitio es de un distribuidor independiente.',
+        'Para ser distribuidor de Herbalife, el registro solo se realiza en la plataforma oficial myHerbalife. Este sitio es una tienda independiente Herbal Kapıda.',
     },
   },
   contact: {
@@ -596,7 +596,7 @@ export const CMS_SECTION_LOCALE_BLOCKS: Record<
         {
           question: 'Are the products original?',
           answer:
-            'Yes. Products sold are genuine Herbal Kapıda products. This site belongs to an independent Herbal Kapıda Nutrition distributor.',
+            'Yes. Products sold are original Herbalife products. This site is an independent distributor store under the Herbal Kapıda brand; it is not the official Herbalife website.',
         },
         {
           question: 'Which bundle should I choose?',
@@ -621,7 +621,7 @@ export const CMS_SECTION_LOCALE_BLOCKS: Record<
         {
           question: 'Sind die Produkte original?',
           answer:
-            'Ja. Es werden original Herbal Kapıda Produkte verkauft. Diese Website gehört einem unabhängigen Herbal Kapıda Nutrition Distributor.',
+            'Ja. Es werden original Herbalife-Produkte verkauft. Diese Website ist ein unabhängiger Vertriebspartner-Shop unter der Marke Herbal Kapıda; nicht die offizielle Herbalife-Website.',
         },
         {
           question: 'Welches Paket soll ich wählen?',
@@ -646,7 +646,7 @@ export const CMS_SECTION_LOCALE_BLOCKS: Record<
         {
           question: 'Les produits sont-ils originaux ?',
           answer:
-            'Oui. Les produits vendus sont des produits Herbal Kapıda authentiques. Ce site appartient à un distributeur indépendant Herbal Kapıda Nutrition.',
+            'Oui. Les produits vendus sont des produits Herbalife d’origine. Ce site est une boutique de distributeur indépendant sous la marque Herbal Kapıda ; ce n’est pas le site officiel Herbalife.',
         },
         {
           question: 'Quelle offre choisir ?',
@@ -671,7 +671,7 @@ export const CMS_SECTION_LOCALE_BLOCKS: Record<
         {
           question: '¿Los productos son originales?',
           answer:
-            'Sí. Se venden productos Herbal Kapıda auténticos. Este sitio pertenece a un distribuidor independiente de Herbal Kapıda Nutrition.',
+            'Sí. Se venden productos Herbalife originales. Este sitio es una tienda de distribuidor independiente bajo la marca Herbal Kapıda; no es el sitio oficial de Herbalife.',
         },
         {
           question: '¿Qué pack debo elegir?',

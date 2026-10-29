@@ -82,7 +82,7 @@
       "title": "Eine gesunde Routine in 3 Schritten",
       "body": "Vom Einkauf bis zum Tracking — einfacher Ablauf, dauerhafte Betreuung.",
       "cta": "Per WhatsApp starten",
-      "disclaimer": "{distributor} · unabhängiger Herbal Kapıda-Vertriebspartner. Dies ist nicht die offizielle Herbal Kapıda-Website.",
+      "disclaimer": "{distributor} · Herbal Kapıda — unabhängiger Herbalife-Vertriebspartner. Nicht die offizielle Herbalife-Website.",
       "step1Title": "Teilen Sie Ihr Ziel",
       "step1Body": "Gewicht, Energie oder Sport — wir klären Ihren Startpunkt in einem kurzen WhatsApp-Chat.",
       "step2Title": "Das passende Set wählen",
@@ -148,7 +148,7 @@
     "fallbackFaqItems": [
       {
         "question": "Are the products genuine?",
-        "answer": "Yes. Products sold are original Herbal Kapıda Nutrition products. This site belongs to an independent distributor; not the official Herbal Kapıda site."
+        "answer": "Yes. Products sold are original Herbalife products. This site is an independent distributor store under the Herbal Kapıda brand; it is not the official Herbalife website."
       },
       {
         "question": "How long does shipping take?",
@@ -456,7 +456,7 @@
     "map": "Karte",
     "googleReview": "Google-Bewertung",
     "whatsappPrefill": "Hallo, ich schreibe wegen {brand}.",
-    "legalDisclaimerFallback": "Diese Website gehört einem unabhängigen Herbal Kapıda Nutrition-Vertriebspartner. Die Produkte sind zu 100 % original."
+    "legalDisclaimerFallback": "Diese Website wird unter der Marke Herbal Kapıda von einem unabhängigen Herbalife-Vertriebspartner betrieben. Verkaufte Produkte sind original Herbalife-Produkte."
   },
   "locale": {
     "language": "Sprache",
@@ -1368,7 +1368,7 @@
     "fallbackItems": [
       {
         "question": "Are the products genuine?",
-        "answer": "Yes. Products sold are original Herbal Kapıda products. This site belongs to an independent Herbal Kapıda Nutrition distributor."
+        "answer": "Yes. Products sold are original Herbalife products. This site is an independent distributor store under the Herbal Kapıda brand; it is not the official Herbalife website."
       },
       {
         "question": "Which bundle should I choose?",

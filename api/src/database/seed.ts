@@ -878,6 +878,24 @@ async function seed() {
           changed = true;
         }
       }
+      // Yanlış “Herbal Kapıda Nutrition” / karışık marka metinlerini düzelt
+      if (
+        typeof brand.legalDisclaimer === 'string' &&
+        (/Herbal Kapıda Nutrition/i.test(brand.legalDisclaimer) ||
+          /resmi Herbal Kapıda sitesi/i.test(brand.legalDisclaimer) ||
+          /orijinal Herbal Kapıda ürün/i.test(brand.legalDisclaimer))
+      ) {
+        brand.legalDisclaimer = defaults.legalDisclaimer;
+        changed = true;
+      }
+      if (
+        typeof brand.tagline === 'string' &&
+        (/Herbal Kapıda Nutrition/i.test(brand.tagline) ||
+          /orijinal Herbal Kapıda ürün/i.test(brand.tagline))
+      ) {
+        brand.tagline = defaults.tagline;
+        changed = true;
+      }
       if (typeof brand.name === 'string' && brand.name.trim() === '') {
         brand.name = defaults.name;
         brand.slogan = defaults.slogan;
@@ -1008,6 +1026,32 @@ async function seed() {
         exists.value = promises;
         await em.save(exists);
         console.log('Site setting promises: updated');
+      }
+    } else if (key === 'legal' || key === 'footer' || key === 'membership') {
+      const cur = { ...(exists.value || {}) } as Record<string, unknown>;
+      const defaults = value as Record<string, unknown>;
+      let changed = false;
+      for (const [field, defVal] of Object.entries(defaults)) {
+        if (field === 'translations') continue;
+        const curVal = cur[field];
+        if (
+          typeof curVal === 'string' &&
+          typeof defVal === 'string' &&
+          (/Herbal Kapıda Nutrition/i.test(curVal) ||
+            /orijinal Herbal Kapıda ürün/i.test(curVal) ||
+            /resmi Herbal Kapıda sitesi/i.test(curVal))
+        ) {
+          cur[field] = defVal;
+          changed = true;
+        } else if (curVal === undefined || curVal === '') {
+          cur[field] = defVal;
+          changed = true;
+        }
+      }
+      if (changed) {
+        exists.value = cur;
+        await em.save(exists);
+        console.log(`Site setting ${key}: branding cleaned`);
       }
     } else if (key === 'welcomePopup') {
       const popup = { ...(exists.value || {}) } as Record<string, unknown>;
@@ -1189,7 +1233,10 @@ async function seed() {
       console.log('Content section:', section.page, section.sectionKey);
     } else {
       const raw = JSON.stringify(exists.content || {});
-      const looksStale = /unsplash\.com/i.test(raw);
+      const looksStale =
+        /unsplash\.com/i.test(raw) ||
+        /Herbal Kapıda Nutrition/i.test(raw) ||
+        /orijinal Herbal Kapıda ürün/i.test(raw);
       if (looksStale) {
         exists.content = section.content;
         exists.title = section.title;

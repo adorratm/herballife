@@ -82,7 +82,7 @@
       "title": "Une routine saine en 3 étapes",
       "body": "De l’achat au suivi — processus simple, accompagnement continu.",
       "cta": "Commencer sur WhatsApp",
-      "disclaimer": "{distributor} · distributeur Herbal Kapıda indépendant. Ce n’est pas le site officiel Herbal Kapıda.",
+      "disclaimer": "{distributor} · Herbal Kapıda — distributeur Herbalife indépendant. Ce n’est pas le site officiel Herbalife.",
       "step1Title": "Partagez votre objectif",
       "step1Body": "Poids, énergie ou sport — nous clarifions le point de départ via WhatsApp.",
       "step2Title": "Choisissez le bon set",
@@ -148,7 +148,7 @@
     "fallbackFaqItems": [
       {
         "question": "Are the products genuine?",
-        "answer": "Yes. Products sold are original Herbal Kapıda Nutrition products. This site belongs to an independent distributor; not the official Herbal Kapıda site."
+        "answer": "Yes. Products sold are original Herbalife products. This site is an independent distributor store under the Herbal Kapıda brand; it is not the official Herbalife website."
       },
       {
         "question": "How long does shipping take?",
@@ -456,7 +456,7 @@
     "map": "Carte",
     "googleReview": "Google review",
     "whatsappPrefill": "Hello, I'm writing about {brand}.",
-    "legalDisclaimerFallback": "This site belongs to an independent Herbal Kapıda Nutrition distributor. Products are 100% original."
+    "legalDisclaimerFallback": "Ce site est exploité sous la marque Herbal Kapıda par un distributeur indépendant Herbalife. Les produits vendus sont des produits Herbalife d’origine."
   },
   "locale": {
     "language": "Langue",
@@ -1393,7 +1393,7 @@
     "fallbackItems": [
       {
         "question": "Les produits sont-ils authentiques ?",
-        "answer": "Oui. Les produits vendus sont des produits Herbal Kapıda d'origine. Ce site appartient à un distributeur indépendant Herbal Kapıda Nutrition."
+        "answer": "Oui. Les produits vendus sont des produits Herbalife d’origine. Ce site est une boutique de distributeur indépendant sous la marque Herbal Kapıda ; ce n’est pas le site officiel Herbalife."
       },
       {
         "question": "Quel coffret dois-je choisir ?",

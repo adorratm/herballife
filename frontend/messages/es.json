@@ -82,7 +82,7 @@
       "title": "Rutina saludable en 3 pasos",
       "body": "De la compra al seguimiento — proceso simple, apoyo continuo.",
       "cta": "Empezar por WhatsApp",
-      "disclaimer": "{distributor} · distribuidor Herbal Kapıda independiente. No es el sitio oficial de Herbal Kapıda.",
+      "disclaimer": "{distributor} · Herbal Kapıda — distribuidor independiente Herbalife. No es el sitio oficial de Herbalife.",
       "step1Title": "Comparte tu objetivo",
       "step1Body": "Peso, energía o deporte — aclaramos el punto de partida por WhatsApp.",
       "step2Title": "Elige el set adecuado",
@@ -148,7 +148,7 @@
     "fallbackFaqItems": [
       {
         "question": "Are the products genuine?",
-        "answer": "Yes. Products sold are original Herbal Kapıda Nutrition products. This site belongs to an independent distributor; not the official Herbal Kapıda site."
+        "answer": "Yes. Products sold are original Herbalife products. This site is an independent distributor store under the Herbal Kapıda brand; it is not the official Herbalife website."
       },
       {
         "question": "How long does shipping take?",
@@ -456,7 +456,7 @@
     "map": "Map",
     "googleReview": "Google review",
     "whatsappPrefill": "Hello, I'm writing about {brand}.",
-    "legalDisclaimerFallback": "This site belongs to an independent Herbal Kapıda Nutrition distributor. Products are 100% original."
+    "legalDisclaimerFallback": "Este sitio opera bajo la marca Herbal Kapıda como distribuidor independiente de Herbalife. Los productos vendidos son Herbalife originales."
   },
   "locale": {
     "language": "Idioma",
@@ -1393,7 +1393,7 @@
     "fallbackItems": [
       {
         "question": "¿Los productos son originales?",
-        "answer": "Sí. Los productos vendidos son Herbal Kapıda originales. Este sitio pertenece a un distribuidor independiente de Herbal Kapıda Nutrition."
+        "answer": "Sí. Se venden productos Herbalife originales. Este sitio es una tienda de distribuidor independiente bajo la marca Herbal Kapıda; no es el sitio oficial de Herbalife."
       },
       {
         "question": "¿Qué pack debo elegir?",

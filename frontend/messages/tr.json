@@ -82,7 +82,7 @@
       "title": "3 adımda sağlıklı rutine",
       "body": "Alışverişten takibe — süreç sade, destek sürekli.",
       "cta": "WhatsApp ile başla",
-      "disclaimer": "{distributor} · bağımsız Herbal Kapıda distribütörü. Bu site resmi Herbal Kapıda sitesi değildir.",
+      "disclaimer": "{distributor} · Herbal Kapıda — bağımsız Herbalife distribütörü. Resmi Herbalife sitesi değildir.",
       "step1Title": "Hedefini paylaş",
       "step1Body": "Kilo, enerji veya spor — WhatsApp’tan kısa bir görüşmeyle başlangıç noktanı netleştiriyoruz.",
       "step2Title": "Doğru seti seç",
@@ -130,7 +130,7 @@
     "fallbackFaqItems": [
       {
         "question": "Ürünler orijinal mi?",
-        "answer": "Evet. Satılan ürünler orijinal Herbal Kapıda Nutrition ürünleridir. Bu site bağımsız bir distribütöre aittir; resmi Herbal Kapıda sitesi değildir."
+        "answer": "Evet. Satılan ürünler orijinal Herbalife ürünleridir. Bu site Herbal Kapıda markasıyla yayınlanan bağımsız bir distribütör sitesidir; resmi Herbalife sitesi değildir."
       },
       {
         "question": "Kargo ne kadar sürer?",
@@ -373,7 +373,7 @@
     "map": "Harita",
     "googleReview": "Google Yorum",
     "whatsappPrefill": "Merhaba, {brand} hakkında yazıyorum.",
-    "legalDisclaimerFallback": "Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir. Ürünler %100 orijinaldir."
+    "legalDisclaimerFallback": "Bu site Herbal Kapıda markası altında bağımsız bir Herbalife distribütörüne aittir. Satılan ürünler orijinal Herbalife ürünleridir."
   },
   "benefits": {
     "sameDayTitle": "{cutoff}'a kadar sipariş — aynı gün kargo",
@@ -739,7 +739,7 @@
     "fallbackItems": [
       {
         "question": "Ürünler orijinal mi?",
-        "answer": "Evet. Satılan ürünler orijinal Herbal Kapıda ürünleridir. Bu site bağımsız bir Herbal Kapıda Nutrition distribütörüne aittir."
+        "answer": "Evet. Satılan ürünler orijinal Herbalife ürünleridir. Bu site Herbal Kapıda markasıyla yayınlanan bağımsız bir distribütör sitesidir; resmi Herbalife sitesi değildir."
       },
       {
         "question": "Hangi paketi seçmeliyim?",
@@ -817,7 +817,7 @@
     "aboutTitle": "Hakkımızda",
     "categoryNotFound": "Kategori bulunamadı",
     "catalogLoading": "Katalog yükleniyor…",
-    "aboutJsonLdDescription": "{brand} — bağımsız Herbal Kapıda distribütörü.",
+    "aboutJsonLdDescription": "{brand} — bağımsız Herbalife distribütörü.",
     "keywordsCatalogDefault": [
       "katalog",
       "ürün",
@@ -836,12 +836,12 @@
   },
   "aboutPage": {
     "fallbackHeroTitle": "Hakkımızda",
-    "fallbackHeroSeo": "Herbal Kapıda — bağımsız Herbal Kapıda distribütörü ile orijinal ürünler, avantajlı setler ve kişiselleştirilmiş beslenme desteği.",
-    "metaDescription": "{brand} — bağımsız Herbal Kapıda distribütörü.",
-    "metaKeywords": "hakkımızda, Herbal Kapıda, bağımsız distribütör, Herbal Kapıda, beslenme",
+    "fallbackHeroSeo": "Herbal Kapıda — bağımsız Herbalife distribütörü ile orijinal Herbalife ürünleri, avantajlı setler ve kişiselleştirilmiş beslenme desteği.",
+    "metaDescription": "{brand} — bağımsız Herbalife distribütörü.",
+    "metaKeywords": "hakkımızda, Herbal Kapıda, Herbalife, bağımsız distribütör, beslenme",
     "fallbackBodyLine1": "Sağlıklı yaşam",
     "fallbackBodyLine2": "yanınızda",
-    "fallbackBodyP1": "Herbal Kapıda olarak orijinal Herbal Kapıda ürünlerini, avantajlı paketleri ve birebir beslenme danışmanlığını bir arada sunuyoruz.",
+    "fallbackBodyP1": "Herbal Kapıda olarak orijinal Herbalife ürünlerini, avantajlı paketleri ve birebir beslenme danışmanlığını bir arada sunuyoruz.",
     "fallbackBodyP2": "Amacımız raflara rastgele ürün koymak değil; hedefinize uygun program, sürdürülebilir alışkanlıklar ve güvenilir ürün erişimi sağlamaktır.",
     "fallbackBodyP3": "Ürün seçimi, set önerisi veya wellness takibi için WhatsApp ve iletişim kanallarımızdan bize ulaşabilirsiniz.",
     "ctaProducts": "Ürünleri İncele",
@@ -857,7 +857,7 @@
     "fallbackEthosQuote": "Sürdürülebilir sonuçlar; doğru ürün, düzenli takip ve kişisel rehberlikle gelir.",
     "fallbackEthosLink": "Yazıları oku",
     "pillarOriginalTitle": "Orijinal ürün",
-    "pillarOriginalBody": "Bağımsız distribütör güvencesiyle %100 orijinal Herbal Kapıda ürünleri.",
+    "pillarOriginalBody": "Bağımsız Herbalife distribütörü güvencesiyle %100 orijinal Herbalife ürünleri.",
     "pillarProgramTitle": "Kişisel program",
     "pillarProgramBody": "Hedefinize göre set önerisi ve WhatsApp üzerinden birebir danışmanlık.",
     "pillarTrackingTitle": "Sağlık takibi",
@@ -869,7 +869,7 @@
     "email": "E-posta",
     "waWrite": "WhatsApp'tan yaz",
     "waPrefillAbout": "Merhaba {brand}, hakkınızda bilgi almak istiyorum.",
-    "jsonLdDescription": "{brand} — bağımsız Herbal Kapıda distribütörü."
+    "jsonLdDescription": "{brand} — bağımsız Herbalife distribütörü."
   },
   "locale": {
     "language": "Dil",
