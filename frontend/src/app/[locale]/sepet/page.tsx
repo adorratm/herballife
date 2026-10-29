@@ -388,8 +388,8 @@ export default function CartPage() {
             ) : null}
           </div>
 
-          <aside className="min-w-0 lg:col-span-4">
-            <div className="rounded-xl bg-surface-container-lowest p-4 shadow-sm sm:p-6 lg:sticky lg:top-28">
+          <aside className="min-w-0 lg:col-span-4 lg:self-start lg:sticky lg:top-24 lg:z-10">
+            <div className="rounded-xl bg-surface-container-lowest p-4 shadow-sm sm:p-6">
               <h2 className="mb-4 font-display text-xl">{t("orderSummary")}</h2>
               <div className="space-y-3 border-b border-surface-container pb-4 text-sm">
                 <div className="flex justify-between text-on-surface-variant">

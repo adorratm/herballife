@@ -100,7 +100,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <head>
         {mediaBase ? <link rel="preconnect" href={mediaBase} /> : null}
       </head>
-      <body className="flex min-h-full flex-col overflow-x-hidden bg-background text-on-background antialiased">
+      <body className="flex min-h-full flex-col overflow-x-clip bg-background text-on-background antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <LocaleAlternatesProvider>
             <PanelGoogleTags />
