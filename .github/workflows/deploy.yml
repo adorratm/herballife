@@ -247,15 +247,23 @@ jobs:
               sleep 20
             done
           }
-          FILES=(
+          CANDIDATES=(
             docker-compose.prod.yml
             deploy/deploy.sh
             deploy/.env.production.example
             docker/api.Dockerfile
             docker/frontend.Dockerfile
             docker/admin.Dockerfile
-            frontend/public/downloads/.gitkeep
           )
+          FILES=()
+          for f in "${CANDIDATES[@]}"; do
+            if [ -e "$f" ]; then
+              FILES+=("$f")
+            else
+              echo "::warning::Sync atlandı (yok): $f"
+            fi
+          done
+          [ "${#FILES[@]}" -gt 0 ] || { echo "::error::Sync edilecek dosya yok"; exit 1; }
           retry ssh "${SSH_OPTS[@]}" -p "$PORT" "${REMOTE_USER}@${HOST}" \
             "mkdir -p '${TARGET}/deploy' '${TARGET}/frontend/public/downloads' '${TARGET}/docker'"
           retry bash -c "set -o pipefail; tar czf - ${FILES[*]} | ssh ${SSH_OPTS[*]} -p \"$PORT\" \"${REMOTE_USER}@${HOST}\" \"cd '${TARGET}' && tar xzf -\""
