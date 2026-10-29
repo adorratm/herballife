@@ -20,6 +20,15 @@ function isPlaceholderContent(content: string | null | undefined): boolean {
   if (c.includes('örnek içerik')) return true;
   if (/güncellenecek/i.test(c)) return true;
   if (c.includes('500 000 00 00')) return true;
+  // Eski RichText kayıtları + bozuk iç içe satıcı unvanı
+  if (
+    /Büşra Özberk \(Büşra Özberk \(Herbal Kapıda/i.test(c) ||
+    /Büşra Özberk \(Herbal Kapıda — Bağımsız Distribütör\) \(Bağımsız Distribütör\)/i.test(
+      c,
+    )
+  ) {
+    return true;
+  }
   return false;
 }
 

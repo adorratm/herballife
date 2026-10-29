@@ -631,7 +631,11 @@ async function seed() {
       !exists.content ||
       exists.content.includes('örnek içerik') ||
       /güncellenecek/i.test(exists.content) ||
-      exists.content.includes('500 000 00 00')
+      exists.content.includes('500 000 00 00') ||
+      /Büşra Özberk \(Büşra Özberk \(Herbal Kapıda/i.test(exists.content) ||
+      /Büşra Özberk \(Herbal Kapıda — Bağımsız Distribütör\) \(Bağımsız Distribütör\)/i.test(
+        exists.content,
+      )
     ) {
       exists.title = meta.title;
       exists.content = meta.content;

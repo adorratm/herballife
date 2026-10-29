@@ -38,18 +38,24 @@ export function sellerFromSettings(settings: SiteSettings): LegalSeller {
   ).replace(/\/$/, "");
   const legal = settings.legalSeller || DEFAULT_SETTINGS.legalSeller || {};
   const distributorName = settings.brand.distributorName?.trim();
-  const brandName = settings.brand.name || DEFAULT_SETTINGS.brand.name;
+  const brandName = (settings.brand.name || DEFAULT_SETTINGS.brand.name).trim();
   const distributorTitle =
     settings.brand.distributorTitle?.trim() || "Bağımsız Distribütör";
-  const defaultLegalName =
-    distributorName
-      ? `${distributorName} (${brandName} — ${distributorTitle})`
-      : brandName;
+  const fallbackLegalName =
+    DEFAULT_SETTINGS.legalSeller?.legalName ||
+    (distributorName
+      ? `${distributorName} (Herbal Kapıda — ${distributorTitle})`
+      : brandName);
+  // brand.name yasal unvan gibi doldurulmuşsa tekrar sarmalama
+  const brandLooksLikeLegal =
+    Boolean(distributorName) &&
+    brandName.includes(distributorName) &&
+    brandName.length > distributorName.length + 3;
   return {
     name:
       legal.legalName?.trim() ||
-      defaultLegalName ||
-      DEFAULT_SETTINGS.legalSeller?.legalName ||
+      (brandLooksLikeLegal ? brandName : null) ||
+      fallbackLegalName ||
       brandName,
     address: settings.contact.address || DEFAULT_SETTINGS.contact.address,
     email: settings.contact.email || DEFAULT_SETTINGS.contact.email,
@@ -106,16 +112,44 @@ export function applyLiveSellerContact(
     [SEEDED_CONTACT.phone, seller.phone],
     [SEEDED_CONTACT.hours, seller.hours],
     [SEEDED_CONTACT.website, seller.website],
-    [SEEDED_CONTACT.name, seller.name],
     ["[Vergi dairesi — güncellenecek]", seller.taxOffice],
     ["[MERSİS No — güncellenecek]", seller.mersis],
     ["+90 500 000 00 00", seller.phone],
     ["+905000000000", seller.phone.replace(/\s/g, "")],
   ];
+  // Marka adı satıcı unvanının parçasıysa (ör. "… Herbal Kapıda — …")
+  // replaceAll iç içe unvan üretir; yalnızca tam eşleşme / güvenli bağlamda değiştir.
+  if (
+    SEEDED_CONTACT.name &&
+    seller.name &&
+    SEEDED_CONTACT.name !== seller.name &&
+    !seller.name.includes(SEEDED_CONTACT.name)
+  ) {
+    seededPairs.push([SEEDED_CONTACT.name, seller.name]);
+  }
+  // Uzun eşleşmeler önce
+  seededPairs.sort((a, b) => b[0].length - a[0].length);
   for (const [from, to] of seededPairs) {
     if (from && to && from !== to) {
       result = result.replaceAll(from, to);
     }
+  }
+
+  // Eski brand→seller replace’in ürettiği iç içe unvanları toparla
+  if (seller.name) {
+    result = result
+      .replace(
+        /Büşra Özberk \(Büşra Özberk \(Herbal Kapıda — Bağımsız Distribütör\) — Bağımsız Distribütör\)/g,
+        seller.name,
+      )
+      .replace(
+        /Büşra Özberk \(Herbal Kapıda — Bağımsız Distribütör\) \(Bağımsız Distribütör\)/g,
+        seller.name,
+      )
+      .replace(
+        /Herbal Kapıda \(Bağımsız Distribütör\)/g,
+        seller.name,
+      );
   }
 
   if (seller.hours) {

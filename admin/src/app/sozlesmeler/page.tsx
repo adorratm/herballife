@@ -231,9 +231,11 @@ function LegalPageInner() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-muted">
-          Yasal belge editörü — her dil için ayrı kayıt tutun (TR / EN / DE /
-          FR / ES)
+        <p className="text-sm text-muted max-w-2xl">
+          Yasal belge editörü — her dil için ayrı kayıt (TR / EN / DE / FR /
+          ES). Normal deploy dolu veritabanında seed çalıştırmaz; kod
+          güncellemelerinden sonra yayını yenilemek için{' '}
+          <strong>TR’yi seed ile zorla yenile</strong> kullanın.
         </p>
         <div className="flex flex-wrap gap-2">
           <button
@@ -241,9 +243,27 @@ function LegalPageInner() {
             disabled={saving}
             onClick={() => void syncDefaults({ locales: ['tr'] })}
             className="btn-motion border border-border-muted px-4 py-2 text-sm text-foreground hover:bg-background disabled:opacity-50"
-            title="Eksik TR metinlerini doldurur"
+            title="Yalnızca eksik / yer tutuculu TR metinlerini doldurur"
           >
-            TR varsayılanları
+            TR eksikleri doldur
+          </button>
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() => {
+              if (
+                !window.confirm(
+                  'TR yasal metinleri kod seed’indeki güncel metinlerle üzerine yazılsın mı? Panelde elle düzenlediğiniz içerik silinir.',
+                )
+              ) {
+                return;
+              }
+              void syncDefaults({ force: true, locales: ['tr'] });
+            }}
+            className="btn-motion border border-amber-600/40 bg-amber-50 px-4 py-2 text-sm text-amber-900 hover:bg-amber-100 disabled:opacity-50"
+            title="Deploy sonrası seed çalışmasa bile yayındaki TR sözleşmeleri günceller"
+          >
+            TR’yi seed ile zorla yenile
           </button>
           <button
             type="button"
