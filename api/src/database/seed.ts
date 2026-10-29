@@ -1039,12 +1039,28 @@ async function seed() {
           typeof defVal === 'string' &&
           (/Herbal Kapıda Nutrition/i.test(curVal) ||
             /orijinal Herbal Kapıda ürün/i.test(curVal) ||
-            /resmi Herbal Kapıda sitesi/i.test(curVal))
+            /resmi Herbal Kapıda sitesi/i.test(curVal) ||
+            /Herbal Kapıda\s*üyeli/i.test(curVal) ||
+            /myherbalkapida/i.test(curVal) ||
+            /myHerbal Kapıda/i.test(curVal) ||
+            (field === 'ctaUrl' && /herbalkapida/i.test(curVal)))
         ) {
           cur[field] = defVal;
           changed = true;
         } else if (curVal === undefined || curVal === '') {
           cur[field] = defVal;
+          changed = true;
+        }
+      }
+      if (key === 'membership') {
+        const url = typeof cur.ctaUrl === 'string' ? cur.ctaUrl : '';
+        if (!url || /herbalkapida/i.test(url) || !/^https?:\/\//i.test(url)) {
+          cur.ctaUrl = defaults.ctaUrl || 'https://www.myherbalife.com';
+          changed = true;
+        }
+        const label = typeof cur.ctaLabel === 'string' ? cur.ctaLabel : '';
+        if (!label || /Herbal Kapıda\s*üyeli/i.test(label)) {
+          cur.ctaLabel = defaults.ctaLabel;
           changed = true;
         }
       }

@@ -311,10 +311,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
       "Kilo kontrolü ve vücut kompozisyonu sonuçları kişiden kişiye değişir; tek başına ürün kullanımı yeterli değildir. Kalori alımı, fiziksel aktivite ve düzenli takip birlikte değerlendirilmelidir. Bu site Herbal Kapıda markasıyla yayınlanan bağımsız bir Herbalife distribütör sitesidir.",
   },
   membership: {
-    ctaLabel: "Resmi Herbalife üyeliği",
+    ctaLabel: "Resmi Herbalife kaydı",
     ctaUrl: "https://www.myherbalife.com",
     disclaimer:
-      "Herbalife distribütörü olmak için kayıt yalnızca resmi myHerbalife platformu üzerinden yapılır. Bu site Herbal Kapıda markalı bağımsız bir satıcı sitesidir.",
+      "Herbalife bağımsız distribütör kaydı yalnızca myHerbalife.com üzerinden yapılır. herbalkapida.com resmi Herbalife sitesi değildir.",
   },
   /** freeShippingOver yoksa vitrin env yedeğine düşer */
   shipping: {
@@ -344,6 +344,46 @@ export function filterNavByFeatures(
 
 /** Kısa TTL; admin kayıt sonrası /api/revalidate ile hemen de temizlenir */
 const CMS_REVALIDATE = 15;
+
+const OFFICIAL_MYHERBALIFE = "https://www.myherbalife.com";
+
+/** Production CMS’te yanlış myherbalkapida / “Herbal Kapıda üyeliği” kalıntılarını düzelt. */
+export function normalizeMembership(
+  membership: SiteSettings["membership"] | undefined,
+): SiteSettings["membership"] {
+  const defaults = DEFAULT_SETTINGS.membership || {
+    ctaLabel: "Resmi Herbalife kaydı",
+    ctaUrl: OFFICIAL_MYHERBALIFE,
+    disclaimer:
+      "Herbalife bağımsız distribütör kaydı yalnızca myHerbalife.com üzerinden yapılır. herbalkapida.com resmi Herbalife sitesi değildir.",
+  };
+  const url = (membership?.ctaUrl || "").trim();
+  const label = (membership?.ctaLabel || "").trim();
+  const disclaimer = (membership?.disclaimer || "").trim();
+  const badUrl =
+    !url ||
+    /herbalkapida/i.test(url) ||
+    /myherbal.?kap[iı]da/i.test(url) ||
+    !/^https?:\/\//i.test(url);
+  const badLabel =
+    !label ||
+    /Herbal Kapıda\s*üyeli/i.test(label) ||
+    /Herbal Kapıda\s*membership/i.test(label) ||
+    /Herbal Kapıda-Mitglied/i.test(label) ||
+    /Adhésion.*Herbal Kapıda/i.test(label) ||
+    /Membresía oficial Herbal Kapıda/i.test(label);
+  const badDisclaimer =
+    !disclaimer ||
+    /myHerbal Kapıda/i.test(disclaimer) ||
+    /myherbalkapida/i.test(disclaimer) ||
+    /Herbal Kapıda Nutrition/i.test(disclaimer) ||
+    /Herbal Kapıda markalı bağımsız bir satıcı/i.test(disclaimer);
+  return {
+    ctaLabel: badLabel ? defaults.ctaLabel : label,
+    ctaUrl: badUrl ? defaults.ctaUrl || OFFICIAL_MYHERBALIFE : url,
+    disclaimer: badDisclaimer ? defaults.disclaimer : disclaimer,
+  };
+}
 
 function mergeSettings(
   raw: Record<string, Record<string, unknown>> | null,
@@ -387,10 +427,10 @@ function mergeSettings(
       ...DEFAULT_SETTINGS.legal,
       ...(raw.legal as SiteSettings["legal"]),
     },
-    membership: {
+    membership: normalizeMembership({
       ...DEFAULT_SETTINGS.membership,
       ...(raw.membership as SiteSettings["membership"]),
-    },
+    }),
     localization: raw.localization as SiteSettings["localization"],
     shipping: {
       ...DEFAULT_SETTINGS.shipping,

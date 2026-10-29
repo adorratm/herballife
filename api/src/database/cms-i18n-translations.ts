@@ -492,24 +492,24 @@ export const CMS_SETTING_LOCALE_BLOCKS: Partial<
   },
   membership: {
     en: {
-      ctaLabel: 'Official Herbal Kapıda membership',
+      ctaLabel: 'Official Herbalife registration',
       disclaimer:
-        'To become a Herbalife distributor, registration is only through the official myHerbalife platform. This site is an independent Herbal Kapıda storefront.',
+        'Independent Herbalife distributor registration is only via myHerbalife.com. herbalkapida.com is not the official Herbalife website.',
     },
     de: {
-      ctaLabel: 'Offizielle Herbal Kapıda-Mitgliedschaft',
+      ctaLabel: 'Offizielle Herbalife-Registrierung',
       disclaimer:
-        'Die Registrierung als Herbalife-Distributor erfolgt nur über die offizielle myHerbalife-Plattform. Diese Website ist ein unabhängiger Herbal Kapıda-Shop.',
+        'Die Registrierung als unabhängiger Herbalife-Distributor erfolgt nur über myHerbalife.com. herbalkapida.com ist nicht die offizielle Herbalife-Website.',
     },
     fr: {
-      ctaLabel: 'Adhésion officielle Herbal Kapıda',
+      ctaLabel: 'Inscription Herbalife officielle',
       disclaimer:
-        'Pour devenir distributeur Herbalife, l’inscription se fait uniquement via la plateforme officielle myHerbalife. Ce site est une boutique indépendante Herbal Kapıda.',
+        'L’inscription en tant que distributeur indépendant Herbalife se fait uniquement sur myHerbalife.com. herbalkapida.com n’est pas le site officiel Herbalife.',
     },
     es: {
-      ctaLabel: 'Membresía oficial Herbal Kapıda',
+      ctaLabel: 'Registro oficial Herbalife',
       disclaimer:
-        'Para ser distribuidor de Herbalife, el registro solo se realiza en la plataforma oficial myHerbalife. Este sitio es una tienda independiente Herbal Kapıda.',
+        'El registro como distribuidor independiente de Herbalife solo se realiza en myHerbalife.com. herbalkapida.com no es el sitio oficial de Herbalife.',
     },
   },
   contact: {
