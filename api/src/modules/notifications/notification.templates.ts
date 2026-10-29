@@ -11,6 +11,7 @@ import {
   storefrontHref,
   type EmailCopy,
 } from '@modules/notifications/email-i18n';
+import { formatPhoneDisplay } from '@common/utils/phone';
 
 export type NotificationTemplateContext = {
   order: Order;
@@ -27,7 +28,9 @@ export type NotificationTemplateContext = {
 
 const BRAND = 'Herbal Kapıda';
 const BRAND_EMAIL = 'info@herbalkapida.com';
-const BRAND_PHONE = '+90 555 111 22 33';
+/** CMS contact.phone ile aynı */
+const BRAND_PHONE = '+90 541 489 42 43';
+const BRAND_PHONE_TEL = '+905414894243';
 const DEFAULT_SITE_URL = 'https://herbalkapida.com';
 
 function isLoopbackHost(url: string): boolean {
@@ -81,20 +84,21 @@ export function resolveAdminUrl(config: ConfigService): string {
   return raw || 'http://localhost:3001';
 }
 
-/** Marka renkleri — logo (#8c6566) ile uyumlu */
+/** Site globals.css ile aynı — soft yeşil / açık zemin */
 const C = {
-  page: '#14110f',
-  card: '#1c1714',
-  header: '#f4efe8',
-  ink: '#1a1410',
-  cream: '#f5efe6',
-  muted: '#a89888',
-  soft: '#e8ddd0',
-  line: '#3d3229',
-  lineSoft: '#e5ddd2',
-  accent: '#8c6566',
-  accentSoft: '#c4a574',
-  footer: '#120f0d',
+  page: '#f4f7f5',
+  card: '#ffffff',
+  header: '#ffffff',
+  ink: '#121411',
+  cream: '#121411', // metin vurgusu (eski dark tema adı korundu)
+  muted: '#6d746c',
+  soft: '#3d423c',
+  line: '#d5dad4',
+  lineSoft: '#e8e6e0',
+  accent: '#157a4c',
+  accentSoft: '#1c8f5a',
+  footer: '#eef3f0',
+  surface: '#f4f7f5',
 };
 
 /** Gmail: uzak URL yerine CID (EmailProvider inline attachment) */
@@ -118,21 +122,58 @@ function formatMoney(
   return formatMoneyLocalized(amount, currency, locale);
 }
 
+function addrField(
+  addr: Record<string, string>,
+  ...keys: string[]
+): string {
+  for (const key of keys) {
+    const v = addr[key];
+    if (typeof v === 'string' && v.trim()) return v.trim();
+  }
+  return '';
+}
+
 function formatAddress(
   addr: Record<string, string> | null | undefined,
   copy?: EmailCopy,
+  opts?: { includePhone?: boolean; phoneOverride?: string | null },
 ): string {
   if (!addr) return '—';
   const c = copy || emailCopy('tr');
+  const includePhone = opts?.includePhone !== false;
+  const phoneRaw =
+    opts?.phoneOverride?.trim() || addrField(addr, 'phone', 'gsm', 'mobile');
+  const phone = includePhone ? formatPhoneDisplay(phoneRaw) : '';
+  // Checkout: addressLine; seed/eski: line1; marketplace: address1 / fullAddress
+  const street = addrField(
+    addr,
+    'addressLine',
+    'line1',
+    'address1',
+    'address',
+    'fullAddress',
+    'street',
+  );
+  const neighborhood = addrField(addr, 'neighborhood', 'mahalle');
+  const district = addrField(addr, 'district', 'districtName', 'ilce');
+  const city = addrField(addr, 'city', 'cityName', 'il');
+  const postal = addrField(addr, 'postalCode', 'zip', 'zipCode');
+  const country = addrField(addr, 'country');
+  const locality = [neighborhood, district, city].filter(Boolean).join(' / ');
   const lines = [
-    addr.companyTitle,
-    addr.taxNumber ? `${c.taxId}: ${addr.taxNumber}` : null,
-    addr.taxOffice ? `${c.taxOffice}: ${addr.taxOffice}` : null,
-    addr.fullName,
-    addr.phone,
-    addr.addressLine,
-    [addr.neighborhood, addr.district, addr.city].filter(Boolean).join(', '),
-    addr.postalCode,
+    addrField(addr, 'companyTitle', 'company'),
+    addrField(addr, 'taxNumber')
+      ? `${c.taxId}: ${addrField(addr, 'taxNumber')}`
+      : null,
+    addrField(addr, 'taxOffice')
+      ? `${c.taxOffice}: ${addrField(addr, 'taxOffice')}`
+      : null,
+    addrField(addr, 'fullName', 'name', 'receiverName'),
+    phone || null,
+    street || null,
+    locality || null,
+    postal || null,
+    country && country !== 'TR' && country !== 'Türkiye' ? country : null,
   ].filter((x) => Boolean(x && String(x).trim()));
   return lines.length ? lines.join('\n') : '—';
 }
@@ -141,7 +182,10 @@ function formatAddressOneLine(
   addr: Record<string, string> | null | undefined,
   copy?: EmailCopy,
 ): string {
-  return formatAddress(addr, copy).replace(/\n/g, ' · ');
+  return formatAddress(addr, copy, { includePhone: false }).replace(
+    /\n/g,
+    ' · ',
+  );
 }
 
 function orderItemsList(order: Order, locale?: string | null): string {
@@ -162,7 +206,7 @@ function sectionLabel(text: string): string {
 
 function infoCard(label: string, bodyHtml: string): string {
   return `
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 14px;background:#241e1a;border:1px solid ${C.line};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 14px;background:${C.surface};border:1px solid ${C.line};border-radius:8px;">
     <tr>
       <td style="padding:16px 18px;">
         ${sectionLabel(label)}
@@ -216,13 +260,16 @@ export function buildOrderDetailsHtml(
         .join('')
     : `<tr><td colspan="2" style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:${C.muted};">${escapeHtml(copy.noItems)}</td></tr>`;
 
-  const ship = formatAddress(order.shippingAddress, copy);
+  // Telefon yalnızca müşteri kartında — adres bloğunda tekrar/yanlış numara olmasın
+  const ship = formatAddress(order.shippingAddress, copy, {
+    includePhone: false,
+  });
   const bill = order.billingAddress
-    ? formatAddress(order.billingAddress, copy)
+    ? formatAddress(order.billingAddress, copy, { includePhone: false })
     : null;
 
   const itemsBlock = `
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 18px;background:#241e1a;border:1px solid ${C.line};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 18px;background:${C.surface};border:1px solid ${C.line};border-radius:8px;">
     <tr>
       <td style="padding:16px 18px;">
         ${sectionLabel(copy.orderContents)}
@@ -233,12 +280,16 @@ export function buildOrderDetailsHtml(
 
   if (!includePersonal) return itemsBlock;
 
+  const customerPhone = formatPhoneDisplay(order.customerPhone);
+  const personalLines = [
+    order.customerName || null,
+    order.customerEmail ? `E-posta: ${order.customerEmail}` : null,
+    customerPhone ? `Telefon: ${customerPhone}` : null,
+  ].filter(Boolean);
   const personalBlock = infoCard(
     copy.customer,
     `<p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.7;color:${C.soft};white-space:pre-line;">${escapeHtml(
-      [order.customerName, order.customerEmail, order.customerPhone]
-        .filter(Boolean)
-        .join('\n'),
+      personalLines.join('\n'),
     )}</p>`,
   );
 
@@ -291,7 +342,7 @@ export function buildOrderDetailsText(
       '',
       `${copy.customer}: ${order.customerName}`,
       `E-posta: ${order.customerEmail}`,
-      `Telefon: ${order.customerPhone}`,
+      `Telefon: ${formatPhoneDisplay(order.customerPhone)}`,
       `${copy.delivery}: ${formatAddressOneLine(order.shippingAddress, copy)}`,
     );
     if (order.billingAddress) {
@@ -410,7 +461,7 @@ export function renderBrandedEmail(input: {
     : '';
 
   const metaBlock = rows
-    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 8px;background:#241e1a;border:1px solid ${C.line};">
+    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 8px;background:${C.surface};border:1px solid ${C.line};border-radius:8px;">
         <tr><td style="padding:6px 18px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}</table>
         </td></tr>
@@ -422,7 +473,7 @@ export function renderBrandedEmail(input: {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="color-scheme" content="light dark" />
+  <meta name="color-scheme" content="light" />
   <title>${escapeHtml(input.title)}</title>
 </head>
 <body style="margin:0;padding:0;background:${C.page};">
@@ -430,22 +481,21 @@ export function renderBrandedEmail(input: {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.page};padding:28px 12px;">
     <tr>
       <td align="center">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:${C.card};border:1px solid ${C.line};">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:${C.card};border:1px solid ${C.line};border-radius:12px;overflow:hidden;">
           <tr>
-            <td style="padding:28px 28px 22px;background:${C.header};border-bottom:3px solid ${C.accent};text-align:center;">
+            <td style="padding:20px 20px 16px;background:#ffffff;border-bottom:1px solid ${C.line};text-align:center;">
               <a href="${escapeHtml(site)}" style="text-decoration:none;">
-                <img src="${escapeHtml(logo)}" width="220" alt="${escapeHtml(BRAND)}" style="display:block;margin:0 auto;width:220px;max-width:72%;height:auto;border:0;outline:none;" />
+                <img src="${escapeHtml(logo)}" width="360" alt="${escapeHtml(BRAND)}" style="display:block;margin:0 auto;width:360px;max-width:92%;height:auto;border:0;outline:none;background:#ffffff;" />
               </a>
-              <p style="margin:14px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:${C.accent};">${escapeHtml(copy.distributorTag)}</p>
             </td>
           </tr>
           <tr>
             <td style="height:3px;background:${C.accent};font-size:0;line-height:0;">&nbsp;</td>
           </tr>
           <tr>
-            <td style="padding:30px 28px 8px;">
-              <p style="margin:0 0 10px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${C.accentSoft};">${escapeHtml(input.title)}</p>
-              <h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:1.25;font-weight:400;color:${C.cream};">${escapeHtml(input.greeting)}</h1>
+            <td style="padding:28px 24px 10px;">
+              <p style="margin:0 0 10px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${C.accent};">${escapeHtml(input.title)}</p>
+              <h1 style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:24px;line-height:1.3;font-weight:700;color:${C.ink};">${escapeHtml(input.greeting)}</h1>
               ${paras}
               ${metaBlock}
               ${input.extraHtml || ''}
@@ -453,15 +503,15 @@ export function renderBrandedEmail(input: {
             </td>
           </tr>
           <tr>
-            <td style="padding:24px 28px 28px;border-top:1px solid ${C.line};background:${C.footer};">
-              <p style="margin:0 0 8px;font-family:Georgia,'Times New Roman',serif;font-size:15px;color:${C.cream};">${BRAND}</p>
+            <td style="padding:22px 24px 26px;border-top:1px solid ${C.line};background:${C.footer};">
+              <p style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:${C.ink};">${BRAND}</p>
               <p style="margin:0 0 4px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:${C.muted};">
-                <a href="mailto:${BRAND_EMAIL}" style="color:${C.accentSoft};text-decoration:none;">${BRAND_EMAIL}</a>
+                <a href="mailto:${BRAND_EMAIL}" style="color:${C.accent};text-decoration:none;">${BRAND_EMAIL}</a>
                 &nbsp;·&nbsp;
-                <a href="tel:+905553332211" style="color:${C.muted};text-decoration:none;">${BRAND_PHONE}</a>
+                <a href="tel:${BRAND_PHONE_TEL}" style="color:${C.muted};text-decoration:none;">${BRAND_PHONE}</a>
               </p>
-              <p style="margin:10px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6d5f52;">
-                <a href="${escapeHtml(site)}" style="color:#6d5f52;text-decoration:none;">${escapeHtml(site.replace(/^https?:\/\//, ''))}</a>
+              <p style="margin:10px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:${C.muted};">
+                <a href="${escapeHtml(site)}" style="color:${C.muted};text-decoration:none;">${escapeHtml(site.replace(/^https?:\/\//, ''))}</a>
               </p>
             </td>
           </tr>
@@ -545,7 +595,7 @@ export function buildEmailContent(
             isPaid
               ? `<strong style="color:${C.cream};">${escapeHtml(orderNo)}</strong> ödemesi tamamlandı. Hazırlığa başlayabilirsiniz.`
               : `<strong style="color:${C.cream};">${escapeHtml(orderNo)}</strong> oluşturuldu (ödeme bekleniyor).`,
-            `${escapeHtml(ctx.order.customerName)} · ${escapeHtml(ctx.order.customerEmail)} · ${escapeHtml(ctx.order.customerPhone)}`,
+            `${escapeHtml(ctx.order.customerName)} · ${escapeHtml(ctx.order.customerEmail)} · ${escapeHtml(formatPhoneDisplay(ctx.order.customerPhone))}`,
           ],
           metaRows: opsTotals,
           extraHtml: opsDetailsHtml,

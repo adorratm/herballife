@@ -32,8 +32,16 @@ Bu üçü girilince pipeline deploy adımına geçer. Eksikse build yine GHCR’
 | `DEPLOY_PATH` | `/opt/herbalkapida` | Proje kökü (compose + deploy/) |
 | `DEPLOY_SSH_PASSPHRASE` | — | Key passphrase varsa |
 | `DEPLOY_ENV` | — | İlk kurulumda `deploy/.env` içeriği (çok satır). Yoksa örnek dosya kopyalanır |
+| `MAIL_HOST` / `MAIL_USER` / `MAIL_PASS` / `MAIL_FROM` / `MAIL_PORT` / `MAIL_SECURE` | — | Deploy’da `deploy/.env` üzerine yazılır. **Environment secret yetmez** — Repository secrets olmalı |
+| `ORDER_ALERT_EMAILS` | `info@…` | Yönetici sipariş bildirimi alıcıları |
 | `GHCR_PULL_TOKEN` | `GITHUB_TOKEN` | Sunucuda `docker pull` için PAT (`read:packages`) |
 | `GHCR_PULL_USER` | `github.actor` | GHCR kullanıcı adı |
+
+### Mail gelmiyor?
+
+Deploy job **environment bağlamaz**. Secrets → Actions → **Repository secrets** altında `MAIL_*` olmalı (Environments sayfasındakiler bu workflow’a gelmez).
+
+Her deploy’da dolu `MAIL_*` repository secret’ları `deploy/.env` içine upsert edilir; API `env_file: deploy/.env` ile okur.
 
 ## Build-time public URL’ler (Variables önerilir)
 

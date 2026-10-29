@@ -929,7 +929,8 @@ async function seed() {
         brand.distributorName = defaults.distributorName;
         changed = true;
       }
-      if (!brand.logoUrl) {
+      // Logo her seed’de defaults ile senkron (telefon/görsel güncellemeleri)
+      if (brand.logoUrl !== defaults.logoUrl) {
         brand.logoUrl = defaults.logoUrl;
         changed = true;
       }
@@ -1531,7 +1532,10 @@ async function seed() {
         customerName: 'Ayşe Yılmaz',
         customerPhone: '+90 532 000 00 01',
         shippingAddress: {
-          line1: 'Örnek Mah. Demo Cad. No:1',
+          fullName: 'Ayşe Yılmaz',
+          phone: '+90 532 000 00 01',
+          addressLine: 'Örnek Mah. Demo Cad. No:1',
+          neighborhood: 'Örnek Mah.',
           city: 'İstanbul',
           district: 'Kadıköy',
           postalCode: '34710',

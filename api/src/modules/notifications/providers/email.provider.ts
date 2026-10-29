@@ -70,9 +70,17 @@ export class EmailProvider {
       input.html.includes(`cid:${BRAND_LOGO_CID}`);
 
     if (!this.transporter) {
-      this.logger.log(
-        `[console-email] to=${input.to} subject=${input.subject}\n${input.text || input.html}`,
+      const nodeEnv = this.config.get<string>('nodeEnv') || process.env.NODE_ENV;
+      this.logger.warn(
+        `[console-email] SMTP yok — to=${input.to} subject=${input.subject}`,
       );
+      // Prod'da sessiz "gönderildi" yanıltır; yerel/dev'de konsola düşer.
+      if (nodeEnv === 'production') {
+        throw new Error(
+          'SMTP yapılandırılmamış (MAIL_HOST / MAIL_USER / MAIL_PASS) — e-posta gönderilemedi',
+        );
+      }
+      this.logger.log(input.text || input.html);
       return { id: `console-${Date.now()}` };
     }
 

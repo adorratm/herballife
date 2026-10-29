@@ -48,17 +48,39 @@ export function resolveOrderSource(order: {
 
 export function formatAddress(addr?: Record<string, string> | null): string[] {
   if (!addr) return [];
+  const pick = (...keys: string[]) => {
+    for (const k of keys) {
+      const v = addr[k];
+      if (typeof v === 'string' && v.trim()) return v.trim();
+    }
+    return '';
+  };
   const lines: string[] = [];
-  if (addr.fullName) lines.push(addr.fullName);
-  if (addr.phone) lines.push(addr.phone);
-  if (addr.addressLine || addr.address) {
-    lines.push(addr.addressLine || addr.address);
-  }
-  const cityLine = [addr.district, addr.city, addr.postalCode]
+  const fullName = pick('fullName', 'name', 'receiverName');
+  const phone = pick('phone', 'gsm', 'mobile');
+  const street = pick(
+    'addressLine',
+    'line1',
+    'address1',
+    'address',
+    'fullAddress',
+    'street',
+  );
+  const locality = [
+    pick('neighborhood', 'mahalle'),
+    pick('district', 'districtName', 'ilce'),
+    pick('city', 'cityName', 'il'),
+  ]
     .filter(Boolean)
     .join(' / ');
-  if (cityLine) lines.push(cityLine);
-  if (addr.country && addr.country !== 'TR') lines.push(addr.country);
+  const postal = pick('postalCode', 'zip', 'zipCode');
+  const country = pick('country');
+  if (fullName) lines.push(fullName);
+  if (phone) lines.push(phone);
+  if (street) lines.push(street);
+  if (locality) lines.push(locality);
+  if (postal) lines.push(postal);
+  if (country && country !== 'TR' && country !== 'Türkiye') lines.push(country);
   return lines;
 }
 

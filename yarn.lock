@@ -6209,10 +6209,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^4.3.1":
-  version: 4.3.1
-  resolution: "deepmerge@npm:4.3.1"
-  checksum: 10c0/e53481aaf1aa2c4082b5342be6b6d8ad9dfe387bc92ce197a66dea08bd4265904a087e75e464f14d1347cf2ac8afe1e4c16b266e0561cc5df29382d3c5f80044
+"deepmerge@npm:4.1.2":
+  version: 4.1.2
+  resolution: "deepmerge@npm:4.1.2"
+  checksum: 10c0/32a25c274d5d62abf047fe6ed5a9c618298b80ee3b9a4adc4ae9c63658e703a6ba93ff13e97a6996ae3664edd5a6fabceaeb9b2742fc4592b35d9a9ff0f1ee5a
   languageName: node
   linkType: hard
 

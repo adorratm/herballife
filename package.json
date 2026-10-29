@@ -63,7 +63,8 @@
     "brace-expansion": "5.0.12",
     "shell-quote": "1.12.0",
     "http-cache-semantics": "4.3.0",
-    "node-forge": "portal:./.yarn/vendor/node-forge"
+    "node-forge": "portal:./.yarn/vendor/node-forge",
+    "deepmerge": "4.1.2"
   },
   "volta": {
     "node": "26.12.1",
