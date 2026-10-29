@@ -9,7 +9,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     established: '2024’ten beri',
     location: 'Buca / İzmir',
     logoUrl:
-      'https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/2026-10-29/logo-phone-updated.png',
+      'https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/2026-10-29/logo-white-bg.png',
     distributorName: 'Büşra Özberk',
     distributorTitle: 'Bağımsız Distribütör',
     distributorCode: '',

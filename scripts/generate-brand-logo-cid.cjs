@@ -16,7 +16,7 @@ const outTs = path.join(
 );
 
 const DEFAULT_LOGO_URL =
-  'https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/2026-10-29/logo-phone-updated.png';
+  'https://herbalkapida.s3.eu-central-1.amazonaws.com/brand/2026-10-29/logo-white-bg.png';
 
 function fetchBuffer(url) {
   return new Promise((resolve, reject) => {
