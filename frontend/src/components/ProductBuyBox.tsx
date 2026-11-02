@@ -45,6 +45,7 @@ export function ProductBuyBox({
   whatsappPhone = DEFAULT_WHATSAPP_PHONE,
 }: Props) {
   const t = useTranslations("product");
+  const tBadges = useTranslations("productBadges");
   const locale = useLocale();
   const shakers = useMemo(
     () => SHAKER_KEYS.map((key) => t(key)),
@@ -127,14 +128,18 @@ export function ProductBuyBox({
   const stock = selected != null ? selected.stock : product.stock;
   const outOfStock = stock <= 0;
 
-  const badgeChips = useMemo(
-    () =>
-      computeProductBadges(product, {
-        price: displayPrice,
-        compareAt,
-      }),
-    [product, displayPrice, compareAt],
-  );
+  const badgeChips = useMemo(() => {
+    const raw = computeProductBadges(product, {
+      price: displayPrice,
+      compareAt,
+    });
+    return raw
+      .map((b) => ({
+        ...b,
+        text: (b.labelKey ? tBadges(b.labelKey) : b.label).trim(),
+      }))
+      .filter((b) => Boolean(b.text));
+  }, [product, displayPrice, compareAt, tBadges]);
 
   return (
     <div className="space-y-6">
@@ -148,14 +153,14 @@ export function ProductBuyBox({
         <div className="relative flex min-h-0 flex-wrap gap-2">
           {badgeChips.map((b) => (
             <span
-              key={b.label}
+              key={`${b.tone}-${b.labelKey ?? b.text}`}
               className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ${
                 b.tone === "sale"
                   ? "badge-discount badge-live text-base! px-3! py-1.5!"
                   : "bg-surface-container-high text-on-surface"
               }`}
             >
-              {b.label}
+              {b.text}
             </span>
           ))}
         </div>

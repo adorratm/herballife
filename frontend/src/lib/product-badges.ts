@@ -110,8 +110,12 @@ export function computeProductBadges(
 
   const seen = new Set<string>();
   const unique = prioritized.filter((c) => {
-    if (seen.has(c.label)) return false;
-    seen.add(c.label);
+    const key = c.labelKey
+      ? `key:${c.labelKey}`
+      : `label:${c.label.trim().toLocaleLowerCase("tr")}`;
+    if (!key.replace(/^(key|label):/, "").trim()) return false;
+    if (seen.has(key)) return false;
+    seen.add(key);
     return true;
   });
 
