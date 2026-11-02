@@ -13,10 +13,24 @@ type Settings = {
   einvoicePrefix: string;
   autoEmailInvoiceOnGib?: boolean;
   paytrCommissionRatePercent?: string | number;
+  paytrMerchantId?: string | null;
+  paytrMerchantKeySet?: boolean;
+  paytrMerchantSaltSet?: boolean;
+  paytrTestMode?: string | null;
+  paytrDebugOn?: string | null;
 };
 
 const FIELDS: {
-  key: Exclude<keyof Settings, 'autoEmailInvoiceOnGib'>;
+  key: Exclude<
+    keyof Settings,
+    | 'autoEmailInvoiceOnGib'
+    | 'paytrCommissionRatePercent'
+    | 'paytrMerchantId'
+    | 'paytrMerchantKeySet'
+    | 'paytrMerchantSaltSet'
+    | 'paytrTestMode'
+    | 'paytrDebugOn'
+  >;
   label: string;
   required?: boolean;
 }[] = [
@@ -31,6 +45,8 @@ const FIELDS: {
 
 export default function AccountingSettingsPage() {
   const [form, setForm] = useState<Settings | null>(null);
+  const [paytrKey, setPaytrKey] = useState('');
+  const [paytrSalt, setPaytrSalt] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -54,21 +70,32 @@ export default function AccountingSettingsPage() {
     setError(null);
     setMessage(null);
     try {
+      const body: Record<string, unknown> = {
+        companyTitle: form.companyTitle,
+        vkn: form.vkn || null,
+        taxOffice: form.taxOffice || null,
+        address: form.address || null,
+        city: form.city || null,
+        earchivePrefix: form.earchivePrefix,
+        einvoicePrefix: form.einvoicePrefix,
+        autoEmailInvoiceOnGib: Boolean(form.autoEmailInvoiceOnGib),
+        paytrCommissionRatePercent: Number(
+          form.paytrCommissionRatePercent ?? 2.19,
+        ),
+        paytrMerchantId: form.paytrMerchantId?.trim() || null,
+        paytrTestMode: form.paytrTestMode === '1' ? '1' : '0',
+        paytrDebugOn: form.paytrDebugOn === '1' ? '1' : '0',
+      };
+      if (paytrKey.trim()) body.paytrMerchantKey = paytrKey.trim();
+      if (paytrSalt.trim()) body.paytrMerchantSalt = paytrSalt.trim();
+
       const saved = await api<Settings>('/accounting/settings', {
         method: 'PATCH',
-        body: {
-          companyTitle: form.companyTitle,
-          vkn: form.vkn || null,
-          taxOffice: form.taxOffice || null,
-          address: form.address || null,
-          city: form.city || null,
-          earchivePrefix: form.earchivePrefix,
-          einvoicePrefix: form.einvoicePrefix,
-          autoEmailInvoiceOnGib: Boolean(form.autoEmailInvoiceOnGib),
-          paytrCommissionRatePercent: Number(form.paytrCommissionRatePercent ?? 2.19),
-        },
+        body,
       });
       setForm(saved);
+      setPaytrKey('');
+      setPaytrSalt('');
       setMessage('Muhasebe ayarları kaydedildi');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Kayıt başarısız');
@@ -79,12 +106,16 @@ export default function AccountingSettingsPage() {
 
   if (!form) return <p className="text-sm text-muted">Yükleniyor…</p>;
 
+  const apiBase =
+    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
+    'https://api.herbalkapida.com';
+
   return (
     <div className="max-w-xl space-y-6">
       <div>
         <h2 className="text-lg font-semibold">Muhasebe ayarları</h2>
         <p className="text-sm text-muted">
-          Firma bilgileri ve e-belge ön ekleri (GİB).
+          Firma bilgileri, e-belge ön ekleri ve PayTR sanal POS.
         </p>
       </div>
 
@@ -152,10 +183,105 @@ export default function AccountingSettingsPage() {
             className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
           />
           <span className="mt-1 block text-xs text-muted">
-            Sipariş detayında hesaba geçecek tutar bu orana göre hesaplanır (ör. %2,19
-            → 589,90 ₺ ödemede ~576,98 ₺).
+            Sipariş detayında hesaba geçecek tutar bu orana göre hesaplanır.
           </span>
         </label>
+
+        <fieldset className="space-y-3 border border-border-muted p-3">
+          <legend className="mono px-1 text-[10px] uppercase text-muted">
+            PayTR sanal POS
+          </legend>
+          <p className="text-xs text-muted">
+            Boş bırakılırsa sunucu <code>.env</code> değerlerini kullanır. Key/Salt
+            alanları güvenlik için gösterilmez; doldurursanız güncellenir.
+          </p>
+          <p className="text-xs text-muted">
+            Bildirim URL:{' '}
+            <code className="break-all">
+              {apiBase}/payments/paytr/callback
+            </code>
+          </p>
+          <label className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              Merchant ID
+            </span>
+            <input
+              value={form.paytrMerchantId ?? ''}
+              onChange={(e) =>
+                setForm((f) =>
+                  f ? { ...f, paytrMerchantId: e.target.value } : f,
+                )
+              }
+              className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+              autoComplete="off"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              Merchant Key
+              {form.paytrMerchantKeySet ? ' (kayıtlı)' : ''}
+            </span>
+            <input
+              type="password"
+              value={paytrKey}
+              onChange={(e) => setPaytrKey(e.target.value)}
+              placeholder={
+                form.paytrMerchantKeySet ? '•••••••• (değiştirmek için yazın)' : ''
+              }
+              className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+              autoComplete="new-password"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              Merchant Salt
+              {form.paytrMerchantSaltSet ? ' (kayıtlı)' : ''}
+            </span>
+            <input
+              type="password"
+              value={paytrSalt}
+              onChange={(e) => setPaytrSalt(e.target.value)}
+              placeholder={
+                form.paytrMerchantSaltSet
+                  ? '•••••••• (değiştirmek için yazın)'
+                  : ''
+              }
+              className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+              autoComplete="new-password"
+            />
+          </label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.paytrTestMode === '1'}
+                onChange={(e) =>
+                  setForm((f) =>
+                    f
+                      ? { ...f, paytrTestMode: e.target.checked ? '1' : '0' }
+                      : f,
+                  )
+                }
+              />
+              Test modu
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.paytrDebugOn !== '0'}
+                onChange={(e) =>
+                  setForm((f) =>
+                    f
+                      ? { ...f, paytrDebugOn: e.target.checked ? '1' : '0' }
+                      : f,
+                  )
+                }
+              />
+              Debug
+            </label>
+          </div>
+        </fieldset>
+
         <button
           type="submit"
           disabled={saving}

@@ -597,6 +597,40 @@ export class UpdateAccountingSettingsDto {
   @Min(0)
   @Max(100)
   paytrCommissionRatePercent?: number;
+
+  @ApiPropertyOptional({ description: 'PayTR Merchant ID' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  paytrMerchantId?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'PayTR Merchant Key (boş = değiştirme)',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(128)
+  paytrMerchantKey?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'PayTR Merchant Salt (boş = değiştirme)',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(128)
+  paytrMerchantSalt?: string | null;
+
+  @ApiPropertyOptional({ description: "PayTR test modu: '0' | '1'" })
+  @IsOptional()
+  @IsString()
+  @MaxLength(1)
+  paytrTestMode?: string | null;
+
+  @ApiPropertyOptional({ description: "PayTR debug: '0' | '1'" })
+  @IsOptional()
+  @IsString()
+  @MaxLength(1)
+  paytrDebugOn?: string | null;
 }
 
 export class ReportsQueryDto {

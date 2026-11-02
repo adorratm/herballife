@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Profile, VerifyCallback } from 'passport-google-oauth20';
 import { ConfigService } from '@nestjs/config';
@@ -36,7 +36,10 @@ export class GoogleAdminStrategy extends PassportStrategy(
     try {
       const email = profile.emails?.[0]?.value;
       if (!email) {
-        done(new Error('Google hesabında e-posta yok'), undefined);
+        done(
+          new UnauthorizedException('Google hesabında e-posta yok'),
+          undefined,
+        );
         return;
       }
       const user = await this.authService.findOrCreateOAuthUser({
@@ -50,7 +53,7 @@ export class GoogleAdminStrategy extends PassportStrategy(
       });
       done(null, user);
     } catch (err) {
-      done(err, undefined);
+      done(err as Error, undefined);
     }
   }
 }

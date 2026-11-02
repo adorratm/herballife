@@ -134,6 +134,7 @@ export type Order = {
   billingAddress?: Record<string, string> | null;
   subtotal: string | number;
   shippingFee?: string | number;
+  paymentFee?: string | number;
   discountAmount?: string | number;
   couponCode?: string | null;
   taxAmount?: string | number;

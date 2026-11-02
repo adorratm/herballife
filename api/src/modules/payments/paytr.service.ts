@@ -18,6 +18,7 @@ import {
   RetryPaymentDto,
 } from '@modules/payments/dto/payments.dto';
 import { PaymentFulfillmentService } from '@modules/payments/payment-fulfillment.service';
+import { PaytrConfigService } from '@modules/payments/paytr-config.service';
 
 type PaytrTokenResponse = {
   status: string;
@@ -33,14 +34,11 @@ export class PaytrService {
     @InjectEntityManager() private readonly em: EntityManager,
     private readonly config: ConfigService,
     private readonly fulfillment: PaymentFulfillmentService,
+    private readonly paytrConfig: PaytrConfigService,
   ) {}
 
-  isConfigured(): boolean {
-    return Boolean(
-      this.config.get<string>('paytr.merchantId') &&
-      this.config.get<string>('paytr.merchantKey') &&
-      this.config.get<string>('paytr.merchantSalt'),
-    );
+  async isConfigured(): Promise<boolean> {
+    return this.paytrConfig.isConfigured();
   }
 
   /** Geliştirme mock’u; production’da varsayılan kapalı */
@@ -127,10 +125,10 @@ export class PaytrService {
     const merchantOkUrl = `${frontend}/odeme/basarili?${qs}`;
     const merchantFailUrl = `${frontend}/odeme/basarisiz?${qs}`;
 
-    if (!this.isConfigured()) {
+    if (!(await this.isConfigured())) {
       if (!this.isMockAllowed()) {
         throw new ServiceUnavailableException(
-          'PayTR yapılandırılmamış. Canlıda PAYTR_MERCHANT_* anahtarlarını girin.',
+          'PayTR yapılandırılmamış. Panelden veya PAYTR_MERCHANT_* ile anahtarları girin.',
         );
       }
       const mockToken = `mock-paytr-${randomUUID()}`;
@@ -155,14 +153,16 @@ export class PaytrService {
       };
     }
 
-    const merchantId = this.config.get<string>('paytr.merchantId')!;
-    const merchantKey = this.config.get<string>('paytr.merchantKey')!;
-    const merchantSalt = this.config.get<string>('paytr.merchantSalt')!;
-    const testMode = this.config.get<string>('paytr.testMode') || '0';
-    const debugOn = this.config.get<string>('paytr.debugOn') || '1';
-    const noInstallment = this.config.get<string>('paytr.noInstallment') || '0';
-    const maxInstallment =
-      this.config.get<string>('paytr.maxInstallment') || '0';
+    const creds = await this.paytrConfig.getCredentials();
+    const {
+      merchantId,
+      merchantKey,
+      merchantSalt,
+      testMode,
+      debugOn,
+      noInstallment,
+      maxInstallment,
+    } = creds;
     const currency = 'TL';
     const timeoutLimit = '30';
     const lang = 'tr';
@@ -266,12 +266,12 @@ export class PaytrService {
       throw new BadRequestException('Eksik PayTR bildirimi');
     }
 
-    if (!this.isConfigured()) {
+    if (!(await this.isConfigured())) {
       throw new ServiceUnavailableException('PayTR yapılandırılmamış');
     }
 
-    const merchantKey = this.config.get<string>('paytr.merchantKey')!;
-    const merchantSalt = this.config.get<string>('paytr.merchantSalt')!;
+    const { merchantKey, merchantSalt } =
+      await this.paytrConfig.getCredentials();
     const expected = createHmac('sha256', merchantKey)
       .update(merchantOid + merchantSalt + status + totalAmount)
       .digest('base64');
@@ -346,16 +346,15 @@ export class PaytrService {
       throw new BadRequestException('Geçersiz iade tutarı');
     }
 
-    if (!this.isConfigured()) {
+    if (!(await this.isConfigured())) {
       this.logger.log(
         `[mock-paytr-refund] oid=${input.merchantOid} amount=${amount}`,
       );
       return { status: 'success', mock: true };
     }
 
-    const merchantId = this.config.get<string>('paytr.merchantId')!;
-    const merchantKey = this.config.get<string>('paytr.merchantKey')!;
-    const merchantSalt = this.config.get<string>('paytr.merchantSalt')!;
+    const { merchantId, merchantKey, merchantSalt } =
+      await this.paytrConfig.getCredentials();
 
     const paytrToken = createHmac('sha256', merchantKey)
       .update(merchantId + input.merchantOid + amount + merchantSalt)
@@ -408,6 +407,7 @@ export class PaytrService {
   private buildUserBasket(order: Order): string {
     const items = order.items || [];
     const shipping = Number(order.shippingFee || 0);
+    const paymentFee = Number(order.paymentFee || 0);
     const discount = Number(order.discountAmount || 0);
     const goodsGross = items.reduce(
       (sum, item) => sum + Number(item.lineTotal),
@@ -438,6 +438,9 @@ export class PaytrService {
 
     if (shipping > 0) {
       basket.push(['Kargo', shipping.toFixed(2), 1]);
+    }
+    if (paymentFee > 0) {
+      basket.push(['Kapıda ödeme ücreti', paymentFee.toFixed(2), 1]);
     }
 
     if (!basket.length) {

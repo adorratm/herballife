@@ -17,7 +17,7 @@ export function ProductCarousel({
   products,
   size = "default",
   className = "",
-  intervalMs = 4200,
+  intervalMs = 5500,
 }: Props) {
   const tAria = useTranslations("aria");
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -46,7 +46,10 @@ export function ProductCarousel({
       el.scrollTo({ left: max, behavior: "smooth" });
       return;
     }
-    const amount = Math.max(el.clientWidth * 0.7, 200);
+    const first = el.firstElementChild as HTMLElement | null;
+    const styles = getComputedStyle(el);
+    const gap = parseFloat(styles.columnGap || styles.gap || "0") || 0;
+    const amount = first ? first.offsetWidth + gap : Math.max(el.clientWidth * 0.2, 160);
     el.scrollBy({ left: dir * amount, behavior: "smooth" });
   }, []);
 

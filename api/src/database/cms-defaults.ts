@@ -298,6 +298,14 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     defaultFee: 89.9,
     freeShippingOver: 750,
   },
+  payment: {
+    codFees: {
+      TRY: 75,
+      USD: 2.5,
+      EUR: 2.5,
+      GBP: 2,
+    },
+  },
   promises: {
     sameDayCutoff: '13:00',
     sameDayShipping: true,

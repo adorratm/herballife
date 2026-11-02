@@ -255,6 +255,7 @@
     "discount": "Discount ({code})",
     "labelDelivery": "Livraison",
     "labelShipping": "Expédition",
+    "labelCodFee": "Frais de paiement à la livraison",
     "pickupFree": "Store · Free",
     "vatLine": "VAT ({rate}%{included})",
     "vatIncluded": " incl.",

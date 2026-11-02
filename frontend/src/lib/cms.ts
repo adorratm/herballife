@@ -72,6 +72,10 @@ export type SiteSettings = {
     defaultFee?: number;
     freeShippingOver?: number;
   };
+  /** Kapıda ödeme ek ücreti — para birimine göre */
+  payment?: {
+    codFees?: Partial<Record<"TRY" | "USD" | "EUR" | "GBP", number>>;
+  };
   promises?: {
     sameDayCutoff?: string;
     sameDayShipping?: boolean;
@@ -320,6 +324,14 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   shipping: {
     defaultFee: 89.9,
   },
+  payment: {
+    codFees: {
+      TRY: 75,
+      USD: 2.5,
+      EUR: 2.5,
+      GBP: 2,
+    },
+  },
   welcomePopup: { ...DEFAULT_WELCOME_POPUP },
   features: {
     googleReviewsPageEnabled: false,
@@ -435,6 +447,15 @@ function mergeSettings(
     shipping: {
       ...DEFAULT_SETTINGS.shipping,
       ...(raw.shipping as SiteSettings["shipping"]),
+    },
+    payment: {
+      ...DEFAULT_SETTINGS.payment,
+      ...(raw.payment as SiteSettings["payment"]),
+      codFees: {
+        ...DEFAULT_SETTINGS.payment?.codFees,
+        ...((raw.payment as SiteSettings["payment"] | undefined)?.codFees ||
+          {}),
+      },
     },
     analytics: raw.analytics as SiteSettings["analytics"],
     welcomePopup: {

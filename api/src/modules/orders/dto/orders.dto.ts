@@ -185,6 +185,16 @@ export class CreateOrderDto {
   @IsString()
   @MaxLength(10)
   locale?: string;
+
+  @ApiPropertyOptional({
+    description: 'Sipariş para birimi (TRY|USD|EUR|GBP)',
+    example: 'TRY',
+  })
+  @IsOptional()
+  @Transform(trimString)
+  @IsString()
+  @MaxLength(3)
+  currency?: string;
 }
 
 export class UpdateOrderStatusDto {

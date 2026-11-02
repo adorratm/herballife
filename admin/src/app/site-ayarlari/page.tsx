@@ -56,6 +56,13 @@ type ShippingSettings = {
   freeShippingOver: string;
 };
 
+type CodFeeSettings = {
+  TRY: string;
+  USD: string;
+  EUR: string;
+  GBP: string;
+};
+
 type LegalSellerFields = {
   legalName: string;
   taxOffice: string;
@@ -297,6 +304,13 @@ const DEFAULT_ANALYTICS: AnalyticsSettings = {
 const DEFAULT_SHIPPING: ShippingSettings = {
   defaultFee: '89.90',
   freeShippingOver: '750',
+};
+
+const DEFAULT_COD_FEES: CodFeeSettings = {
+  TRY: '75',
+  USD: '2.5',
+  EUR: '2.5',
+  GBP: '2',
 };
 
 const DEFAULT_WHATSAPP: WhatsAppSettings = {
@@ -631,6 +645,9 @@ export default function SiteSettingsPage() {
   const [shipping, setShipping] = useState<ShippingSettings>({
     ...DEFAULT_SHIPPING,
   });
+  const [codFees, setCodFees] = useState<CodFeeSettings>({
+    ...DEFAULT_COD_FEES,
+  });
   const [legalSeller, setLegalSeller] =
     useState<LegalSellerFields>(DEFAULT_LEGAL_SELLER);
   const [bankAccounts, setBankAccounts] = useState<BankAccountRow[]>([
@@ -915,6 +932,21 @@ export default function SiteSettingsPage() {
                 : DEFAULT_SHIPPING.freeShippingOver,
           });
         }
+        if (map.payment) {
+          const p = map.payment as {
+            codFees?: Partial<Record<keyof CodFeeSettings, number | string>>;
+            codFee?: number | string;
+          };
+          const fees = p.codFees || {};
+          setCodFees({
+            TRY: String(
+              fees.TRY ?? p.codFee ?? DEFAULT_COD_FEES.TRY,
+            ),
+            USD: String(fees.USD ?? DEFAULT_COD_FEES.USD),
+            EUR: String(fees.EUR ?? DEFAULT_COD_FEES.EUR),
+            GBP: String(fees.GBP ?? DEFAULT_COD_FEES.GBP),
+          });
+        }
         if (map.legalSeller) {
           const ls = map.legalSeller as Record<string, unknown>;
           setLegalSeller({
@@ -1157,6 +1189,18 @@ export default function SiteSettingsPage() {
                 freeShippingOver: Number(shipping.freeShippingOver) || 0,
               },
               group: 'shipping',
+            },
+            {
+              key: 'payment',
+              value: {
+                codFees: {
+                  TRY: Number(codFees.TRY) || 0,
+                  USD: Number(codFees.USD) || 0,
+                  EUR: Number(codFees.EUR) || 0,
+                  GBP: Number(codFees.GBP) || 0,
+                },
+              },
+              group: 'payment',
             },
             {
               key: 'legalSeller',
@@ -1926,6 +1970,36 @@ export default function SiteSettingsPage() {
                 className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
               />
             </label>
+          </div>
+        </fieldset>
+
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            Kapıda ödeme ek ücreti
+          </legend>
+          <p className="text-xs text-muted">
+            Müşteri kapıda ödemeyi seçince sipariş toplamına eklenir. Her para
+            birimi için ayrı tutar girin (0 = ek ücret yok). Otomatik kur
+            çevrimi yoktur.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(['TRY', 'USD', 'EUR', 'GBP'] as const).map((code) => (
+              <label key={code} className="block text-sm">
+                <span className="mono text-[10px] uppercase text-muted">
+                  {code}
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  value={codFees[code]}
+                  onChange={(e) =>
+                    setCodFees((s) => ({ ...s, [code]: e.target.value }))
+                  }
+                  className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+                />
+              </label>
+            ))}
           </div>
         </fieldset>
 

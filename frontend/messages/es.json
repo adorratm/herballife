@@ -255,6 +255,7 @@
     "discount": "Discount ({code})",
     "labelDelivery": "Entrega",
     "labelShipping": "Envío",
+    "labelCodFee": "Cargo contra reembolso",
     "pickupFree": "Store · Free",
     "vatLine": "VAT ({rate}%{included})",
     "vatIncluded": " incl.",

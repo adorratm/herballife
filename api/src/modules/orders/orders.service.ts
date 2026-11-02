@@ -130,11 +130,17 @@ export class OrdersService {
       dto.shippingProvider,
       afterDiscount,
     );
+    const orderCurrency = normalizeOrderCurrency(dto.currency);
+    const paymentFee =
+      provider === 'cod'
+        ? await this.resolveCodFee(orderCurrency)
+        : 0;
     const { taxAmount, total } = this.calculateTotals(
       cart.items,
       subtotal,
       discountAmount,
       shippingFee,
+      paymentFee,
     );
 
     const pickup = isStorePickup(dto.shippingProvider);
@@ -164,11 +170,12 @@ export class OrdersService {
           (dto.billingAddress as unknown as Record<string, string>) ?? null,
         subtotal: subtotal.toFixed(2),
         shippingFee: shippingFee.toFixed(2),
+        paymentFee: paymentFee.toFixed(2),
         discountAmount: discountAmount.toFixed(2),
         couponCode,
         taxAmount: taxAmount.toFixed(2),
         total: total.toFixed(2),
-        currency: 'TRY',
+        currency: orderCurrency,
         locale: (dto.locale || 'tr').trim().toLowerCase().slice(0, 10) || 'tr',
         shippingProvider: dto.shippingProvider ?? null,
         legalAcceptances: dto.legalAcceptances ?? null,
@@ -204,7 +211,7 @@ export class OrdersService {
         provider,
         status: PaymentStatus.PENDING,
         amount: total.toFixed(2),
-        currency: 'TRY',
+        currency: orderCurrency,
       });
       await tx.save(payment);
 
@@ -867,11 +874,32 @@ export class OrdersService {
     };
   }
 
+  private async resolveCodFee(currency: string): Promise<number> {
+    const row = await this.em.findOne(SiteSetting, {
+      where: { key: 'payment' },
+    });
+    const val = (row?.value || {}) as {
+      codFees?: Partial<Record<string, number | string>>;
+      codFee?: number | string;
+    };
+    const code = (currency || 'TRY').toUpperCase();
+    const fromMap = val.codFees?.[code];
+    const raw =
+      fromMap != null && String(fromMap).trim() !== ''
+        ? fromMap
+        : code === 'TRY'
+          ? (val.codFee ?? 75)
+          : 0;
+    const n = Number(raw);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  }
+
   private calculateTotals(
     items: CartItem[],
     subtotal: number,
     discountAmount: number,
     shippingFee: number,
+    paymentFee = 0,
   ) {
     const fallback = this.config.get<number>('tax.ratePercent') ?? 20;
     const included = this.config.get<boolean>('tax.included') !== false;
@@ -884,6 +912,7 @@ export class OrdersService {
       subtotal,
       discountAmount,
       shippingFee,
+      paymentFee,
       fallbackRatePercent: fallback,
       taxIncluded: included,
     });
@@ -903,6 +932,7 @@ export class OrdersService {
       subtotal: parseMoney(order.subtotal),
       discountAmount: parseMoney(order.discountAmount),
       shippingFee: parseMoney(order.shippingFee),
+      paymentFee: parseMoney(order.paymentFee ?? 0),
       fallbackRatePercent: fallback,
       taxIncluded: included,
     });
@@ -922,4 +952,12 @@ export class OrdersService {
       order as Order & { paymentSettlement?: PaytrSettlement }
     ).paymentSettlement = settlement;
   }
+}
+
+function normalizeOrderCurrency(raw?: string | null): string {
+  const code = (raw || 'TRY').trim().toUpperCase();
+  if (code === 'USD' || code === 'EUR' || code === 'GBP' || code === 'TRY') {
+    return code;
+  }
+  return 'TRY';
 }

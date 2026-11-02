@@ -271,6 +271,7 @@
     "discount": "Discount ({code})",
     "labelDelivery": "Delivery",
     "labelShipping": "Shipping",
+    "labelCodFee": "Cash on delivery fee",
     "pickupFree": "Store · Free",
     "vatLine": "VAT ({rate}%{included})",
     "vatIncluded": " incl.",

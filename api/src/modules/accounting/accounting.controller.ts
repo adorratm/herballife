@@ -71,7 +71,7 @@ export class AccountingController {
 
   @Get('settings')
   getSettings() {
-    return this.settings.get();
+    return this.settings.getPublic();
   }
 
   @Patch('settings')

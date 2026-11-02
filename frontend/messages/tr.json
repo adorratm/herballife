@@ -271,6 +271,7 @@
     "discount": "İndirim ({code})",
     "labelDelivery": "Teslimat",
     "labelShipping": "Kargo",
+    "labelCodFee": "Kapıda ödeme ücreti",
     "pickupFree": "Mağaza · Ücretsiz",
     "vatLine": "KDV (%{rate}%{included})",
     "vatIncluded": " dahil",

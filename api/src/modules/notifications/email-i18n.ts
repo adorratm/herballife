@@ -197,6 +197,7 @@ export type EmailCopy = {
   subtotal: string;
   discount: string;
   shipping: string;
+  paymentFee: string;
   total: string;
   products: string;
   orderContents: string;
@@ -337,6 +338,7 @@ function buildCopy(locale: EmailLocale): EmailCopy {
       subtotal: 'Subtotal',
       discount: 'Discount',
       shipping: 'Shipping',
+      paymentFee: 'Cash on delivery fee',
       total: 'Total',
       products: 'Items',
       orderContents: 'Order contents',
@@ -464,6 +466,7 @@ function buildCopy(locale: EmailLocale): EmailCopy {
       subtotal: 'Zwischensumme',
       discount: 'Rabatt',
       shipping: 'Versand',
+      paymentFee: 'Nachnahmegebühr',
       total: 'Gesamt',
       products: 'Artikel',
       orderContents: 'Bestellinhalt',
@@ -595,6 +598,7 @@ function buildCopy(locale: EmailLocale): EmailCopy {
       subtotal: 'Sous-total',
       discount: 'Remise',
       shipping: 'Livraison',
+      paymentFee: 'Frais de paiement à la livraison',
       total: 'Total',
       products: 'Articles',
       orderContents: 'Contenu de la commande',
@@ -727,6 +731,7 @@ function buildCopy(locale: EmailLocale): EmailCopy {
       subtotal: 'Subtotal',
       discount: 'Descuento',
       shipping: 'Envío',
+      paymentFee: 'Cargo contra reembolso',
       total: 'Total',
       products: 'Artículos',
       orderContents: 'Contenido del pedido',
@@ -859,6 +864,7 @@ function buildCopy(locale: EmailLocale): EmailCopy {
     subtotal: 'Ara toplam',
     discount: 'İndirim',
     shipping: 'Kargo',
+    paymentFee: 'Kapıda ödeme ücreti',
     total: 'Toplam',
     products: 'Ürünler',
     orderContents: 'Sipariş içeriği',

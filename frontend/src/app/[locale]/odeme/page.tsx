@@ -13,6 +13,7 @@ import { BadgeCheck, Lock, ShieldCheck } from "lucide-react";
 import {
   checkout,
   createAddress,
+  getApiBase,
   getMe,
   getMyAddresses,
   getShippingProviders,
@@ -32,6 +33,7 @@ import { formatMoney } from "@/lib/format";
 import { calculateOrderTotals } from "@/lib/pricing";
 import { trackBeginCheckout } from "@/lib/analytics";
 import { cartLineSelectionLabel } from "@/lib/variant-groups";
+import { useActiveCurrency } from "@/hooks/useActiveCurrency";
 import type {
   Address,
   Cart,
@@ -81,13 +83,23 @@ const emptyAddr = (): AddressFields => ({
   postalCode: "",
 });
 
+const DEFAULT_COD_FEES: Record<string, number> = {
+  TRY: 75,
+  USD: 2.5,
+  EUR: 2.5,
+  GBP: 2,
+};
+
 export default function CheckoutPage() {
   const locale = useLocale();
+  const { currency: activeCurrency } = useActiveCurrency();
   const tCheckout = useTranslations("checkout");
   const tCart = useTranslations("cart");
   const tAccount = useTranslations("account");
   const tForms = useTranslations("forms");
   const [cart, setCart] = useState<Cart | null>(null);
+  const [codFees, setCodFees] =
+    useState<Record<string, number>>(DEFAULT_COD_FEES);
   const [providers, setProviders] = useState<ShippingProvider[]>([]);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [user, setUser] = useState<User | null>(null);
@@ -135,6 +147,22 @@ export default function CheckoutPage() {
   });
   const [panelContact, setPanelContact] = useState(true);
   const [panelAddress, setPanelAddress] = useState(true);
+
+  useEffect(() => {
+    void fetch(`${getApiBase()}/cms/settings?locale=${encodeURIComponent(locale)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { payment?: { codFees?: Record<string, number> } } | null) => {
+        const fees = data?.payment?.codFees;
+        if (!fees || typeof fees !== "object") return;
+        setCodFees((prev) => ({
+          ...prev,
+          ...Object.fromEntries(
+            Object.entries(fees).map(([k, v]) => [k, Number(v) || 0]),
+          ),
+        }));
+      })
+      .catch(() => undefined);
+  }, [locale]);
 
   useEffect(() => {
     const token = getToken();
@@ -474,6 +502,7 @@ export default function CheckoutPage() {
           paymentMethod,
           couponCode: couponPreview?.valid ? couponPreview.code : undefined,
           locale,
+          currency: activeCurrency,
           legalAcceptances: {
             mesafeliSatis: form.mesafeliSatis,
             onBilgilendirme: form.onBilgilendirme,
@@ -523,8 +552,19 @@ export default function CheckoutPage() {
   const discountAmount = couponPreview?.valid
     ? Number(couponPreview.discountAmount)
     : 0;
+  const paymentFee =
+    paymentMethod === "cod"
+      ? Math.max(
+          0,
+          Number(
+            codFees[activeCurrency] ??
+              (activeCurrency === "TRY" ? DEFAULT_COD_FEES.TRY : 0),
+          ) || 0,
+        )
+      : 0;
   const totals = calculateOrderTotals(subtotal, shippingFee, {
     discountAmount,
+    paymentFee,
   });
   const total = totals.total;
 
@@ -1191,13 +1231,23 @@ export default function CheckoutPage() {
               ) : null}
               <Row
                 label={tCheckout("labelShipping")}
-                value={formatMoney(shippingFee)}
+                value={formatMoney(shippingFee, activeCurrency)}
               />
+              {paymentFee > 0 ? (
+                <Row
+                  label={tCheckout("labelCodFee")}
+                  value={formatMoney(paymentFee, activeCurrency)}
+                />
+              ) : null}
               <Row
                 label={tCheckout("vatLine", { rate: totals.ratePercent, included: totals.taxIncluded ? tCheckout("vatIncluded") : "" })}
-                value={formatMoney(totals.taxAmount)}
+                value={formatMoney(totals.taxAmount, activeCurrency)}
               />
-              <Row label={tCheckout("total")} value={formatMoney(total)} accent />
+              <Row
+                label={tCheckout("total")}
+                value={formatMoney(total, activeCurrency)}
+                accent
+              />
             </div>
             {error ? (
               <p className="mt-4 font-meta text-[11px] uppercase text-error">

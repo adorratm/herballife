@@ -12,7 +12,6 @@ import {
   UseGuards,
   UseFilters,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
@@ -36,6 +35,8 @@ import { User, UserRole } from '@entities/user.entity';
 import { Roles } from '@common/decorators/roles.decorator';
 import { GoogleAdminOauthFilter } from '@modules/auth/filters/google-admin-oauth.filter';
 import { GoogleOauthFilter } from '@modules/auth/filters/google-oauth.filter';
+import { GoogleAdminAuthGuard } from '@modules/auth/guards/google-admin-auth.guard';
+import { GoogleAuthGuard } from '@modules/auth/guards/google-auth.guard';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -232,7 +233,7 @@ export class AuthController {
 
   @Public()
   @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Google OAuth başlat' })
   googleAuth() {
     return;
@@ -240,7 +241,7 @@ export class AuthController {
 
   @Public()
   @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   @UseFilters(GoogleOauthFilter)
   @ApiOperation({ summary: 'Google OAuth callback' })
   googleCallback(@Req() req: Request, @Res() res: Response) {
@@ -249,7 +250,7 @@ export class AuthController {
 
   @Public()
   @Get('google/admin')
-  @UseGuards(AuthGuard('google-admin'))
+  @UseGuards(GoogleAdminAuthGuard)
   @ApiOperation({ summary: 'Admin Google OAuth başlat' })
   googleAdminAuth() {
     return;
@@ -257,7 +258,7 @@ export class AuthController {
 
   @Public()
   @Get('google/admin/callback')
-  @UseGuards(AuthGuard('google-admin'))
+  @UseGuards(GoogleAdminAuthGuard)
   @UseFilters(GoogleAdminOauthFilter)
   @ApiOperation({ summary: 'Admin Google OAuth callback' })
   googleAdminCallback(@Req() req: Request, @Res() res: Response) {

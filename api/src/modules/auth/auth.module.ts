@@ -9,6 +9,8 @@ import { GoogleStrategy } from '@modules/auth/strategies/google.strategy';
 import { GoogleAdminStrategy } from '@modules/auth/strategies/google-admin.strategy';
 import { GoogleAdminOauthFilter } from '@modules/auth/filters/google-admin-oauth.filter';
 import { GoogleOauthFilter } from '@modules/auth/filters/google-oauth.filter';
+import { GoogleAdminAuthGuard } from '@modules/auth/guards/google-admin-auth.guard';
+import { GoogleAuthGuard } from '@modules/auth/guards/google-auth.guard';
 import { NotificationsModule } from '@modules/notifications/notifications.module';
 
 @Module({
@@ -33,6 +35,8 @@ import { NotificationsModule } from '@modules/notifications/notifications.module
     JwtStrategy,
     GoogleStrategy,
     GoogleAdminStrategy,
+    GoogleAdminAuthGuard,
+    GoogleAuthGuard,
     GoogleAdminOauthFilter,
     GoogleOauthFilter,
   ],

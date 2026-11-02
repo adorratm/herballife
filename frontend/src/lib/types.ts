@@ -373,6 +373,8 @@ export type CheckoutPayload = {
   couponCode?: string;
   /** Vitrin dili — sipariş e-postaları bu dile gider */
   locale?: string;
+  /** Vitrin para birimi */
+  currency?: string;
   legalAcceptances: {
     mesafeliSatis: boolean;
     onBilgilendirme: boolean;

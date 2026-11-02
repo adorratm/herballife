@@ -11,6 +11,7 @@ export type CalculateOrderTaxInput = {
   subtotal: number;
   discountAmount?: number;
   shippingFee?: number;
+  paymentFee?: number;
   fallbackRatePercent?: number;
   taxIncluded?: boolean;
 };
@@ -62,6 +63,7 @@ export function calculateOrderTax(input: CalculateOrderTaxInput): {
   );
   const discountRatio = input.subtotal > 0 ? discount / input.subtotal : 0;
   const shippingFee = Math.max(0, input.shippingFee ?? 0);
+  const paymentFee = Math.max(0, input.paymentFee ?? 0);
 
   let itemsVat = 0;
   for (const item of input.items) {
@@ -73,14 +75,15 @@ export function calculateOrderTax(input: CalculateOrderTaxInput): {
       : excludedTax(lineGross, rate);
   }
 
-  const shippingRate = weightedVatRate(input.items, fallback);
-  const shippingVat = included
-    ? includedTax(shippingFee, shippingRate)
-    : excludedTax(shippingFee, shippingRate);
+  const feeRate = weightedVatRate(input.items, fallback);
+  const fees = shippingFee + paymentFee;
+  const feesVat = included
+    ? includedTax(fees, feeRate)
+    : excludedTax(fees, feeRate);
 
   const afterDiscount = Math.max(0, input.subtotal - discount);
-  const total = afterDiscount + shippingFee;
-  const taxAmount = itemsVat + shippingVat;
+  const total = afterDiscount + shippingFee + paymentFee;
+  const taxAmount = itemsVat + feesVat;
 
   return { taxAmount, total };
 }

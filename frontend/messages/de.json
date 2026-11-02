@@ -270,6 +270,7 @@
     "discount": "Rabatt ({code})",
     "labelDelivery": "Lieferung",
     "labelShipping": "Versand",
+    "labelCodFee": "Nachnahmegebühr",
     "pickupFree": "Shop · Kostenlos",
     "vatLine": "MwSt. ({rate}%{included})",
     "vatIncluded": " inkl.",

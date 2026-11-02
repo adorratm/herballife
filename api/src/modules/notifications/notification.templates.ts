@@ -335,6 +335,9 @@ export function buildOrderDetailsText(
       ? `${copy.discount}: −${formatMoney(order.discountAmount, order.currency, locale)}${order.couponCode ? ` (${order.couponCode})` : ''}`
       : null,
     `${copy.shipping}: ${formatMoney(order.shippingFee, order.currency, locale)}${order.shippingProvider ? ` · ${order.shippingProvider}` : ''}`,
+    Number(order.paymentFee) > 0
+      ? `${copy.paymentFee}: ${formatMoney(order.paymentFee, order.currency, locale)}`
+      : null,
     `${copy.total}: ${formatMoney(order.total, order.currency, locale)}`,
   ];
   if (includePersonal) {
@@ -376,16 +379,20 @@ function orderTotalMetaRows(
       value: `−${formatMoney(order.discountAmount, order.currency, locale)}`,
     });
   }
-  rows.push(
-    {
-      label: copy.shipping,
-      value: `${formatMoney(order.shippingFee, order.currency, locale)}${order.shippingProvider ? ` · ${order.shippingProvider}` : ''}`,
-    },
-    {
-      label: copy.total,
-      value: formatMoney(order.total, order.currency, locale),
-    },
-  );
+  rows.push({
+    label: copy.shipping,
+    value: `${formatMoney(order.shippingFee, order.currency, locale)}${order.shippingProvider ? ` · ${order.shippingProvider}` : ''}`,
+  });
+  if (Number(order.paymentFee) > 0) {
+    rows.push({
+      label: copy.paymentFee,
+      value: formatMoney(order.paymentFee, order.currency, locale),
+    });
+  }
+  rows.push({
+    label: copy.total,
+    value: formatMoney(order.total, order.currency, locale),
+  });
   return rows;
 }
 

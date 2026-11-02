@@ -56,4 +56,45 @@ export class AccountingSettings extends BaseEntity {
     default: 2.19,
   })
   paytrCommissionRatePercent!: string;
+
+  @Column({
+    name: 'paytr_merchant_id',
+    type: 'varchar',
+    length: 64,
+    nullable: true,
+  })
+  paytrMerchantId!: string | null;
+
+  @Column({
+    name: 'paytr_merchant_key',
+    type: 'varchar',
+    length: 128,
+    nullable: true,
+  })
+  paytrMerchantKey!: string | null;
+
+  @Column({
+    name: 'paytr_merchant_salt',
+    type: 'varchar',
+    length: 128,
+    nullable: true,
+  })
+  paytrMerchantSalt!: string | null;
+
+  /** '0' | '1' — null ise env */
+  @Column({
+    name: 'paytr_test_mode',
+    type: 'varchar',
+    length: 1,
+    nullable: true,
+  })
+  paytrTestMode!: string | null;
+
+  @Column({
+    name: 'paytr_debug_on',
+    type: 'varchar',
+    length: 1,
+    nullable: true,
+  })
+  paytrDebugOn!: string | null;
 }

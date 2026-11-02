@@ -11,6 +11,7 @@ export function calculateOrderTotals(
     ratePercent?: number;
     included?: boolean;
     discountAmount?: number;
+    paymentFee?: number;
   },
 ) {
   const rate = options?.ratePercent ?? 20;
@@ -19,13 +20,15 @@ export function calculateOrderTotals(
     Math.max(0, options?.discountAmount ?? 0),
     Math.max(0, subtotal),
   );
+  const paymentFee = Math.max(0, options?.paymentFee ?? 0);
   const afterDiscount = Math.max(0, subtotal - discountAmount);
-  const net = afterDiscount + shippingFee;
+  const net = afterDiscount + shippingFee + paymentFee;
   if (included) {
     return {
       subtotal,
       discountAmount,
       shippingFee,
+      paymentFee,
       taxAmount: extractIncludedTax(net, rate),
       total: net,
       taxIncluded: true,
@@ -37,6 +40,7 @@ export function calculateOrderTotals(
     subtotal,
     discountAmount,
     shippingFee,
+    paymentFee,
     taxAmount,
     total: net + taxAmount,
     taxIncluded: false,

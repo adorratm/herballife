@@ -73,6 +73,16 @@ export class Order extends BaseEntity {
   })
   shippingFee!: string;
 
+  /** Kapıda ödeme vb. ödeme yöntemi ek ücreti */
+  @Column({
+    name: 'payment_fee',
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
+  paymentFee!: string;
+
   @Column({
     name: 'discount_amount',
     type: 'decimal',
