@@ -4,8 +4,10 @@
  */
 import { InitialSchema1761500000000 } from './1761500000000-InitialSchema';
 import { CartItemSelectionLabel1761600000000 } from './1761600000000-CartItemSelectionLabel';
+import { UserAvatarUrlText1762100000000 } from './1762100000000-UserAvatarUrlText';
 
 export const ALL_MIGRATIONS = [
   InitialSchema1761500000000,
   CartItemSelectionLabel1761600000000,
+  UserAvatarUrlText1762100000000,
 ];

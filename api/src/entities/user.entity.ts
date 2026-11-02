@@ -69,7 +69,8 @@ export class User extends BaseEntity {
   })
   role!: UserRole;
 
-  @Column({ name: 'avatar_url', type: 'varchar', length: 500, nullable: true })
+  /** Google OAuth avatar URL’leri 500+ karakter olabiliyor */
+  @Column({ name: 'avatar_url', type: 'text', nullable: true })
   avatarUrl!: string | null;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
