@@ -5,6 +5,13 @@ import { api } from '@/lib/api';
 
 export const ADMIN_CURRENCIES = ['TRY', 'USD', 'EUR', 'GBP'] as const;
 export type AdminCurrency = (typeof ADMIN_CURRENCIES)[number];
+export type ExtraAdminCurrency = Exclude<AdminCurrency, 'TRY'>;
+
+export function isExtraAdminCurrency(
+  value: string,
+): value is ExtraAdminCurrency {
+  return value === 'USD' || value === 'EUR' || value === 'GBP';
+}
 
 export type AdminLanguage = {
   code: string;
@@ -98,7 +105,7 @@ export type AdminI18nState = {
   localeTabs: LocaleTab[];
   enabledCurrencies: AdminCurrency[];
   /** TRY hariç gösterilecek paralar */
-  extraCurrencies: AdminCurrency[];
+  extraCurrencies: ExtraAdminCurrency[];
   reload: () => Promise<void>;
 };
 
@@ -146,7 +153,7 @@ export function useAdminI18n(): AdminI18nState {
   );
 
   const extraCurrencies = useMemo(
-    () => enabledCurrencies.filter((c) => c !== 'TRY'),
+    () => enabledCurrencies.filter(isExtraAdminCurrency),
     [enabledCurrencies],
   );
 

@@ -6,7 +6,7 @@ import { api } from '@/lib/api';
 import {
   mergeTranslations,
   useAdminI18n,
-  type AdminCurrency,
+  type ExtraAdminCurrency,
 } from '@/lib/admin-i18n';
 import { asArray, asPaged, formatMoney, slugify } from '@/lib/utils';
 import { DataTable } from '@/components/DataTable';
@@ -48,10 +48,9 @@ type VariantForm = {
   isActive: boolean;
 };
 
-const PRICE_FIELD_BY_CURRENCY: Record<
-  Exclude<AdminCurrency, 'TRY'>,
-  'priceUsd' | 'priceEur' | 'priceGbp'
-> = {
+type PriceFieldKey = 'priceUsd' | 'priceEur' | 'priceGbp';
+
+const PRICE_FIELD_BY_CURRENCY: Record<ExtraAdminCurrency, PriceFieldKey> = {
   USD: 'priceUsd',
   EUR: 'priceEur',
   GBP: 'priceGbp',
