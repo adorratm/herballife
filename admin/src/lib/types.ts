@@ -6,10 +6,7 @@ export type ProductVariant = {
   prices?: Partial<Record<'TRY' | 'USD' | 'EUR' | 'GBP', number>> | null;
   categoryKey?: string | null;
   translations?: Partial<
-    Record<
-      'tr' | 'en' | 'de' | 'fr' | 'es',
-      { name?: string; categoryLabel?: string }
-    >
+    Record<string, { name?: string; categoryLabel?: string }>
   > | null;
   stock: number;
   isActive?: boolean;
@@ -41,7 +38,7 @@ export type Product = {
   batchId?: string | null;
   flavorNotes?: string[];
   imageUrl?: string | null;
-  imagesByLocale?: Partial<Record<'tr' | 'en' | 'de' | 'fr' | 'es', string>>;
+  imagesByLocale?: Partial<Record<string, string>>;
   useSharedImage?: boolean;
   gallery?: string[];
   badge?: string | null;
@@ -199,7 +196,7 @@ export type BlogPost = {
       seoDescription?: string;
     }
   > | null;
-  imagesByLocale?: Partial<Record<'tr' | 'en' | 'de' | 'fr' | 'es', string>>;
+  imagesByLocale?: Partial<Record<string, string>>;
   useSharedImage?: boolean;
   authorName?: string | null;
   tags?: string[];

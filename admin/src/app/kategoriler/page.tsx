@@ -3,6 +3,7 @@
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
+import { mergeTranslations, useAdminI18n } from '@/lib/admin-i18n';
 import { asArray, slugify } from '@/lib/utils';
 import { DataTable } from '@/components/DataTable';
 import { Checkbox } from '@/components/Checkbox';
@@ -10,22 +11,12 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { AdminFormPanel } from '@/components/AdminFormPanel';
 import { RichTextEditor } from '@/components/RichTextEditor';
 
-type LocaleKey = 'en' | 'de' | 'fr' | 'es';
-
 type LocaleFields = { name: string; slug: string; description: string };
 
-const LOCALE_TABS: { key: LocaleKey; label: string }[] = [
-  { key: 'en', label: 'EN' },
-  { key: 'de', label: 'DE' },
-  { key: 'fr', label: 'FR' },
-  { key: 'es', label: 'ES' },
-];
-
-const emptyTranslations = (): Record<LocaleKey, LocaleFields> => ({
-  en: { name: '', slug: '', description: '' },
-  de: { name: '', slug: '', description: '' },
-  fr: { name: '', slug: '', description: '' },
-  es: { name: '', slug: '', description: '' },
+const emptyLocaleFields = (): LocaleFields => ({
+  name: '',
+  slug: '',
+  description: '',
 });
 
 type Category = {
@@ -45,8 +36,8 @@ type FormState = {
   name: string;
   slug: string;
   description: string;
-  translationTab: LocaleKey;
-  translations: Record<LocaleKey, LocaleFields>;
+  translationTab: string;
+  translations: Record<string, LocaleFields>;
   seoTitle: string;
   seoDescription: string;
   sortOrder: string;
@@ -57,17 +48,21 @@ const emptyForm = (): FormState => ({
   name: '',
   slug: '',
   description: '',
-  translationTab: 'en',
-  translations: emptyTranslations(),
+  translationTab: '',
+  translations: {},
   seoTitle: '',
   seoDescription: '',
   sortOrder: '0',
   isActive: true,
 });
 
-function formFromCategory(r: Category): FormState {
-  const translations = emptyTranslations();
-  for (const { key } of LOCALE_TABS) {
+function formFromCategory(
+  r: Category,
+  localeKeys: string[],
+  defaultTab: string,
+): FormState {
+  const translations: Record<string, LocaleFields> = {};
+  for (const key of localeKeys) {
     const t = r.translations?.[key];
     translations[key] = {
       name: t?.name || '',
@@ -80,7 +75,7 @@ function formFromCategory(r: Category): FormState {
     slug: r.slug,
     name: r.name,
     description: r.description || '',
-    translationTab: 'en',
+    translationTab: defaultTab,
     translations,
     seoTitle: r.seoTitle || '',
     seoDescription: r.seoDescription || '',
@@ -92,6 +87,12 @@ function formFromCategory(r: Category): FormState {
 function CategoriesPageInner() {
   const searchParams = useSearchParams();
   const filterQ = (searchParams.get('q') || '').trim().toLowerCase();
+  const { localeTabs } = useAdminI18n();
+  const existingTranslationsRef = useRef<Category['translations']>(null);
+  const activeLocaleKeys = useMemo(
+    () => localeTabs.map((t) => t.key),
+    [localeTabs],
+  );
 
   const [rows, setRows] = useState<Category[]>([]);
   const [form, setForm] = useState<FormState>(emptyForm());
@@ -103,6 +104,21 @@ function CategoriesPageInner() {
   const [deleting, setDeleting] = useState(false);
   const [highlightRowKey, setHighlightRowKey] = useState<string | null>(null);
   const openedFromQuery = useRef(false);
+
+  useEffect(() => {
+    if (!localeTabs.length) return;
+    setForm((f) => {
+      const translations = { ...f.translations };
+      for (const { key } of localeTabs) {
+        if (!translations[key]) translations[key] = emptyLocaleFields();
+      }
+      const translationTab =
+        f.translationTab && localeTabs.some((t) => t.key === f.translationTab)
+          ? f.translationTab
+          : localeTabs[0].key;
+      return { ...f, translations, translationTab };
+    });
+  }, [localeTabs]);
 
   async function load() {
     setLoading(true);
@@ -133,31 +149,16 @@ function CategoriesPageInner() {
     );
     if (!match) return;
     openedFromQuery.current = true;
-    setForm({
-      id: match.id,
-      name: match.name,
-      slug: match.slug,
-      description: match.description || '',
-      translationTab: 'en',
-      translations: (() => {
-        const tr = emptyTranslations();
-        for (const { key } of LOCALE_TABS) {
-          const t = match.translations?.[key];
-          tr[key] = {
-            name: t?.name || '',
-            slug: t?.slug || '',
-            description: t?.description || '',
-          };
-        }
-        return tr;
-      })(),
-      seoTitle: match.seoTitle || '',
-      seoDescription: match.seoDescription || '',
-      sortOrder: String(match.sortOrder),
-      isActive: match.isActive,
-    });
+    existingTranslationsRef.current = match.translations || null;
+    setForm(
+      formFromCategory(
+        match,
+        activeLocaleKeys,
+        localeTabs[0]?.key || '',
+      ),
+    );
     setEditing(true);
-  }, [filterQ, rows]);
+  }, [filterQ, rows, activeLocaleKeys, localeTabs]);
 
   const visible = useMemo(() => {
     if (!filterQ) return rows;
@@ -172,8 +173,8 @@ function CategoriesPageInner() {
     e.preventDefault();
     setSaving(true);
     setError(null);
-    for (const { key, label } of LOCALE_TABS) {
-      const row = form.translations[key];
+    for (const { key, label } of localeTabs) {
+      const row = form.translations[key] || emptyLocaleFields();
       if (
         !row.name.trim() ||
         !row.description.trim() ||
@@ -184,15 +185,20 @@ function CategoriesPageInner() {
         return;
       }
     }
-    const translations: Record<string, LocaleFields> = {};
-    for (const { key } of LOCALE_TABS) {
-      const row = form.translations[key];
-      translations[key] = {
+    const activeTranslations: Record<string, LocaleFields> = {};
+    for (const { key } of localeTabs) {
+      const row = form.translations[key] || emptyLocaleFields();
+      activeTranslations[key] = {
         name: row.name.trim(),
         slug: row.slug.trim() || slugify(row.name),
         description: row.description.trim(),
       };
     }
+    const translations = mergeTranslations(
+      existingTranslationsRef.current || {},
+      activeTranslations,
+      activeLocaleKeys,
+    );
     const payload = {
       name: form.name,
       slug: form.slug || slugify(form.name),
@@ -216,6 +222,7 @@ function CategoriesPageInner() {
       }
       setHighlightRowKey(savedId || null);
       setEditing(false);
+      existingTranslationsRef.current = null;
       setForm(emptyForm());
       await load();
     } catch (err) {
@@ -256,7 +263,16 @@ function CategoriesPageInner() {
         <button
           type="button"
           onClick={() => {
-            setForm(emptyForm());
+            existingTranslationsRef.current = null;
+            const translations: Record<string, LocaleFields> = {};
+            for (const { key } of localeTabs) {
+              translations[key] = emptyLocaleFields();
+            }
+            setForm({
+              ...emptyForm(),
+              translationTab: localeTabs[0]?.key || '',
+              translations,
+            });
             setEditing(true);
           }}
           className="btn-motion bg-accent px-4 py-2 text-sm text-white"
@@ -342,10 +358,20 @@ function CategoriesPageInner() {
           </div>
           <div className="md:col-span-2 space-y-3 rounded border border-border-muted p-3">
             <p className="mono text-[10px] uppercase text-muted">
-              Çeviriler (TR ana alanlarda) — EN/DE/FR/ES zorunlu
+              Çeviriler (TR ana alanlarda)
+              {localeTabs.length
+                ? ' — aktif diller için zorunlu'
+                : ' — ek dil aktif değil'}
             </p>
+            {localeTabs.length === 0 ? (
+              <p className="text-xs text-muted">
+                Dil ve Para ayarlarından ek dil açıldığında burada alanlar
+                görünür.
+              </p>
+            ) : (
+              <>
             <div className="flex flex-wrap gap-2">
-              {LOCALE_TABS.map(({ key, label }) => (
+              {localeTabs.map(({ key, label }) => (
                 <button
                   key={key}
                   type="button"
@@ -364,7 +390,7 @@ function CategoriesPageInner() {
             </div>
             {(() => {
               const tab = form.translationTab;
-              const row = form.translations[tab];
+              const row = form.translations[tab] || emptyLocaleFields();
               return (
                 <div className="grid gap-3">
                   <label className="block text-sm">
@@ -374,19 +400,21 @@ function CategoriesPageInner() {
                     <input
                       value={row.name}
                       onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          translations: {
-                            ...f.translations,
-                            [tab]: {
-                              ...f.translations[tab],
-                              name: e.target.value,
-                              slug:
-                                f.translations[tab].slug ||
-                                slugify(e.target.value),
+                        setForm((f) => {
+                          const cur =
+                            f.translations[tab] || emptyLocaleFields();
+                          return {
+                            ...f,
+                            translations: {
+                              ...f.translations,
+                              [tab]: {
+                                ...cur,
+                                name: e.target.value,
+                                slug: cur.slug || slugify(e.target.value),
+                              },
                             },
-                          },
-                        }))
+                          };
+                        })
                       }
                       className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
                     />
@@ -403,7 +431,7 @@ function CategoriesPageInner() {
                           translations: {
                             ...f.translations,
                             [tab]: {
-                              ...f.translations[tab],
+                              ...(f.translations[tab] || emptyLocaleFields()),
                               slug: e.target.value,
                             },
                           },
@@ -425,7 +453,7 @@ function CategoriesPageInner() {
                             translations: {
                               ...f.translations,
                               [tab]: {
-                                ...f.translations[tab],
+                                ...(f.translations[tab] || emptyLocaleFields()),
                                 description: html,
                               },
                             },
@@ -439,6 +467,8 @@ function CategoriesPageInner() {
                 </div>
               );
             })()}
+              </>
+            )}
           </div>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
@@ -495,7 +525,14 @@ function CategoriesPageInner() {
         selectedRowKey={editing ? form.id || null : null}
         highlightRowKey={!editing ? highlightRowKey : null}
         onRowClick={(r) => {
-          setForm(formFromCategory(r));
+          existingTranslationsRef.current = r.translations || null;
+          setForm(
+            formFromCategory(
+              r,
+              activeLocaleKeys,
+              localeTabs[0]?.key || '',
+            ),
+          );
           setEditing(true);
         }}
         columns={[
@@ -514,7 +551,14 @@ function CategoriesPageInner() {
                 <button
                   type="button"
                   onClick={() => {
-                    setForm(formFromCategory(r));
+                    existingTranslationsRef.current = r.translations || null;
+                    setForm(
+                      formFromCategory(
+                        r,
+                        activeLocaleKeys,
+                        localeTabs[0]?.key || '',
+                      ),
+                    );
                     setEditing(true);
                   }}
                   className="text-xs text-accent hover:underline"

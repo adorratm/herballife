@@ -1,8 +1,13 @@
 'use client';
 
-import { FormEvent, Suspense, useEffect, useState } from 'react';
+import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
+import {
+  mergeTranslations,
+  useAdminI18n,
+  type AdminCurrency,
+} from '@/lib/admin-i18n';
 import { asArray, asPaged, formatMoney, slugify } from '@/lib/utils';
 import { DataTable } from '@/components/DataTable';
 import { MediaUpload } from '@/components/MediaUpload';
@@ -13,8 +18,6 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { AdminFormPanel } from '@/components/AdminFormPanel';
 import type { Category, Product, ProductVariant } from '@/lib/types';
-
-type LocaleKey = 'en' | 'de' | 'fr' | 'es';
 
 type LocaleFields = {
   name: string;
@@ -35,7 +38,7 @@ type VariantForm = {
   weightLabel: string;
   categoryKey: string;
   categoryLabel: string;
-  localeLabels: Record<LocaleKey, VariantLocaleFields>;
+  localeLabels: Record<string, VariantLocaleFields>;
   /** TRY (kök fiyat) */
   price: string;
   priceUsd: string;
@@ -45,12 +48,14 @@ type VariantForm = {
   isActive: boolean;
 };
 
-const LOCALE_TABS: { key: LocaleKey; label: string }[] = [
-  { key: 'en', label: 'EN' },
-  { key: 'de', label: 'DE' },
-  { key: 'fr', label: 'FR' },
-  { key: 'es', label: 'ES' },
-];
+const PRICE_FIELD_BY_CURRENCY: Record<
+  Exclude<AdminCurrency, 'TRY'>,
+  'priceUsd' | 'priceEur' | 'priceGbp'
+> = {
+  USD: 'priceUsd',
+  EUR: 'priceEur',
+  GBP: 'priceGbp',
+};
 
 type FormPanelTab =
   | 'temel'
@@ -77,21 +82,9 @@ const emptyLocaleFields = (): LocaleFields => ({
   badge: '',
 });
 
-const emptyTranslations = (): Record<LocaleKey, LocaleFields> => ({
-  en: emptyLocaleFields(),
-  de: emptyLocaleFields(),
-  fr: emptyLocaleFields(),
-  es: emptyLocaleFields(),
-});
-
-const emptyVariantLocaleLabels = (): Record<
-  LocaleKey,
-  VariantLocaleFields
-> => ({
-  en: { name: '', categoryLabel: '' },
-  de: { name: '', categoryLabel: '' },
-  fr: { name: '', categoryLabel: '' },
-  es: { name: '', categoryLabel: '' },
+const emptyVariantLocaleFields = (): VariantLocaleFields => ({
+  name: '',
+  categoryLabel: '',
 });
 
 type FormState = {
@@ -107,8 +100,8 @@ type FormState = {
   priceEur: string;
   priceGbp: string;
   priceTaxIncluded: boolean;
-  translationTab: LocaleKey;
-  translations: Record<LocaleKey, LocaleFields>;
+  translationTab: string;
+  translations: Record<string, LocaleFields>;
   stock: string;
   originCountry: string;
   originRegion: string;
@@ -120,7 +113,7 @@ type FormState = {
   flavorNotes: string;
   imageUrl: string;
   useSharedImage: boolean;
-  imagesByLocale: Record<LocaleKey, string>;
+  imagesByLocale: Record<string, string>;
   gallery: string;
   categoryId: string;
   hepsiburadaCategoryId: string;
@@ -142,7 +135,7 @@ const emptyVariant = (_kind = 'other'): VariantForm => ({
   weightLabel: '250g',
   categoryKey: '',
   categoryLabel: '',
-  localeLabels: emptyVariantLocaleLabels(),
+  localeLabels: {},
   price: '',
   priceUsd: '',
   priceEur: '',
@@ -175,8 +168,8 @@ const emptyForm = (): FormState => ({
   priceEur: '',
   priceGbp: '',
   priceTaxIncluded: true,
-  translationTab: 'en',
-  translations: emptyTranslations(),
+  translationTab: '',
+  translations: {},
   stock: '0',
   originCountry: '',
   originRegion: '',
@@ -188,7 +181,7 @@ const emptyForm = (): FormState => ({
   flavorNotes: '',
   imageUrl: '',
   useSharedImage: true,
-  imagesByLocale: { en: '', de: '', fr: '', es: '' },
+  imagesByLocale: {},
   gallery: '',
   categoryId: '',
   hepsiburadaCategoryId: '',
@@ -208,6 +201,12 @@ const emptyForm = (): FormState => ({
 function ProductsPageInner() {
   const searchParams = useSearchParams();
   const initialQ = searchParams.get('q') || '';
+  const { localeTabs, extraCurrencies } = useAdminI18n();
+  const existingTranslationsRef = useRef<Product['translations']>(null);
+  const existingImagesByLocaleRef = useRef<Product['imagesByLocale']>(null);
+  const existingVariantTranslationsRef = useRef<
+    Record<string, ProductVariant['translations']>
+  >({});
 
   const [rows, setRows] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -230,6 +229,41 @@ function ProductsPageInner() {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 20;
+
+  const activeLocaleKeys = useMemo(
+    () => localeTabs.map((t) => t.key),
+    [localeTabs],
+  );
+
+  useEffect(() => {
+    if (!localeTabs.length) return;
+    setForm((f) => {
+      const translations = { ...f.translations };
+      const imagesByLocale = { ...f.imagesByLocale };
+      const variants = f.variants.map((v) => {
+        const localeLabels = { ...v.localeLabels };
+        for (const { key } of localeTabs) {
+          if (!localeLabels[key]) localeLabels[key] = emptyVariantLocaleFields();
+        }
+        return { ...v, localeLabels };
+      });
+      for (const { key } of localeTabs) {
+        if (!translations[key]) translations[key] = emptyLocaleFields();
+        if (imagesByLocale[key] == null) imagesByLocale[key] = '';
+      }
+      const translationTab =
+        f.translationTab && localeTabs.some((t) => t.key === f.translationTab)
+          ? f.translationTab
+          : localeTabs[0].key;
+      return {
+        ...f,
+        translationTab,
+        translations,
+        imagesByLocale,
+        variants,
+      };
+    });
+  }, [localeTabs]);
 
   async function load(opts?: { page?: number; q?: string }) {
     const nextPage = opts?.page ?? page;
@@ -280,17 +314,35 @@ function ProductsPageInner() {
   }
 
   function startCreate() {
-    setForm(emptyForm());
+    existingTranslationsRef.current = null;
+    existingImagesByLocaleRef.current = null;
+    existingVariantTranslationsRef.current = {};
+    const translations: Record<string, LocaleFields> = {};
+    const imagesByLocale: Record<string, string> = {};
+    for (const { key } of localeTabs) {
+      translations[key] = emptyLocaleFields();
+      imagesByLocale[key] = '';
+    }
+    setForm({
+      ...emptyForm(),
+      translationTab: localeTabs[0]?.key || '',
+      translations,
+      imagesByLocale,
+    });
     setFormPanelTab('temel');
     setEditing(true);
   }
 
   function startEdit(p: Product) {
+    existingTranslationsRef.current = p.translations || null;
+    existingImagesByLocaleRef.current = p.imagesByLocale || null;
+    const variantExisting: Record<string, ProductVariant['translations']> = {};
     const variants: VariantForm[] =
       p.variants && p.variants.length
         ? p.variants.map((v: ProductVariant) => {
-            const localeLabels = emptyVariantLocaleLabels();
-            for (const { key } of LOCALE_TABS) {
+            if (v.id) variantExisting[v.id] = v.translations || null;
+            const localeLabels: Record<string, VariantLocaleFields> = {};
+            for (const { key } of localeTabs) {
               localeLabels[key] = {
                 name: v.translations?.[key]?.name || '',
                 categoryLabel: v.translations?.[key]?.categoryLabel || '',
@@ -312,8 +364,10 @@ function ProductsPageInner() {
             };
           })
         : [emptyVariant(p.kind || 'other')];
-    const tr = emptyTranslations();
-    for (const { key } of LOCALE_TABS) {
+    existingVariantTranslationsRef.current = variantExisting;
+    const tr: Record<string, LocaleFields> = {};
+    const imagesByLocale: Record<string, string> = {};
+    for (const { key } of localeTabs) {
       const row = p.translations?.[key];
       tr[key] = {
         name: row?.name || '',
@@ -322,6 +376,7 @@ function ProductsPageInner() {
         shortDescription: row?.shortDescription || '',
         badge: row?.badge || '',
       };
+      imagesByLocale[key] = p.imagesByLocale?.[key] || '';
     }
     setForm({
       id: p.id,
@@ -336,7 +391,7 @@ function ProductsPageInner() {
       priceEur: p.prices?.EUR != null ? String(p.prices.EUR) : '',
       priceGbp: p.prices?.GBP != null ? String(p.prices.GBP) : '',
       priceTaxIncluded: p.priceTaxIncluded !== false,
-      translationTab: 'en',
+      translationTab: localeTabs[0]?.key || '',
       translations: tr,
       stock: String(p.stock ?? 0),
       originCountry: p.originCountry || '',
@@ -349,12 +404,7 @@ function ProductsPageInner() {
       flavorNotes: (p.flavorNotes || []).join(', '),
       imageUrl: p.imageUrl || '',
       useSharedImage: p.useSharedImage !== false,
-      imagesByLocale: {
-        en: p.imagesByLocale?.en || '',
-        de: p.imagesByLocale?.de || '',
-        fr: p.imagesByLocale?.fr || '',
-        es: p.imagesByLocale?.es || '',
-      },
+      imagesByLocale,
       gallery: (p.gallery || []).join('\n'),
       categoryId: p.categoryId || '',
       hepsiburadaCategoryId: p.hepsiburadaCategoryId || '',
@@ -408,30 +458,46 @@ function ProductsPageInner() {
     const variants = form.variants
       .filter((v) => v.weightLabel.trim() && String(v.price).trim())
       .map((v, i) => {
-        const translations: Record<
+        const activeTranslations: Record<
           string,
           { name?: string; categoryLabel?: string }
         > = {};
         if (v.categoryLabel.trim()) {
-          translations.tr = { categoryLabel: v.categoryLabel.trim() };
+          activeTranslations.tr = { categoryLabel: v.categoryLabel.trim() };
         }
-        for (const { key } of LOCALE_TABS) {
-          const row = v.localeLabels[key];
+        for (const { key } of localeTabs) {
+          const row = v.localeLabels[key] || emptyVariantLocaleFields();
           const name = row.name.trim();
           const categoryLabel = row.categoryLabel.trim();
           if (name || categoryLabel) {
-            translations[key] = {
+            activeTranslations[key] = {
               ...(name ? { name } : {}),
               ...(categoryLabel ? { categoryLabel } : {}),
             };
           }
         }
+        const existingVariantT =
+          (v.id && existingVariantTranslationsRef.current[v.id]) || null;
+        const translations = mergeTranslations(
+          (existingVariantT || {}) as Record<
+            string,
+            { name?: string; categoryLabel?: string }
+          >,
+          activeTranslations,
+          [...activeLocaleKeys, 'tr'],
+        );
         const variantPrices: Record<string, number> = {
           TRY: Number(v.price),
         };
-        if (v.priceUsd.trim()) variantPrices.USD = Number(v.priceUsd);
-        if (v.priceEur.trim()) variantPrices.EUR = Number(v.priceEur);
-        if (v.priceGbp.trim()) variantPrices.GBP = Number(v.priceGbp);
+        if (extraCurrencies.includes('USD') && v.priceUsd.trim()) {
+          variantPrices.USD = Number(v.priceUsd);
+        }
+        if (extraCurrencies.includes('EUR') && v.priceEur.trim()) {
+          variantPrices.EUR = Number(v.priceEur);
+        }
+        if (extraCurrencies.includes('GBP') && v.priceGbp.trim()) {
+          variantPrices.GBP = Number(v.priceGbp);
+        }
 
         return {
           ...(v.id ? { id: v.id } : {}),
@@ -463,12 +529,18 @@ function ProductsPageInner() {
     const prices: Record<string, number> = {
       TRY: Number(form.basePrice),
     };
-    if (form.priceUsd.trim()) prices.USD = Number(form.priceUsd);
-    if (form.priceEur.trim()) prices.EUR = Number(form.priceEur);
-    if (form.priceGbp.trim()) prices.GBP = Number(form.priceGbp);
+    if (extraCurrencies.includes('USD') && form.priceUsd.trim()) {
+      prices.USD = Number(form.priceUsd);
+    }
+    if (extraCurrencies.includes('EUR') && form.priceEur.trim()) {
+      prices.EUR = Number(form.priceEur);
+    }
+    if (extraCurrencies.includes('GBP') && form.priceGbp.trim()) {
+      prices.GBP = Number(form.priceGbp);
+    }
 
-    for (const { key, label } of LOCALE_TABS) {
-      const row = form.translations[key];
+    for (const { key, label } of localeTabs) {
+      const row = form.translations[key] || emptyLocaleFields();
       if (
         !row.name.trim() ||
         !row.description.trim() ||
@@ -480,7 +552,7 @@ function ProductsPageInner() {
       }
     }
     if (!form.useSharedImage) {
-      for (const { key, label } of LOCALE_TABS) {
+      for (const { key, label } of localeTabs) {
         if (!form.imagesByLocale[key]?.trim()) {
           setError(`${label} görsel URL zorunludur (ortak görsel kapalı).`);
           setSaving(false);
@@ -494,10 +566,10 @@ function ProductsPageInner() {
       }
     }
 
-    const translations: Record<string, LocaleFields> = {};
-    for (const { key } of LOCALE_TABS) {
-      const row = form.translations[key];
-      translations[key] = {
+    const activeTranslations: Record<string, LocaleFields> = {};
+    for (const { key } of localeTabs) {
+      const row = form.translations[key] || emptyLocaleFields();
+      activeTranslations[key] = {
         name: row.name.trim(),
         slug: row.slug.trim() || slugify(row.name),
         description: row.description.trim(),
@@ -505,6 +577,11 @@ function ProductsPageInner() {
         badge: row.badge.trim(),
       };
     }
+    const translations = mergeTranslations(
+      (existingTranslationsRef.current || {}) as Record<string, LocaleFields>,
+      activeTranslations,
+      activeLocaleKeys,
+    );
 
     const payload = {
       name: form.name,
@@ -533,12 +610,20 @@ function ProductsPageInner() {
       useSharedImage: form.useSharedImage,
       imagesByLocale: form.useSharedImage
         ? {}
-        : {
-            en: form.imagesByLocale.en.trim(),
-            de: form.imagesByLocale.de.trim(),
-            fr: form.imagesByLocale.fr.trim(),
-            es: form.imagesByLocale.es.trim(),
-          },
+        : (() => {
+            const active: Record<string, string> = {};
+            for (const { key } of localeTabs) {
+              active[key] = (form.imagesByLocale[key] || '').trim();
+            }
+            return mergeTranslations(
+              (existingImagesByLocaleRef.current || {}) as Record<
+                string,
+                string
+              >,
+              active,
+              activeLocaleKeys,
+            );
+          })(),
       gallery: form.gallery
         .split('\n')
         .map((u) => u.trim())
@@ -818,37 +903,46 @@ function ProductsPageInner() {
               Fiyatlar (KDV dahil)
             </p>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {(
-                [
-                  ['TRY', 'basePrice', true],
-                  ['USD', 'priceUsd', false],
-                  ['EUR', 'priceEur', false],
-                  ['GBP', 'priceGbp', false],
-                ] as const
-              ).map(([code, field, required]) => (
-                <label key={code} className="block text-sm">
-                  <span className="mono text-[10px] uppercase text-muted">
-                    {code}
-                    {required ? ' *' : ''}
-                  </span>
-                  <input
-                    required={required}
-                    type="number"
-                    step="0.01"
-                    value={form[field]}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, [field]: e.target.value }))
-                    }
-                    className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-                  />
-                </label>
-              ))}
+              <label className="block text-sm">
+                <span className="mono text-[10px] uppercase text-muted">
+                  TRY *
+                </span>
+                <input
+                  required
+                  type="number"
+                  step="0.01"
+                  value={form.basePrice}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, basePrice: e.target.value }))
+                  }
+                  className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                />
+              </label>
+              {extraCurrencies.map((code) => {
+                const field = PRICE_FIELD_BY_CURRENCY[code];
+                return (
+                  <label key={code} className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      {code}
+                    </span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={form[field]}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, [field]: e.target.value }))
+                      }
+                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                    />
+                  </label>
+                );
+              })}
             </div>
-            {!form.priceUsd.trim() ||
-            !form.priceEur.trim() ||
-            !form.priceGbp.trim() ? (
+            {extraCurrencies.some(
+              (code) => !String(form[PRICE_FIELD_BY_CURRENCY[code]]).trim(),
+            ) ? (
               <p className="text-xs text-amber-700">
-                USD, EUR veya GBP boş — yurtdışı ziyaretçilerde TRY fiyatına
+                Aktif para birimleri boşsa yurtdışı ziyaretçilerde TRY fiyatına
                 düşülür.
               </p>
             ) : null}
@@ -883,10 +977,20 @@ function ProductsPageInner() {
           >
           <div className="col-span-full space-y-3 rounded border border-border-muted p-3">
             <p className="mono text-[10px] uppercase text-muted">
-              Çeviriler (TR ana alanlarda) — EN/DE/FR/ES zorunlu
+              Çeviriler (TR ana alanlarda)
+              {localeTabs.length
+                ? ' — aktif diller için zorunlu'
+                : ' — ek dil aktif değil'}
             </p>
+            {localeTabs.length === 0 ? (
+              <p className="text-xs text-muted">
+                Dil ve Para ayarlarından ek dil açıldığında burada alanlar
+                görünür.
+              </p>
+            ) : (
+              <>
             <div className="flex flex-wrap gap-2">
-              {LOCALE_TABS.map(({ key, label }) => (
+              {localeTabs.map(({ key, label }) => (
                 <button
                   key={key}
                   type="button"
@@ -905,7 +1009,7 @@ function ProductsPageInner() {
             </div>
             {(() => {
               const tab = form.translationTab;
-              const row = form.translations[tab];
+              const row = form.translations[tab] || emptyLocaleFields();
               return (
                 <div className="grid gap-3">
                   <label className="block text-sm">
@@ -915,19 +1019,21 @@ function ProductsPageInner() {
                     <input
                       value={row.name}
                       onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          translations: {
-                            ...f.translations,
-                            [tab]: {
-                              ...f.translations[tab],
-                              name: e.target.value,
-                              slug:
-                                f.translations[tab].slug ||
-                                slugify(e.target.value),
+                        setForm((f) => {
+                          const cur =
+                            f.translations[tab] || emptyLocaleFields();
+                          return {
+                            ...f,
+                            translations: {
+                              ...f.translations,
+                              [tab]: {
+                                ...cur,
+                                name: e.target.value,
+                                slug: cur.slug || slugify(e.target.value),
+                              },
                             },
-                          },
-                        }))
+                          };
+                        })
                       }
                       className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
                     />
@@ -944,7 +1050,7 @@ function ProductsPageInner() {
                           translations: {
                             ...f.translations,
                             [tab]: {
-                              ...f.translations[tab],
+                              ...(f.translations[tab] || emptyLocaleFields()),
                               slug: e.target.value,
                             },
                           },
@@ -965,7 +1071,7 @@ function ProductsPageInner() {
                           translations: {
                             ...f.translations,
                             [tab]: {
-                              ...f.translations[tab],
+                              ...(f.translations[tab] || emptyLocaleFields()),
                               shortDescription: e.target.value,
                             },
                           },
@@ -986,7 +1092,7 @@ function ProductsPageInner() {
                           translations: {
                             ...f.translations,
                             [tab]: {
-                              ...f.translations[tab],
+                              ...(f.translations[tab] || emptyLocaleFields()),
                               badge: e.target.value,
                             },
                           },
@@ -1009,7 +1115,7 @@ function ProductsPageInner() {
                             translations: {
                               ...f.translations,
                               [tab]: {
-                                ...f.translations[tab],
+                                ...(f.translations[tab] || emptyLocaleFields()),
                                 description: html,
                               },
                             },
@@ -1023,6 +1129,8 @@ function ProductsPageInner() {
                 </div>
               );
             })()}
+              </>
+            )}
           </div>
           </div>
 
@@ -1325,12 +1433,17 @@ function ProductsPageInner() {
               />
             </div>
             {!form.useSharedImage ? (
+              localeTabs.length === 0 ? (
+                <p className="mt-3 text-xs text-muted">
+                  Ek dil aktif değil; yalnızca TR görseli kullanılır.
+                </p>
+              ) : (
               <div className="mt-3 grid gap-4 sm:grid-cols-2">
-                {LOCALE_TABS.map(({ key, label }) => (
+                {localeTabs.map(({ key, label }) => (
                   <MediaUpload
                     key={key}
                     label={`Görsel (${label})`}
-                    value={form.imagesByLocale[key]}
+                    value={form.imagesByLocale[key] || ''}
                     onChange={(url) =>
                       setForm((f) => ({
                         ...f,
@@ -1344,6 +1457,7 @@ function ProductsPageInner() {
                   />
                 ))}
               </div>
+              )
             ) : null}
           </div>
           <div className="md:col-span-2">
@@ -1385,8 +1499,8 @@ function ProductsPageInner() {
               </button>
             </div>
             <p className="text-[11px] text-muted">
-              Her satır ayrı seçenektir. Fiyatlar üründeki gibi TRY / USD / EUR /
-              GBP; TR etiket kök, EN/DE/FR/ES ad ve grup başlığı ayrıdır.
+              Her satır ayrı seçenektir. Fiyatlar aktif paralara göre; TR etiket
+              kök, aktif dillerde ad ve grup başlığı ayrıdır.
             </p>
             {form.variants.map((v, i) => (
               <div
@@ -1466,64 +1580,86 @@ function ProductsPageInner() {
                   />
                 </div>
                 <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                  {(
-                    [
-                      ['TRY *', 'price'],
-                      ['USD', 'priceUsd'],
-                      ['EUR', 'priceEur'],
-                      ['GBP', 'priceGbp'],
-                    ] as const
-                  ).map(([label, field]) => (
-                    <label key={field} className="block text-sm">
-                      <span className="mono text-[10px] uppercase text-muted">
-                        {label}
-                      </span>
-                      <input
-                        type="number"
-                        step="0.01"
-                        placeholder={label}
-                        value={v[field]}
-                        onChange={(e) =>
-                          setForm((f) => {
-                            const variants = [...f.variants];
-                            variants[i] = {
-                              ...variants[i],
-                              [field]: e.target.value,
-                            };
-                            return { ...f, variants };
-                          })
-                        }
-                        className="mt-1 w-full border border-border-muted bg-background px-2 py-1.5 text-sm"
-                      />
-                    </label>
-                  ))}
+                  <label className="block text-sm">
+                    <span className="mono text-[10px] uppercase text-muted">
+                      TRY *
+                    </span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      placeholder="TRY *"
+                      value={v.price}
+                      onChange={(e) =>
+                        setForm((f) => {
+                          const variants = [...f.variants];
+                          variants[i] = {
+                            ...variants[i],
+                            price: e.target.value,
+                          };
+                          return { ...f, variants };
+                        })
+                      }
+                      className="mt-1 w-full border border-border-muted bg-background px-2 py-1.5 text-sm"
+                    />
+                  </label>
+                  {extraCurrencies.map((code) => {
+                    const field = PRICE_FIELD_BY_CURRENCY[code];
+                    return (
+                      <label key={code} className="block text-sm">
+                        <span className="mono text-[10px] uppercase text-muted">
+                          {code}
+                        </span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          placeholder={code}
+                          value={v[field]}
+                          onChange={(e) =>
+                            setForm((f) => {
+                              const variants = [...f.variants];
+                              variants[i] = {
+                                ...variants[i],
+                                [field]: e.target.value,
+                              };
+                              return { ...f, variants };
+                            })
+                          }
+                          className="mt-1 w-full border border-border-muted bg-background px-2 py-1.5 text-sm"
+                        />
+                      </label>
+                    );
+                  })}
                 </div>
-                {!v.priceUsd.trim() ||
-                !v.priceEur.trim() ||
-                !v.priceGbp.trim() ? (
+                {extraCurrencies.some(
+                  (code) =>
+                    !String(v[PRICE_FIELD_BY_CURRENCY[code]]).trim(),
+                ) ? (
                   <p className="text-[11px] text-amber-700">
-                    USD/EUR/GBP boşsa bu varyantta yurtdışı ziyaretçiler TRY
-                    fiyatına düşer.
+                    Aktif para birimleri boşsa bu varyantta yurtdışı
+                    ziyaretçiler TRY fiyatına düşer.
                   </p>
                 ) : null}
                 <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                  {LOCALE_TABS.map(({ key, label }) => (
+                  {localeTabs.map(({ key, label }) => (
                     <div key={key} className="space-y-1">
                       <p className="mono text-[10px] uppercase text-muted">
                         {label} etiket / grup
                       </p>
                       <input
                         placeholder={`Ad (${label})`}
-                        value={v.localeLabels[key].name}
+                        value={v.localeLabels[key]?.name || ''}
                         onChange={(e) =>
                           setForm((f) => {
                             const variants = [...f.variants];
+                            const cur =
+                              variants[i].localeLabels[key] ||
+                              emptyVariantLocaleFields();
                             variants[i] = {
                               ...variants[i],
                               localeLabels: {
                                 ...variants[i].localeLabels,
                                 [key]: {
-                                  ...variants[i].localeLabels[key],
+                                  ...cur,
                                   name: e.target.value,
                                 },
                               },
@@ -1535,16 +1671,19 @@ function ProductsPageInner() {
                       />
                       <input
                         placeholder={`Grup (${label})`}
-                        value={v.localeLabels[key].categoryLabel}
+                        value={v.localeLabels[key]?.categoryLabel || ''}
                         onChange={(e) =>
                           setForm((f) => {
                             const variants = [...f.variants];
+                            const cur =
+                              variants[i].localeLabels[key] ||
+                              emptyVariantLocaleFields();
                             variants[i] = {
                               ...variants[i],
                               localeLabels: {
                                 ...variants[i].localeLabels,
                                 [key]: {
-                                  ...variants[i].localeLabels[key],
+                                  ...cur,
                                   categoryLabel: e.target.value,
                                 },
                               },

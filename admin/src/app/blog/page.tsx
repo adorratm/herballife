@@ -1,8 +1,9 @@
 'use client';
 
-import { FormEvent, Suspense, useEffect, useState } from 'react';
+import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
+import { mergeTranslations, useAdminI18n } from '@/lib/admin-i18n';
 import { asArray, asPaged, slugify } from '@/lib/utils';
 import { DataTable } from '@/components/DataTable';
 import { MediaUpload } from '@/components/MediaUpload';
@@ -13,8 +14,6 @@ import { AdminFormPanel } from '@/components/AdminFormPanel';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import type { BlogPost } from '@/lib/types';
 
-type LocaleKey = 'en' | 'de' | 'fr' | 'es';
-
 type BlogLocaleFields = {
   title: string;
   slug: string;
@@ -24,46 +23,13 @@ type BlogLocaleFields = {
   seoDescription: string;
 };
 
-const LOCALE_TABS: { key: LocaleKey; label: string }[] = [
-  { key: 'en', label: 'EN' },
-  { key: 'de', label: 'DE' },
-  { key: 'fr', label: 'FR' },
-  { key: 'es', label: 'ES' },
-];
-
-const emptyBlogTranslations = (): Record<LocaleKey, BlogLocaleFields> => ({
-  en: {
-    title: '',
-    slug: '',
-    excerpt: '',
-    content: '',
-    seoTitle: '',
-    seoDescription: '',
-  },
-  de: {
-    title: '',
-    slug: '',
-    excerpt: '',
-    content: '',
-    seoTitle: '',
-    seoDescription: '',
-  },
-  fr: {
-    title: '',
-    slug: '',
-    excerpt: '',
-    content: '',
-    seoTitle: '',
-    seoDescription: '',
-  },
-  es: {
-    title: '',
-    slug: '',
-    excerpt: '',
-    content: '',
-    seoTitle: '',
-    seoDescription: '',
-  },
+const emptyBlogLocaleFields = (): BlogLocaleFields => ({
+  title: '',
+  slug: '',
+  excerpt: '',
+  content: '',
+  seoTitle: '',
+  seoDescription: '',
 });
 
 type FormState = {
@@ -74,9 +40,9 @@ type FormState = {
   content: string;
   coverImageUrl: string;
   useSharedImage: boolean;
-  imagesByLocale: Record<LocaleKey, string>;
-  translationTab: LocaleKey;
-  translations: Record<LocaleKey, BlogLocaleFields>;
+  imagesByLocale: Record<string, string>;
+  translationTab: string;
+  translations: Record<string, BlogLocaleFields>;
   authorName: string;
   tags: string;
   relatedProductSlugs: string[];
@@ -93,9 +59,9 @@ const emptyForm = (): FormState => ({
   content: '',
   coverImageUrl: '',
   useSharedImage: true,
-  imagesByLocale: { en: '', de: '', fr: '', es: '' },
-  translationTab: 'en',
-  translations: emptyBlogTranslations(),
+  imagesByLocale: {},
+  translationTab: '',
+  translations: {},
   authorName: 'Herbal Kapıda',
   tags: '',
   relatedProductSlugs: [],
@@ -108,6 +74,13 @@ const emptyForm = (): FormState => ({
 function BlogAdminPageInner() {
   const searchParams = useSearchParams();
   const initialQ = searchParams.get('q') || '';
+  const { localeTabs } = useAdminI18n();
+  const existingTranslationsRef = useRef<BlogPost['translations']>(null);
+  const existingImagesByLocaleRef = useRef<BlogPost['imagesByLocale']>(null);
+  const activeLocaleKeys = useMemo(
+    () => localeTabs.map((t) => t.key),
+    [localeTabs],
+  );
 
   const [rows, setRows] = useState<BlogPost[]>([]);
   const [form, setForm] = useState<FormState>(emptyForm());
@@ -125,6 +98,23 @@ function BlogAdminPageInner() {
   const [categoryOptions, setCategoryOptions] = useState<
     { slug: string; name: string }[]
   >([]);
+
+  useEffect(() => {
+    if (!localeTabs.length) return;
+    setForm((f) => {
+      const translations = { ...f.translations };
+      const imagesByLocale = { ...f.imagesByLocale };
+      for (const { key } of localeTabs) {
+        if (!translations[key]) translations[key] = emptyBlogLocaleFields();
+        if (imagesByLocale[key] == null) imagesByLocale[key] = '';
+      }
+      const translationTab =
+        f.translationTab && localeTabs.some((t) => t.key === f.translationTab)
+          ? f.translationTab
+          : localeTabs[0].key;
+      return { ...f, translations, imagesByLocale, translationTab };
+    });
+  }, [localeTabs]);
 
   async function load(search = q) {
     setLoading(true);
@@ -176,11 +166,40 @@ function BlogAdminPageInner() {
   }, []);
 
   function startCreate() {
-    setForm(emptyForm());
+    existingTranslationsRef.current = null;
+    existingImagesByLocaleRef.current = null;
+    const translations: Record<string, BlogLocaleFields> = {};
+    const imagesByLocale: Record<string, string> = {};
+    for (const { key } of localeTabs) {
+      translations[key] = emptyBlogLocaleFields();
+      imagesByLocale[key] = '';
+    }
+    setForm({
+      ...emptyForm(),
+      translationTab: localeTabs[0]?.key || '',
+      translations,
+      imagesByLocale,
+    });
     setEditing(true);
   }
 
   function startEdit(post: BlogPost) {
+    existingTranslationsRef.current = post.translations || null;
+    existingImagesByLocaleRef.current = post.imagesByLocale || null;
+    const translations: Record<string, BlogLocaleFields> = {};
+    const imagesByLocale: Record<string, string> = {};
+    for (const { key } of localeTabs) {
+      const t = post.translations?.[key];
+      translations[key] = {
+        title: t?.title || '',
+        slug: t?.slug || '',
+        excerpt: t?.excerpt || '',
+        content: t?.content || '',
+        seoTitle: t?.seoTitle || '',
+        seoDescription: t?.seoDescription || '',
+      };
+      imagesByLocale[key] = post.imagesByLocale?.[key] || '';
+    }
     setForm({
       id: post.id,
       slug: post.slug,
@@ -189,28 +208,9 @@ function BlogAdminPageInner() {
       content: post.content,
       coverImageUrl: post.coverImageUrl || '',
       useSharedImage: post.useSharedImage !== false,
-      imagesByLocale: {
-        en: post.imagesByLocale?.en || '',
-        de: post.imagesByLocale?.de || '',
-        fr: post.imagesByLocale?.fr || '',
-        es: post.imagesByLocale?.es || '',
-      },
-      translationTab: 'en',
-      translations: (() => {
-        const tr = emptyBlogTranslations();
-        for (const { key } of LOCALE_TABS) {
-          const t = post.translations?.[key];
-          tr[key] = {
-            title: t?.title || '',
-            slug: t?.slug || '',
-            excerpt: t?.excerpt || '',
-            content: t?.content || '',
-            seoTitle: t?.seoTitle || '',
-            seoDescription: t?.seoDescription || '',
-          };
-        }
-        return tr;
-      })(),
+      imagesByLocale,
+      translationTab: localeTabs[0]?.key || '',
+      translations,
       authorName: post.authorName || '',
       tags: (post.tags || []).join(', '),
       relatedProductSlugs: post.relatedProductSlugs || [],
@@ -227,8 +227,8 @@ function BlogAdminPageInner() {
     setSaving(true);
     setError(null);
     setMessage(null);
-    for (const { key, label } of LOCALE_TABS) {
-      const row = form.translations[key];
+    for (const { key, label } of localeTabs) {
+      const row = form.translations[key] || emptyBlogLocaleFields();
       if (
         !row.title.trim() ||
         !row.slug.trim() ||
@@ -241,7 +241,7 @@ function BlogAdminPageInner() {
       }
     }
     if (!form.useSharedImage) {
-      for (const { key, label } of LOCALE_TABS) {
+      for (const { key, label } of localeTabs) {
         if (!form.imagesByLocale[key]?.trim()) {
           setError(`${label} kapak görseli zorunludur.`);
           setSaving(false);
@@ -255,10 +255,10 @@ function BlogAdminPageInner() {
       }
     }
 
-    const translations: Record<string, BlogLocaleFields> = {};
-    for (const { key } of LOCALE_TABS) {
-      const row = form.translations[key];
-      translations[key] = {
+    const activeTranslations: Record<string, BlogLocaleFields> = {};
+    for (const { key } of localeTabs) {
+      const row = form.translations[key] || emptyBlogLocaleFields();
+      activeTranslations[key] = {
         title: row.title.trim(),
         slug: row.slug.trim() || slugify(row.title),
         excerpt: row.excerpt.trim(),
@@ -267,6 +267,14 @@ function BlogAdminPageInner() {
         seoDescription: row.seoDescription.trim(),
       };
     }
+    const translations = mergeTranslations(
+      (existingTranslationsRef.current || {}) as Record<
+        string,
+        BlogLocaleFields
+      >,
+      activeTranslations,
+      activeLocaleKeys,
+    );
 
     const payload = {
       slug: form.slug || slugify(form.title),
@@ -278,12 +286,20 @@ function BlogAdminPageInner() {
       useSharedImage: form.useSharedImage,
       imagesByLocale: form.useSharedImage
         ? {}
-        : {
-            en: form.imagesByLocale.en.trim(),
-            de: form.imagesByLocale.de.trim(),
-            fr: form.imagesByLocale.fr.trim(),
-            es: form.imagesByLocale.es.trim(),
-          },
+        : (() => {
+            const active: Record<string, string> = {};
+            for (const { key } of localeTabs) {
+              active[key] = (form.imagesByLocale[key] || '').trim();
+            }
+            return mergeTranslations(
+              (existingImagesByLocaleRef.current || {}) as Record<
+                string,
+                string
+              >,
+              active,
+              activeLocaleKeys,
+            );
+          })(),
       authorName: form.authorName || undefined,
       tags: form.tags
         .split(',')
@@ -308,6 +324,8 @@ function BlogAdminPageInner() {
       }
       setHighlightRowKey(savedId || null);
       setEditing(false);
+      existingTranslationsRef.current = null;
+      existingImagesByLocaleRef.current = null;
       setForm(emptyForm());
       setMessage('Kaydedildi');
       await load();
@@ -487,12 +505,17 @@ function BlogAdminPageInner() {
               />
             </div>
             {!form.useSharedImage ? (
+              localeTabs.length === 0 ? (
+                <p className="mt-3 text-xs text-muted">
+                  Ek dil aktif değil; yalnızca TR kapak görseli kullanılır.
+                </p>
+              ) : (
               <div className="mt-3 grid gap-4 sm:grid-cols-2">
-                {LOCALE_TABS.map(({ key, label }) => (
+                {localeTabs.map(({ key, label }) => (
                   <MediaUpload
                     key={key}
                     label={`Kapak görseli (${label})`}
-                    value={form.imagesByLocale[key]}
+                    value={form.imagesByLocale[key] || ''}
                     onChange={(url) =>
                       setForm((f) => ({
                         ...f,
@@ -506,14 +529,25 @@ function BlogAdminPageInner() {
                   />
                 ))}
               </div>
+              )
             ) : null}
           </div>
           <div className="md:col-span-2 space-y-3 rounded border border-border-muted p-3">
             <p className="mono text-[10px] uppercase text-muted">
-              Çeviriler — EN/DE/FR/ES zorunlu
+              Çeviriler
+              {localeTabs.length
+                ? ' — aktif diller için zorunlu'
+                : ' — ek dil aktif değil'}
             </p>
+            {localeTabs.length === 0 ? (
+              <p className="text-xs text-muted">
+                Dil ve Para ayarlarından ek dil açıldığında burada alanlar
+                görünür.
+              </p>
+            ) : (
+              <>
             <div className="flex flex-wrap gap-2">
-              {LOCALE_TABS.map(({ key, label }) => (
+              {localeTabs.map(({ key, label }) => (
                 <button
                   key={key}
                   type="button"
@@ -532,7 +566,7 @@ function BlogAdminPageInner() {
             </div>
             {(() => {
               const tab = form.translationTab;
-              const row = form.translations[tab];
+              const row = form.translations[tab] || emptyBlogLocaleFields();
               return (
                 <div className="grid gap-3">
                   <label className="block text-sm">
@@ -542,19 +576,21 @@ function BlogAdminPageInner() {
                     <input
                       value={row.title}
                       onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          translations: {
-                            ...f.translations,
-                            [tab]: {
-                              ...f.translations[tab],
-                              title: e.target.value,
-                              slug:
-                                f.translations[tab].slug ||
-                                slugify(e.target.value),
+                        setForm((f) => {
+                          const cur =
+                            f.translations[tab] || emptyBlogLocaleFields();
+                          return {
+                            ...f,
+                            translations: {
+                              ...f.translations,
+                              [tab]: {
+                                ...cur,
+                                title: e.target.value,
+                                slug: cur.slug || slugify(e.target.value),
+                              },
                             },
-                          },
-                        }))
+                          };
+                        })
                       }
                       className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
                     />
@@ -571,7 +607,8 @@ function BlogAdminPageInner() {
                           translations: {
                             ...f.translations,
                             [tab]: {
-                              ...f.translations[tab],
+                              ...(f.translations[tab] ||
+                                emptyBlogLocaleFields()),
                               slug: e.target.value,
                             },
                           },
@@ -593,7 +630,8 @@ function BlogAdminPageInner() {
                             translations: {
                               ...f.translations,
                               [tab]: {
-                                ...f.translations[tab],
+                                ...(f.translations[tab] ||
+                                  emptyBlogLocaleFields()),
                                 excerpt: html,
                               },
                             },
@@ -616,7 +654,11 @@ function BlogAdminPageInner() {
                             ...f,
                             translations: {
                               ...f.translations,
-                              [tab]: { ...f.translations[tab], content: html },
+                              [tab]: {
+                                ...(f.translations[tab] ||
+                                  emptyBlogLocaleFields()),
+                                content: html,
+                              },
                             },
                           }))
                         }
@@ -627,6 +669,8 @@ function BlogAdminPageInner() {
                 </div>
               );
             })()}
+              </>
+            )}
           </div>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">Yazar</span>
@@ -766,12 +810,11 @@ function BlogAdminPageInner() {
             header: 'Başlık',
             render: (r) => {
               const enTitle = r.translations?.en?.title?.trim();
-              const i18nOk = Boolean(
-                enTitle &&
-                  r.translations?.de?.title?.trim() &&
-                  r.translations?.fr?.title?.trim() &&
-                  r.translations?.es?.title?.trim(),
-              );
+              const i18nOk =
+                activeLocaleKeys.length === 0 ||
+                activeLocaleKeys.every((key) =>
+                  Boolean(r.translations?.[key]?.title?.trim()),
+                );
               return (
                 <div>
                   <div className="font-medium">{r.title}</div>
@@ -779,7 +822,11 @@ function BlogAdminPageInner() {
                     <div className="text-xs text-muted">EN: {enTitle}</div>
                   ) : null}
                   <div className="mono text-[10px] text-muted">
-                    {i18nOk ? 'EN/DE/FR/ES ✓' : 'çeviri eksik'}
+                    {activeLocaleKeys.length === 0
+                      ? 'yalnızca TR'
+                      : i18nOk
+                        ? 'aktif diller ✓'
+                        : 'çeviri eksik'}
                   </div>
                 </div>
               );

@@ -24,19 +24,19 @@
     "@tiptap/starter-kit": "^3.32.2",
     "echarts": "^6.1.0",
     "echarts-for-react": "^3.0.6",
-    "next": "16.4.4",
+    "next": "16.4.5",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "socket.io-client": "^4.8.4"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
+    "@tailwindcss/postcss": "^4.3.4",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "eslint": "^10.14.0",
-    "eslint-config-next": "16.4.4",
-    "tailwindcss": "^4.3.3",
+    "eslint-config-next": "16.4.5",
+    "tailwindcss": "^4.3.4",
     "typescript": "^6.0.3"
   },
   "volta": {

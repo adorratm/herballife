@@ -1,7 +1,8 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '@/lib/api';
+import { mergeTranslations, useAdminI18n } from '@/lib/admin-i18n';
 import { asArray, asPaged } from '@/lib/utils';
 import { DataTable } from '@/components/DataTable';
 import { Checkbox } from '@/components/Checkbox';
@@ -15,25 +16,12 @@ type ItemRule = { position: number; discountPercent: number };
 
 type RuleMode = 'flat' | 'nth_item' | 'both';
 
-type LocaleKey = 'en' | 'de' | 'fr' | 'es';
-
 type CampaignLocaleFields = { name: string; headline: string; badge: string };
 
-const LOCALE_TABS: { key: LocaleKey; label: string }[] = [
-  { key: 'en', label: 'EN' },
-  { key: 'de', label: 'DE' },
-  { key: 'fr', label: 'FR' },
-  { key: 'es', label: 'ES' },
-];
-
-const emptyCampaignTranslations = (): Record<
-  LocaleKey,
-  CampaignLocaleFields
-> => ({
-  en: { name: '', headline: '', badge: '' },
-  de: { name: '', headline: '', badge: '' },
-  fr: { name: '', headline: '', badge: '' },
-  es: { name: '', headline: '', badge: '' },
+const emptyCampaignLocaleFields = (): CampaignLocaleFields => ({
+  name: '',
+  headline: '',
+  badge: '',
 });
 
 type Campaign = {
@@ -48,7 +36,7 @@ type Campaign = {
   headline?: string | null;
   imageUrl?: string | null;
   translations?: Record<string, CampaignLocaleFields> | null;
-  imagesByLocale?: Partial<Record<LocaleKey, string>>;
+  imagesByLocale?: Partial<Record<string, string>>;
   useSharedImage?: boolean;
   productIds: string[];
   startsAt?: string | null;
@@ -68,9 +56,9 @@ type FormState = {
   headline: string;
   imageUrl: string;
   useSharedImage: boolean;
-  imagesByLocale: Record<LocaleKey, string>;
-  translationTab: LocaleKey;
-  translations: Record<LocaleKey, CampaignLocaleFields>;
+  imagesByLocale: Record<string, string>;
+  translationTab: string;
+  translations: Record<string, CampaignLocaleFields>;
   productIds: string[];
   startsAt: string;
   endsAt: string;
@@ -193,9 +181,9 @@ const emptyForm = (): FormState => ({
   headline: '',
   imageUrl: '',
   useSharedImage: true,
-  imagesByLocale: { en: '', de: '', fr: '', es: '' },
-  translationTab: 'en',
-  translations: emptyCampaignTranslations(),
+  imagesByLocale: {},
+  translationTab: '',
+  translations: {},
   productIds: [],
   startsAt: '',
   endsAt: '',
@@ -238,6 +226,14 @@ function rangeForPreset(p: Preset): { startsAt: string; endsAt: string } {
 }
 
 export default function CampaignsPage() {
+  const { localeTabs } = useAdminI18n();
+  const existingTranslationsRef = useRef<Campaign['translations']>(null);
+  const existingImagesByLocaleRef = useRef<Campaign['imagesByLocale']>(null);
+  const activeLocaleKeys = useMemo(
+    () => localeTabs.map((t) => t.key),
+    [localeTabs],
+  );
+
   const [rows, setRows] = useState<Campaign[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [productQuery, setProductQuery] = useState('');
@@ -248,6 +244,23 @@ export default function CampaignsPage() {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!localeTabs.length) return;
+    setForm((f) => {
+      const translations = { ...f.translations };
+      const imagesByLocale = { ...f.imagesByLocale };
+      for (const { key } of localeTabs) {
+        if (!translations[key]) translations[key] = emptyCampaignLocaleFields();
+        if (imagesByLocale[key] == null) imagesByLocale[key] = '';
+      }
+      const translationTab =
+        f.translationTab && localeTabs.some((t) => t.key === f.translationTab)
+          ? f.translationTab
+          : localeTabs[0].key;
+      return { ...f, translations, imagesByLocale, translationTab };
+    });
+  }, [localeTabs]);
 
   async function load() {
     setLoading(true);
@@ -299,7 +312,20 @@ export default function CampaignsPage() {
   );
 
   function startCreate() {
-    setForm(emptyForm());
+    existingTranslationsRef.current = null;
+    existingImagesByLocaleRef.current = null;
+    const translations: Record<string, CampaignLocaleFields> = {};
+    const imagesByLocale: Record<string, string> = {};
+    for (const { key } of localeTabs) {
+      translations[key] = emptyCampaignLocaleFields();
+      imagesByLocale[key] = '';
+    }
+    setForm({
+      ...emptyForm(),
+      translationTab: localeTabs[0]?.key || '',
+      translations,
+      imagesByLocale,
+    });
     setProductQuery('');
     setEditing(true);
     setMessage(null);
@@ -307,6 +333,14 @@ export default function CampaignsPage() {
 
   function applyPreset(p: Preset) {
     const range = rangeForPreset(p);
+    const translations: Record<string, CampaignLocaleFields> = {};
+    const imagesByLocale: Record<string, string> = {};
+    for (const { key } of localeTabs) {
+      translations[key] = emptyCampaignLocaleFields();
+      imagesByLocale[key] = '';
+    }
+    existingTranslationsRef.current = null;
+    existingImagesByLocaleRef.current = null;
     setForm({
       ...emptyForm(),
       name: p.name,
@@ -318,6 +352,9 @@ export default function CampaignsPage() {
       startsAt: range.startsAt,
       endsAt: range.endsAt,
       isActive: true,
+      translationTab: localeTabs[0]?.key || '',
+      translations,
+      imagesByLocale,
     });
     setProductQuery('');
     setEditing(true);
@@ -329,6 +366,19 @@ export default function CampaignsPage() {
   }
 
   function startEdit(row: Campaign) {
+    existingTranslationsRef.current = row.translations || null;
+    existingImagesByLocaleRef.current = row.imagesByLocale || null;
+    const translations: Record<string, CampaignLocaleFields> = {};
+    const imagesByLocale: Record<string, string> = {};
+    for (const { key } of localeTabs) {
+      const t = row.translations?.[key];
+      translations[key] = {
+        name: t?.name || '',
+        headline: t?.headline || '',
+        badge: t?.badge || '',
+      };
+      imagesByLocale[key] = row.imagesByLocale?.[key] || '';
+    }
     setForm({
       id: row.id,
       name: row.name,
@@ -343,25 +393,9 @@ export default function CampaignsPage() {
       headline: row.headline || '',
       imageUrl: row.imageUrl || '',
       useSharedImage: row.useSharedImage !== false,
-      imagesByLocale: {
-        en: row.imagesByLocale?.en || '',
-        de: row.imagesByLocale?.de || '',
-        fr: row.imagesByLocale?.fr || '',
-        es: row.imagesByLocale?.es || '',
-      },
-      translationTab: 'en',
-      translations: (() => {
-        const tr = emptyCampaignTranslations();
-        for (const { key } of LOCALE_TABS) {
-          const t = row.translations?.[key];
-          tr[key] = {
-            name: t?.name || '',
-            headline: t?.headline || '',
-            badge: t?.badge || '',
-          };
-        }
-        return tr;
-      })(),
+      imagesByLocale,
+      translationTab: localeTabs[0]?.key || '',
+      translations,
       productIds: [...(row.productIds || [])],
       startsAt: toLocalInput(row.startsAt),
       endsAt: toLocalInput(row.endsAt),
@@ -402,8 +436,8 @@ export default function CampaignsPage() {
     setError(null);
     setMessage(null);
     try {
-      for (const { key, label } of LOCALE_TABS) {
-        const row = form.translations[key];
+      for (const { key, label } of localeTabs) {
+        const row = form.translations[key] || emptyCampaignLocaleFields();
         if (!row.name.trim() || !row.headline.trim()) {
           setError(`${label}: kampanya adı ve vitrin metni zorunludur.`);
           setSaving(false);
@@ -411,7 +445,7 @@ export default function CampaignsPage() {
         }
       }
       if (!form.useSharedImage) {
-        for (const { key, label } of LOCALE_TABS) {
+        for (const { key, label } of localeTabs) {
           if (!form.imagesByLocale[key]?.trim()) {
             setError(`${label} banner görseli zorunludur.`);
             setSaving(false);
@@ -425,15 +459,20 @@ export default function CampaignsPage() {
         }
       }
 
-      const translations: Record<string, CampaignLocaleFields> = {};
-      for (const { key } of LOCALE_TABS) {
-        const row = form.translations[key];
-        translations[key] = {
+      const activeTranslations: Record<string, CampaignLocaleFields> = {};
+      for (const { key } of localeTabs) {
+        const row = form.translations[key] || emptyCampaignLocaleFields();
+        activeTranslations[key] = {
           name: row.name.trim(),
           headline: row.headline.trim(),
           badge: row.badge.trim(),
         };
       }
+      const translations = mergeTranslations(
+        existingTranslationsRef.current || {},
+        activeTranslations,
+        activeLocaleKeys,
+      );
 
       const body = {
         name: form.name.trim(),
@@ -459,12 +498,20 @@ export default function CampaignsPage() {
         useSharedImage: form.useSharedImage,
         imagesByLocale: form.useSharedImage
           ? {}
-          : {
-              en: form.imagesByLocale.en.trim(),
-              de: form.imagesByLocale.de.trim(),
-              fr: form.imagesByLocale.fr.trim(),
-              es: form.imagesByLocale.es.trim(),
-            },
+          : (() => {
+              const active: Record<string, string> = {};
+              for (const { key } of localeTabs) {
+                active[key] = (form.imagesByLocale[key] || '').trim();
+              }
+              return mergeTranslations(
+                (existingImagesByLocaleRef.current || {}) as Record<
+                  string,
+                  string
+                >,
+                active,
+                activeLocaleKeys,
+              );
+            })(),
         productIds: form.productIds,
         startsAt: form.startsAt
           ? new Date(form.startsAt).toISOString()
@@ -768,12 +815,17 @@ export default function CampaignsPage() {
                 }
               />
               {!form.useSharedImage ? (
+                localeTabs.length === 0 ? (
+                  <p className="mt-3 text-xs text-muted">
+                    Ek dil aktif değil; yalnızca TR banner kullanılır.
+                  </p>
+                ) : (
                 <div className="mt-3 grid gap-4 sm:grid-cols-2">
-                  {LOCALE_TABS.map(({ key, label }) => (
+                  {localeTabs.map(({ key, label }) => (
                     <MediaUpload
                       key={key}
                       label={`Banner (${label})`}
-                      value={form.imagesByLocale[key]}
+                      value={form.imagesByLocale[key] || ''}
                       onChange={(url) =>
                         setForm((f) => ({
                           ...f,
@@ -787,14 +839,25 @@ export default function CampaignsPage() {
                     />
                   ))}
                 </div>
+                )
               ) : null}
             </div>
             <div className="md:col-span-2 space-y-3 rounded border border-border-muted p-3">
               <p className="mono text-[10px] uppercase text-muted">
-                Çeviriler (TR ana alanlarda) — EN/DE/FR/ES zorunlu
+                Çeviriler (TR ana alanlarda)
+                {localeTabs.length
+                  ? ' — aktif diller için zorunlu'
+                  : ' — ek dil aktif değil'}
               </p>
+              {localeTabs.length === 0 ? (
+                <p className="text-xs text-muted">
+                  Dil ve Para ayarlarından ek dil açıldığında burada alanlar
+                  görünür.
+                </p>
+              ) : (
+                <>
               <div className="flex flex-wrap gap-2">
-                {LOCALE_TABS.map(({ key, label }) => (
+                {localeTabs.map(({ key, label }) => (
                   <button
                     key={key}
                     type="button"
@@ -813,7 +876,8 @@ export default function CampaignsPage() {
               </div>
               {(() => {
                 const tab = form.translationTab;
-                const row = form.translations[tab];
+                const row =
+                  form.translations[tab] || emptyCampaignLocaleFields();
                 return (
                   <div className="grid gap-3 sm:grid-cols-2">
                     <label className="block text-sm">
@@ -825,7 +889,11 @@ export default function CampaignsPage() {
                             ...f,
                             translations: {
                               ...f.translations,
-                              [tab]: { ...f.translations[tab], name: e.target.value },
+                              [tab]: {
+                                ...(f.translations[tab] ||
+                                  emptyCampaignLocaleFields()),
+                                name: e.target.value,
+                              },
                             },
                           }))
                         }
@@ -842,7 +910,8 @@ export default function CampaignsPage() {
                             translations: {
                               ...f.translations,
                               [tab]: {
-                                ...f.translations[tab],
+                                ...(f.translations[tab] ||
+                                  emptyCampaignLocaleFields()),
                                 headline: e.target.value,
                               },
                             },
@@ -861,7 +930,8 @@ export default function CampaignsPage() {
                             translations: {
                               ...f.translations,
                               [tab]: {
-                                ...f.translations[tab],
+                                ...(f.translations[tab] ||
+                                  emptyCampaignLocaleFields()),
                                 badge: e.target.value,
                               },
                             },
@@ -874,6 +944,8 @@ export default function CampaignsPage() {
                   </div>
                 );
               })()}
+                </>
+              )}
             </div>
             <label className="text-sm">
               Başlangıç
