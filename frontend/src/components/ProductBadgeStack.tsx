@@ -42,11 +42,15 @@ export function ProductBadgeStack({
   if (onImage) {
     const inset = compact ? "0.375rem" : "0.625rem";
     const saleDigits = sale?.label.replace(/\D/g, "") || "";
+    /* İndirim solda: sağ üst favori butonuyla çakışmasın */
+    const saleTop = cornerPill
+      ? `calc(${inset} + ${compact ? "1.35rem" : "1.55rem"})`
+      : inset;
     return (
       <>
         {cornerPill ? (
           <span
-            className={`product-badge-pill pointer-events-none absolute z-10 ${badgeToneClass(cornerPill.tone)} ${compact ? "product-badge-pill--compact" : ""} ${className}`}
+            className={`product-badge-pill pointer-events-none absolute z-5 ${badgeToneClass(cornerPill.tone)} ${compact ? "product-badge-pill--compact" : ""} ${className}`}
             style={{ left: inset, top: inset }}
           >
             {resolveLabel(cornerPill, t)}
@@ -54,8 +58,8 @@ export function ProductBadgeStack({
         ) : null}
         {sale ? (
           <span
-            className={`product-badge-ribbon pointer-events-none absolute z-10 ${compact ? "product-badge-ribbon--compact" : ""}`}
-            style={{ right: inset, top: inset }}
+            className={`product-badge-ribbon pointer-events-none absolute z-5 ${compact ? "product-badge-ribbon--compact" : ""}`}
+            style={{ left: inset, top: saleTop }}
             aria-label={tAria("discountPercent", {
               percent: saleDigits || sale.label.replace(/\D/g, "") || "0",
             })}

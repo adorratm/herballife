@@ -57,7 +57,9 @@ export function ProductCard({
         compact ? "rounded-lg p-1.5" : "rounded-xl p-2.5"
       }`}
     >
-      <div className={`absolute z-10 ${compact ? "right-1.5 top-1.5" : "right-2.5 top-2.5"}`}>
+      <div
+        className={`absolute z-20 ${compact ? "right-1.5 top-1.5" : "right-2.5 top-2.5"}`}
+      >
         <FavoriteButton productId={product.id} size="sm" />
       </div>
       <Link href={productHref(product.slug)} className="flex min-w-0 flex-1 flex-col">
@@ -108,16 +110,20 @@ export function ProductCard({
               {variant.weightLabel}
             </p>
           ) : null}
-          <div className="mt-auto flex min-h-5 flex-wrap items-baseline gap-1.5 pt-1">
+          <div className="mt-auto flex min-h-6 flex-wrap items-baseline gap-x-2 gap-y-0.5 pt-1.5">
             {hasDiscount ? (
-              <span className="text-[10px] text-outline line-through">
+              <span
+                className={`font-medium text-outline line-through ${
+                  compact ? "text-[11px]" : "text-xs"
+                }`}
+              >
                 {formatMoney(compareAt, product.currency)}
               </span>
             ) : null}
             <span
-              className={`font-bold text-primary ${
+              className={`font-display font-bold tracking-tight text-primary ${
                 hasDiscount ? "price-live" : ""
-              } ${compact ? "text-xs" : "text-sm"}`}
+              } ${compact ? "text-sm" : "text-lg"}`}
             >
               {formatMoney(price, product.currency)}
             </span>
@@ -125,7 +131,7 @@ export function ProductCard({
             discount != null &&
             discount > 0 &&
             !saleInRibbon ? (
-              <span className="text-[10px] font-semibold text-[#b85c38]">
+              <span className="text-[11px] font-bold text-[#b85c38]">
                 −%{discount}
               </span>
             ) : null}

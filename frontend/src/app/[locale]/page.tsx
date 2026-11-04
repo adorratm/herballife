@@ -188,9 +188,9 @@ export default async function HomePage() {
 
       {/* 1 — Hero: marka, tek başlık, tek cümle, CTA, baskın ürün görseli */}
       <section className="hero-forest relative isolate overflow-hidden">
-        <div className="page-shell grid items-center gap-8 py-12 sm:py-16 lg:min-h-[min(46rem,calc(100svh-4.5rem))] lg:grid-cols-12 lg:gap-6 lg:py-20">
+        <div className="page-shell grid items-center gap-5 py-8 sm:gap-6 sm:py-10 lg:min-h-[min(28rem,calc(100svh-5.5rem))] lg:grid-cols-12 lg:gap-5 lg:py-12">
           <div className="hero-enter relative z-10 lg:col-span-6">
-            <h1 className="display-xl">
+            <h1 className="display-xl text-[clamp(2.75rem,7.5vw,5.5rem)]">
               <span className="block text-white">{brandWords[0]}</span>
               {brandWords.length > 1 ? (
                 <span className="block text-[#8fe0b6]">
@@ -198,13 +198,13 @@ export default async function HomePage() {
                 </span>
               ) : null}
             </h1>
-            <p className="mt-7 max-w-md font-display text-2xl font-bold leading-snug tracking-tight text-white md:text-3xl">
+            <p className="mt-4 max-w-md font-display text-xl font-bold leading-snug tracking-tight text-white md:text-2xl">
               {String(hero.headline)}
             </p>
-            <p className="mt-3 line-clamp-2 max-w-md text-base leading-relaxed text-white/75">
+            <p className="mt-2 line-clamp-2 max-w-md text-sm leading-relaxed text-white/75 sm:text-base">
               {String(hero.body)}
             </p>
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-3">
               <Link href={toLinkHref(String(hero.ctaHref))} className="btn-brand-light">
                 {String(hero.ctaLabel)}
                 <ArrowRight className="h-4 w-4" aria-hidden />
@@ -222,7 +222,7 @@ export default async function HomePage() {
           </div>
 
           <div className="hero-media relative w-full min-w-0 lg:col-span-6">
-            <div className="relative mx-auto aspect-6/5 w-full max-w-full overflow-hidden sm:max-w-176">
+            <div className="relative mx-auto aspect-5/4 w-full max-w-full overflow-hidden sm:max-w-140 lg:max-h-88">
               <div className="absolute bottom-0 left-[18%] z-10 aspect-square h-[52%] max-h-full -translate-x-1/2 sm:bottom-[-3%] sm:h-[58%]">
                 {/* eslint-disable-next-line @next/next/no-img-element -- hero LCP: kesin eager */}
                 <img
@@ -271,6 +271,65 @@ export default async function HomePage() {
           endsAt={topCampaign.endsAt}
         />
       ) : null}
+
+      {/* 3 — Hediyeli setler */}
+      <section id="hediyeli-setler" className="mint-wash py-14 md:py-20">
+        <div className="page-shell">
+          <Reveal>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div className="max-w-xl">
+                <p className="eyebrow text-primary">
+                  {topCampaign?.badge || tHome("giftedEyebrowFallback")}
+                </p>
+                <h2 className="display-md mt-3 text-on-surface">
+                  {tHome("giftedTitle")}
+                </h2>
+                <p className="mt-3 text-base leading-relaxed text-on-surface-variant">
+                  {topCampaign?.headline || tHome("giftedBodyFallback")}
+                </p>
+              </div>
+              <Link
+                href={categoryHref("avantajli-setler")}
+                className="link-arrow text-sm"
+              >
+                {tHome("giftedAllLink")}
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </div>
+          </Reveal>
+          <div className="mt-8">
+            <ProductCarousel products={giftedProducts} />
+          </div>
+          {!featured.items.length && !gifted.items.length ? (
+            <p className="mt-6 text-sm text-on-surface-variant">
+              {tHome("productsComingSoon")}
+            </p>
+          ) : null}
+        </div>
+      </section>
+
+      {/* 4 — En çok satanlar */}
+      <section className="bg-white py-14 md:py-20">
+        <div className="page-shell">
+          <Reveal>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="eyebrow text-primary">{tHome("bestsellersEyebrow")}</p>
+                <h2 className="display-md mt-3 text-on-surface">
+                  {tHome("bestsellersTitle")}
+                </h2>
+              </div>
+              <Link href="/urunler" className="link-arrow text-sm">
+                {tHome("bestsellersLink")}
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </div>
+          </Reveal>
+          <div className="mt-8">
+            <ProductCarousel products={bestsellerProducts} />
+          </div>
+        </div>
+      </section>
 
       <section className="border-b border-outline-variant/30 bg-white py-8 md:py-10">
         <div className="page-shell">
@@ -348,64 +407,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 3 — Hediyeli setler */}
-      <section id="hediyeli-setler" className="mint-wash py-14 md:py-20">
-        <div className="page-shell">
-          <Reveal>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div className="max-w-xl">
-                <p className="eyebrow text-primary">
-                  {topCampaign?.badge || tHome("giftedEyebrowFallback")}
-                </p>
-                <h2 className="display-md mt-3 text-on-surface">
-                  {tHome("giftedTitle")}
-                </h2>
-                <p className="mt-3 text-base leading-relaxed text-on-surface-variant">
-                  {topCampaign?.headline || tHome("giftedBodyFallback")}
-                </p>
-              </div>
-              <Link
-                href={categoryHref("avantajli-setler")}
-                className="link-arrow text-sm"
-              >
-                {tHome("giftedAllLink")}
-                <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
-          </Reveal>
-          <div className="mt-8">
-            <ProductCarousel products={giftedProducts} />
-          </div>
-          {!featured.items.length && !gifted.items.length ? (
-            <p className="mt-6 text-sm text-on-surface-variant">
-              {tHome("productsComingSoon")}
-            </p>
-          ) : null}
-        </div>
-      </section>
-
-      {/* 4 — En çok satanlar */}
-      <section className="bg-white py-14 md:py-20">
-        <div className="page-shell">
-          <Reveal>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="eyebrow text-primary">{tHome("bestsellersEyebrow")}</p>
-                <h2 className="display-md mt-3 text-on-surface">
-                  {tHome("bestsellersTitle")}
-                </h2>
-              </div>
-              <Link href="/urunler" className="link-arrow text-sm">
-                {tHome("bestsellersLink")}
-                <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
-          </Reveal>
-          <div className="mt-8">
-            <ProductCarousel products={bestsellerProducts} />
-          </div>
-        </div>
-      </section>
+      
 
       {/* 5 — Yolculuk: 3 adım */}
       <section className="forest py-16 md:py-24">
