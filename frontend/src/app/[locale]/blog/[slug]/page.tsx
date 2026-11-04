@@ -122,7 +122,7 @@ function RelatedProductTeaser({ product }: { product: Product }) {
         <h3 className="line-clamp-2 font-display text-base leading-snug text-on-surface group-hover:text-primary">
           {product.name}
         </h3>
-        <div className="mt-1.5 flex items-baseline gap-2">
+        <div className="mt-1.5 flex flex-col justify-end">
           {compareAt && Number(compareAt) > Number(price) ? (
             <span className="text-xs text-outline line-through">
               {formatMoney(compareAt, product.currency)}

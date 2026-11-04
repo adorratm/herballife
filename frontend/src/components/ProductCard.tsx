@@ -110,31 +110,38 @@ export function ProductCard({
               {variant.weightLabel}
             </p>
           ) : null}
-          <div className="mt-auto flex min-h-6 flex-wrap items-baseline gap-x-2 gap-y-0.5 pt-1.5">
+          <div
+            className={`mt-auto flex flex-col justify-end pt-1.5 ${
+              compact ? "min-h-8" : "min-h-10"
+            }`}
+          >
             {hasDiscount ? (
+              <div className="flex items-center gap-1.5 leading-none">
+                <span
+                  className={`font-medium text-outline line-through ${
+                    compact ? "text-[11px]" : "text-xs"
+                  }`}
+                >
+                  {formatMoney(compareAt, product.currency)}
+                </span>
+                {discount != null &&
+                discount > 0 &&
+                !saleInRibbon ? (
+                  <span className="text-[11px] font-bold text-[#b85c38]">
+                    −%{discount}
+                  </span>
+                ) : null}
+              </div>
+            ) : null}
+            <div className="flex items-baseline gap-1.5">
               <span
-                className={`font-medium text-outline line-through ${
-                  compact ? "text-[11px]" : "text-xs"
-                }`}
+                className={`font-display font-bold tracking-tight text-primary ${
+                  hasDiscount ? "price-live" : ""
+                } ${compact ? "text-sm" : "text-lg"}`}
               >
-                {formatMoney(compareAt, product.currency)}
+                {formatMoney(price, product.currency)}
               </span>
-            ) : null}
-            <span
-              className={`font-display font-bold tracking-tight text-primary ${
-                hasDiscount ? "price-live" : ""
-              } ${compact ? "text-sm" : "text-lg"}`}
-            >
-              {formatMoney(price, product.currency)}
-            </span>
-            {hasDiscount &&
-            discount != null &&
-            discount > 0 &&
-            !saleInRibbon ? (
-              <span className="text-[11px] font-bold text-[#b85c38]">
-                −%{discount}
-              </span>
-            ) : null}
+            </div>
           </div>
           {hasDiscount && !compact ? (
             <p className="mt-0.5 px-0.5 text-[10px] font-medium leading-snug text-on-surface-variant">

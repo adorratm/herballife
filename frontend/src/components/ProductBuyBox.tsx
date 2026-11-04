@@ -261,7 +261,17 @@ export function ProductBuyBox({
               </span>
             ) : null}
           </p>
-          <div className="flex flex-wrap items-baseline gap-3">
+          {hasDeal ? (
+            <div className="mt-1 flex items-center gap-2">
+              <span className="text-base text-on-surface-variant line-through">
+                {formatMoney(compareAt, product.currency)}
+              </span>
+              {discountPct != null ? (
+                <span className="badge-discount text-xs">−%{discountPct}</span>
+              ) : null}
+            </div>
+          ) : null}
+          <div className="mt-0.5 flex items-baseline gap-3">
             <p
               className={`font-display text-3xl text-primary ${
                 hasDeal ? "price-live" : ""
@@ -269,14 +279,6 @@ export function ProductBuyBox({
             >
               {formatMoney(displayPrice, product.currency)}
             </p>
-            {hasDeal ? (
-              <p className="text-sm text-on-surface-variant line-through">
-                {formatMoney(compareAt, product.currency)}
-              </p>
-            ) : null}
-            {hasDeal && discountPct != null ? (
-              <span className="badge-discount text-sm!">−%{discountPct}</span>
-            ) : null}
           </div>
           {hasDeal ? (
             <p className="mt-1 text-[11px] font-medium text-on-surface-variant">

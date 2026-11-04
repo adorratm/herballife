@@ -362,12 +362,21 @@ export default function CartPage() {
                           <p className="line-clamp-2 text-[11px] font-semibold leading-snug">
                             {p.name}
                           </p>
-                          <p className="mt-0.5 text-xs font-semibold text-primary">
-                            {formatMoney(
-                              p.salePrice ?? p.basePrice,
-                              p.currency,
-                            )}
-                          </p>
+                          <div className="mt-0.5 flex flex-col justify-end">
+                            {p.compareAtPrice &&
+                            Number(p.compareAtPrice) >
+                              Number(p.salePrice ?? p.basePrice) ? (
+                              <span className="text-[10px] text-outline line-through">
+                                {formatMoney(p.compareAtPrice, p.currency)}
+                              </span>
+                            ) : null}
+                            <p className="text-xs font-semibold text-primary">
+                              {formatMoney(
+                                p.salePrice ?? p.basePrice,
+                                p.currency,
+                              )}
+                            </p>
+                          </div>
                         </Link>
                         <div className="mt-1.5">
                           <AddToCartButton
