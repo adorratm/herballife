@@ -30,6 +30,7 @@ import {
   localizeProductForCatalog,
   normalizeCurrency,
   normalizeLocale,
+  requiredExtraLocalesFromLocalization,
   setRuntimeExchangeRatesFromTry,
   sqlMatchSlugAnyLocale,
 } from '@common/catalog/localization.util';
@@ -66,6 +67,19 @@ export class ProductsService {
       );
     } catch {
       setRuntimeExchangeRatesFromTry(undefined);
+    }
+  }
+
+  private async requiredExtraLocales(): Promise<string[]> {
+    try {
+      const row = await this.em.findOne(SiteSetting, {
+        where: { key: 'localization' },
+      });
+      return requiredExtraLocalesFromLocalization(
+        (row?.value || null) as Record<string, unknown> | null,
+      );
+    } catch {
+      return [];
     }
   }
 
@@ -239,26 +253,29 @@ export class ProductsService {
     return product;
   }
 
-  private validateProductI18n(
-    dto: Pick<
-      CreateProductDto,
-      'translations' | 'useSharedImage' | 'imageUrl' | 'imagesByLocale'
-    >,
-  ): void {
+  private async validateProductI18n(dto: {
+    translations?: ProductTranslations | Record<string, unknown> | null;
+    useSharedImage?: boolean;
+    imageUrl?: string | null;
+    imagesByLocale?: CreateProductDto['imagesByLocale'] | null;
+  }): Promise<void> {
+    const locales = await this.requiredExtraLocales();
     assertRequiredLocales(
       dto.translations as ProductTranslations | null | undefined,
       ['name', 'description', 'slug'],
       'Ürün',
+      locales,
     );
     assertImagesByLocaleWhenNotShared(
       dto.useSharedImage,
       dto.imageUrl,
       dto.imagesByLocale,
+      locales,
     );
   }
 
   async create(dto: CreateProductDto): Promise<Product> {
-    this.validateProductI18n(dto);
+    await this.validateProductI18n(dto);
     const exists = await this.em.findOne(Product, {
       where: { slug: dto.slug },
     });
@@ -341,7 +358,7 @@ export class ProductsService {
 
   async update(id: string, dto: UpdateProductDto): Promise<Product> {
     const product = await this.findById(id);
-    this.validateProductI18n({
+    await this.validateProductI18n({
       translations:
         dto.translations !== undefined ? dto.translations : product.translations,
       useSharedImage:

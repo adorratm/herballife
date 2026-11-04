@@ -19,12 +19,27 @@ import {
   applyCategoryLocale,
   assertRequiredLocales,
   normalizeLocale,
+  requiredExtraLocalesFromLocalization,
   sqlMatchSlugAnyLocale,
 } from '@common/catalog/localization.util';
+import { SiteSetting } from '@entities/site-setting.entity';
 
 @Injectable()
 export class CategoriesService {
   constructor(@InjectEntityManager() private readonly em: EntityManager) {}
+
+  private async requiredExtraLocales(): Promise<string[]> {
+    try {
+      const row = await this.em.findOne(SiteSetting, {
+        where: { key: 'localization' },
+      });
+      return requiredExtraLocalesFromLocalization(
+        (row?.value || null) as Record<string, unknown> | null,
+      );
+    } catch {
+      return [];
+    }
+  }
 
   async findAllPublic(
     query: CatalogLocaleQueryDto = {},
@@ -84,18 +99,20 @@ export class CategoriesService {
     return category;
   }
 
-  private validateCategoryI18n(
+  private async validateCategoryI18n(
     translations: CategoryTranslations | null | undefined,
-  ): void {
+  ): Promise<void> {
+    const locales = await this.requiredExtraLocales();
     assertRequiredLocales(
       translations,
       ['name', 'description', 'slug'],
       'Kategori',
+      locales,
     );
   }
 
   async create(dto: CreateCategoryDto): Promise<Category> {
-    this.validateCategoryI18n(
+    await this.validateCategoryI18n(
       dto.translations as CategoryTranslations | null | undefined,
     );
     const exists = await this.em.findOne(Category, {
@@ -118,7 +135,7 @@ export class CategoriesService {
 
   async update(id: string, dto: UpdateCategoryDto): Promise<Category> {
     const category = await this.findById(id);
-    this.validateCategoryI18n(
+    await this.validateCategoryI18n(
       (dto.translations !== undefined
         ? dto.translations
         : category.translations) as CategoryTranslations | null | undefined,

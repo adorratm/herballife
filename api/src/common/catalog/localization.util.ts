@@ -169,12 +169,48 @@ export function normalizeCurrency(
   return DEFAULT_CURRENCY_BY_LOCALE[locale];
 }
 
+/**
+ * Panel Dil & Para ayarlarından zorunlu ek dilleri çıkarır (TR hariç).
+ * Diller kapalıysa boş dizi → çeviri zorunluluğu yok.
+ */
+export function requiredExtraLocalesFromLocalization(
+  raw: Record<string, unknown> | null | undefined,
+): string[] {
+  if (!raw || typeof raw !== 'object') return [];
+
+  if (Array.isArray(raw.languages)) {
+    const codes: string[] = [];
+    for (const item of raw.languages) {
+      if (!item || typeof item !== 'object') continue;
+      const row = item as Record<string, unknown>;
+      const code = String(row.code || '')
+        .toLowerCase()
+        .split('-')[0];
+      if (!code || code === 'tr') continue;
+      if (row.enabled === false) continue;
+      codes.push(code);
+    }
+    return codes;
+  }
+
+  const enabled = Array.isArray(raw.enabledLocales)
+    ? (raw.enabledLocales as unknown[]).map((c) =>
+        String(c || '')
+          .toLowerCase()
+          .split('-')[0],
+      )
+    : [];
+  return enabled.filter((c) => c && c !== 'tr');
+}
+
 export function assertRequiredLocales<T extends Record<string, unknown>>(
-  translations: Partial<Record<MandatoryLocale, T>> | null | undefined,
+  translations: Partial<Record<string, T>> | null | undefined,
   fields: (keyof T & string)[],
   label = 'Çeviri',
+  /** Aktif ek diller; verilmezse eski sabit set (en/de/fr/es) */
+  requiredLocales: string[] = MANDATORY_LOCALES,
 ): void {
-  for (const loc of MANDATORY_LOCALES) {
+  for (const loc of requiredLocales) {
     const block = translations?.[loc];
     if (!block || typeof block !== 'object') {
       throw new BadRequestException(`${label}: ${loc} çevirisi zorunludur`);
@@ -194,10 +230,11 @@ export function assertImagesByLocaleWhenNotShared(
   useSharedImage: boolean | undefined,
   imageUrl: string | null | undefined,
   imagesByLocale: ImagesByLocale | null | undefined,
+  requiredLocales: string[] = MANDATORY_LOCALES,
 ): void {
   if (useSharedImage !== false) return;
-  for (const loc of MANDATORY_LOCALES) {
-    const url = imagesByLocale?.[loc]?.trim();
+  for (const loc of requiredLocales) {
+    const url = imagesByLocale?.[loc as LocaleCode]?.trim();
     if (!url) {
       throw new BadRequestException(
         `Ortak görsel kapalıyken ${loc} görsel URL zorunludur`,

@@ -21,7 +21,9 @@ import {
   assertImagesByLocaleWhenNotShared,
   assertRequiredLocales,
   normalizeLocale,
+  requiredExtraLocalesFromLocalization,
 } from '@common/catalog/localization.util';
+import { SiteSetting } from '@entities/site-setting.entity';
 
 export type CampaignPriceInfo = {
   salePrice: string;
@@ -41,26 +43,42 @@ export class CampaignsService {
     return this.em.find(Campaign, { order: { createdAt: 'DESC' } });
   }
 
-  private validateCampaignI18n(
-    dto: Pick<
-      CreateCampaignDto,
-      'translations' | 'useSharedImage' | 'imageUrl' | 'imagesByLocale'
-    >,
-  ): void {
+  private async requiredExtraLocales(): Promise<string[]> {
+    try {
+      const row = await this.em.findOne(SiteSetting, {
+        where: { key: 'localization' },
+      });
+      return requiredExtraLocalesFromLocalization(
+        (row?.value || null) as Record<string, unknown> | null,
+      );
+    } catch {
+      return [];
+    }
+  }
+
+  private async validateCampaignI18n(dto: {
+    translations?: CampaignTranslations | Record<string, unknown> | null;
+    useSharedImage?: boolean;
+    imageUrl?: string | null;
+    imagesByLocale?: CreateCampaignDto['imagesByLocale'] | null;
+  }): Promise<void> {
+    const locales = await this.requiredExtraLocales();
     assertRequiredLocales(
       dto.translations as CampaignTranslations | null | undefined,
       ['name', 'headline'],
       'Kampanya',
+      locales,
     );
     assertImagesByLocaleWhenNotShared(
       dto.useSharedImage,
       dto.imageUrl,
       dto.imagesByLocale,
+      locales,
     );
   }
 
   async create(dto: CreateCampaignDto): Promise<Campaign> {
-    this.validateCampaignI18n(dto);
+    await this.validateCampaignI18n(dto);
     const slug = this.slugify(dto.slug || dto.name);
     const existing = await this.em.findOne(Campaign, { where: { slug } });
     if (existing) {
@@ -91,7 +109,7 @@ export class CampaignsService {
     const row = await this.em.findOne(Campaign, { where: { id } });
     if (!row) throw new NotFoundException('Kampanya bulunamadı');
 
-    this.validateCampaignI18n({
+    await this.validateCampaignI18n({
       translations:
         dto.translations !== undefined ? dto.translations : row.translations,
       useSharedImage:

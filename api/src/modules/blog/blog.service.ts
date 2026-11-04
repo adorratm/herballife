@@ -18,28 +18,46 @@ import {
   assertImagesByLocaleWhenNotShared,
   assertRequiredLocales,
   normalizeLocale,
+  requiredExtraLocalesFromLocalization,
   sqlMatchSlugAnyLocale,
 } from '@common/catalog/localization.util';
+import { SiteSetting } from '@entities/site-setting.entity';
 
 @Injectable()
 export class BlogService {
   constructor(@InjectEntityManager() private readonly em: EntityManager) {}
 
-  private validateBlogI18n(
-    dto: Pick<
-      CreateBlogPostDto,
-      'translations' | 'useSharedImage' | 'coverImageUrl' | 'imagesByLocale'
-    >,
-  ): void {
+  private async requiredExtraLocales(): Promise<string[]> {
+    try {
+      const row = await this.em.findOne(SiteSetting, {
+        where: { key: 'localization' },
+      });
+      return requiredExtraLocalesFromLocalization(
+        (row?.value || null) as Record<string, unknown> | null,
+      );
+    } catch {
+      return [];
+    }
+  }
+
+  private async validateBlogI18n(dto: {
+    translations?: BlogTranslations | Record<string, unknown> | null;
+    useSharedImage?: boolean;
+    coverImageUrl?: string | null;
+    imagesByLocale?: CreateBlogPostDto['imagesByLocale'] | null;
+  }): Promise<void> {
+    const locales = await this.requiredExtraLocales();
     assertRequiredLocales(
       dto.translations as BlogTranslations | null | undefined,
       ['title', 'excerpt', 'content', 'slug'],
       'Blog',
+      locales,
     );
     assertImagesByLocaleWhenNotShared(
       dto.useSharedImage,
       dto.coverImageUrl,
       dto.imagesByLocale,
+      locales,
     );
   }
 
@@ -123,7 +141,7 @@ export class BlogService {
   }
 
   async create(dto: CreateBlogPostDto): Promise<BlogPost> {
-    this.validateBlogI18n(dto);
+    await this.validateBlogI18n(dto);
     const existing = await this.em.findOne(BlogPost, {
       where: { slug: dto.slug },
     });
@@ -156,7 +174,7 @@ export class BlogService {
   async update(id: string, dto: UpdateBlogPostDto): Promise<BlogPost> {
     const post = await this.getById(id);
 
-    this.validateBlogI18n({
+    await this.validateBlogI18n({
       translations:
         dto.translations !== undefined ? dto.translations : post.translations,
       useSharedImage:
