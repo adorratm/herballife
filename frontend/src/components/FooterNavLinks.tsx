@@ -8,9 +8,14 @@ type Item = { href: string; label: string };
 export function FooterNavLinks({
   items,
   className,
+  asListItems = false,
+  icon,
 }: {
   items: Item[];
   className?: string;
+  /** <li> içine sar (liste içinde kullanım) */
+  asListItems?: boolean;
+  icon?: React.ReactNode;
 }) {
   const tNav = useTranslations("nav");
   const tHeader = useTranslations("header");
@@ -39,11 +44,19 @@ export function FooterNavLinks({
 
   return (
     <>
-      {items.map((item) => (
-        <Link key={item.href} href={toLinkHref(item.href)} className={className}>
-          {navLabel(item.href, item.label)}
-        </Link>
-      ))}
+      {items.map((item) => {
+        const link = (
+          <Link
+            key={asListItems ? undefined : item.href}
+            href={toLinkHref(item.href)}
+            className={className}
+          >
+            {icon}
+            {navLabel(item.href, item.label)}
+          </Link>
+        );
+        return asListItems ? <li key={item.href}>{link}</li> : link;
+      })}
     </>
   );
 }

@@ -170,7 +170,16 @@
         "question": "Which bundle should I choose?",
         "answer": "We offer gift bundles for your goal. Product advice is available on WhatsApp — typical reply under one hour."
       }
-    ]
+    ],
+    "blocks": {
+      "giftedPackages": "Beliebteste Geschenkpakete",
+      "bestsellerSets": "Meistverkaufte Sets",
+      "bestsellerProducts": "Meistverkaufte Produkte",
+      "sets": "Sets",
+      "deals": "Angebote",
+      "personalCare": "Körperpflege",
+      "viewAll": "Alle ansehen"
+    }
   },
   "cart": {
     "title": "Warenkorb",
@@ -314,7 +323,7 @@
     "outOfStock": "Nicht auf Lager",
     "details": "Produktdetails",
     "reviews": "Bewertungen",
-    "bestPrice30Days": "Bester Preis der letzten 30 Tage",
+    "bestPrice30Days": "Niedrigster Preis der letzten 30 Tage!",
     "campaign": "Aktion",
     "discount": "Rabatt",
     "variantOut": " · Ausverkauft",
@@ -457,7 +466,21 @@
     "map": "Karte",
     "googleReview": "Google-Bewertung",
     "whatsappPrefill": "Hallo, ich schreibe wegen {brand}.",
-    "legalDisclaimerFallback": "Diese Website wird unter der Marke Herbal Kapıda von einem unabhängigen Herbalife-Vertriebspartner betrieben. Verkaufte Produkte sind original Herbalife-Produkte."
+    "legalDisclaimerFallback": "Diese Website wird unter der Marke Herbal Kapıda von einem unabhängigen Herbalife-Vertriebspartner betrieben. Verkaufte Produkte sind original Herbalife-Produkte.",
+    "newsletterTitle": "Newsletter abonnieren",
+    "newsletterBody": "Erfahren Sie als Erste von Set-Angeboten und Geschenkpaketen.",
+    "address": "Adresse",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "hours": "Öffnungszeiten",
+    "corporate": "Unternehmen",
+    "categories": "Kategorien",
+    "popularProducts": "Beliebte Produkte",
+    "quickAccess": "Schnellzugriff",
+    "allProducts": "Alle Produkte",
+    "myAccount": "Mein Konto",
+    "cargoTracking": "Sendungsverfolgung",
+    "followUs": "Folgen Sie uns"
   },
   "locale": {
     "language": "Sprache",

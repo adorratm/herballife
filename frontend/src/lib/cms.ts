@@ -76,6 +76,8 @@ export type SiteSettings = {
   payment?: {
     codFees?: Partial<Record<"TRY" | "USD" | "EUR" | "GBP", number>>;
   };
+  /** Ana sayfa ürün blokları — bkz. lib/home-blocks.ts */
+  homeBlocks?: { blocks?: unknown[] };
   promises?: {
     sameDayCutoff?: string;
     sameDayShipping?: boolean;
@@ -458,6 +460,7 @@ function mergeSettings(
       },
     },
     analytics: raw.analytics as SiteSettings["analytics"],
+    homeBlocks: raw.homeBlocks as SiteSettings["homeBlocks"],
     welcomePopup: {
       ...DEFAULT_WELCOME_POPUP,
       ...(raw.welcomePopup as Partial<WelcomePopupSettings>),

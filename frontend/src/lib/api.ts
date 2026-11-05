@@ -164,6 +164,7 @@ export async function getProductsPaged(
       categorySlug: params?.categorySlug,
       originCountry: params?.originCountry,
       featured: params?.featured,
+      ids: params?.ids?.length ? params.ids.join(",") : undefined,
       minPrice: params?.minPrice,
       maxPrice: params?.maxPrice,
       sort: params?.sort,

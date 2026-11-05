@@ -428,6 +428,19 @@ export class ProductQueryDto extends CatalogLocaleQueryDto {
   @IsBoolean()
   featured?: boolean;
 
+  @ApiPropertyOptional({
+    description: 'Virgülle ayrılmış ürün ID listesi (sonuç bu sırayla döner)',
+  })
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === undefined || value === null || value === '') return undefined;
+    const list = Array.isArray(value) ? value : String(value).split(',');
+    return list.map((v) => String(v).trim()).filter(Boolean);
+  })
+  @IsArray()
+  @IsUUID('all', { each: true })
+  ids?: string[];
+
   @ApiPropertyOptional()
   @IsOptional()
   @Transform(({ value }) =>

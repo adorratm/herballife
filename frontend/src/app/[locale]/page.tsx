@@ -19,8 +19,10 @@ import { BenefitsBar } from "@/components/BenefitsBar";
 import { CampaignDateBanner } from "@/components/CampaignDateBanner";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { HomeStickyCta } from "@/components/HomeStickyCta";
-import { NewsletterForm } from "@/components/NewsletterForm";
-import { ProductCarousel } from "@/components/ProductCarousel";
+import {
+  HomeProductBlocks,
+  type ResolvedHomeBlock,
+} from "@/components/HomeProductBlocks";
 import { Reveal } from "@/components/Reveal";
 import { getBlogPosts } from "@/lib/blog.server";
 import { getActiveCampaigns } from "@/lib/campaigns.server";
@@ -31,9 +33,125 @@ import {
   sectionContent,
 } from "@/lib/cms";
 import { blogCoverImage } from "@/lib/format";
+import {
+  HOME_BLOCK_DEFS,
+  normalizeHomeBlocks,
+  type HomeBlockConfig,
+  type HomeBlockKey,
+} from "@/lib/home-blocks";
+import {
+  productDiscountPercent,
+  resolveProductCompareAt,
+} from "@/lib/product-badges";
 import { buildHomeMetadata, faqJsonLd, JsonLd } from "@/lib/seo";
 import { buildWhatsAppUrl, resolveWhatsAppPhone } from "@/lib/whatsapp";
-import type { BlogPost, Category } from "@/lib/types";
+import type { BlogPost, Category, Product } from "@/lib/types";
+
+const SETS_CATEGORY = "avantajli-setler";
+const PERSONAL_CARE_CATEGORY = "kisisel-bakim";
+const GIFT_RE = /hediye/i;
+
+function productDiscount(p: Product): number {
+  const price = p.salePrice ?? p.variants?.[0]?.price ?? p.basePrice;
+  return productDiscountPercent(price, resolveProductCompareAt(p, price)) ?? 0;
+}
+
+/**
+ * Panelden ürün seçilmiş bloklar seçimi gösterir; seçilmemişse
+ * kategori / öne çıkan / indirim oranına göre otomatik doldurulur.
+ */
+async function resolveHomeBlocks(
+  configs: HomeBlockConfig[],
+  locale: string,
+  titleFor: (key: HomeBlockKey, custom?: string) => string,
+): Promise<ResolvedHomeBlock[]> {
+  const memo = new Map<string, Promise<Product[]>>();
+  const load = (key: string, fn: () => Promise<{ items: Product[] }>) => {
+    if (!memo.has(key)) {
+      memo.set(
+        key,
+        fn()
+          .then((r) => r.items ?? [])
+          .catch(() => [] as Product[]),
+      );
+    }
+    return memo.get(key)!;
+  };
+  const sets = () =>
+    load("sets", () =>
+      getProductsPaged({ page: 1, limit: 48, categorySlug: SETS_CATEGORY, locale }),
+    );
+  const featured = () =>
+    load("featured", () =>
+      getProductsPaged({ page: 1, limit: 36, featured: true, locale }),
+    );
+  const all = () =>
+    load("all", () => getProductsPaged({ page: 1, limit: 100, locale }));
+  const personal = () =>
+    load("personal", () =>
+      getProductsPaged({
+        page: 1,
+        limit: 16,
+        categorySlug: PERSONAL_CARE_CATEGORY,
+        locale,
+      }),
+    );
+  const isSet = (p: Product) =>
+    p.category?.slug === SETS_CATEGORY ||
+    Object.values(p.category?.localeSlugs || {}).includes(SETS_CATEGORY);
+
+  async function auto(key: HomeBlockKey): Promise<Product[]> {
+    switch (key) {
+      case "giftedPackages": {
+        const list = await sets();
+        const gifted = list.filter((p) => GIFT_RE.test(p.name));
+        return gifted.length ? gifted : list;
+      }
+      case "bestsellerSets": {
+        const list = await sets();
+        const plain = list.filter((p) => !GIFT_RE.test(p.name));
+        return plain.length ? plain : list;
+      }
+      case "bestsellerProducts": {
+        const f = (await featured()).filter((p) => !isSet(p));
+        if (f.length) return f;
+        return (await all()).filter((p) => !isSet(p));
+      }
+      case "sets":
+        return sets();
+      case "deals":
+        return [...(await all())]
+          .filter((p) => productDiscount(p) > 0)
+          .sort((a, b) => productDiscount(b) - productDiscount(a));
+      case "personalCare":
+        return personal();
+    }
+  }
+
+  const enabled = configs.filter((c) => c.enabled);
+  return Promise.all(
+    enabled.map(async (c) => {
+      const limit = c.limit || HOME_BLOCK_DEFS[c.key].defaultLimit;
+      let products: Product[] = [];
+      if (c.productIds.length) {
+        products = await load(`ids:${c.key}`, () =>
+          getProductsPaged({
+            page: 1,
+            limit: Math.min(c.productIds.length, 100),
+            ids: c.productIds,
+            locale,
+          }),
+        );
+      }
+      if (!products.length) products = await auto(c.key);
+      return {
+        key: c.key,
+        title: titleFor(c.key, c.title),
+        products: products.slice(0, limit),
+      };
+    }),
+  );
+}
 
 const HOME_CATEGORY_HUB: { slug: string; Icon: LucideIcon }[] = [
   { slug: "kilo-kontrolu", Icon: Scale },
@@ -83,40 +201,17 @@ export default async function HomePage() {
       body: tHome("journey.step3Body"),
     },
   ];
-  const [
-    settings,
-    sections,
-    categories,
-    featured,
-    gifted,
-    bestsellers,
-    activeCampaigns,
-    blog,
-  ] = await Promise.all([
-    getSiteSettings(locale),
+  const settings = await getSiteSettings(locale);
+  const blockConfigs = normalizeHomeBlocks(settings.homeBlocks);
+  const [sections, categories, productBlocks, activeCampaigns, blog] =
+    await Promise.all([
     getContentSections("home", locale),
     getCategories(locale).catch(() => [] as Category[]),
-    getProductsPaged({
-      page: 1,
-      limit: 12,
-      featured: true,
-      locale,
-    }).catch(() => ({
-      items: [],
-    })),
-    getProductsPaged({
-      page: 1,
-      limit: 12,
-      categorySlug: "avantajli-setler",
-      locale,
-    }).catch(() => ({ items: [] })),
-    getProductsPaged({
-      page: 1,
-      limit: 12,
-      sort: "name",
-      order: "asc",
-      locale,
-    }).catch(() => ({ items: [] })),
+    resolveHomeBlocks(blockConfigs, locale, (key, custom) =>
+      locale === "tr" && custom?.trim()
+        ? custom.trim()
+        : tHome(`blocks.${key}` as Parameters<typeof tHome>[0]),
+    ),
     getActiveCampaigns(),
     getBlogPosts({
       page: 1,
@@ -174,12 +269,6 @@ export default async function HomePage() {
   const faqLd = faqJsonLd(faqItems);
 
   const brandWords = settings.brand.name.trim().split(/\s+/);
-  const giftedProducts = (
-    gifted.items.length ? gifted.items : featured.items
-  ).slice(0, 12);
-  const bestsellerProducts = (
-    bestsellers.items.length ? bestsellers.items : featured.items
-  ).slice(0, 12);
 
   return (
     <div>
@@ -272,66 +361,15 @@ export default async function HomePage() {
         />
       ) : null}
 
-      {/* 3 — Hediyeli setler */}
-      <section id="hediyeli-setler" className="mint-wash py-14 md:py-20">
-        <div className="page-shell">
-          <Reveal>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div className="max-w-xl">
-                <p className="eyebrow text-primary">
-                  {topCampaign?.badge || tHome("giftedEyebrowFallback")}
-                </p>
-                <h2 className="display-md mt-3 text-on-surface">
-                  {tHome("giftedTitle")}
-                </h2>
-                <p className="mt-3 text-base leading-relaxed text-on-surface-variant">
-                  {topCampaign?.headline || tHome("giftedBodyFallback")}
-                </p>
-              </div>
-              <Link
-                href={categoryHref("avantajli-setler")}
-                className="link-arrow text-sm"
-              >
-                {tHome("giftedAllLink")}
-                <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
-          </Reveal>
-          <div className="mt-8">
-            <ProductCarousel products={giftedProducts} />
-          </div>
-          {!featured.items.length && !gifted.items.length ? (
-            <p className="mt-6 text-sm text-on-surface-variant">
-              {tHome("productsComingSoon")}
-            </p>
-          ) : null}
-        </div>
-      </section>
+      {/* 3 — Ürün blokları (panel: Ana sayfa blokları) */}
+      <HomeProductBlocks blocks={productBlocks} />
+      {!productBlocks.some((b) => b.products.length) ? (
+        <p className="page-shell py-10 text-sm text-on-surface-variant">
+          {tHome("productsComingSoon")}
+        </p>
+      ) : null}
 
-      {/* 4 — En çok satanlar */}
-      <section className="bg-white py-14 md:py-20">
-        <div className="page-shell">
-          <Reveal>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="eyebrow text-primary">{tHome("bestsellersEyebrow")}</p>
-                <h2 className="display-md mt-3 text-on-surface">
-                  {tHome("bestsellersTitle")}
-                </h2>
-              </div>
-              <Link href="/urunler" className="link-arrow text-sm">
-                {tHome("bestsellersLink")}
-                <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
-          </Reveal>
-          <div className="mt-8">
-            <ProductCarousel products={bestsellerProducts} />
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-outline-variant/30 bg-white py-8 md:py-10">
+      <section className="bg-white pb-10 pt-4 md:pb-14 md:pt-6">
         <div className="page-shell">
           <BenefitsBar
             promises={settings.promises}
@@ -410,26 +448,26 @@ export default async function HomePage() {
       
 
       {/* 5 — Yolculuk: 3 adım */}
-      <section className="forest py-16 md:py-24">
-        <div className="page-shell grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <section className="forest py-10 md:py-12">
+        <div className="page-shell grid gap-6 lg:grid-cols-12 lg:items-center lg:gap-12">
           <Reveal className="lg:col-span-5">
             <p className="eyebrow text-[#8fe0b6]">{tHome("journey.eyebrow")}</p>
-            <h2 className="display-lg mt-4 text-white">
+            <h2 className="display-md mt-3 text-white">
               {tHome("journey.title")}
             </h2>
-            <p className="mt-5 max-w-md text-base leading-relaxed text-white/75">
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-white/75 md:text-base">
               {tHome("journey.body")}
             </p>
             <a
               href={waUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-brand-light mt-8"
+              className="btn-brand-light mt-5 px-5! py-2.5! text-sm!"
             >
               <MessageCircle className="h-4 w-4" aria-hidden />
               {tHome("journey.cta")}
             </a>
-            <p className="mt-8 max-w-sm text-xs leading-relaxed text-white/55">
+            <p className="mt-5 max-w-sm text-[11px] leading-relaxed text-white/55">
               {tHome("journey.disclaimer", {
                 distributor: settings.brand.distributorName,
               })}
@@ -439,15 +477,19 @@ export default async function HomePage() {
             {journey.map((j, i) => (
               <li key={j.step}>
                 <Reveal delay={i * 80}>
-                  <div className="grid grid-cols-[4.5rem_1fr] gap-4 border-t border-white/20 py-8 sm:grid-cols-[6rem_1fr]">
-                    <span className="font-display text-5xl font-extrabold leading-none tracking-tighter text-[#8fe0b6] sm:text-6xl">
+                  <div
+                    className={`grid grid-cols-[3.25rem_1fr] items-start gap-3 py-4 sm:grid-cols-[4.25rem_1fr] ${
+                      i === 0 ? "" : "border-t border-white/20"
+                    }`}
+                  >
+                    <span className="font-display text-3xl font-extrabold leading-none tracking-tighter text-[#8fe0b6] sm:text-4xl">
                       {j.step}
                     </span>
                     <div>
-                      <h3 className="font-display text-2xl font-bold tracking-tight text-white">
+                      <h3 className="font-display text-lg font-bold tracking-tight text-white">
                         {j.title}
                       </h3>
-                      <p className="mt-2 max-w-md text-base leading-relaxed text-white/75">
+                      <p className="mt-1 max-w-lg text-sm leading-relaxed text-white/75">
                         {j.body}
                       </p>
                     </div>
@@ -572,20 +614,6 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      {/* 8 — Bülten */}
-      <section className="bg-linear-to-br from-primary-fixed via-white to-primary-fixed py-14 md:py-20">
-        <div className="page-shell grid gap-8 md:grid-cols-2 md:items-center md:gap-12">
-          <Reveal>
-            <h2 className="display-md text-on-surface">{tHome("newsletterTitle")}</h2>
-            <p className="mt-3 max-w-md text-base leading-relaxed text-on-surface-variant">
-              {tHome("newsletterBody")}
-            </p>
-          </Reveal>
-          <Reveal delay={80}>
-            <NewsletterForm />
-          </Reveal>
-        </div>
-      </section>
     </div>
   );
 }

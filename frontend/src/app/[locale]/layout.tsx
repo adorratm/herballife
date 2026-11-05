@@ -17,6 +17,8 @@ import { WhatsAppChatGate } from "@/components/WhatsAppChatGate";
 import { WelcomePopup } from "@/components/WelcomePopup";
 import { routing } from "@/i18n/routing";
 import { DEFAULT_WELCOME_POPUP, getSiteSettings } from "@/lib/cms";
+import { getCategories, getProductsPaged } from "@/lib/catalog.server";
+import type { FooterLinkItem } from "@/components/SiteFooter";
 import {
   JsonLd,
   buildSiteMetadata,
@@ -76,10 +78,21 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
   setRequestLocale(locale);
 
-  const [settings, messages] = await Promise.all([
-    getSiteSettings(locale),
-    getMessages(),
-  ]);
+  const [settings, messages, footerCategories, footerPopular] =
+    await Promise.all([
+      getSiteSettings(locale),
+      getMessages(),
+      getCategories(locale)
+        .then((list) =>
+          list.map((c) => ({ id: c.id, slug: c.slug, name: c.name })),
+        )
+        .catch(() => [] as FooterLinkItem[]),
+      getProductsPaged({ page: 1, limit: 7, featured: true, locale })
+        .then((r) =>
+          (r.items ?? []).map((p) => ({ id: p.id, slug: p.slug, name: p.name })),
+        )
+        .catch(() => [] as FooterLinkItem[]),
+    ]);
 
   const mediaBase =
     (process.env.NEXT_PUBLIC_CDN_URL || process.env.AWS_CDN_URL || "").replace(
@@ -108,7 +121,11 @@ export default async function LocaleLayout({ children, params }: Props) {
             <JsonLd data={websiteJsonLd(settings, locale)} />
             <SiteHeader settings={settings} />
             <main className="flex-1">{children}</main>
-            <SiteFooterGate settings={settings} />
+            <SiteFooterGate
+              settings={settings}
+              categories={footerCategories}
+              popularProducts={footerPopular}
+            />
             <div
               className="h-[calc(4.75rem+env(safe-area-inset-bottom))] shrink-0 md:hidden"
               aria-hidden

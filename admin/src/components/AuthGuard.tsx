@@ -13,6 +13,7 @@ const ADMIN_ONLY_PREFIXES = [
   '/blog',
   '/icerik',
   '/site-ayarlari',
+  '/anasayfa-bloklari',
   '/medya',
   '/galeri',
   '/muhasebe-ayarlari',

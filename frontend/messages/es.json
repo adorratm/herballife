@@ -170,7 +170,16 @@
         "question": "Which bundle should I choose?",
         "answer": "We offer gift bundles for your goal. Product advice is available on WhatsApp — typical reply under one hour."
       }
-    ]
+    ],
+    "blocks": {
+      "giftedPackages": "Paquetes con regalo más elegidos",
+      "bestsellerSets": "Sets más vendidos",
+      "bestsellerProducts": "Productos más vendidos",
+      "sets": "Sets",
+      "deals": "Ofertas",
+      "personalCare": "Cuidado personal",
+      "viewAll": "Ver todo"
+    }
   },
   "cart": {
     "title": "Carrito",
@@ -314,7 +323,7 @@
     "outOfStock": "Agotado",
     "details": "Detalles del producto",
     "reviews": "Reseñas",
-    "bestPrice30Days": "Mejor precio de los últimos 30 días",
+    "bestPrice30Days": "¡El precio más bajo de los últimos 30 días!",
     "adding": "Adding…",
     "addedCheck": "Added to cart ✓",
     "addError": "Could not add to cart. Check your connection.",
@@ -457,7 +466,21 @@
     "map": "Map",
     "googleReview": "Google review",
     "whatsappPrefill": "Hello, I'm writing about {brand}.",
-    "legalDisclaimerFallback": "Este sitio opera bajo la marca Herbal Kapıda como distribuidor independiente de Herbalife. Los productos vendidos son Herbalife originales."
+    "legalDisclaimerFallback": "Este sitio opera bajo la marca Herbal Kapıda como distribuidor independiente de Herbalife. Los productos vendidos son Herbalife originales.",
+    "newsletterTitle": "Suscríbete al boletín",
+    "newsletterBody": "Entérate primero de las ofertas en sets y paquetes con regalo.",
+    "address": "Dirección",
+    "phone": "Teléfono",
+    "email": "Correo",
+    "hours": "Horario",
+    "corporate": "Empresa",
+    "categories": "Categorías",
+    "popularProducts": "Productos populares",
+    "quickAccess": "Acceso rápido",
+    "allProducts": "Todos los productos",
+    "myAccount": "Mi cuenta",
+    "cargoTracking": "Seguimiento de envío",
+    "followUs": "Síguenos"
   },
   "locale": {
     "language": "Idioma",

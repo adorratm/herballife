@@ -60,6 +60,11 @@ export const ADMIN_NAV_GROUPS: NavGroup[] = [
     title: 'Site & içerik',
     items: [
       { href: '/site-ayarlari', label: 'Site ayarları', adminOnly: true },
+      {
+        href: '/anasayfa-bloklari',
+        label: 'Ana sayfa blokları',
+        adminOnly: true,
+      },
       { href: '/icerik', label: 'Sayfa metinleri', adminOnly: true },
       { href: '/blog', label: 'Blog', adminOnly: true },
       { href: '/galeri', label: 'Galeri', adminOnly: true },

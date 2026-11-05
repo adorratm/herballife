@@ -170,7 +170,16 @@
         "question": "Which bundle should I choose?",
         "answer": "We offer gift bundles for your goal. Product advice is available on WhatsApp — typical reply under one hour."
       }
-    ]
+    ],
+    "blocks": {
+      "giftedPackages": "Nos coffrets cadeaux préférés",
+      "bestsellerSets": "Coffrets les plus vendus",
+      "bestsellerProducts": "Produits les plus vendus",
+      "sets": "Coffrets",
+      "deals": "Bonnes affaires",
+      "personalCare": "Soins personnels",
+      "viewAll": "Tout voir"
+    }
   },
   "cart": {
     "title": "Panier",
@@ -314,7 +323,7 @@
     "outOfStock": "Rupture de stock",
     "details": "Détails du produit",
     "reviews": "Avis",
-    "bestPrice30Days": "Meilleur prix des 30 derniers jours",
+    "bestPrice30Days": "Prix le plus bas des 30 derniers jours !",
     "adding": "Adding…",
     "addedCheck": "Added to cart ✓",
     "addError": "Could not add to cart. Check your connection.",
@@ -457,7 +466,21 @@
     "map": "Carte",
     "googleReview": "Google review",
     "whatsappPrefill": "Hello, I'm writing about {brand}.",
-    "legalDisclaimerFallback": "Ce site est exploité sous la marque Herbal Kapıda par un distributeur indépendant Herbalife. Les produits vendus sont des produits Herbalife d’origine."
+    "legalDisclaimerFallback": "Ce site est exploité sous la marque Herbal Kapıda par un distributeur indépendant Herbalife. Les produits vendus sont des produits Herbalife d’origine.",
+    "newsletterTitle": "Abonnez-vous à la newsletter",
+    "newsletterBody": "Soyez les premiers informés des offres et coffrets cadeaux.",
+    "address": "Adresse",
+    "phone": "Téléphone",
+    "email": "E-mail",
+    "hours": "Horaires",
+    "corporate": "Entreprise",
+    "categories": "Catégories",
+    "popularProducts": "Produits populaires",
+    "quickAccess": "Accès rapide",
+    "allProducts": "Tous les produits",
+    "myAccount": "Mon compte",
+    "cargoTracking": "Suivi de colis",
+    "followUs": "Suivez-nous"
   },
   "locale": {
     "language": "Langue",

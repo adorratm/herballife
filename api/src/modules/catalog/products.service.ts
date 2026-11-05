@@ -133,6 +133,10 @@ export class ProductsService {
       qb.andWhere('p.is_featured = true');
     }
 
+    if (query.ids?.length) {
+      qb.andWhere('p.id IN (:...ids)', { ids: query.ids });
+    }
+
     if (query.categoryId) {
       qb.andWhere('p.category_id = :categoryId', {
         categoryId: query.categoryId,
@@ -213,6 +217,14 @@ export class ProductsService {
 
     for (const item of items) {
       this.sortProductVariants(item);
+    }
+
+    if (query.ids?.length) {
+      // Panelde seçilen sıra korunur (ana sayfa blokları)
+      const order = new Map(query.ids.map((id, i) => [id, i]));
+      items.sort(
+        (a, b) => (order.get(a.id) ?? 9999) - (order.get(b.id) ?? 9999),
+      );
     }
 
     return paginateResult(items, total, page, limit);

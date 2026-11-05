@@ -170,7 +170,16 @@
     "membershipEyebrow": "Herbalife distribütörü olmak ister misiniz?",
     "membershipFallbackTitle": "Resmi Herbalife kaydı",
     "newsletterTitle": "Kampanya bülteni",
-    "newsletterBody": "Set fırsatları, hediyeli paketler ve wellness ipuçları — spam'sız, yalnızca değerli haberler."
+    "newsletterBody": "Set fırsatları, hediyeli paketler ve wellness ipuçları — spam'sız, yalnızca değerli haberler.",
+    "blocks": {
+      "giftedPackages": "En Çok Tercih Edilen Hediyeli Paketlerimiz",
+      "bestsellerSets": "En Çok Satan Setler",
+      "bestsellerProducts": "En Çok Satan Ürünler",
+      "sets": "Setler",
+      "deals": "Fırsat Ürünleri",
+      "personalCare": "Kişisel Bakım Ürünleri",
+      "viewAll": "Tümünü gör"
+    }
   },
   "cart": {
     "title": "Sepet",
@@ -314,7 +323,7 @@
     "outOfStock": "Stokta yok",
     "details": "Ürün Detayı",
     "reviews": "Yorumlar",
-    "bestPrice30Days": "Son 30 günün en iyi fiyatı",
+    "bestPrice30Days": "Son 30 günün en düşük fiyatı!",
     "campaign": "Kampanya",
     "discount": "indirim",
     "variantOut": " · Yok",
@@ -374,7 +383,21 @@
     "map": "Harita",
     "googleReview": "Google Yorum",
     "whatsappPrefill": "Merhaba, {brand} hakkında yazıyorum.",
-    "legalDisclaimerFallback": "Bu site Herbal Kapıda markası altında bağımsız bir Herbalife distribütörüne aittir. Satılan ürünler orijinal Herbalife ürünleridir."
+    "legalDisclaimerFallback": "Bu site Herbal Kapıda markası altında bağımsız bir Herbalife distribütörüne aittir. Satılan ürünler orijinal Herbalife ürünleridir.",
+    "newsletterTitle": "E-Bültene abone olun",
+    "newsletterBody": "Set fırsatları ve hediyeli paketlerden ilk siz haberdar olun.",
+    "address": "Adres",
+    "phone": "Telefon",
+    "email": "E-posta",
+    "hours": "Çalışma saatleri",
+    "corporate": "Kurumsal",
+    "categories": "Kategoriler",
+    "popularProducts": "Popüler Ürünler",
+    "quickAccess": "Hızlı Erişim",
+    "allProducts": "Tüm ürünler",
+    "myAccount": "Hesabım",
+    "cargoTracking": "Kargo takip",
+    "followUs": "Bizi takip edin"
   },
   "benefits": {
     "sameDayTitle": "{cutoff}'a kadar sipariş — aynı gün kargo",

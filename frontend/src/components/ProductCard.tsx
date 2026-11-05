@@ -4,12 +4,12 @@ import { AppImage as Image } from "@/components/AppImage";
 import { Link } from "@/i18n/routing";
 import { productHref } from "@/i18n/hrefs";
 import { useTranslations } from "next-intl";
+import { ArrowDown } from "lucide-react";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { ProductBadgeStack } from "@/components/ProductBadgeStack";
 import { formatMoney, productImage } from "@/lib/format";
 import {
-  badgeHasSale,
   computeProductBadges,
   productDiscountPercent,
   resolveProductCompareAt,
@@ -48,8 +48,10 @@ export function ProductCard({
   const hasDiscount =
     compareAt != null && Number(compareAt) > Number(price);
   const { score } = ratingFromSlug(product.slug);
-  const badges = computeProductBadges(product, { price, compareAt });
-  const saleInRibbon = badgeHasSale(badges);
+  /* İndirim yüzdesi fiyat satırında gösterilir; görselde yalnız yeni / çok satan */
+  const imageBadges = computeProductBadges(product, { price, compareAt }).filter(
+    (b) => b.tone !== "sale",
+  );
 
   return (
     <article
@@ -72,7 +74,7 @@ export function ProductCard({
               "radial-gradient(ellipse 70% 55% at 50% 40%, color-mix(in srgb, var(--primary-fixed) 90%, white), var(--surface-container-low))",
           }}
         >
-          <ProductBadgeStack badges={badges} compact={compact} onImage />
+          <ProductBadgeStack badges={imageBadges} compact={compact} onImage />
           <Image
             src={img}
             alt={product.name}
@@ -85,22 +87,22 @@ export function ProductCard({
         <div className="flex flex-1 flex-col gap-0.5 px-0.5">
           {!compact ? (
             <div className="flex items-center gap-1">
-              <span className="flex gap-0.5 text-amber-500" aria-hidden>
+              <span className="flex gap-px text-amber-400" aria-hidden>
                 {"★★★★★".split("").map((s, i) => (
                   <span
                     key={i}
-                    className={`text-[9px] ${i < Math.round(score) ? "opacity-100" : "opacity-25"}`}
+                    className={`text-[11px] leading-none ${i < Math.round(score) ? "opacity-100" : "opacity-25"}`}
                   >
                     {s}
                   </span>
                 ))}
               </span>
-              <span className="text-[9px] text-on-surface-variant">{score}</span>
+              <span className="sr-only">{score}</span>
             </div>
           ) : null}
           <h3
             className={`line-clamp-2 min-h-[2.5em] font-display leading-snug text-on-surface group-hover:text-primary ${
-              compact ? "text-[12px]" : "text-[13px]"
+              compact ? "text-[12px]" : "text-sm font-semibold"
             }`}
           >
             {product.name}
@@ -112,11 +114,11 @@ export function ProductCard({
           ) : null}
           <div
             className={`mt-auto flex flex-col justify-end pt-1.5 ${
-              compact ? "min-h-8" : "min-h-10"
+              compact ? "min-h-8" : "min-h-11"
             }`}
           >
             {hasDiscount ? (
-              <div className="flex items-center gap-1.5 leading-none">
+              <div className="flex items-center justify-between gap-1.5 leading-none">
                 <span
                   className={`font-medium text-outline line-through ${
                     compact ? "text-[11px]" : "text-xs"
@@ -124,27 +126,26 @@ export function ProductCard({
                 >
                   {formatMoney(compareAt, product.currency)}
                 </span>
-                {discount != null &&
-                discount > 0 &&
-                !saleInRibbon ? (
-                  <span className="text-[11px] font-bold text-[#b85c38]">
-                    −%{discount}
+                {discount != null && discount > 0 ? (
+                  <span
+                    className={`discount-tag ${compact ? "discount-tag--sm" : ""}`}
+                  >
+                    -%{discount}
                   </span>
                 ) : null}
               </div>
             ) : null}
-            <div className="flex items-baseline gap-1.5">
-              <span
-                className={`font-display font-bold tracking-tight text-primary ${
-                  hasDiscount ? "price-live" : ""
-                } ${compact ? "text-sm" : "text-lg"}`}
-              >
-                {formatMoney(price, product.currency)}
-              </span>
-            </div>
+            <span
+              className={`mt-1 font-display font-bold tracking-tight text-primary ${
+                compact ? "text-sm" : "text-lg"
+              }`}
+            >
+              {formatMoney(price, product.currency)}
+            </span>
           </div>
           {hasDiscount && !compact ? (
-            <p className="mt-0.5 px-0.5 text-[10px] font-medium leading-snug text-on-surface-variant">
+            <p className="best-price-pill mt-1.5">
+              <ArrowDown className="h-3 w-3 shrink-0" strokeWidth={2.5} aria-hidden />
               {t("bestPrice30Days")}
             </p>
           ) : null}

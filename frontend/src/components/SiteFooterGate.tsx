@@ -1,21 +1,29 @@
 "use client";
 
 import { usePathname } from "@/i18n/routing";
-import { SiteFooter } from "@/components/SiteFooter";
+import { SiteFooter, type FooterLinkItem } from "@/components/SiteFooter";
 import type { SiteSettings } from "@/lib/cms";
 
 type Props = {
   settings: SiteSettings;
+  categories?: FooterLinkItem[];
+  popularProducts?: FooterLinkItem[];
 };
 
 /** Sepet / ödeme akışında footer menüsü forma binmesin */
 const HIDE_FOOTER_PREFIXES = ["/sepet", "/odeme"] as const;
 
-export function SiteFooterGate({ settings }: Props) {
+export function SiteFooterGate({ settings, categories, popularProducts }: Props) {
   const pathname = usePathname();
   const hide = HIDE_FOOTER_PREFIXES.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`),
   );
   if (hide) return null;
-  return <SiteFooter settings={settings} />;
+  return (
+    <SiteFooter
+      settings={settings}
+      categories={categories}
+      popularProducts={popularProducts}
+    />
+  );
 }

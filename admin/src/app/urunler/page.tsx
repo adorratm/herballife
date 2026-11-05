@@ -4,6 +4,13 @@ import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from 'react
 import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import {
+  HOME_BLOCK_META,
+  HOME_BLOCK_ORDER,
+  loadHomeBlocks,
+  setProductHomeBlocks,
+  type HomeBlockKey,
+} from '@/lib/home-blocks';
+import {
   mergeTranslations,
   useAdminI18n,
   type ExtraAdminCurrency,
@@ -218,6 +225,10 @@ function ProductsPageInner() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [highlightRowKey, setHighlightRowKey] = useState<string | null>(null);
+  /** Ana sayfa blokları: ürün → hangi bloklarda (site_settings.homeBlocks) */
+  const [homeBlockMap, setHomeBlockMap] = useState<Record<string, HomeBlockKey[]>>({});
+  const [formHomeBlocks, setFormHomeBlocks] = useState<HomeBlockKey[]>([]);
+  const initialHomeBlocksRef = useRef<HomeBlockKey[]>([]);
   const [deleteVariantIndex, setDeleteVariantIndex] = useState<number | null>(
     null,
   );
@@ -329,10 +340,15 @@ function ProductsPageInner() {
       imagesByLocale,
     });
     setFormPanelTab('temel');
+    setFormHomeBlocks([]);
+    initialHomeBlocksRef.current = [];
     setEditing(true);
   }
 
   function startEdit(p: Product) {
+    const blocksForProduct = homeBlockMap[p.id] || [];
+    setFormHomeBlocks(blocksForProduct);
+    initialHomeBlocksRef.current = blocksForProduct;
     existingTranslationsRef.current = p.translations || null;
     existingImagesByLocaleRef.current = p.imagesByLocale || null;
     const variantExisting: Record<string, ProductVariant['translations']> = {};
@@ -658,6 +674,20 @@ function ProductsPageInner() {
         savedId = created.id;
       }
       setHighlightRowKey(savedId || null);
+      const prevBlocks = [...initialHomeBlocksRef.current].sort().join(',');
+      const nextBlocks = [...formHomeBlocks].sort().join(',');
+      if (savedId && prevBlocks !== nextBlocks) {
+        try {
+          await setProductHomeBlocks(savedId, formHomeBlocks);
+          await refreshHomeBlocks();
+        } catch (blockErr) {
+          setError(
+            `Ürün kaydedildi ancak ana sayfa blokları güncellenemedi: ${
+              blockErr instanceof Error ? blockErr.message : ''
+            }`,
+          );
+        }
+      }
       setEditing(false);
       setForm(emptyForm());
       await load();
@@ -667,6 +697,25 @@ function ProductsPageInner() {
       setSaving(false);
     }
   }
+
+  async function refreshHomeBlocks() {
+    try {
+      const blocks = await loadHomeBlocks();
+      const map: Record<string, HomeBlockKey[]> = {};
+      for (const b of blocks) {
+        for (const id of b.productIds) {
+          (map[id] ||= []).push(b.key);
+        }
+      }
+      setHomeBlockMap(map);
+    } catch {
+      /* ayarlar okunamazsa blok seçimi boş görünür */
+    }
+  }
+
+  useEffect(() => {
+    void refreshHomeBlocks();
+  }, []);
 
   async function confirmRemove() {
     if (!deleteId) return;
@@ -1220,6 +1269,30 @@ function ProductsPageInner() {
             label="Öne çıkan"
             description="Ana sayfada vurgulanır"
           />
+          <fieldset className="border border-border-muted bg-surface-high p-3 md:col-span-2">
+            <legend className="mono px-1 text-[10px] uppercase text-muted">
+              Ana sayfa blokları
+            </legend>
+            <p className="mb-2 text-xs text-muted">
+              Ürünün ana sayfada hangi bölümlerde görüneceğini seçin. Sıralama
+              için “Ana sayfa blokları” sayfasını kullanın.
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {HOME_BLOCK_ORDER.map((key) => (
+                <Checkbox
+                  key={key}
+                  id={`home-block-${key}`}
+                  checked={formHomeBlocks.includes(key)}
+                  onChange={(on) =>
+                    setFormHomeBlocks((list) =>
+                      on ? [...list.filter((k) => k !== key), key] : list.filter((k) => k !== key),
+                    )
+                  }
+                  label={HOME_BLOCK_META[key].label}
+                />
+              ))}
+            </div>
+          </fieldset>
           </div>
 
           <div

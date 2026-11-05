@@ -170,7 +170,16 @@
     "membershipEyebrow": "Want to become a Herbalife distributor?",
     "membershipFallbackTitle": "Official Herbalife registration",
     "newsletterTitle": "Campaign newsletter",
-    "newsletterBody": "Bundle deals, gift packages, and wellness tips — no spam, only useful updates."
+    "newsletterBody": "Bundle deals, gift packages, and wellness tips — no spam, only useful updates.",
+    "blocks": {
+      "giftedPackages": "Most Popular Gift Packages",
+      "bestsellerSets": "Best-Selling Sets",
+      "bestsellerProducts": "Best-Selling Products",
+      "sets": "Sets",
+      "deals": "Deals",
+      "personalCare": "Personal Care",
+      "viewAll": "View all"
+    }
   },
   "cart": {
     "title": "Cart",
@@ -314,7 +323,7 @@
     "outOfStock": "Out of stock",
     "details": "Product details",
     "reviews": "Reviews",
-    "bestPrice30Days": "Best price in the last 30 days",
+    "bestPrice30Days": "Lowest price in the last 30 days!",
     "campaign": "Campaign",
     "discount": "off",
     "variantOut": " · Out",
@@ -870,7 +879,21 @@
     "map": "Map",
     "googleReview": "Google review",
     "whatsappPrefill": "Hello, I'm writing about {brand}.",
-    "legalDisclaimerFallback": "This site is operated under the Herbal Kapıda brand by an independent Herbalife distributor. Products sold are original Herbalife products."
+    "legalDisclaimerFallback": "This site is operated under the Herbal Kapıda brand by an independent Herbalife distributor. Products sold are original Herbalife products.",
+    "newsletterTitle": "Subscribe to our newsletter",
+    "newsletterBody": "Be the first to hear about set deals and gift packages.",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "hours": "Opening hours",
+    "corporate": "Company",
+    "categories": "Categories",
+    "popularProducts": "Popular Products",
+    "quickAccess": "Quick Access",
+    "allProducts": "All products",
+    "myAccount": "My account",
+    "cargoTracking": "Track shipment",
+    "followUs": "Follow us"
   },
   "locale": {
     "language": "Language",

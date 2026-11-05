@@ -1,4 +1,4 @@
-const CARDS = [
+export const PAYMENT_CARDS = [
   { id: "advantage", label: "Advantage", src: "/images/payment-cards/advantage.svg" },
   { id: "axess", label: "Axess", src: "/images/payment-cards/axess.svg" },
   { id: "bankkart", label: "Bankkart", src: "/images/payment-cards/bankkart.svg" },
@@ -21,7 +21,7 @@ export function PaymentCardLogos() {
             className="flex flex-wrap items-center gap-1.5"
             aria-label="Kabul edilen kartlar"
           >
-            {CARDS.map((card) => (
+            {PAYMENT_CARDS.map((card) => (
               <li key={card.id}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -50,5 +50,30 @@ export function PaymentCardLogos() {
         </div>
       </div>
     </div>
+  );
+}
+
+/** Footer alt şeridi için yalnız kart logoları */
+export function PaymentCardList({ className = "" }: { className?: string }) {
+  return (
+    <ul
+      className={`flex flex-wrap items-center gap-1.5 ${className}`}
+      aria-label="Kabul edilen kartlar"
+    >
+      {PAYMENT_CARDS.map((card) => (
+        <li key={card.id}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={card.src}
+            alt={card.label}
+            title={card.label}
+            width={40}
+            height={26}
+            className="h-6 w-10 rounded-sm bg-white object-contain"
+            loading="lazy"
+          />
+        </li>
+      ))}
+    </ul>
   );
 }

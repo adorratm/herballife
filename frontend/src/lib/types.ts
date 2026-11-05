@@ -109,6 +109,8 @@ export type ProductQuery = {
   categorySlug?: string;
   originCountry?: string;
   featured?: boolean;
+  /** Belirli ürün ID’leri (sıra korunur) */
+  ids?: string[];
   minPrice?: number;
   maxPrice?: number;
   sort?: "name" | "price" | "createdAt" | "stock";

@@ -15,11 +15,6 @@ import { freeShippingThreshold } from "@/lib/shipping";
 
 type SitePromises = NonNullable<SiteSettings["promises"]>;
 
-const TONE_CLASS = {
-  sage: "bg-primary-fixed text-primary border border-primary/15",
-  blush: "bg-tertiary-fixed text-tertiary border border-tertiary/20",
-  mint: "bg-flash-soft text-flash border border-flash/20",
-};
 
 type Props = {
   className?: string;
@@ -102,22 +97,38 @@ export async function BenefitsBar({
 
   return (
     <div
-      className={`lift-safe grid grid-cols-2 items-stretch gap-2.5 sm:gap-3 md:grid-cols-5 md:gap-4${className ? ` ${className}` : ""}`}
+      className={`lift-safe grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4 xl:grid-cols-5 ${className}`}
     >
       {benefits.map((b, i) => (
-        <Reveal key={b.title} delay={i * 55} variant="scale">
-          <div className="card-motion panel-motion flex h-full min-h-19 items-center gap-3 rounded-xl bg-surface-container-lowest p-3 shadow-sm sm:p-4">
-            <span
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${TONE_CLASS[b.tone]}`}
-              aria-hidden
-            >
-              <b.Icon className="h-5 w-5" strokeWidth={2} />
+        <Reveal
+          key={b.title}
+          delay={i * 55}
+          variant="scale"
+          className={
+            /* Tek kalan kart mobil 2'li ızgarada tam genişlik */
+            i === benefits.length - 1 && benefits.length % 2 === 1
+              ? "sm:col-span-2 md:col-span-1"
+              : ""
+          }
+        >
+          <div className="card-motion group flex h-full items-center gap-4 rounded-2xl border border-outline-variant/50 bg-surface-container-low p-4 sm:p-5">
+            <span className="relative flex h-14 w-14 shrink-0 items-center justify-center" aria-hidden>
+              <span
+                className={`absolute bottom-0.5 right-0.5 h-7 w-7 rounded-full ${
+                  b.tone === "blush" ? "bg-amber-300/80" : "bg-amber-300/70"
+                } transition-transform duration-300 group-hover:scale-110`}
+              />
+              <span className="absolute inset-1 rounded-2xl bg-white shadow-sm" />
+              <b.Icon
+                className="relative h-7 w-7 text-primary"
+                strokeWidth={1.75}
+              />
             </span>
             <div className="flex min-w-0 flex-1 flex-col justify-center">
-              <p className="line-clamp-2 min-h-[2.5em] text-sm font-bold leading-snug text-on-surface">
+              <p className="font-display text-[15px] font-bold leading-snug text-on-surface">
                 {b.title}
               </p>
-              <p className="mt-0.5 line-clamp-1 text-xs leading-snug text-on-surface-variant">
+              <p className="mt-0.5 text-[13px] leading-snug text-on-surface-variant">
                 {b.subtitle}
               </p>
             </div>
