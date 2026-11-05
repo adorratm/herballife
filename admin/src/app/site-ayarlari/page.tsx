@@ -39,6 +39,10 @@ type WhatsAppSettings = {
   phone: string;
   greeting: string;
   presets: WhatsAppPresetRow[];
+  /** WhatsApp butonunun solunda çıkan bilgi balonu */
+  bubbleEnabled: boolean;
+  bubbleText: string;
+  bubblePhone: string;
 };
 
 type AnalyticsSettings = {
@@ -306,6 +310,13 @@ const DEFAULT_SHIPPING: ShippingSettings = {
   freeShippingOver: '750',
 };
 
+const DEFAULT_CARD_FEES: CodFeeSettings = {
+  TRY: '100',
+  USD: '3',
+  EUR: '3',
+  GBP: '2.5',
+};
+
 const DEFAULT_COD_FEES: CodFeeSettings = {
   TRY: '75',
   USD: '2.5',
@@ -316,6 +327,9 @@ const DEFAULT_COD_FEES: CodFeeSettings = {
 const DEFAULT_WHATSAPP: WhatsAppSettings = {
   enabled: true,
   phone: '',
+  bubbleEnabled: true,
+  bubbleText: '',
+  bubblePhone: '+90 541 489 42 43',
   greeting: 'Merhaba — Herbal Kapıda. Size nasıl yardımcı olabiliriz?',
   presets: [
     {
@@ -422,6 +436,12 @@ function asWhatsApp(value: unknown): WhatsAppSettings {
     presets: presets.length
       ? presets
       : DEFAULT_WHATSAPP.presets.map((p) => ({ ...p })),
+    bubbleEnabled: row.bubbleEnabled !== false,
+    bubbleText: typeof row.bubbleText === 'string' ? row.bubbleText : '',
+    bubblePhone:
+      typeof row.bubblePhone === 'string' && row.bubblePhone.trim()
+        ? row.bubblePhone
+        : DEFAULT_WHATSAPP.bubblePhone,
   };
 }
 
@@ -644,6 +664,11 @@ export default function SiteSettingsPage() {
   });
   const [shipping, setShipping] = useState<ShippingSettings>({
     ...DEFAULT_SHIPPING,
+  });
+  const [codFeeEnabled, setCodFeeEnabled] = useState(true);
+  const [cardFeeEnabled, setCardFeeEnabled] = useState(true);
+  const [cardFees, setCardFees] = useState<CodFeeSettings>({
+    ...DEFAULT_CARD_FEES,
   });
   const [codFees, setCodFees] = useState<CodFeeSettings>({
     ...DEFAULT_COD_FEES,
@@ -936,7 +961,19 @@ export default function SiteSettingsPage() {
           const p = map.payment as {
             codFees?: Partial<Record<keyof CodFeeSettings, number | string>>;
             codFee?: number | string;
+            codFeeEnabled?: boolean;
+            cardFeeEnabled?: boolean;
+            cardFees?: Partial<Record<keyof CodFeeSettings, number | string>>;
           };
+          setCodFeeEnabled(p.codFeeEnabled !== false);
+          setCardFeeEnabled(p.cardFeeEnabled !== false);
+          const cf = p.cardFees || {};
+          setCardFees({
+            TRY: String(cf.TRY ?? DEFAULT_CARD_FEES.TRY),
+            USD: String(cf.USD ?? DEFAULT_CARD_FEES.USD),
+            EUR: String(cf.EUR ?? DEFAULT_CARD_FEES.EUR),
+            GBP: String(cf.GBP ?? DEFAULT_CARD_FEES.GBP),
+          });
           const fees = p.codFees || {};
           setCodFees({
             TRY: String(
@@ -1155,6 +1192,9 @@ export default function SiteSettingsPage() {
                 phone: whatsapp.phone.trim(),
                 greeting: whatsapp.greeting.trim(),
                 presets: cleanedPresets,
+                bubbleEnabled: whatsapp.bubbleEnabled,
+                bubbleText: whatsapp.bubbleText.trim(),
+                bubblePhone: whatsapp.bubblePhone.trim(),
                 translations: whatsappTranslations,
               },
               group: 'whatsapp',
@@ -1193,11 +1233,19 @@ export default function SiteSettingsPage() {
             {
               key: 'payment',
               value: {
+                codFeeEnabled,
                 codFees: {
                   TRY: Number(codFees.TRY) || 0,
                   USD: Number(codFees.USD) || 0,
                   EUR: Number(codFees.EUR) || 0,
                   GBP: Number(codFees.GBP) || 0,
+                },
+                cardFeeEnabled,
+                cardFees: {
+                  TRY: Number(cardFees.TRY) || 0,
+                  USD: Number(cardFees.USD) || 0,
+                  EUR: Number(cardFees.EUR) || 0,
+                  GBP: Number(cardFees.GBP) || 0,
                 },
               },
               group: 'payment',
@@ -1902,6 +1950,50 @@ export default function SiteSettingsPage() {
                   className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
                 />
               </label>
+              <div className="space-y-2 rounded-lg border border-border-muted bg-surface-high p-3">
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={whatsapp.bubbleEnabled}
+                    onChange={(e) =>
+                      setWhatsapp((s) => ({ ...s, bubbleEnabled: e.target.checked }))
+                    }
+                    className="accent-accent"
+                  />
+                  Butonun yanında bilgi balonu göster
+                </label>
+                <label className="block text-sm">
+                  <span className="mono text-[10px] uppercase text-muted">
+                    Balondaki irtibat numarası
+                  </span>
+                  <input
+                    value={whatsapp.bubblePhone}
+                    onChange={(e) =>
+                      setWhatsapp((s) => ({ ...s, bubblePhone: e.target.value }))
+                    }
+                    placeholder="+90 541 489 42 43"
+                    className="mt-1 w-full rounded-lg border border-border-muted bg-surface px-3 py-2"
+                  />
+                </label>
+                <label className="block text-sm">
+                  <span className="mono text-[10px] uppercase text-muted">
+                    Bilgi balonu metni (boşsa varsayılan metin)
+                  </span>
+                  <textarea
+                    rows={5}
+                    value={whatsapp.bubbleText}
+                    onChange={(e) =>
+                      setWhatsapp((s) => ({ ...s, bubbleText: e.target.value }))
+                    }
+                    placeholder={'HİZMETLERİMİZ 💚 Orijinal Herbalife ürünleri, hızlı kargo…'}
+                    className="mt-1 w-full rounded-lg border border-border-muted bg-surface px-3 py-2"
+                  />
+                  <span className="mt-1 block text-[11px] text-muted">
+                    Satır sonları korunur. Emoji kullanabilirsiniz. Ziyaretçi
+                    kapatırsa o oturumda tekrar gösterilmez.
+                  </span>
+                </label>
+              </div>
             </>
           ) : (
             <p className="text-xs text-muted">
@@ -1977,12 +2069,22 @@ export default function SiteSettingsPage() {
           <legend className="mono px-2 text-xs uppercase text-muted">
             Kapıda ödeme ek ücreti
           </legend>
+          <label className="flex items-center gap-2 text-sm font-medium">
+            <input
+              type="checkbox"
+              checked={codFeeEnabled}
+              onChange={(e) => setCodFeeEnabled(e.target.checked)}
+              className="accent-accent"
+            />
+            Ek ücret uygulansın
+          </label>
           <p className="text-xs text-muted">
-            Müşteri kapıda ödemeyi seçince sipariş toplamına eklenir. Her para
-            birimi için ayrı tutar girin (0 = ek ücret yok). Otomatik kur
-            çevrimi yoktur.
+            Müşteri kapıda ödemeyi seçince sipariş toplamına eklenir. Her para birimi için ayrı tutar girin (0 = ek ücret yok).
+            Otomatik kur çevrimi yoktur.
           </p>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div
+            className={`grid gap-3 sm:grid-cols-2 ${codFeeEnabled ? '' : 'pointer-events-none opacity-50'}`}
+          >
             {(['TRY', 'USD', 'EUR', 'GBP'] as const).map((code) => (
               <label key={code} className="block text-sm">
                 <span className="mono text-[10px] uppercase text-muted">
@@ -1995,6 +2097,46 @@ export default function SiteSettingsPage() {
                   value={codFees[code]}
                   onChange={(e) =>
                     setCodFees((s) => ({ ...s, [code]: e.target.value }))
+                  }
+                  className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+                />
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">
+          <legend className="mono px-2 text-xs uppercase text-muted">
+            Kredi kartı ile ödeme ek ücreti
+          </legend>
+          <label className="flex items-center gap-2 text-sm font-medium">
+            <input
+              type="checkbox"
+              checked={cardFeeEnabled}
+              onChange={(e) => setCardFeeEnabled(e.target.checked)}
+              className="accent-accent"
+            />
+            Ek ücret uygulansın
+          </label>
+          <p className="text-xs text-muted">
+            Müşteri kredi / banka kartı (PayTR) ile ödeyince sipariş toplamına eklenir ve PayTR sepetinde ayrı satır olarak görünür. Her para birimi için ayrı tutar girin (0 = ek ücret yok).
+            Otomatik kur çevrimi yoktur.
+          </p>
+          <div
+            className={`grid gap-3 sm:grid-cols-2 ${cardFeeEnabled ? '' : 'pointer-events-none opacity-50'}`}
+          >
+            {(['TRY', 'USD', 'EUR', 'GBP'] as const).map((code) => (
+              <label key={code} className="block text-sm">
+                <span className="mono text-[10px] uppercase text-muted">
+                  {code}
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  value={cardFees[code]}
+                  onChange={(e) =>
+                    setCardFees((s) => ({ ...s, [code]: e.target.value }))
                   }
                   className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
                 />

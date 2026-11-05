@@ -299,11 +299,19 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     freeShippingOver: 750,
   },
   payment: {
+    codFeeEnabled: true,
     codFees: {
       TRY: 75,
       USD: 2.5,
       EUR: 2.5,
       GBP: 2,
+    },
+    cardFeeEnabled: true,
+    cardFees: {
+      TRY: 100,
+      USD: 3,
+      EUR: 3,
+      GBP: 2.5,
     },
   },
   promises: {

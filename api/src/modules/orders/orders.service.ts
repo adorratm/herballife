@@ -131,10 +131,7 @@ export class OrdersService {
       afterDiscount,
     );
     const orderCurrency = normalizeOrderCurrency(dto.currency);
-    const paymentFee =
-      provider === 'cod'
-        ? await this.resolveCodFee(orderCurrency)
-        : 0;
+    const paymentFee = await this.resolvePaymentFee(provider, orderCurrency);
     const { taxAmount, total } = this.calculateTotals(
       cart.items,
       subtotal,
@@ -874,21 +871,39 @@ export class OrdersService {
     };
   }
 
-  private async resolveCodFee(currency: string): Promise<number> {
+  /**
+   * Ödeme yöntemine göre ek ücret — panel: Site ayarları → Ödeme.
+   * Kapıda ödeme: codFeeEnabled + codFees (TRY varsayılan 75)
+   * Kredi kartı (PayTR): cardFeeEnabled + cardFees (TRY varsayılan 100)
+   * Havale/EFT: ücretsiz
+   */
+  private async resolvePaymentFee(
+    provider: PaymentMethod,
+    currency: string,
+  ): Promise<number> {
+    if (provider !== 'cod' && provider !== 'paytr') return 0;
     const row = await this.em.findOne(SiteSetting, {
       where: { key: 'payment' },
     });
     const val = (row?.value || {}) as {
+      codFeeEnabled?: boolean;
       codFees?: Partial<Record<string, number | string>>;
       codFee?: number | string;
+      cardFeeEnabled?: boolean;
+      cardFees?: Partial<Record<string, number | string>>;
+      cardFee?: number | string;
     };
+    const isCod = provider === 'cod';
+    if ((isCod ? val.codFeeEnabled : val.cardFeeEnabled) === false) return 0;
+    const map = isCod ? val.codFees : val.cardFees;
+    const legacy = isCod ? val.codFee : val.cardFee;
     const code = (currency || 'TRY').toUpperCase();
-    const fromMap = val.codFees?.[code];
+    const fromMap = map?.[code];
     const raw =
       fromMap != null && String(fromMap).trim() !== ''
         ? fromMap
         : code === 'TRY'
-          ? (val.codFee ?? 75)
+          ? (legacy ?? (isCod ? 75 : 100))
           : 0;
     const n = Number(raw);
     return Number.isFinite(n) && n > 0 ? n : 0;

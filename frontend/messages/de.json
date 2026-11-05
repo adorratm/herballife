@@ -315,7 +315,9 @@
     "payMethodBankDesc": "Überweisen Sie nach der Bestellung; wir bereiten die Bestellung nach Zahlungseingang vor",
     "placeOrderCod": "Bestellen (Nachnahme)",
     "placeOrderBank": "Bestellen (Überweisung)",
-    "mobilePlaceOrder": "Bestellen"
+    "mobilePlaceOrder": "Bestellen",
+    "labelCardFee": "Gebühr für Kartenzahlung",
+    "payMethodFee": "+{fee}"
   },
   "product": {
     "addToCart": "In den Warenkorb",
@@ -535,7 +537,10 @@
     "presetShippingLabel": "Versand & Lieferung",
     "presetShippingMessage": "Hallo, ich habe eine Frage zu Lieferzeiten und Versandoptionen.",
     "presetOtherLabel": "Etwas anderes",
-    "presetOtherMessage": "Hallo, ich schreibe Ihnen."
+    "presetOtherMessage": "Hallo, ich schreibe Ihnen.",
+    "bubbleDefault": "UNSERE LEISTUNGEN 💚 Alle Produkte sind originale Herbalife-Produkte und werden schnell mit der Garantie eines unabhängigen Distributors versendet. 📦\nDazu bieten wir einen persönlichen Anwendungsplan und kostenloses Ernährungscoaching 🌸",
+    "bubbleClose": "Infoblase schließen",
+    "bubbleContact": "Kontakt:"
   },
   "auth": {
     "loginEyebrow": "Anmelden",

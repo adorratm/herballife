@@ -72,7 +72,7 @@ export default async function MediaPage() {
     !gallery.uploads.length;
 
   return (
-    <div className="bg-white pb-16">
+    <div className="bg-white pb-8 md:pb-10">
       <JsonLd
         data={breadcrumbJsonLd(
           [
@@ -93,7 +93,7 @@ export default async function MediaPage() {
               href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-cta mt-6 inline-flex cursor-pointer px-5 py-2.5"
+              className="btn-cta mt-4 inline-flex cursor-pointer px-5 py-2.5"
             >
               {t("followInstagram")}
             </a>
@@ -101,12 +101,12 @@ export default async function MediaPage() {
         </div>
       </section>
 
-      <div className="page-shell space-y-14 py-10 md:space-y-16 md:py-12">
+      <div className="page-shell space-y-10 py-6 md:space-y-12 md:py-8">
         {empty ? (
           <Reveal>
-            <div className="rounded-2xl border border-outline-variant bg-surface-container-low p-8 text-center md:p-12">
-              <div className="mx-auto grid  grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
-                {Array.from({ length: 8 }).map((_, i) => (
+            <div className="mx-auto max-w-3xl rounded-2xl border border-outline-variant bg-surface-container-low p-5 text-center md:p-6">
+              <div className="mx-auto grid max-w-xl grid-cols-4 gap-2 md:gap-3">
+                {Array.from({ length: 4 }).map((_, i) => (
                   <div
                     key={i}
                     className="aspect-square animate-pulse rounded-xl bg-surface-container"
@@ -114,13 +114,16 @@ export default async function MediaPage() {
                   />
                 ))}
               </div>
-              <p className="mt-6 text-sm text-on-surface-variant">
+              <p className="mt-4 text-sm text-on-surface-variant">
                 {t("emptySoon")}
               </p>
+
             </div>
           </Reveal>
         ) : null}
 
+        {/* Boş bölümler sayfayı uzatmasın: yalnız içerik olanları göster */}
+        {gallery.stories.length ? (
         <section>
           <Reveal className="mb-6">
             <p className="page-kicker">
@@ -143,7 +146,9 @@ export default async function MediaPage() {
             />
           </div>
         </section>
+        ) : null}
 
+        {gallery.instagram.length ? (
         <section>
           <Reveal className="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>
@@ -168,7 +173,9 @@ export default async function MediaPage() {
             }
           />
         </section>
+        ) : null}
 
+        {gallery.uploads.length ? (
         <section>
           <Reveal className="mb-6">
             <p className="page-kicker">{header.uploadsLabel}</p>
@@ -183,6 +190,7 @@ export default async function MediaPage() {
             emptyMessage={t("galleryEmpty")}
           />
         </section>
+        ) : null}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useId, useMemo, useRef, useState } from "react";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { readCookieConsent } from "@/lib/cookie-consent";
 import {
@@ -25,9 +25,15 @@ type Props = {
   brandName?: string;
   greeting?: string;
   presets?: WhatsAppPreset[];
+  /** Butonun solunda bilgi balonu */
+  bubbleEnabled?: boolean;
+  /** Panelden özel metin; boşsa çeviri varsayılanı */
+  bubbleText?: string;
+  /** Balonda gösterilecek okunur telefon */
+  displayPhone?: string;
 };
 
-const POPUP_KEYS = ["popup0", "popup1", "popup2", "popup3", "popup4"] as const;
+const BUBBLE_DISMISS_KEY = "herbalkapida:wa-bubble-dismissed";
 const TITLE_KEYS = ["title0", "title1", "title2", "title3", "title4"] as const;
 
 function openWhatsApp(phone: string | null | undefined, text: string) {
@@ -41,13 +47,12 @@ export function WhatsAppChat({
   brandName = "Herbal Kapıda",
   greeting = DEFAULT_WHATSAPP_SETTINGS.greeting,
   presets = DEFAULT_WHATSAPP_SETTINGS.presets,
+  bubbleEnabled = true,
+  bubbleText = "",
+  displayPhone = "",
 }: Props) {
   const t = useTranslations("whatsapp");
   const tForms = useTranslations("forms");
-  const popupMessages = useMemo(
-    () => POPUP_KEYS.map((key) => t(key)),
-    [t],
-  );
   const titleRotation = useMemo(
     () => TITLE_KEYS.map((key) => t(key)),
     [t],
@@ -76,8 +81,11 @@ export function WhatsAppChat({
   const [open, setOpen] = useState(false);
   const [liftForCookie, setLiftForCookie] = useState(false);
   const [custom, setCustom] = useState("");
-  const [popupIndex, setPopupIndex] = useState(0);
-  const [popupVisible, setPopupVisible] = useState(false);
+  /* Eski dönen kısa mesaj balonu yerini kalıcı bilgi balonuna bıraktı */
+  const popupIndex = 0;
+  const popupVisible = false;
+  const [bubbleVisible, setBubbleVisible] = useState(false);
+  const [bubbleDismissed, setBubbleDismissed] = useState(true);
   const expanded = useFabScrollExpand(enabled);
   const showLabel = expanded || open;
   const panelId = useId();
@@ -104,7 +112,32 @@ export function WhatsAppChat({
   }, []);
 
   useEffect(() => {
-    if (open) setPopupVisible(false);
+    if (!enabled || !bubbleEnabled) return;
+    let dismissed = false;
+    try {
+      dismissed = window.sessionStorage.getItem(BUBBLE_DISMISS_KEY) === "1";
+    } catch {
+      /* gizli sekme */
+    }
+    setBubbleDismissed(dismissed);
+    if (dismissed) return;
+    const timer = window.setTimeout(() => setBubbleVisible(true), 3500);
+    return () => window.clearTimeout(timer);
+  }, [enabled, bubbleEnabled]);
+
+  function dismissBubble() {
+    setBubbleVisible(false);
+    setBubbleDismissed(true);
+    try {
+      window.sessionStorage.setItem(BUBBLE_DISMISS_KEY, "1");
+    } catch {
+      /* yoksay */
+    }
+  }
+
+  useEffect(() => {
+    if (open && bubbleVisible) dismissBubble();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   useEffect(() => {
@@ -152,23 +185,6 @@ export function WhatsAppChat({
       );
     };
   }, [popupVisible, open, popupIndex]);
-
-  useEffect(() => {
-    let popupTimer: ReturnType<typeof setInterval> | undefined;
-    let hideTimer: ReturnType<typeof setTimeout> | undefined;
-    const cycle = () => {
-      setPopupIndex((i) => (i + 1) % popupMessages.length);
-      setPopupVisible(true);
-      hideTimer = setTimeout(() => setPopupVisible(false), 4500);
-    };
-    const start = setTimeout(cycle, 5000);
-    popupTimer = setInterval(cycle, 12000);
-    return () => {
-      clearTimeout(start);
-      if (popupTimer) clearInterval(popupTimer);
-      if (hideTimer) clearTimeout(hideTimer);
-    };
-  }, [popupMessages.length]);
 
   useEffect(() => {
     const baseTitle = document.title;
@@ -236,21 +252,6 @@ export function WhatsAppChat({
       ref={stackRef}
       className={`pointer-events-none fixed right-3 z-50 flex flex-col items-end gap-3 md:right-6 ${bottomClass}`}
     >
-      {!open && popupVisible ? (
-        <div
-          ref={popupRef}
-          className="pointer-events-none banner-enter max-w-[min(100vw-2rem,20rem)] rounded-2xl border border-[#25D366]/35 bg-surface-container-lowest px-4 py-3 shadow-lg"
-          role="status"
-        >
-          <p className="font-meta text-[10px] uppercase tracking-widest text-[#25D366]">
-            {t("label")}
-          </p>
-          <p className="mt-1 text-sm leading-snug text-on-surface">
-            {popupMessages[popupIndex]}
-          </p>
-        </div>
-      ) : null}
-
       {open ? (
         <div
           ref={panelRef}
@@ -326,6 +327,49 @@ export function WhatsAppChat({
         </div>
       ) : null}
 
+      <div className="relative">
+      {bubbleVisible && !open ? (
+        <div
+          role="status"
+          className="pointer-events-auto banner-enter absolute bottom-full right-0 mb-3 w-[min(18rem,calc(100vw-1.5rem))] rounded-2xl border border-outline-variant/50 bg-white p-3.5 pr-7 shadow-[0_10px_30px_rgba(18,40,28,0.18)] sm:bottom-0 sm:right-full sm:mb-0 sm:mr-3 sm:w-72"
+        >
+          <button
+            type="button"
+            onClick={dismissBubble}
+            aria-label={t("bubbleClose")}
+            className="absolute right-1.5 top-1.5 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-outline hover:bg-surface-container hover:text-on-surface"
+          >
+            <X className="h-3.5 w-3.5" aria-hidden />
+          </button>
+          {displayPhone ? (
+            <p className="text-[13px] font-semibold leading-relaxed text-on-surface">
+              {t("bubbleContact")}{" "}
+              <a
+                href={`tel:${displayPhone.replace(/[^\d+]/g, "")}`}
+                className="whitespace-nowrap text-primary hover:underline"
+              >
+                {displayPhone}
+              </a>{" "}
+              💚
+            </p>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => {
+              dismissBubble();
+              setOpen(true);
+            }}
+            className="mt-0.5 block w-full cursor-pointer whitespace-pre-line text-left text-[13px] leading-relaxed text-on-surface"
+          >
+            {bubbleText || t("bubbleDefault")}
+          </button>
+          {/* balon kuyruğu — butona doğru */}
+          <span
+            className="absolute -bottom-1.5 right-5 h-3 w-3 rotate-45 border-b border-r border-outline-variant/50 bg-white sm:-right-1.5 sm:bottom-4 sm:border-b-0 sm:border-t"
+            aria-hidden
+          />
+        </div>
+      ) : null}
       <button
         ref={toggleRef}
         type="button"
@@ -347,6 +391,15 @@ export function WhatsAppChat({
           {open ? t("close") : t("label")}
         </span>
       </button>
+      {bubbleEnabled && !bubbleDismissed && !open ? (
+        <span
+          className="pointer-events-none absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#e53935] px-1 text-[11px] font-bold leading-none text-white ring-2 ring-white"
+          aria-hidden
+        >
+          1
+        </span>
+      ) : null}
+      </div>
     </div>
   );
 }

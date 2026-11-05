@@ -221,10 +221,10 @@ export default async function AboutPage() {
 
       {/* 1 — Sinematik hero: marka, tek cümle, CTA, baskın görsel */}
       <section className="hero-forest relative isolate overflow-hidden">
-        <div className="page-shell grid items-center gap-8 py-14 sm:py-16 lg:min-h-[min(46rem,calc(100svh-4.5rem))] lg:grid-cols-12 lg:gap-6 lg:py-20">
+        <div className="page-shell grid items-center gap-6 py-8 sm:py-10 lg:min-h-[min(26rem,calc(100svh-6rem))] lg:grid-cols-12 lg:gap-6 lg:py-10">
           <div className="hero-enter relative z-10 lg:col-span-6">
             <p className="eyebrow text-[#8fe0b6]">{kicker}</p>
-            <h1 className="display-xl mt-5">
+            <h1 className="display-xl mt-3 text-[clamp(2.5rem,5.5vw,4.5rem)]!">
               <span className="block text-white">{brandWords[0]}</span>
               {brandWords.length > 1 ? (
                 <span className="block text-[#8fe0b6]">
@@ -232,10 +232,10 @@ export default async function AboutPage() {
                 </span>
               ) : null}
             </h1>
-            <p className="mt-7 max-w-md text-lg leading-relaxed text-white/80 md:text-xl">
+            <p className="mt-4 max-w-md text-base leading-relaxed text-white/80 md:text-lg">
               {brand.tagline || brand.slogan || hero.seoDescription}
             </p>
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-3">
               {whatsapp.enabled ? (
                 <a
                   href={waUrl}
@@ -265,7 +265,7 @@ export default async function AboutPage() {
           </div>
 
           <div className="hero-media relative w-full min-w-0 lg:col-span-6">
-            <div className="relative mx-auto aspect-6/5 w-full max-w-full overflow-hidden sm:max-w-176">
+            <div className="relative mx-auto aspect-6/5 w-full max-w-full overflow-hidden sm:max-w-120 lg:max-h-88">
               <div className="absolute bottom-0 left-[18%] z-10 aspect-square h-[58%] max-h-full -translate-x-1/2 sm:bottom-[-3%] sm:h-[70%]">
                 <Image
                   src="/images/cutouts/formul-2-vitamin.png"
@@ -300,11 +300,11 @@ export default async function AboutPage() {
       </section>
 
       {/* 2 — Hikaye */}
-      <section className="bg-white py-16 md:py-28">
-        <div className="page-shell grid gap-10 lg:grid-cols-12 lg:gap-16">
+      <section className="bg-white py-10 md:py-14">
+        <div className="page-shell grid gap-6 lg:grid-cols-12 lg:gap-12">
           <Reveal className="lg:col-span-5">
             <p className="eyebrow text-primary">{t("storyEyebrow")}</p>
-            <h2 className="display-lg mt-4 text-on-surface">
+            <h2 className="display-md mt-3 text-on-surface">
               {body.titleLine1}
               {body.titleLine2 ? (
                 <span className="block text-primary">{body.titleLine2}</span>
@@ -313,11 +313,11 @@ export default async function AboutPage() {
           </Reveal>
           <Reveal className="lg:col-span-7" delay={90}>
             {lead ? (
-              <p className="font-display text-2xl font-semibold leading-snug tracking-tight text-on-surface md:text-3xl">
+              <p className="font-display text-xl font-semibold leading-snug tracking-tight text-on-surface md:text-2xl">
                 {lead}
               </p>
             ) : null}
-            <div className="mt-8 space-y-5 text-lg leading-8 text-on-surface-variant">
+            <div className="mt-4 space-y-3 text-base leading-7 text-on-surface-variant">
               {restParagraphs.map((p, i) => (
                 <p key={`p-${i}`}>{p}</p>
               ))}
@@ -327,7 +327,7 @@ export default async function AboutPage() {
       </section>
 
       {/* 3 — Üç dayanak */}
-      <section className="mint-wash py-16 md:py-24">
+      <section className="mint-wash py-10 md:py-14">
         <div className="page-shell">
           <Reveal>
             <p className="eyebrow text-primary">{t("pillarsEyebrow")}</p>
@@ -335,20 +335,20 @@ export default async function AboutPage() {
               {t("pillarsTitle")}
             </h2>
           </Reveal>
-          <ul className="mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
+          <ul className="mt-7 grid gap-6 md:grid-cols-3 md:gap-8">
             {pagePillars.map((pillar, i) => (
               <li key={pillar.title}>
                 <Reveal delay={i * 80}>
-                  <div className="border-t-2 border-primary pt-6">
+                  <div className="border-t-2 border-primary pt-4">
                     <pillar.Icon
-                      className="h-8 w-8 text-primary"
+                      className="h-7 w-7 text-primary"
                       strokeWidth={1.5}
                       aria-hidden
                     />
-                    <h3 className="mt-6 font-display text-2xl font-bold tracking-tight text-on-surface">
+                    <h3 className="mt-3 font-display text-xl font-bold tracking-tight text-on-surface">
                       {pillar.title}
                     </h3>
-                    <p className="mt-3 text-base leading-relaxed text-on-surface-variant">
+                    <p className="mt-2 text-sm leading-relaxed text-on-surface-variant md:text-base">
                       {pillar.body}
                     </p>
                   </div>
@@ -373,14 +373,14 @@ export default async function AboutPage() {
             <div className="absolute inset-0 -z-10 bg-linear-to-r from-[#0a2f1f]/90 via-[#0a2f1f]/65 to-[#0a2f1f]/25" />
           </>
         ) : null}
-        <div className="page-shell grid items-center gap-10 py-20 md:py-28 lg:grid-cols-12">
+        <div className="page-shell grid items-center gap-6 py-10 md:py-14 lg:grid-cols-12">
           <Reveal className="lg:col-span-9">
             <p className="eyebrow text-[#8fe0b6]">{ethos.eyebrow}</p>
-            <p className="display-lg mt-6 text-white">“{ethos.quote}”</p>
+            <p className="display-md mt-3 text-white">“{ethos.quote}”</p>
             {ethos.linkLabel ? (
               <Link
                 href={toLinkHref(ethos.linkHref || "/blog")}
-                className="btn-outline-light mt-10"
+                className="btn-outline-light mt-6"
               >
                 {String(ethos.linkLabel).replace(/\s*→\s*$/, "")}
                 <ArrowRight className="h-4 w-4" aria-hidden />
@@ -389,7 +389,7 @@ export default async function AboutPage() {
           </Reveal>
           {!hasCustomEthosImage ? (
             <Reveal className="hidden lg:col-span-3 lg:block" variant="fade">
-              <div className="relative mx-auto aspect-3/4 w-full max-w-64">
+              <div className="relative mx-auto aspect-3/4 w-full max-w-44">
                 <Image
                   src="/images/cutouts/herbal-aloe.png"
                   alt=""
@@ -405,7 +405,7 @@ export default async function AboutPage() {
 
       {/* 5 — İletişim bilgileri */}
       {body.showContactAside !== false && contactRows.length ? (
-        <section className="bg-white py-16 md:py-24">
+        <section className="bg-white py-10 md:py-14">
           <div className="page-shell">
             <Reveal>
               <p className="eyebrow text-primary">{t("contactEyebrow")}</p>
@@ -413,10 +413,10 @@ export default async function AboutPage() {
                 {brand.distributorName || brand.name}
               </h2>
             </Reveal>
-            <dl className="mt-10 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+            <dl className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
               {contactRows.map((row, i) => (
                 <Reveal key={row.label} delay={i * 60}>
-                  <div className="border-t border-outline-variant pt-5">
+                  <div className="border-t border-outline-variant pt-3">
                     <dt className="flex items-center gap-2 text-sm font-semibold text-on-surface-variant">
                       <row.Icon
                         className="h-4 w-4 text-primary"
@@ -446,15 +446,15 @@ export default async function AboutPage() {
 
       {/* 6 — Kapanış CTA */}
       <section className="forest relative isolate overflow-hidden">
-        <div className="page-shell py-20 text-center md:py-28">
+        <div className="page-shell py-10 text-center md:py-14">
           <Reveal>
-            <h2 className="display-lg mx-auto max-w-3xl text-white">
+            <h2 className="display-md mx-auto max-w-3xl text-white">
               {t("closingTitle")}
             </h2>
-            <p className="mx-auto mt-5 max-w-lg text-lg leading-relaxed text-white/80">
+            <p className="mx-auto mt-3 max-w-lg text-base leading-relaxed text-white/80">
               {t("closingBody")}
             </p>
-            <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
               {whatsapp.enabled ? (
                 <a
                   href={waUrl}

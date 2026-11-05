@@ -425,7 +425,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
           </div>
         </div>
 
-        <div className="page-shell grid grid-cols-[1fr_auto] items-center gap-2 py-2.5 sm:py-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-2 xl:gap-3 xl:py-3.5">
+        <div className="page-shell grid grid-cols-[1fr_auto] items-center gap-2 py-1.5 sm:py-2 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-2 xl:gap-3 xl:py-2">
           <Link
             href="/"
             className="flex min-w-0 items-center gap-2.5 justify-self-start lg:max-w-sm xl:max-w-md 2xl:max-w-xl"
@@ -436,7 +436,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                 alt={logoText}
                 width={360}
                 height={100}
-                className="h-14 w-auto max-w-[min(100%,16rem)] shrink-0 bg-transparent object-contain object-left sm:h-16 sm:max-w-72 md:h-18 md:max-w-80 lg:h-20 lg:max-w-96 xl:max-w-md"
+                className="h-16 w-auto max-w-[min(100%,18rem)] shrink-0 bg-transparent object-contain object-left sm:h-18 sm:max-w-80 md:h-20 md:max-w-88 lg:h-22 lg:max-w-104 xl:h-24 xl:max-w-md"
                 priority
               />
             ) : (

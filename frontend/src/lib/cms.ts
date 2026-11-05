@@ -74,7 +74,11 @@ export type SiteSettings = {
   };
   /** Kapıda ödeme ek ücreti — para birimine göre */
   payment?: {
+    codFeeEnabled?: boolean;
     codFees?: Partial<Record<"TRY" | "USD" | "EUR" | "GBP", number>>;
+    /** Kredi kartı (PayTR) ek ücreti */
+    cardFeeEnabled?: boolean;
+    cardFees?: Partial<Record<"TRY" | "USD" | "EUR" | "GBP", number>>;
   };
   /** Ana sayfa ürün blokları — bkz. lib/home-blocks.ts */
   homeBlocks?: { blocks?: unknown[] };
@@ -327,6 +331,14 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     defaultFee: 89.9,
   },
   payment: {
+    codFeeEnabled: true,
+    cardFeeEnabled: true,
+    cardFees: {
+      TRY: 100,
+      USD: 3,
+      EUR: 3,
+      GBP: 2.5,
+    },
     codFees: {
       TRY: 75,
       USD: 2.5,

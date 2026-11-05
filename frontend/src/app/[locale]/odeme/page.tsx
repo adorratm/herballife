@@ -89,6 +89,29 @@ const DEFAULT_COD_FEES: Record<string, number> = {
   EUR: 2.5,
   GBP: 2,
 };
+const DEFAULT_CARD_FEES: Record<string, number> = {
+  TRY: 100,
+  USD: 3,
+  EUR: 3,
+  GBP: 2.5,
+};
+
+type PaymentFeeConfig = {
+  codEnabled: boolean;
+  cod: Record<string, number>;
+  cardEnabled: boolean;
+  card: Record<string, number>;
+};
+
+function numMap(raw: unknown): Record<string, number> {
+  if (!raw || typeof raw !== "object") return {};
+  return Object.fromEntries(
+    Object.entries(raw as Record<string, unknown>).map(([k, v]) => [
+      k,
+      Number(v) || 0,
+    ]),
+  );
+}
 
 export default function CheckoutPage() {
   const locale = useLocale();
@@ -98,8 +121,12 @@ export default function CheckoutPage() {
   const tAccount = useTranslations("account");
   const tForms = useTranslations("forms");
   const [cart, setCart] = useState<Cart | null>(null);
-  const [codFees, setCodFees] =
-    useState<Record<string, number>>(DEFAULT_COD_FEES);
+  const [feeConfig, setFeeConfig] = useState<PaymentFeeConfig>({
+    codEnabled: true,
+    cod: DEFAULT_COD_FEES,
+    cardEnabled: true,
+    card: DEFAULT_CARD_FEES,
+  });
   const [providers, setProviders] = useState<ShippingProvider[]>([]);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [user, setUser] = useState<User | null>(null);
@@ -151,16 +178,27 @@ export default function CheckoutPage() {
   useEffect(() => {
     void fetch(`${getApiBase()}/cms/settings?locale=${encodeURIComponent(locale)}`)
       .then((res) => (res.ok ? res.json() : null))
-      .then((data: { payment?: { codFees?: Record<string, number> } } | null) => {
-        const fees = data?.payment?.codFees;
-        if (!fees || typeof fees !== "object") return;
-        setCodFees((prev) => ({
-          ...prev,
-          ...Object.fromEntries(
-            Object.entries(fees).map(([k, v]) => [k, Number(v) || 0]),
-          ),
-        }));
-      })
+      .then(
+        (
+          data: {
+            payment?: {
+              codFeeEnabled?: boolean;
+              codFees?: Record<string, number>;
+              cardFeeEnabled?: boolean;
+              cardFees?: Record<string, number>;
+            };
+          } | null,
+        ) => {
+          const p = data?.payment;
+          if (!p || typeof p !== "object") return;
+          setFeeConfig((prev) => ({
+            codEnabled: p.codFeeEnabled !== false,
+            cod: { ...prev.cod, ...numMap(p.codFees) },
+            cardEnabled: p.cardFeeEnabled !== false,
+            card: { ...prev.card, ...numMap(p.cardFees) },
+          }));
+        },
+      )
       .catch(() => undefined);
   }, [locale]);
 
@@ -552,16 +590,21 @@ export default function CheckoutPage() {
   const discountAmount = couponPreview?.valid
     ? Number(couponPreview.discountAmount)
     : 0;
-  const paymentFee =
-    paymentMethod === "cod"
-      ? Math.max(
-          0,
-          Number(
-            codFees[activeCurrency] ??
-              (activeCurrency === "TRY" ? DEFAULT_COD_FEES.TRY : 0),
-          ) || 0,
-        )
-      : 0;
+  function feeFor(method: PaymentMethod): number {
+    const isCod = method === "cod";
+    if (method !== "cod" && method !== "paytr") return 0;
+    if (isCod ? !feeConfig.codEnabled : !feeConfig.cardEnabled) return 0;
+    const map = isCod ? feeConfig.cod : feeConfig.card;
+    const fallback = isCod ? DEFAULT_COD_FEES : DEFAULT_CARD_FEES;
+    return Math.max(
+      0,
+      Number(
+        map[activeCurrency] ??
+          (activeCurrency === "TRY" ? fallback.TRY : 0),
+      ) || 0,
+    );
+  }
+  const paymentFee = feeFor(paymentMethod);
   const totals = calculateOrderTotals(subtotal, shippingFee, {
     discountAmount,
     paymentFee,
@@ -1130,6 +1173,13 @@ export default function CheckoutPage() {
                   />
                   <span>
                     {tCheckout(opt.labelKey)}
+                    {feeFor(opt.value) > 0 ? (
+                      <span className="ml-2 inline-block rounded bg-surface-container px-1.5 py-0.5 normal-case tracking-normal text-on-surface">
+                        {tCheckout("payMethodFee", {
+                          fee: formatMoney(feeFor(opt.value), activeCurrency),
+                        })}
+                      </span>
+                    ) : null}
                     <span className="mt-1 block normal-case tracking-normal text-secondary">
                       {tCheckout(opt.descKey)}
                     </span>
@@ -1235,7 +1285,9 @@ export default function CheckoutPage() {
               />
               {paymentFee > 0 ? (
                 <Row
-                  label={tCheckout("labelCodFee")}
+                  label={tCheckout(
+                    paymentMethod === "cod" ? "labelCodFee" : "labelCardFee",
+                  )}
                   value={formatMoney(paymentFee, activeCurrency)}
                 />
               ) : null}

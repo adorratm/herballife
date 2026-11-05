@@ -104,11 +104,11 @@ export default async function BlogIndexPage({ searchParams }: Props) {
 
       {/* Başlık bandı */}
       <section className="forest">
-        <div className="page-shell py-14 md:py-20">
+        <div className="page-shell py-8 md:py-10">
           <div className="hero-enter">
             <p className="eyebrow text-[#8fe0b6]">{brand}</p>
-            <h1 className="display-xl mt-4 text-white">{t("title")}</h1>
-            <p className="mt-6 max-w-md text-lg leading-relaxed text-white/80">
+            <h1 className="display-lg mt-2 text-white">{t("title")}</h1>
+            <p className="mt-3 max-w-xl text-base leading-relaxed text-white/80">
               {t("heroBody")}
             </p>
           </div>
@@ -116,7 +116,7 @@ export default async function BlogIndexPage({ searchParams }: Props) {
           {tabs.length > 0 ? (
             <nav
               aria-label={t("tagsNav")}
-              className="mt-10 flex flex-wrap gap-x-7 gap-y-2 border-t border-white/20 pt-5"
+              className="mt-5 flex flex-wrap gap-x-7 gap-y-2 border-t border-white/20 pt-4"
             >
               <Link
                 href="/blog"
@@ -146,10 +146,10 @@ export default async function BlogIndexPage({ searchParams }: Props) {
         </div>
       </section>
 
-      <div className="page-shell py-12 md:py-20">
+      <div className="page-shell py-8 md:py-10">
         {paged.items.length === 0 ? (
           <Reveal>
-            <div className="mx-auto max-w-md py-10 text-center">
+            <div className="mx-auto max-w-md py-4 text-center">
               <h2 className="display-md text-on-surface">{t("emptyTitle")}</h2>
               <p className="mt-3 text-base text-on-surface-variant">
                 {tag ? t("emptyTag", { tag }) : t("emptyDefault")}
@@ -175,7 +175,7 @@ export default async function BlogIndexPage({ searchParams }: Props) {
                   href={blogPostHref(featured.slug)}
                   className="group grid overflow-hidden rounded-2xl border border-outline-variant/40 bg-white shadow-sm transition-shadow hover:shadow-md lg:grid-cols-12"
                 >
-                  <div className="relative aspect-16/11 overflow-hidden bg-[#0f3d2e] lg:col-span-7 lg:aspect-auto lg:min-h-88">
+                  <div className="relative aspect-16/9 overflow-hidden bg-[#0f3d2e] lg:col-span-6 lg:aspect-auto lg:min-h-64">
                     <Image
                       src={blogCoverImage(featured.coverImageUrl, featured.slug)}
                       alt={featured.title}
@@ -185,15 +185,15 @@ export default async function BlogIndexPage({ searchParams }: Props) {
                       sizes="(max-width: 1024px) 100vw, 58vw"
                     />
                   </div>
-                  <div className="flex flex-col justify-center p-6 sm:p-8 lg:col-span-5 lg:p-10">
+                  <div className="flex flex-col justify-center p-5 sm:p-6 lg:col-span-6 lg:p-8">
                     <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">
                       {featured.tags?.[0] || t("featuredTag")}
                     </p>
-                    <h2 className="mt-3 font-display text-2xl font-extrabold leading-tight tracking-tight text-on-surface transition-colors group-hover:text-primary sm:text-3xl md:text-[2rem]">
+                    <h2 className="mt-2 font-display text-xl font-extrabold leading-tight tracking-tight text-on-surface transition-colors group-hover:text-primary sm:text-2xl">
                       {featured.title}
                     </h2>
                     {featured.excerpt ? (
-                      <p className="mt-4 line-clamp-3 text-base leading-7 text-on-surface-variant">
+                      <p className="mt-3 line-clamp-3 text-sm leading-6 text-on-surface-variant md:text-base">
                         {featured.excerpt}
                       </p>
                     ) : null}
@@ -216,8 +216,8 @@ export default async function BlogIndexPage({ searchParams }: Props) {
             {/* Diğer yazılar */}
             {rest.length > 0 ? (
               <ul
-                className={`grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 ${
-                  featured ? "mt-16 border-t border-outline-variant pt-14 md:mt-20 md:pt-16" : ""
+                className={`grid gap-x-5 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${
+                  featured ? "mt-8 border-t border-outline-variant pt-8" : ""
                 }`}
               >
                 {rest.map((post, i) => (
@@ -252,11 +252,11 @@ export default async function BlogIndexPage({ searchParams }: Props) {
                               })}
                             </span>
                           </div>
-                          <h2 className="mt-3 font-display text-xl font-extrabold leading-snug tracking-tight text-on-surface transition-colors group-hover:text-primary sm:text-2xl">
+                          <h2 className="mt-2 line-clamp-2 font-display text-lg font-bold leading-snug tracking-tight text-on-surface transition-colors group-hover:text-primary">
                             {post.title}
                           </h2>
                           {post.excerpt ? (
-                            <p className="mt-2 line-clamp-3 flex-1 text-sm leading-6 text-on-surface-variant sm:text-base sm:leading-7">
+                            <p className="mt-1.5 line-clamp-2 flex-1 text-sm leading-6 text-on-surface-variant">
                               {post.excerpt}
                             </p>
                           ) : (
@@ -278,7 +278,7 @@ export default async function BlogIndexPage({ searchParams }: Props) {
 
         {paged.totalPages > 1 ? (
           <nav
-            className="mt-16 flex items-center justify-center gap-4"
+            className="mt-10 flex items-center justify-center gap-4"
             aria-label={t("pagination")}
           >
             {page > 1 ? (

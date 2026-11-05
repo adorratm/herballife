@@ -315,7 +315,9 @@
     "payMethodBankDesc": "Effectuez un virement après la commande ; nous préparons le colis dès réception du paiement",
     "placeOrderCod": "Commander (paiement à la livraison)",
     "placeOrderBank": "Commander (virement)",
-    "mobilePlaceOrder": "Commander"
+    "mobilePlaceOrder": "Commander",
+    "labelCardFee": "Frais de paiement par carte",
+    "payMethodFee": "+{fee}"
   },
   "product": {
     "addToCart": "Ajouter au panier",
@@ -915,7 +917,10 @@
     "sendOnWhatsapp": "Send on WhatsApp",
     "openFab": "Open WhatsApp",
     "closeFab": "Close WhatsApp",
-    "defaultCustomMessage": "Hello, I'm writing about {brand}."
+    "defaultCustomMessage": "Hello, I'm writing about {brand}.",
+    "bubbleDefault": "NOS SERVICES 💚 Tous nos produits sont des produits Herbalife originaux, expédiés rapidement avec la garantie d’un distributeur indépendant. 📦\nEn plus, nous proposons un programme d’utilisation personnalisé et un coaching nutritionnel gratuit 🌸",
+    "bubbleClose": "Fermer la bulle",
+    "bubbleContact": "Contact :"
   },
   "accountTabs": {
     "ariaLabel": "Account sections"

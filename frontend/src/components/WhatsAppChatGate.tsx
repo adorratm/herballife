@@ -9,6 +9,9 @@ type Props = {
   brandName?: string;
   greeting?: string;
   presets?: WhatsAppPreset[];
+  bubbleEnabled?: boolean;
+  bubbleText?: string;
+  displayPhone?: string;
 };
 
 export function WhatsAppChatGate(props: Props) {

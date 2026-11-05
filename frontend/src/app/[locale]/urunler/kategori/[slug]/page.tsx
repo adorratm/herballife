@@ -170,24 +170,24 @@ export default async function CategoryCatalogPage({ params }: Props) {
         />
       ) : null}
       <PageBreadcrumb items={crumbs} />
-      <section className="page-shell border-b border-outline-variant/20 py-6 md:py-8">
-        <h1 className="font-display text-3xl tracking-tight text-on-surface md:text-4xl">
+      <section className="page-shell pt-4 md:pt-6">
+        <h1 className="font-display text-2xl tracking-tight text-on-surface md:text-3xl">
           {category.name}
         </h1>
         {intro ? (
           looksLikeHtml(intro) ? (
             <div
-              className="prose-blog mt-3 max-w-3xl space-y-3 text-sm leading-relaxed text-on-surface-variant [&_a]:text-primary [&_a]:underline [&_p]:mb-0"
+              className="prose-blog mt-1.5 line-clamp-3 max-w-4xl space-y-3 text-sm leading-relaxed text-on-surface-variant [&_a]:text-primary [&_a]:underline [&_p]:mb-0"
               dangerouslySetInnerHTML={{ __html: intro }}
             />
           ) : (
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-on-surface-variant">
+            <p className="mt-1.5 line-clamp-3 max-w-4xl text-sm leading-relaxed text-on-surface-variant">
               {intro}
             </p>
           )
         ) : null}
         {relatedBlog.items.length ? (
-          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-outline-variant/15 pt-4">
+          <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
             {relatedBlog.items.map((post) => (
               <Link
                 key={post.id}

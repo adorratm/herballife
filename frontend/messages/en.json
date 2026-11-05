@@ -315,7 +315,9 @@
     "payMethodBankDesc": "Send a bank transfer after placing your order; we prepare it once the payment is confirmed",
     "placeOrderCod": "Place order (cash on delivery)",
     "placeOrderBank": "Place order (bank transfer)",
-    "mobilePlaceOrder": "Place order"
+    "mobilePlaceOrder": "Place order",
+    "labelCardFee": "Card payment service fee",
+    "payMethodFee": "+{fee}"
   },
   "product": {
     "addToCart": "Add to cart",
@@ -418,7 +420,10 @@
     "presetShippingLabel": "Shipping & delivery",
     "presetShippingMessage": "Hello, I have a question about shipping times and delivery options.",
     "presetOtherLabel": "Something else",
-    "presetOtherMessage": "Hello, I'm writing to you."
+    "presetOtherMessage": "Hello, I'm writing to you.",
+    "bubbleDefault": "OUR SERVICES 💚 All our products are original Herbalife products, shipped fast with independent distributor assurance. 📦\nOn top of that we offer a personal usage plan and free nutrition coaching 🌸",
+    "bubbleClose": "Close info bubble",
+    "bubbleContact": "Contact:"
   },
   "auth": {
     "loginEyebrow": "Sign in",

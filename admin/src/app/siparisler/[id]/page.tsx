@@ -339,7 +339,7 @@ export default function OrderDetailPage() {
             </div>
             {Number(order.paymentFee || 0) > 0 ? (
               <div className="flex justify-between">
-                <span className="text-muted">Kapıda ödeme ücreti</span>
+                <span className="text-muted">Ödeme yöntemi ücreti</span>
                 <span>{formatMoney(order.paymentFee || 0, currency)}</span>
               </div>
             ) : null}

@@ -25,7 +25,7 @@ import {
   organizationJsonLd,
   websiteJsonLd,
 } from "@/lib/seo";
-import { resolveWhatsAppPhone } from "@/lib/whatsapp";
+import { DEFAULT_BUBBLE_PHONE, resolveWhatsAppPhone } from "@/lib/whatsapp";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -140,6 +140,13 @@ export default async function LocaleLayout({ children, params }: Props) {
               brandName={settings.brand.name}
               greeting={settings.whatsapp.greeting}
               presets={settings.whatsapp.presets}
+              bubbleEnabled={settings.whatsapp.bubbleEnabled !== false}
+              displayPhone={
+                settings.whatsapp.bubblePhone?.trim() || DEFAULT_BUBBLE_PHONE
+              }
+              bubbleText={
+                locale === "tr" ? settings.whatsapp.bubbleText?.trim() || "" : ""
+              }
             />
             <ScrollToTopFab />
             <CartToastHost />

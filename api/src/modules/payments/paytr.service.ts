@@ -440,7 +440,7 @@ export class PaytrService {
       basket.push(['Kargo', shipping.toFixed(2), 1]);
     }
     if (paymentFee > 0) {
-      basket.push(['Kapıda ödeme ücreti', paymentFee.toFixed(2), 1]);
+      basket.push(['Kart ile ödeme hizmet bedeli', paymentFee.toFixed(2), 1]);
     }
 
     if (!basket.length) {

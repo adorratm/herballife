@@ -315,7 +315,9 @@
     "payMethodBankDesc": "Sipariş sonrası banka hesabımıza havale/EFT yapın; ödemeniz onaylanınca siparişiniz hazırlanır",
     "placeOrderCod": "Siparişi Tamamla (Kapıda Ödeme)",
     "placeOrderBank": "Siparişi Tamamla (Havale / EFT)",
-    "mobilePlaceOrder": "Siparişi tamamla"
+    "mobilePlaceOrder": "Siparişi tamamla",
+    "labelCardFee": "Kart ile ödeme hizmet bedeli",
+    "payMethodFee": "+{fee}"
   },
   "product": {
     "addToCart": "Sepete Ekle",
@@ -448,7 +450,10 @@
     "presetShippingLabel": "Kargo & teslimat",
     "presetShippingMessage": "Merhaba, kargo süresi ve teslimat seçenekleri hakkında yazıyorum.",
     "presetOtherLabel": "Başka bir konu",
-    "presetOtherMessage": "Merhaba, yazıyorum."
+    "presetOtherMessage": "Merhaba, yazıyorum.",
+    "bubbleDefault": "HİZMETLERİMİZ 💚 Tüm ürünlerimiz orijinal Herbalife ürünüdür ve bağımsız distribütör güvencesiyle hızlı kargoyla gönderilir. 📦\nBunlara ek olarak size özel kullanım programı ve ücretsiz beslenme koçluğu sunuyoruz 🌸",
+    "bubbleClose": "Bilgi balonunu kapat",
+    "bubbleContact": "İrtibat no:"
   },
   "auth": {
     "loginEyebrow": "Oturum açma",

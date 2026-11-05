@@ -200,9 +200,9 @@ export function SiteFooter({
               <Image
                 src={brand.logoUrl}
                 alt={brand.name}
-                width={260}
-                height={80}
-                className="h-14 w-auto max-w-60 object-contain object-left"
+                width={400}
+                height={120}
+                className="h-24 w-auto max-w-full object-contain object-left sm:h-28 lg:h-26 xl:h-28"
               />
             ) : (
               <span className="font-display text-2xl font-extrabold tracking-tight text-primary">

@@ -12,7 +12,15 @@ export type WhatsAppSettings = {
   phone: string;
   greeting: string;
   presets: WhatsAppPreset[];
+  /** Butonun solunda bilgi balonu (varsayılan açık) */
+  bubbleEnabled?: boolean;
+  /** Boşsa çeviri dosyasındaki varsayılan metin */
+  bubbleText?: string;
+  /** Balondaki irtibat numarası (boşsa DEFAULT_BUBBLE_PHONE) */
+  bubblePhone?: string;
 };
+
+export const DEFAULT_BUBBLE_PHONE = "+90 541 489 42 43";
 
 export type WhatsAppTranslator = (key: string) => string;
 
@@ -118,6 +126,9 @@ export function mergeWhatsAppSettings(raw: unknown): WhatsAppSettings {
         ? row.greeting
         : DEFAULT_WHATSAPP_SETTINGS.greeting,
     presets: normalizeWhatsAppPresets(row.presets),
+    bubbleEnabled: row.bubbleEnabled !== false,
+    bubbleText: typeof row.bubbleText === "string" ? row.bubbleText : "",
+    bubblePhone: typeof row.bubblePhone === "string" ? row.bubblePhone : "",
   };
 }
 

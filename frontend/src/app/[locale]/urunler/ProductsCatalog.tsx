@@ -204,13 +204,13 @@ export default function ProductsCatalog({
     categories.find((c) => c.slug === categorySlug)?.name || null;
 
   return (
-    <div className="page-shell py-8 md:py-10">
+    <div className="page-shell py-4 md:py-6">
       {hideHeading ? null : (
-        <div className="mb-8">
-          <h1 className="font-display text-3xl tracking-tight text-on-surface md:text-4xl">
+        <div className="mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h1 className="font-display text-2xl tracking-tight text-on-surface md:text-3xl">
             {activeCategoryName || t("title")}
           </h1>
-          <p className="mt-2 text-sm text-on-surface-variant">
+          <p className="text-sm text-on-surface-variant">
             {activeCategoryName
               ? t("categorySubtitle", { name: activeCategoryName })
               : t("defaultSubtitle")}
@@ -218,11 +218,12 @@ export default function ProductsCatalog({
         </div>
       )}
 
-      <div className="mb-8 rounded-xl border border-outline-variant/30 bg-white p-4 shadow-sm md:p-5">
-        <div className="mb-3 flex items-center justify-between gap-3 md:hidden">
+      {/* Kompakt filtre çubuğu: masaüstünde tek satır, mobilde açılır */}
+      <div className="mb-5 rounded-xl border border-outline-variant/40 bg-white p-2 shadow-sm md:p-2.5">
+        <div className="flex items-center gap-2 md:hidden">
           <button
             type="button"
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-outline-variant/40 bg-surface-container-low px-4 py-2.5 text-sm font-semibold text-on-surface"
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-surface-container-low px-3 py-2 text-sm font-semibold text-on-surface"
             aria-expanded={filtersOpen}
             onClick={() => setFiltersOpen((v) => !v)}
           >
@@ -231,133 +232,103 @@ export default function ProductsCatalog({
               {filtersOpen ? "▲" : "▼"}
             </span>
           </button>
-          {hasActiveFilters ? (
-            <button
-              type="button"
-              className="shrink-0 text-sm font-medium text-primary hover:underline"
-              onClick={() =>
-                patchParams({
-                  q: null,
-                  category: null,
-                  origin: null,
-                  page: null,
-                })
-              }
-            >
-              {t("clear")}
-            </button>
-          ) : null}
+          <span className="shrink-0 px-1 text-xs text-on-surface-variant">
+            {summary}
+          </span>
         </div>
 
         <div
-          className={`grid gap-3 sm:grid-cols-2 lg:grid-cols-4 ${filtersOpen ? "grid" : "hidden md:grid"}`}
+          className={`flex-col gap-2 pt-2 md:flex md:flex-row md:items-center md:pt-0 ${
+            filtersOpen ? "flex" : "hidden"
+          }`}
         >
-          <label className="block">
-            <span className="mb-1.5 block text-xs font-medium text-on-surface-variant">
-              {t("searchLabel")}
-            </span>
-            <input
-              className="catalog-filter-input"
-              defaultValue={q}
-              key={`q-${q}`}
-              placeholder={tForms("searchProducts")}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  patchParams({
-                    q: (e.target as HTMLInputElement).value.trim() || null,
-                  });
-                }
-              }}
-              onBlur={(e) =>
-                patchParams({ q: e.target.value.trim() || null })
+          <input
+            className="catalog-filter-input catalog-filter-input--compact catalog-filter-input--grow"
+            defaultValue={q}
+            key={`q-${q}`}
+            aria-label={t("searchLabel")}
+            placeholder={tForms("searchProducts")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                patchParams({
+                  q: (e.target as HTMLInputElement).value.trim() || null,
+                });
               }
-            />
-          </label>
-          <label className="block">
-            <span className="mb-1.5 block text-xs font-medium text-on-surface-variant">
-              {t("categoryLabel")}
-            </span>
+            }}
+            onBlur={(e) => patchParams({ q: e.target.value.trim() || null })}
+          />
+          <select
+            className="catalog-filter-input catalog-filter-input--compact"
+            aria-label={t("categoryLabel")}
+            value={categorySlug}
+            onChange={(e) => patchParams({ category: e.target.value || null })}
+          >
+            <option value="">
+              {t("categoryLabel")}: {tCommon("all")}
+            </option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.slug}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          {origins.length > 0 ? (
             <select
-              className="catalog-filter-input"
-              value={categorySlug}
-              onChange={(e) =>
-                patchParams({ category: e.target.value || null })
-              }
+              className="catalog-filter-input catalog-filter-input--compact"
+              aria-label={t("originLabel")}
+              value={originCountry}
+              onChange={(e) => patchParams({ origin: e.target.value || null })}
             >
-              <option value="">{tCommon("all")}</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.slug}>
-                  {c.name}
+              <option value="">
+                {t("originLabel")}: {tCommon("all")}
+              </option>
+              {origins.map((o) => (
+                <option key={o} value={o}>
+                  {o}
                 </option>
               ))}
             </select>
-          </label>
-          {origins.length > 0 ? (
-            <label className="block">
-              <span className="mb-1.5 block text-xs font-medium text-on-surface-variant">
-                {t("originLabel")}
-              </span>
-              <select
-                className="catalog-filter-input"
-                value={originCountry}
-                onChange={(e) =>
-                  patchParams({ origin: e.target.value || null })
+          ) : null}
+          <select
+            className="catalog-filter-input catalog-filter-input--compact"
+            aria-label={t("sortLabel")}
+            value={`${sort}:${order}`}
+            onChange={(e) => {
+              const [s, o] = e.target.value.split(":") as [
+                SortKey,
+                "asc" | "desc",
+              ];
+              patchParams({ sort: s, order: o });
+            }}
+          >
+            <option value="name:asc">{t("sortNameAsc")}</option>
+            <option value="name:desc">{t("sortNameDesc")}</option>
+            <option value="price:asc">{t("sortPriceAsc")}</option>
+            <option value="price:desc">{t("sortPriceDesc")}</option>
+            <option value="createdAt:desc">{t("sortNewest")}</option>
+            <option value="stock:desc">{t("sortStock")}</option>
+          </select>
+          <div className="flex shrink-0 items-center justify-between gap-3 px-1 md:justify-end">
+            <span className="hidden whitespace-nowrap text-xs text-on-surface-variant md:inline">
+              {summary}
+            </span>
+            {hasActiveFilters ? (
+              <button
+                type="button"
+                className="whitespace-nowrap text-xs font-semibold text-primary hover:underline"
+                onClick={() =>
+                  patchParams({
+                    q: null,
+                    category: null,
+                    origin: null,
+                    page: null,
+                  })
                 }
               >
-                <option value="">{tCommon("all")}</option>
-                {origins.map((o) => (
-                  <option key={o} value={o}>
-                    {o}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ) : null}
-          <label className="block">
-            <span className="mb-1.5 block text-xs font-medium text-on-surface-variant">
-              {t("sortLabel")}
-            </span>
-            <select
-              className="catalog-filter-input"
-              value={`${sort}:${order}`}
-              onChange={(e) => {
-                const [s, o] = e.target.value.split(":") as [
-                  SortKey,
-                  "asc" | "desc",
-                ];
-                patchParams({ sort: s, order: o });
-              }}
-            >
-              <option value="name:asc">{t("sortNameAsc")}</option>
-              <option value="name:desc">{t("sortNameDesc")}</option>
-              <option value="price:asc">{t("sortPriceAsc")}</option>
-              <option value="price:desc">{t("sortPriceDesc")}</option>
-              <option value="createdAt:desc">{t("sortNewest")}</option>
-              <option value="stock:desc">{t("sortStock")}</option>
-            </select>
-          </label>
-        </div>
-
-        <div
-          className={`mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-outline-variant/20 pt-3 ${filtersOpen ? "flex" : "hidden md:flex"}`}
-        >
-          <p className="text-sm text-on-surface-variant">{summary}</p>
-          {hasActiveFilters ? (
-            <button
-              type="button"
-              className="text-sm font-medium text-primary hover:underline"
-              onClick={() =>
-                patchParams({
-                  q: null,
-                  category: null,
-                  origin: null,
-                  page: null,
-                })
-              }
-            >
-              {t("clearFilters")}
-            </button>
-          ) : null}
+                {t("clearFilters")}
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
 

@@ -623,6 +623,22 @@ select:disabled {
   outline: none;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
+.catalog-filter-input--compact {
+  height: 2.375rem;
+  font-size: 0.8125rem;
+}
+@media (min-width: 768px) {
+  .catalog-filter-input--compact {
+    width: auto;
+    min-width: 11rem;
+    max-width: 15rem;
+  }
+  .catalog-filter-input--compact.catalog-filter-input--grow {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+  }
+}
 .catalog-filter-input:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
