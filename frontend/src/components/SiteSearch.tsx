@@ -360,7 +360,7 @@ export function SiteSearch({ className = "", variant = "both" }: Props) {
           onClick={() => setOpen(true)}
           className={`${
             variant === "both" ? "flex 2xl:hidden" : "flex"
-          } h-10 w-10 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-container-low ${
+          } h-9 w-9 items-center justify-center rounded-full border border-outline-variant text-on-surface sm:h-10 sm:w-10 sm:border-0 transition-colors hover:bg-surface-container-low ${
             variant === "both" ? "" : className
           }`}
           aria-label={t("searchAria")}

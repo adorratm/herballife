@@ -425,7 +425,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
           </div>
         </div>
 
-        <div className="page-shell grid grid-cols-[1fr_auto] items-center gap-2 py-1.5 sm:py-2 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-2 xl:gap-3 xl:py-2">
+        <div className="page-shell grid grid-cols-[1fr_auto] items-center gap-1 py-2.5 max-sm:px-3! sm:gap-2 sm:py-2.5 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-2 xl:gap-3 xl:py-3">
           <Link
             href="/"
             className="flex min-w-0 items-center gap-2.5 justify-self-start lg:max-w-sm xl:max-w-md 2xl:max-w-xl"
@@ -436,7 +436,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                 alt={logoText}
                 width={360}
                 height={100}
-                className="h-16 w-auto max-w-[min(100%,18rem)] shrink-0 bg-transparent object-contain object-left sm:h-18 sm:max-w-80 md:h-20 md:max-w-88 lg:h-22 lg:max-w-104 xl:h-24 xl:max-w-md"
+                className="h-30 w-auto max-w-none shrink-0 bg-transparent object-contain object-left xl:h-32"
                 priority
               />
             ) : (
@@ -452,7 +452,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
                   </span>
                 ) : null}
                 {brand.distributorCode?.trim() ? (
-                  <span className="shrink-0 rounded-full border border-primary/25 bg-primary-fixed px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-wide text-primary sm:text-[10px]">
+                  <span className="hidden shrink-0 rounded-full border border-primary/25 bg-primary-fixed px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-wide text-primary sm:inline sm:text-[10px]">
                     ID {brand.distributorCode.trim()}
                   </span>
                 ) : null}
@@ -460,7 +460,8 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
               {brand.distributorName?.trim() ? (
                 <span
                   className={`mt-0.5 block truncate text-[11px] font-medium text-on-surface-variant sm:text-xs ${
-                    brand.logoUrl ? "lg:hidden xl:block" : ""
+                    /* Logoda isim zaten yazıyor: dar ekranda yer açmak için gizle */
+                    brand.logoUrl ? "hidden sm:block lg:hidden 2xl:block" : ""
                   }`}
                 >
                   {brand.distributorName}
@@ -603,7 +604,14 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
             })}
           </nav>
 
-          <div className="flex shrink-0 items-center justify-self-end gap-0.5 sm:gap-1">
+          <div className="flex shrink-0 flex-col items-center gap-2 justify-self-end sm:items-end">
+          {/* Mobil: distribütör ID butonların üstünde (logo yanında yer yok) */}
+          {brand.distributorCode?.trim() ? (
+            <span className="rounded-full border border-primary/25 bg-primary-fixed px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wide text-primary sm:hidden">
+              ID {brand.distributorCode.trim()}
+            </span>
+          ) : null}
+          <div className="flex items-center gap-1">
             <div className="w-auto 2xl:w-52" data-tour="search">
               <SiteSearch />
             </div>
@@ -631,7 +639,7 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
             <Link
               href="/sepet"
               data-tour="cart"
-              className="relative flex h-10 w-10 items-center justify-center rounded-full text-on-surface hover:bg-surface-container-low 2xl:w-auto 2xl:gap-2 2xl:px-3"
+              className="relative flex h-9 w-9 items-center justify-center rounded-full border border-outline-variant text-on-surface hover:bg-surface-container-low sm:h-10 sm:w-10 sm:border-0 2xl:w-auto 2xl:gap-2 2xl:px-3"
               aria-label={tNav("cart")}
             >
               <CartIcon />
@@ -655,13 +663,14 @@ export function SiteHeader({ settings = DEFAULT_SETTINGS }: Props) {
 
             <button
               type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-on-primary lg:hidden"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-on-primary sm:h-10 sm:w-10 lg:hidden"
               aria-label={tHeader("openMenu")}
               aria-expanded={open}
               onClick={() => setOpen(true)}
             >
               <MenuIcon />
             </button>
+          </div>
           </div>
         </div>
 
@@ -733,7 +742,7 @@ function HeartIcon() {
 
 function CartIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
         d="M4 6h2l1.2 10.2a1.5 1.5 0 0 0 1.5 1.3h8.6a1.5 1.5 0 0 0 1.5-1.3L20 8H7"
         stroke="currentColor"
