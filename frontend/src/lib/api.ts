@@ -739,7 +739,12 @@ export async function getBlogPostBySlug(
 }
 
 export async function getBlogSlugs(): Promise<
-  { slug: string; updatedAt?: string; publishedAt?: string | null }[]
+  {
+    slug: string;
+    updatedAt?: string;
+    publishedAt?: string | null;
+    localeSlugs?: Record<string, string>;
+  }[]
 > {
   try {
     return await apiFetch(`/blog/slugs`);

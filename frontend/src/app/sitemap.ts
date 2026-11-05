@@ -55,31 +55,64 @@ function absoluteHttpUrl(value: unknown): string | null {
   }
 }
 
+/** Sitemap 1 saat önbellekte: hızlı yanıt (Search Console zaman aşımı yaşamasın) */
+export const revalidate = 3600;
+
+type LocaleSlugs = Record<string, string> | undefined;
+
+/**
+ * Yalnız panelde açık diller. Kapalı dillerin URL’leri sitemap’e girerse
+ * Google yönlendirmeli / gereksiz sayfalarla karşılaşır.
+ */
+function activeLocales(
+  settings: Awaited<ReturnType<typeof getSiteSettings>> | null,
+): string[] {
+  const loc = settings?.localization;
+  const fromList = Array.isArray(loc?.enabledLocales)
+    ? loc.enabledLocales
+    : Array.isArray(loc?.languages)
+      ? loc.languages.filter((l) => l?.enabled !== false).map((l) => l.code)
+      : [];
+  const valid = fromList.filter((l): l is (typeof locales)[number] =>
+    (locales as readonly string[]).includes(l),
+  );
+  if (!valid.length) return [...locales];
+  // TR (varsayılan) her zaman başta
+  return Array.from(new Set(["tr", ...valid])).filter((l) =>
+    (locales as readonly string[]).includes(l),
+  );
+}
+
 function withLocales(
-  path: string,
+  langs: string[],
+  pathFor: (locale: string) => string,
   meta: Omit<MetadataRoute.Sitemap[number], "url">,
 ): MetadataRoute.Sitemap {
-  return locales.map((locale) => ({
-    url: `${SITE_URL}${localizedPath(locale, path || "/")}`,
+  const urls = Object.fromEntries(
+    langs.map((l) => [l, `${SITE_URL}${localizedPath(l, pathFor(l) || "/")}`]),
+  );
+  return langs.map((locale) => ({
+    url: urls[locale],
     ...meta,
-    alternates: {
-      languages: Object.fromEntries(
-        locales.map((l) => [l, `${SITE_URL}${localizedPath(l, path || "/")}`]),
-      ),
-    },
+    ...(langs.length > 1 ? { alternates: { languages: urls } } : {}),
   }));
+}
+
+function slugFor(locale: string, base: string, localeSlugs: LocaleSlugs) {
+  return (localeSlugs?.[locale] || base).trim();
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const settings = await getSiteSettings("tr").catch(() => null);
+  const langs = activeLocales(settings);
   const reviewsOn = settings
     ? isGoogleReviewsPageEnabled(settings)
     : false;
   const entries: MetadataRoute.Sitemap = STATIC_ROUTES.filter(
     (route) => reviewsOn || route.path !== "/yorum",
   ).flatMap((route) =>
-    withLocales(route.path, {
+    withLocales(langs, () => route.path, {
       lastModified: now,
       changeFrequency: route.changeFrequency,
       priority: route.priority,
@@ -90,18 +123,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const [products, blogSlugs, categories] = await Promise.all([
       fetchAllCatalogProducts().catch(() => []),
       getBlogSlugs().catch(() => []),
-      getCategories().catch(() => []),
+      getCategories("tr").catch(() => []),
     ]);
 
     for (const cat of categories || []) {
       if (!cat?.slug) continue;
-      const path = categoryCatalogPath(cat.slug);
       entries.push(
-        ...withLocales(path, {
-          lastModified: safeDate(cat.updatedAt) || now,
-          changeFrequency: "weekly",
-          priority: 0.75,
-        }),
+        ...withLocales(
+          langs,
+          (l) => categoryCatalogPath(slugFor(l, cat.slug, cat.localeSlugs)),
+          {
+            lastModified: safeDate(cat.updatedAt) || now,
+            changeFrequency: "weekly",
+            priority: 0.75,
+          },
+        ),
       );
     }
 
@@ -109,22 +145,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (!p?.slug) continue;
       const img = absoluteHttpUrl(productImage(p.imageUrl, p.slug));
       entries.push(
-        ...withLocales(`/urunler/${p.slug}`, {
-          lastModified: safeDate(p.updatedAt) || now,
-          changeFrequency: "weekly",
-          priority: 0.8,
-          ...(img
-            ? { images: [img] }
-            : {}),
-        }),
+        ...withLocales(
+          langs,
+          (l) => `/urunler/${slugFor(l, p.slug, p.localeSlugs)}`,
+          {
+            lastModified: safeDate(p.updatedAt) || now,
+            changeFrequency: "weekly",
+            priority: 0.8,
+            ...(img ? { images: [img] } : {}),
+          },
+        ),
       );
     }
 
-    for (const slug of blogSlugs || []) {
-      if (!slug) continue;
+    for (const post of blogSlugs || []) {
+      // API {slug, updatedAt, localeSlugs} döner (eski sürüm düz string)
+      const base =
+        typeof post === "string" ? post : (post as { slug?: string })?.slug;
+      if (!base) continue;
+      const ls =
+        typeof post === "string" ? undefined : (post as { localeSlugs?: LocaleSlugs }).localeSlugs;
+      const updated =
+        typeof post === "string"
+          ? undefined
+          : safeDate(post.updatedAt) || safeDate(post.publishedAt);
       entries.push(
-        ...withLocales(`/blog/${slug}`, {
-          lastModified: now,
+        ...withLocales(langs, (l) => `/blog/${slugFor(l, base, ls)}`, {
+          lastModified: updated || now,
           changeFrequency: "weekly",
           priority: 0.7,
         }),

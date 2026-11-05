@@ -17,6 +17,7 @@ import {
   applyBlogLocale,
   assertImagesByLocaleWhenNotShared,
   assertRequiredLocales,
+  buildLocaleSlugs,
   normalizeLocale,
   requiredExtraLocalesFromLocalization,
   sqlMatchSlugAnyLocale,
@@ -253,18 +254,29 @@ export class BlogService {
   }
 
   async listPublishedSlugs(): Promise<
-    Pick<BlogPost, 'slug' | 'updatedAt' | 'publishedAt'>[]
+    (Pick<BlogPost, 'slug' | 'updatedAt' | 'publishedAt'> & {
+      localeSlugs: Record<string, string>;
+    })[]
   > {
-    return this.em.find(BlogPost, {
+    const rows = await this.em.find(BlogPost, {
       where: { isPublished: true },
       select: {
         slug: true,
         updatedAt: true,
         publishedAt: true,
+        translations: true,
       },
       order: { publishedAt: 'DESC' },
     });
+    // Sitemap: her dil için doğru slug (yönlendirmeli URL göndermeyelim)
+    return rows.map((r) => ({
+      slug: r.slug,
+      updatedAt: r.updatedAt,
+      publishedAt: r.publishedAt,
+      localeSlugs: buildLocaleSlugs(r.slug, r.translations),
+    }));
   }
+
 }
 
 function normalizeSlugs(value?: string[] | null): string[] {
