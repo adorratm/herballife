@@ -25,20 +25,21 @@ export function ProductCardHorizontal({ product }: { product: Product }) {
   return (
     <Link
       href={productHref(product.slug)}
-      className="group card-motion flex h-full min-w-0 items-stretch overflow-hidden rounded-xl border border-outline-variant bg-white shadow-sm"
+      className="group card-motion isolate flex h-full min-w-0 items-center overflow-hidden rounded-xl border border-outline-variant bg-white shadow-sm [transform:translateZ(0)]"
     >
-      <div className="relative w-[34%] max-w-36 shrink-0 border-r border-outline-variant/70 bg-surface-container-low">
-        <div className="relative h-full min-h-28 w-full">
+      {/* Kare görsel kendi yuvarlak çerçevesinde: kart köşelerinden taşmaz */}
+      <div className="flex w-[34%] max-w-36 shrink-0 items-center self-stretch border-r border-outline-variant/70 p-2">
+        <div className="relative aspect-square w-full overflow-hidden rounded-lg border border-outline-variant/50 bg-white">
           <Image
             src={img}
             alt={product.name}
             fill
-            className="object-contain p-2.5 transition-transform duration-500 ease-out group-hover:scale-[1.06]"
-            sizes="(max-width: 640px) 34vw, 10rem"
+            className="rounded-lg object-contain p-1.5 transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+            sizes="(max-width: 640px) 34vw, 9rem"
           />
         </div>
       </div>
-      <div className="flex min-w-0 flex-1 flex-col gap-1 p-3">
+      <div className="flex min-w-0 flex-1 flex-col gap-1 self-stretch p-3">
         <h3 className="line-clamp-2 font-display text-sm font-semibold leading-snug text-on-surface group-hover:text-primary">
           {product.name}
         </h3>
