@@ -1,6 +1,7 @@
 "use client";
 
 import { AppImage as Image } from "@/components/AppImage";
+import { catalogItemId } from "@/lib/catalog-item-id";
 import { Link } from "@/i18n/routing";
 import { productHref } from "@/i18n/hrefs";
 import { useTranslations } from "next-intl";
@@ -159,6 +160,7 @@ export function ProductCard({
         >
           <AddToCartButton
             productId={product.id}
+            itemId={catalogItemId(product, variant || null)}
             variantId={variant?.id}
             variantLabel={variant?.weightLabel}
             productName={product.name}

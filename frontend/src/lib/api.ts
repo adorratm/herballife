@@ -631,6 +631,40 @@ export async function getOrderById(
   }
 }
 
+export type PurchaseAnalytics = {
+  status: string;
+  conversion: boolean;
+  payment_type: string | null;
+  transaction_id: string;
+  currency: string;
+  value: number;
+  shipping?: number;
+  tax?: number;
+  coupon?: string;
+  items: Array<{
+    item_id: string;
+    item_name?: string;
+    item_brand?: string;
+    item_variant?: string;
+    price?: number;
+    quantity?: number;
+  }>;
+};
+
+/** Ödeme başarı sayfası: imzalı token ile (misafir dahil) doğrulanmış sipariş özeti */
+export async function getPurchaseAnalytics(
+  orderId: string,
+  token: string,
+): Promise<PurchaseAnalytics | null> {
+  try {
+    return await apiFetch<PurchaseAnalytics>(
+      `/orders/${encodeURIComponent(orderId)}/analytics?t=${encodeURIComponent(token)}`,
+    );
+  } catch {
+    return null;
+  }
+}
+
 export async function getOrderReturnRequests(
   orderId: string,
   token: string,

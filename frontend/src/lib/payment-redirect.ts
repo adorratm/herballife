@@ -10,6 +10,7 @@ export function redirectToPayment(
     checkoutFormContent?: string;
     orderId?: string;
     orderNumber?: string;
+    analyticsToken?: string;
   },
   locale: string = "tr",
 ): boolean {
@@ -18,6 +19,7 @@ export function redirectToPayment(
     const query: Record<string, string> = { method: result.provider };
     if (result.orderId) query.orderId = result.orderId;
     if (result.orderNumber) query.orderNumber = result.orderNumber;
+    if (result.analyticsToken) query.t = result.analyticsToken;
     window.location.href = getPathname({
       href: { pathname: "/odeme/basarili", query },
       locale,

@@ -10,6 +10,7 @@ import {
   useFabScrollExpand,
 } from "@/hooks/useFabScrollExpand";
 import { stripHtml } from "@/lib/format";
+import { trackWhatsAppClick } from "@/lib/analytics";
 import {
   DEFAULT_WHATSAPP_PHONE,
   DEFAULT_WHATSAPP_SETTINGS,
@@ -38,6 +39,7 @@ const TITLE_KEYS = ["title0", "title1", "title2", "title3", "title4"] as const;
 
 function openWhatsApp(phone: string | null | undefined, text: string) {
   const url = buildWhatsAppUrl(phone, stripHtml(text));
+  trackWhatsAppClick("chat_widget");
   window.open(url, "_blank", "noopener,noreferrer");
 }
 

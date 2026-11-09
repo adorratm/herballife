@@ -8,6 +8,7 @@ import {
   type CookieConsent,
 } from "@/lib/cookie-consent";
 import { useAnalyticsIds } from "@/lib/analytics-ids";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 function applyGtagConsent(consent: CookieConsent | null) {
   if (typeof window === "undefined") return;
@@ -47,6 +48,19 @@ export function AnalyticsScripts() {
     return () => window.removeEventListener(COOKIE_CONSENT_EVENT, onConsent);
   }, []);
 
+  // Sitedeki tüm wa.me / api.whatsapp.com bağlantılarını dönüşüm olarak ölç
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      const target = e.target as Element | null;
+      const a = target?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!a) return;
+      if (!/(^|\/\/)(wa\.me|api\.whatsapp\.com|web\.whatsapp\.com)\//i.test(a.href)) return;
+      trackWhatsAppClick(window.location.pathname);
+    }
+    document.addEventListener("click", onClick, { capture: true });
+    return () => document.removeEventListener("click", onClick, { capture: true });
+  }, []);
+
   useEffect(() => {
     if (!consent) return;
     const t = window.setTimeout(() => applyGtagConsent(consent), 600);
@@ -68,7 +82,7 @@ export function AnalyticsScripts() {
           new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
           j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','${ids.gtmId}');
+          })(window,document,'script','dataLayer',${JSON.stringify(ids.gtmId)});
         `}</Script>
       ) : null}
 
@@ -82,7 +96,7 @@ export function AnalyticsScripts() {
           t.src=v;s=b.getElementsByTagName(e)[0];
           s.parentNode.insertBefore(t,s)}(window, document,'script',
           'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', '${metaOrFb}');
+          fbq('init', ${JSON.stringify(metaOrFb)});
           fbq('track', 'PageView');
         `}</Script>
       ) : null}
@@ -91,7 +105,7 @@ export function AnalyticsScripts() {
         <Script id="tiktok-pixel" strategy="afterInteractive">{`
           !function (w, d, t) {
             w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
-            ttq.load('${ids.tiktokPixelId}');
+            ttq.load(${JSON.stringify(ids.tiktokPixelId)});
             ttq.page();
           }(window, document, 'ttq');
         `}</Script>

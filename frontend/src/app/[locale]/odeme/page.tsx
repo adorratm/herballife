@@ -32,6 +32,7 @@ import {
 import { formatMoney } from "@/lib/format";
 import { calculateOrderTotals } from "@/lib/pricing";
 import { trackBeginCheckout } from "@/lib/analytics";
+import { catalogItemId } from "@/lib/catalog-item-id";
 import { cartLineSelectionLabel } from "@/lib/variant-groups";
 import { useActiveCurrency } from "@/hooks/useActiveCurrency";
 import type {
@@ -219,8 +220,16 @@ export default function CheckoutPage() {
         const subtotal = cartSubtotal(cartData);
         trackBeginCheckout({
           value: subtotal,
-          currency: "TRY",
-          itemCount: cartData.items.reduce((n, i) => n + i.quantity, 0),
+          currency: cartData.currency || "TRY",
+          items: cartData.items.map((i) => ({
+            item_id: i.product
+              ? catalogItemId(i.product, i.variant || null)
+              : i.productId,
+            item_name: i.product?.name,
+            item_variant: i.selectionLabel || i.variant?.weightLabel || undefined,
+            price: Number(i.unitPrice),
+            quantity: i.quantity,
+          })),
         });
       }
 

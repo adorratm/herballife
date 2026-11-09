@@ -442,6 +442,8 @@ export type PaymentInitResponse = {
   paymentPageUrl?: string | null;
   /** cod / bank_transfer için sunucunun önerdiği yönlendirme yolu */
   redirectPath?: string | null;
+  /** Ödeme başarı sayfası dönüşüm verisi için imzalı anahtar */
+  analyticsToken?: string;
   iframeUrl?: string | null;
   token?: string;
   checkoutFormContent?: string;

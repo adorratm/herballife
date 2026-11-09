@@ -11,6 +11,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
+import { orderAnalyticsToken } from '@modules/orders/order-analytics';
 import { PaytrService } from '@modules/payments/paytr.service';
 import { PaymentsService } from '@modules/payments/payments.service';
 import {
@@ -104,6 +105,9 @@ export class PaymentsController {
       const qs = new URLSearchParams();
       if (result.orderId) qs.set('orderId', result.orderId);
       if (result.orderNumber) qs.set('orderNumber', result.orderNumber);
+      if (result.orderId) {
+        qs.set('t', orderAnalyticsToken(this.config, result.orderId));
+      }
       if (result.success) {
         return res.redirect(302, `${frontend}/odeme/basarili?${qs}`);
       }

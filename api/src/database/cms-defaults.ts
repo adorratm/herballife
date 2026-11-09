@@ -289,6 +289,8 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     ga4Id: '',
     gtmId: '',
     googleAdsId: '',
+    googleAdsPurchaseLabel: '',
+    googleAdsWhatsappLabel: '',
     metaPixelId: '',
     facebookPixelId: '',
     yandexMetrikaId: '',

@@ -12,7 +12,32 @@ import {
 } from "@/i18n/routing";
 
 function plainMeta(text: string | null | undefined) {
-  return stripHtml(String(text || ""));
+  return stripHtml(String(text || ""))
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function truncateMeta(text: string, max = 160) {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max - 1);
+  const sp = cut.lastIndexOf(" ");
+  return `${(sp > 100 ? cut.slice(0, sp) : cut).trim()}…`;
+}
+
+/** Ürünlerin üretici markası (Merchant feed, Product JSON-LD). Mağaza adı değil. */
+export const PRODUCT_BRAND =
+  process.env.NEXT_PUBLIC_PRODUCT_BRAND?.trim() || "Herbalife";
+
+/** “Formül 1 Shake” → “Herbalife Formül 1 Shake” (arama niyeti için). */
+export function withProductBrand(name: string): string {
+  const n = name.trim();
+  return new RegExp(PRODUCT_BRAND, "i").test(n) ? n : `${PRODUCT_BRAND} ${n}`;
 }
 
 export { categoryCatalogPath };
@@ -220,7 +245,7 @@ export const DEFAULT_SEO_LABELS: SeoLabels = {
   blogTagTitle: "Articles · {tag}",
   blogTagDescription: "Posts tagged “{tag}” — {brand}.",
   pageSuffix: " · Page {page}",
-  aboutJsonLdDescription: "{brand} — independent Herbal Kapıda distributor.",
+  aboutJsonLdDescription: "{brand} — independent Herbalife distributor.",
   keywordsCatalogDefault: ["catalog", "products", "bundles", "sets"],
   keywordsCategoryExtra: ["product", "bundle"],
   keywordsBlog: ["articles", "nutrition", "Herbal Kapıda"],
@@ -393,20 +418,35 @@ export function buildProductMetadata(
   settings: SiteSettings,
   locale = "tr",
 ): Metadata {
-  const title = product.seoTitle || product.name;
-  const description =
-    product.seoDescription ||
-    product.shortDescription ||
-    product.description?.slice(0, 160) ||
-    settings.seo.description;
+  const title = product.seoTitle?.trim() || withProductBrand(product.name);
+  const description = truncateMeta(
+    plainMeta(
+      product.seoDescription ||
+        product.shortDescription ||
+        product.description ||
+        settings.seo.description,
+    ),
+  );
   const image = product.imageUrl || settings.seo.ogImage;
-  const url = `${SITE_URL}${localizedPath(locale, `/urunler/${product.slug}`)}`;
+  const slugFor = (l: string) => product.localeSlugs?.[l] || product.slug;
+  const url = `${SITE_URL}${localizedPath(locale, `/urunler/${slugFor(locale)}`)}`;
   const ogLocale = OPEN_GRAPH_LOCALE[locale] || OPEN_GRAPH_LOCALE.tr;
 
   return {
     title,
     description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      languages: {
+        ...Object.fromEntries(
+          locales.map((l) => [
+            l,
+            `${SITE_URL}${localizedPath(l, `/urunler/${slugFor(l)}`)}`,
+          ]),
+        ),
+        "x-default": `${SITE_URL}${localizedPath("tr", `/urunler/${slugFor("tr")}`)}`,
+      },
+    },
     robots: { index: true, follow: true },
     openGraph: {
       // Next Metadata yalnızca website|article|... kabul eder; "product" RSC'yi düşürür.
@@ -836,7 +876,7 @@ export function productJsonLd(
     ...(additionalProperty.length ? { additionalProperty } : {}),
     brand: {
       "@type": "Brand",
-      name: settings.brand.name,
+      name: PRODUCT_BRAND,
     },
     offers,
     ...(ratingCount > 0 && ratingAvg > 0

@@ -74,3 +74,10 @@ export function catalogListAndSalePrice(
   }
   return { price: current };
 }
+
+export { catalogItemId } from "@/lib/catalog-item-id";
+
+/** Feed linkleri: dil öneksiz URL tarayıcı diline göre /en'e yönlenebiliyor. */
+export function catalogProductUrl(siteUrl: string, slug: string): string {
+  return `${siteUrl.replace(/\/$/, "")}/tr/urunler/${encodeURIComponent(slug)}`;
+}

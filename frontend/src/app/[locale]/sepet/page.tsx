@@ -1,6 +1,7 @@
 "use client";
 
 import { AppImage as Image } from "@/components/AppImage";
+import { catalogItemId } from "@/lib/catalog-item-id";
 import { Link, asRouterHref, useRouter } from "@/i18n/routing";
 import { productHref } from "@/i18n/hrefs";
 import { useLocale, useTranslations } from "next-intl";
@@ -381,6 +382,7 @@ export default function CartPage() {
                         <div className="mt-1.5">
                           <AddToCartButton
                             productId={p.id}
+                            itemId={catalogItemId(p)}
                             productName={p.name}
                             price={Number(p.salePrice ?? p.basePrice)}
                             label={tCommon("add")}

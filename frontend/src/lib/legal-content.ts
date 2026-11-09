@@ -384,7 +384,7 @@ ${seller.email} · ${seller.phone}
     },
     "musteri-memnuniyeti": {
       title: "Müşteri Memnuniyeti Politikası",
-      content: `${seller.name}, orijinal Herbal Kapıda ürünlerinde kalite, şeffaflık ve hızlı destek sunmayı taahhüt eder.
+      content: `${seller.name}, orijinal Herbalife ürünlerinde kalite, şeffaflık ve hızlı destek sunmayı taahhüt eder.
 
 1. İlkelerimiz
 - Sipariş ve teslimat süreçlerinde açık bilgilendirme

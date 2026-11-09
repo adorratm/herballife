@@ -49,6 +49,8 @@ type AnalyticsSettings = {
   ga4Id: string;
   gtmId: string;
   googleAdsId: string;
+  googleAdsPurchaseLabel: string;
+  googleAdsWhatsappLabel: string;
   metaPixelId: string;
   facebookPixelId: string;
   yandexMetrikaId: string;
@@ -299,6 +301,8 @@ const DEFAULT_ANALYTICS: AnalyticsSettings = {
   ga4Id: '',
   gtmId: '',
   googleAdsId: '',
+  googleAdsPurchaseLabel: '',
+  googleAdsWhatsappLabel: '',
   metaPixelId: '',
   facebookPixelId: '',
   yandexMetrikaId: '',
@@ -605,6 +609,73 @@ const SETTINGS_SECTIONS: { key: SettingsSection; label: string }[] = [
   { key: 'navigasyon', label: 'Menü & footer' },
 ];
 
+const RE_GTM = /\bGTM-[A-Z0-9]{4,12}\b/;
+const RE_GA4 = /\bG-[A-Z0-9]{6,16}\b/;
+const RE_AW = /\bAW-(\d{6,14})(?:\/([A-Za-z0-9_-]{4,64}))?/;
+const RE_LABEL = /^[A-Za-z0-9_-]{4,64}$/;
+const RE_DIGITS = /^\d{5,20}$/;
+
+/** Yanlış alana yazılan / snippet olarak yapıştırılan kimlikleri ayıklar. */
+function normalizeAnalyticsForSave(a: AnalyticsSettings): AnalyticsSettings {
+  const t = (v: string) => (v || '').trim();
+  const g = [t(a.ga4Id), t(a.gtmId), t(a.googleAdsId)];
+  const pick = (re: RegExp, own: string) =>
+    own.match(re)?.[0] || g.map((x) => x.match(re)?.[0]).find(Boolean) || '';
+  const aw =
+    t(a.googleAdsId).match(RE_AW) ||
+    g.map((x) => x.match(RE_AW)).find(Boolean) ||
+    null;
+  const label = (v: string) => {
+    const x = t(v).replace(/^AW-\d+\//, '');
+    return RE_LABEL.test(x) ? x : '';
+  };
+  const digits = (v: string) => (RE_DIGITS.test(t(v)) ? t(v) : '');
+  const tiktok = t(a.tiktokPixelId).toUpperCase();
+  return {
+    ga4Id: pick(RE_GA4, t(a.ga4Id)),
+    gtmId: pick(RE_GTM, t(a.gtmId)),
+    googleAdsId: aw ? `AW-${aw[1]}` : '',
+    googleAdsPurchaseLabel: label(a.googleAdsPurchaseLabel) || aw?.[2] || '',
+    googleAdsWhatsappLabel: label(a.googleAdsWhatsappLabel),
+    metaPixelId: digits(a.metaPixelId),
+    facebookPixelId: digits(a.facebookPixelId),
+    yandexMetrikaId: digits(a.yandexMetrikaId),
+    tiktokPixelId: /^[A-Z0-9]{10,32}$/.test(tiktok) ? tiktok : '',
+  };
+}
+
+function analyticsIssues(a: AnalyticsSettings): string[] {
+  const n = normalizeAnalyticsForSave(a);
+  const out: string[] = [];
+  const labels: Record<keyof AnalyticsSettings, string> = {
+    ga4Id: 'GA4',
+    gtmId: 'GTM',
+    googleAdsId: 'Google Ads ID',
+    googleAdsPurchaseLabel: 'Ads satın alma etiketi',
+    googleAdsWhatsappLabel: 'Ads WhatsApp etiketi',
+    metaPixelId: 'Meta Pixel',
+    facebookPixelId: 'Facebook Pixel',
+    yandexMetrikaId: 'Yandex Metrika',
+    tiktokPixelId: 'TikTok Pixel',
+  };
+  for (const k of Object.keys(labels) as (keyof AnalyticsSettings)[]) {
+    const raw = (a[k] || '').trim();
+    if (raw && raw !== n[k]) {
+      out.push(
+        n[k]
+          ? `${labels[k]}: kayıtta “${n[k]}” olarak düzeltilecek.`
+          : `${labels[k]}: geçerli bir kimlik değil, kayıtta temizlenecek.`,
+      );
+    }
+  }
+  if (n.googleAdsId && !n.googleAdsPurchaseLabel && !n.gtmId) {
+    out.push(
+      'Google Ads satın alma etiketi boş: Ads → Hedefler → Dönüşümler → Satın alma → Etiket kurulumu ekranındaki send_to değerinin “/” sonrasını girin.',
+    );
+  }
+  return out;
+}
+
 export default function SiteSettingsPage() {
   const [formLocale, setFormLocale] = useState<FormLocale>('tr');
   const [settingsSection, setSettingsSection] =
@@ -662,6 +733,7 @@ export default function SiteSettingsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsSettings>({
     ...DEFAULT_ANALYTICS,
   });
+  const analyticsWarnings = analyticsIssues(analytics);
   const [shipping, setShipping] = useState<ShippingSettings>({
     ...DEFAULT_SHIPPING,
   });
@@ -938,6 +1010,8 @@ export default function SiteSettingsPage() {
             ga4Id: String(a.ga4Id || ''),
             gtmId: String(a.gtmId || ''),
             googleAdsId: String(a.googleAdsId || ''),
+            googleAdsPurchaseLabel: String(a.googleAdsPurchaseLabel || ''),
+            googleAdsWhatsappLabel: String(a.googleAdsWhatsappLabel || ''),
             metaPixelId: String(a.metaPixelId || ''),
             facebookPixelId: String(a.facebookPixelId || ''),
             yandexMetrikaId: String(a.yandexMetrikaId || ''),
@@ -1211,15 +1285,7 @@ export default function SiteSettingsPage() {
             },
             {
               key: 'analytics',
-              value: {
-                ga4Id: analytics.ga4Id.trim(),
-                gtmId: analytics.gtmId.trim(),
-                googleAdsId: analytics.googleAdsId.trim(),
-                metaPixelId: analytics.metaPixelId.trim(),
-                facebookPixelId: analytics.facebookPixelId.trim(),
-                yandexMetrikaId: analytics.yandexMetrikaId.trim(),
-                tiktokPixelId: analytics.tiktokPixelId.trim(),
-              },
+              value: normalizeAnalyticsForSave(analytics),
               group: 'analytics',
             },
             {
@@ -2216,13 +2282,28 @@ export default function SiteSettingsPage() {
           <legend className="mono px-2 text-xs uppercase text-muted">
             Analitik & piksel
           </legend>
-          <p className="text-xs text-muted">Tüm dillerde ortaktır.</p>
+          <p className="text-xs text-muted">
+            Tüm dillerde ortaktır. Sadece kimlik girin (kod parçası
+            yapıştırmayın). Kayıtta biçim kontrol edilir; yanlış alana
+            yazılan GTM-/G-/AW- kimlikleri doğru alana taşınır. GTM
+            kullanıyorsanız aynı GA4 / Ads etiketini GTM içine ayrıca
+            eklemeyin (çift sayım).
+          </p>
+          {analyticsWarnings.length ? (
+            <ul className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-700">
+              {analyticsWarnings.map((w) => (
+                <li key={w}>⚠ {w}</li>
+              ))}
+            </ul>
+          ) : null}
           <div className="grid gap-3 md:grid-cols-2">
             {(
               [
-                ['ga4Id', 'Google Analytics 4 (G-…)'],
-                ['gtmId', 'Google Tag Manager'],
-                ['googleAdsId', 'Google Ads dönüşüm'],
+                ['ga4Id', 'Google Analytics 4 (G-XXXXXXXXXX)'],
+                ['gtmId', 'Google Tag Manager (GTM-XXXXXXX)'],
+                ['googleAdsId', 'Google Ads hesap ID (AW-123456789)'],
+                ['googleAdsPurchaseLabel', 'Ads satın alma dönüşüm etiketi (AW-…/ sonrası)'],
+                ['googleAdsWhatsappLabel', 'Ads WhatsApp dönüşüm etiketi (opsiyonel)'],
                 ['metaPixelId', 'Meta Pixel'],
                 ['facebookPixelId', 'Facebook Pixel (Meta ile aynı olabilir)'],
                 ['yandexMetrikaId', 'Yandex Metrika'],

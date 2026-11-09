@@ -195,7 +195,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     name: "Herbal Kapıda",
     slogan: "A healthier, happier life",
     tagline:
-      "Original Herbal Kapıda products and personalized nutrition support with an independent distributor.",
+      "Original Herbalife products and personalized nutrition support with an independent distributor.",
     established: "Since 2024",
     location: "Buca / İzmir",
     logoUrl:

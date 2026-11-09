@@ -8,6 +8,7 @@ import { CookieBannerGate } from "@/components/CookieBannerGate";
 import { AnalyticsScripts } from "@/components/AnalyticsScripts";
 import { LocaleAlternatesProvider } from "@/components/LocaleAlternates";
 import { PanelGoogleTags } from "@/components/PanelGoogleTags";
+import { consentDefaultInlineScript } from "@/lib/consent-default";
 import { SiteTour } from "@/components/SiteTour";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { SiteFooterGate } from "@/components/SiteFooterGate";
@@ -111,6 +112,10 @@ export default async function LocaleLayout({ children, params }: Props) {
       className={`${jakarta.variable} ${inter.variable} h-full`}
     >
       <head>
+        <script
+          id="google-consent-default"
+          dangerouslySetInnerHTML={{ __html: consentDefaultInlineScript() }}
+        />
         {mediaBase ? <link rel="preconnect" href={mediaBase} /> : null}
       </head>
       <body className="flex min-h-full flex-col overflow-x-clip bg-background text-on-background antialiased">

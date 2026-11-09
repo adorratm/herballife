@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { ProductGallery } from "@/components/ProductGallery";
 import { ProductReviews } from "@/components/ProductReviews";
 import { ProductViewTracker } from "@/components/ProductViewTracker";
+import { catalogItemId } from "@/lib/catalog-item-id";
 import { Reveal } from "@/components/Reveal";
 import { getProductReviews } from "@/lib/api";
 import {
@@ -139,7 +140,7 @@ export default async function ProductDetailPage({ params }: Props) {
   const specs = [
     [t("specCategory"), category?.name || null],
     ...(distributorCode
-      ? ([[t("specHerbal KapıdaId"), distributorCode]] as const)
+      ? ([[t("specHerbalifeId"), distributorCode]] as const)
       : []),
     [t("specKind"), kindLabel],
     [t("specForm"), product.process || null],
@@ -179,9 +180,17 @@ export default async function ProductDetailPage({ params }: Props) {
         currentSlug={product.slug}
       />
       <ProductViewTracker
-        id={product.id}
+        itemId={catalogItemId(
+          product,
+          (product.variants || []).find((v) => v.isActive !== false) || null,
+        )}
         name={product.name}
-        price={Number(product.salePrice ?? product.basePrice ?? 0)}
+        price={Number(
+          (product.variants || []).find((v) => v.isActive !== false)?.price ??
+            product.salePrice ??
+            product.basePrice ??
+            0,
+        )}
         currency={product.currency || "TRY"}
       />
       <JsonLd

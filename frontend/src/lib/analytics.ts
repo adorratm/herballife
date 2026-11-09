@@ -1,3 +1,5 @@
+import { getLoadedAnalyticsIds, loadAnalyticsIds } from "@/lib/analytics-ids";
+
 type DataLayer = Array<Record<string, unknown>>;
 
 declare global {
@@ -8,110 +10,117 @@ declare global {
   }
 }
 
-function pushDataLayer(payload: Record<string, unknown>) {
+export type AnalyticsItem = {
+  /** Merchant feed g:id ile aynı (catalogItemId) */
+  item_id: string;
+  item_name?: string;
+  item_brand?: string;
+  item_variant?: string;
+  price?: number;
+  quantity?: number;
+};
+
+const BRAND = process.env.NEXT_PUBLIC_PRODUCT_BRAND?.trim() || "Herbalife";
+
+function cleanItem(i: AnalyticsItem): AnalyticsItem {
+  return {
+    item_id: i.item_id,
+    ...(i.item_name ? { item_name: i.item_name } : {}),
+    item_brand: i.item_brand || BRAND,
+    ...(i.item_variant ? { item_variant: i.item_variant } : {}),
+    ...(typeof i.price === "number" && Number.isFinite(i.price)
+      ? { price: i.price }
+      : {}),
+    quantity: i.quantity ?? 1,
+  };
+}
+
+/**
+ * GTM için dataLayer olayı. gtag.js yolunda (GTM yoksa) GA4'e ayrıca
+ * gtag('event') gönderilir; GTM varken çift sayım olmaması için gönderilmez.
+ */
+function emit(event: string, ecommerce: Record<string, unknown>) {
   if (typeof window === "undefined") return;
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push(payload);
+  window.dataLayer.push({ ecommerce: null });
+  window.dataLayer.push({ event, ecommerce });
+
+  const ids = getLoadedAnalyticsIds();
+  if (ids && !ids.gtmId && ids.ga4Id && typeof window.gtag === "function") {
+    window.gtag("event", event, { ...ecommerce, send_to: ids.ga4Id });
+  }
+}
+
+/** Google Ads dönüşümü (panelde AW-… ve etiket tanımlıysa, gtag.js ile). */
+async function adsConversion(
+  labelKey: "googleAdsPurchaseLabel" | "googleAdsWhatsappLabel",
+  params: Record<string, unknown>,
+) {
+  if (typeof window === "undefined") return;
+  const ids = await loadAnalyticsIds();
+  const label = ids[labelKey];
+  if (!ids.googleAdsId || !label || typeof window.gtag !== "function") return;
+  window.gtag("event", "conversion", {
+    send_to: `${ids.googleAdsId}/${label}`,
+    ...params,
+  });
+}
+
+export function trackViewContent(item: {
+  itemId: string;
+  name?: string;
+  price?: number;
+  currency?: string;
+}) {
+  const currency = item.currency || "TRY";
+  const value = item.price ?? 0;
+  emit("view_item", {
+    currency,
+    value,
+    items: [cleanItem({ item_id: item.itemId, item_name: item.name, price: item.price })],
+  });
+  if (typeof window !== "undefined" && typeof window.fbq === "function") {
+    window.fbq("track", "ViewContent", {
+      content_ids: [item.itemId],
+      content_name: item.name,
+      content_type: "product",
+      value,
+      currency,
+    });
+  }
 }
 
 export function trackAddToCart(item: {
-  id: string;
+  itemId: string;
   name?: string;
+  variant?: string | null;
   price?: number;
   quantity?: number;
   currency?: string;
 }) {
-  if (typeof window === "undefined") return;
   const qty = item.quantity ?? 1;
   const value = (item.price ?? 0) * qty;
-
-  if (typeof window.gtag === "function") {
-    window.gtag("event", "add_to_cart", {
-      currency: item.currency || "TRY",
-      value,
-      items: [
-        {
-          item_id: item.id,
-          item_name: item.name,
-          quantity: qty,
-          price: item.price,
-        },
-      ],
-    });
-  }
-
-  pushDataLayer({
-    event: "add_to_cart",
-    ecommerce: {
-      currency: item.currency || "TRY",
-      value,
-      items: [
-        {
-          item_id: item.id,
-          item_name: item.name,
-          quantity: qty,
-          price: item.price,
-        },
-      ],
-    },
+  const currency = item.currency || "TRY";
+  emit("add_to_cart", {
+    currency,
+    value,
+    items: [
+      cleanItem({
+        item_id: item.itemId,
+        item_name: item.name,
+        item_variant: item.variant || undefined,
+        price: item.price,
+        quantity: qty,
+      }),
+    ],
   });
-
-  if (typeof window.fbq === "function") {
+  if (typeof window !== "undefined" && typeof window.fbq === "function") {
     window.fbq("track", "AddToCart", {
-      content_ids: [item.id],
+      content_ids: [item.itemId],
       content_name: item.name,
       content_type: "product",
       value,
-      currency: item.currency || "TRY",
-    });
-  }
-}
-
-export function trackViewContent(item: {
-  id: string;
-  name?: string;
-  price?: number;
-  currency?: string;
-}) {
-  if (typeof window === "undefined") return;
-  const value = item.price ?? 0;
-
-  if (typeof window.gtag === "function") {
-    window.gtag("event", "view_item", {
-      currency: item.currency || "TRY",
-      value,
-      items: [
-        {
-          item_id: item.id,
-          item_name: item.name,
-          price: item.price,
-        },
-      ],
-    });
-  }
-
-  pushDataLayer({
-    event: "view_item",
-    ecommerce: {
-      currency: item.currency || "TRY",
-      value,
-      items: [
-        {
-          item_id: item.id,
-          item_name: item.name,
-          price: item.price,
-        },
-      ],
-    },
-  });
-
-  if (typeof window.fbq === "function") {
-    window.fbq("track", "ViewContent", {
-      content_ids: [item.id],
-      content_name: item.name,
-      content_type: "product",
-      value,
-      currency: item.currency || "TRY",
+      currency,
     });
   }
 }
@@ -119,82 +128,96 @@ export function trackViewContent(item: {
 export function trackBeginCheckout(input: {
   value?: number;
   currency?: string;
-  itemCount?: number;
+  items: AnalyticsItem[];
 }) {
-  if (typeof window === "undefined") return;
   const value = input.value ?? 0;
-
-  if (typeof window.gtag === "function") {
-    window.gtag("event", "begin_checkout", {
-      currency: input.currency || "TRY",
-      value,
-      items: input.itemCount
-        ? [{ quantity: input.itemCount }]
-        : undefined,
-    });
-  }
-
-  pushDataLayer({
-    event: "begin_checkout",
-    ecommerce: {
-      currency: input.currency || "TRY",
-      value,
-      item_count: input.itemCount,
-    },
-  });
-
-  if (typeof window.fbq === "function") {
+  const currency = input.currency || "TRY";
+  const items = input.items.map(cleanItem);
+  emit("begin_checkout", { currency, value, items });
+  if (typeof window !== "undefined" && typeof window.fbq === "function") {
     window.fbq("track", "InitiateCheckout", {
       value,
-      currency: input.currency || "TRY",
-      num_items: input.itemCount,
+      currency,
+      num_items: items.reduce((n, i) => n + (i.quantity || 1), 0),
+      content_ids: items.map((i) => i.item_id),
     });
   }
 }
 
-export function trackPurchase(order: {
-  id: string;
-  orderNumber?: string | null;
-  value?: number;
-  currency?: string;
-  ga4Id?: string;
-  gtmId?: string;
-  googleAdsId?: string;
-}) {
-  if (typeof window === "undefined") return;
-  const key = `herbalkapida_purchase_tracked_${order.id}`;
-  if (sessionStorage.getItem(key)) return;
-  sessionStorage.setItem(key, "1");
+export type PurchaseData = {
+  transaction_id: string;
+  value: number;
+  currency: string;
+  shipping?: number;
+  tax?: number;
+  coupon?: string;
+  payment_type?: string | null;
+  items: AnalyticsItem[];
+};
 
-  const value = order.value ?? 0;
-  const currency = order.currency || "TRY";
-
-  if (typeof window.gtag === "function") {
-    window.gtag("event", "purchase", {
-      transaction_id: order.orderNumber || order.id,
-      value,
-      currency,
-    });
+/**
+ * Yalnızca sunucuda doğrulanmış sipariş verisiyle çağrılmalı.
+ * Aynı sipariş bu tarayıcıda ikinci kez sayılmaz; GA4 / Ads ayrıca
+ * transaction_id ile tekilleştirir.
+ */
+export function trackPurchase(order: PurchaseData) {
+  if (typeof window === "undefined" || !order.transaction_id) return;
+  const key = `herbalkapida_purchase_tracked_${order.transaction_id}`;
+  try {
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, String(Date.now()));
+  } catch {
+    // storage kapalıysa GA4/Ads transaction_id tekilleştirmesine güven
   }
 
-  pushDataLayer({
-    event: "purchase",
-    ecommerce: {
-      transaction_id: order.orderNumber || order.id,
-      value,
-      currency,
-    },
-    ...(order.ga4Id ? { ga4_measurement_id: order.ga4Id } : {}),
-    ...(order.gtmId ? { gtm_container_id: order.gtmId } : {}),
-    ...(order.googleAdsId ? { google_ads_id: order.googleAdsId } : {}),
+  const items = order.items.map(cleanItem);
+  emit("purchase", {
+    transaction_id: order.transaction_id,
+    value: order.value,
+    currency: order.currency,
+    ...(order.shipping ? { shipping: order.shipping } : {}),
+    ...(order.tax ? { tax: order.tax } : {}),
+    ...(order.coupon ? { coupon: order.coupon } : {}),
+    ...(order.payment_type ? { payment_type: order.payment_type } : {}),
+    items,
+  });
+
+  void adsConversion("googleAdsPurchaseLabel", {
+    value: order.value,
+    currency: order.currency,
+    transaction_id: order.transaction_id,
   });
 
   if (typeof window.fbq === "function") {
-    window.fbq("track", "Purchase", {
-      value,
-      currency,
-      content_ids: [order.id],
-      content_type: "product",
+    window.fbq(
+      "track",
+      "Purchase",
+      {
+        value: order.value,
+        currency: order.currency,
+        content_ids: items.map((i) => i.item_id),
+        content_type: "product",
+        num_items: items.reduce((n, i) => n + (i.quantity || 1), 0),
+      },
+      { eventID: order.transaction_id },
+    );
+  }
+}
+
+/** WhatsApp danışmanlık tıklaması — Ads'te ikincil dönüşüm olarak kullanılmalı. */
+export function trackWhatsAppClick(context: string) {
+  if (typeof window === "undefined") return;
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: "whatsapp_click", whatsapp_context: context });
+  const ids = getLoadedAnalyticsIds();
+  if (ids && !ids.gtmId && ids.ga4Id && typeof window.gtag === "function") {
+    window.gtag("event", "whatsapp_click", {
+      whatsapp_context: context,
+      send_to: ids.ga4Id,
     });
+  }
+  void adsConversion("googleAdsWhatsappLabel", {});
+  if (typeof window.fbq === "function") {
+    window.fbq("track", "Contact", { method: "whatsapp", context });
   }
 }

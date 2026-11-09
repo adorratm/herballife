@@ -1,5 +1,7 @@
 import {
   catalogActiveVariants,
+  catalogItemId,
+  catalogProductUrl,
   catalogAvailability,
   catalogListAndSalePrice,
   catalogProductDescription,
@@ -9,7 +11,7 @@ import {
 } from "@/lib/catalog-feed";
 import { getSiteSettings } from "@/lib/cms";
 import { productImage } from "@/lib/format";
-import { SITE_URL } from "@/lib/seo";
+import { PRODUCT_BRAND, SITE_URL, withProductBrand } from "@/lib/seo";
 import type { Product, ProductVariant } from "@/lib/types";
 
 export const revalidate = 3600;
@@ -88,9 +90,9 @@ function variantItem(
   brand: string,
 ) {
   const currency = product.currency || "TRY";
-  const link = `${SITE_URL}/urunler/${product.slug}`;
+  const link = catalogProductUrl(SITE_URL, product.slug);
   const image = productImage(product.imageUrl, product.slug);
-  const titleBase = product.seoTitle || product.name;
+  const titleBase = withProductBrand(product.seoTitle || product.name);
   const title = variant.weightLabel
     ? `${titleBase} - ${variant.weightLabel}`
     : titleBase;
@@ -100,7 +102,7 @@ function variantItem(
   );
 
   return buildItemXml({
-    id: variant.sku || `${product.slug}-${variant.id}`,
+    id: catalogItemId(product, variant),
     title,
     description: catalogProductDescription(product),
     link,
@@ -120,7 +122,7 @@ function variantItem(
 
 function productOnlyItem(product: Product, brand: string) {
   const currency = product.currency || "TRY";
-  const link = `${SITE_URL}/urunler/${product.slug}`;
+  const link = catalogProductUrl(SITE_URL, product.slug);
   const image = productImage(product.imageUrl, product.slug);
   const { price, salePrice } = catalogListAndSalePrice(
     product.salePrice ?? product.basePrice,
@@ -128,8 +130,8 @@ function productOnlyItem(product: Product, brand: string) {
   );
 
   return buildItemXml({
-    id: product.slug,
-    title: product.seoTitle || product.name,
+    id: catalogItemId(product),
+    title: withProductBrand(product.seoTitle || product.name),
     description: catalogProductDescription(product),
     link,
     image,
@@ -148,7 +150,8 @@ export async function GET() {
     getSiteSettings("tr"),
     fetchAllCatalogProducts(),
   ]);
-  const brand = escapeXml(settings.brand.name);
+  const brand = escapeXml(PRODUCT_BRAND);
+  const storeName = escapeXml(settings.brand.name);
 
   const items = products
     .filter((p) => p.isActive !== false)
@@ -165,9 +168,9 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
-    <title>${brand} Meta Catalog</title>
+    <title>${storeName} Meta Catalog</title>
     <link>${SITE_URL}</link>
-    <description>${escapeXml(settings.seo.description || brand)}</description>
+    <description>${escapeXml(settings.seo.description || settings.brand.name)}</description>
     <atom:link xmlns:atom="http://www.w3.org/2005/Atom" href="${escapeXml(feedUrl)}" rel="self" type="application/rss+xml"/>
 ${items}
   </channel>

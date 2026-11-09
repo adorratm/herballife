@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { catalogItemId } from "@/lib/catalog-item-id";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { AddToCartButton } from "@/components/AddToCartButton";
@@ -314,6 +315,7 @@ export function ProductBuyBox({
         <div className="flex-1">
           <AddToCartButton
             productId={product.id}
+            itemId={catalogItemId(product, selected || null)}
             variantId={selected?.id}
             variantLabel={selectionLabel}
             selectionLabel={selectionLabel}

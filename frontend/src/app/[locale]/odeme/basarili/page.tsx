@@ -8,9 +8,8 @@ import { useTranslations } from "next-intl";
 import { CheckoutSteps } from "@/components/CheckoutSteps";
 import { Reveal } from "@/components/Reveal";
 import { getToken } from "@/lib/auth";
-import { getOrderById } from "@/lib/api";
+import { getPurchaseAnalytics } from "@/lib/api";
 import { trackPurchase } from "@/lib/analytics";
-import { useAnalyticsIds } from "@/lib/analytics-ids";
 
 function SuccessContent() {
   const t = useTranslations("paymentSuccess");
@@ -25,7 +24,7 @@ function SuccessContent() {
       ? sessionStorage.getItem("herbalkapida_last_order_number")
       : null);
   const [loggedIn, setLoggedIn] = useState(false);
-  const analyticsIds = useAnalyticsIds();
+  const analyticsToken = params.get("t");
 
   useEffect(() => {
     const token = getToken();
@@ -35,34 +34,43 @@ function SuccessContent() {
     }
     if (!orderId) return;
     sessionStorage.setItem("herbalkapida_last_order_id", orderId);
+    if (!analyticsToken) return;
 
+    // PayTR bildirimi (callback) yönlendirmeden birkaç saniye sonra gelebilir:
+    // sipariş onaylanana kadar kısa aralıklarla tekrar sor. Onaysız / iptal
+    // siparişler satış olarak gönderilmez.
     let cancelled = false;
-    (async () => {
-      let value: number | undefined;
-      let currency = "TRY";
-      if (token) {
-        const order = await getOrderById(orderId, token);
-        if (order) {
-          value = Number(order.total);
-          currency = order.currency || "TRY";
-        }
-      }
+    let attempt = 0;
+    let timer: number | undefined;
+    const poll = async () => {
+      attempt += 1;
+      const data = await getPurchaseAnalytics(orderId, analyticsToken);
       if (cancelled) return;
-      trackPurchase({
-        id: orderId,
-        orderNumber,
-        value,
-        currency,
-        ga4Id: analyticsIds.ga4Id || undefined,
-        gtmId: analyticsIds.gtmId || undefined,
-        googleAdsId: analyticsIds.googleAdsId || undefined,
-      });
-    })();
+      if (data?.conversion) {
+        trackPurchase({
+          transaction_id: data.transaction_id,
+          value: data.value,
+          currency: data.currency || "TRY",
+          shipping: data.shipping,
+          tax: data.tax,
+          coupon: data.coupon,
+          payment_type: data.payment_type,
+          items: data.items,
+        });
+        return;
+      }
+      const pending = !data || data.status === "pending_payment";
+      if (pending && attempt < 8) {
+        timer = window.setTimeout(() => void poll(), 2500);
+      }
+    };
+    void poll();
 
     return () => {
       cancelled = true;
+      if (timer) window.clearTimeout(timer);
     };
-  }, [orderId, orderNumber, analyticsIds.ga4Id, analyticsIds.gtmId, analyticsIds.googleAdsId]);
+  }, [orderId, orderNumber, analyticsToken]);
 
   const outlineBtn =
     "inline-flex items-center justify-center border border-outline-variant/40 px-5 py-3 font-meta text-[10px] uppercase tracking-widest transition-colors hover:border-primary sm:px-6";

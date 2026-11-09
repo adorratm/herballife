@@ -10,6 +10,8 @@ import { cartAddItem } from "@/lib/cart";
 
 type Props = {
   productId: string;
+  /** Analitik item_id (Merchant feed g:id ile aynı — catalogItemId) */
+  itemId?: string;
   variantId?: string | null;
   /** Toast / analytics için seçilen varyant etiketi (ör. 550 g) */
   variantLabel?: string | null;
@@ -27,6 +29,7 @@ type Props = {
 
 export function AddToCartButton({
   productId,
+  itemId,
   variantId,
   variantLabel,
   selectionLabel,
@@ -59,8 +62,9 @@ export function AddToCartButton({
         quantity: 1,
       });
       trackAddToCart({
-        id: productId,
+        itemId: itemId || productId,
         name: productName,
+        variant: variantLabel,
         price,
         quantity: 1,
       });

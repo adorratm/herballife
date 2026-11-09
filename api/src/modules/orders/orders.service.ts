@@ -41,6 +41,7 @@ import { isStorePickup } from '@common/constants/shipping';
 import { SiteSetting } from '@entities/site-setting.entity';
 import { paginateResult, PaginatedResult } from '@common/utils/pagination';
 import { calculateOrderTax } from '@modules/orders/order-tax';
+import { verifyOrderAnalyticsToken } from '@modules/orders/order-analytics';
 import { parseMoney } from '@modules/accounting/money';
 import { AccountingSettings } from '@entities/accounting-settings.entity';
 import {
@@ -341,6 +342,67 @@ export class OrdersService {
       .take(limit)
       .getManyAndCount();
     return paginateResult(items, total, page, limit);
+  }
+
+  /**
+   * Ödeme başarı sayfası → GA4 / Google Ads `purchase` verisi.
+   * İmzalı token ile misafir siparişlerde de çalışır; kişisel veri döndürmez.
+   * `conversion` yalnızca ödemesi onaylı (PayTR) veya kapıda ödeme / havale
+   * ile alınmış, iptal/iade edilmemiş siparişlerde true olur.
+   */
+  async getPurchaseAnalytics(id: string, token: string | undefined) {
+    if (!verifyOrderAnalyticsToken(this.config, id, token)) {
+      throw new ForbiddenException('Geçersiz sipariş anahtarı');
+    }
+    const order = await this.em.findOne(Order, {
+      where: { id },
+      relations: { items: { product: true, variant: true }, payment: true },
+    });
+    if (!order) throw new NotFoundException('Sipariş bulunamadı');
+
+    const provider = order.payment?.provider || null;
+    const offline = provider === 'cod' || provider === 'bank_transfer';
+    const paidStatuses: OrderStatus[] = [
+      OrderStatus.PAID,
+      OrderStatus.PROCESSING,
+      OrderStatus.SHIPPED,
+      OrderStatus.DELIVERED,
+    ];
+    const cancelled =
+      order.status === OrderStatus.CANCELLED ||
+      order.status === OrderStatus.REFUNDED;
+    const conversion =
+      !cancelled &&
+      (paidStatuses.includes(order.status) ||
+        order.payment?.status === PaymentStatus.SUCCESS ||
+        offline);
+
+    const num = (v: unknown) => Math.round(Number(v || 0) * 100) / 100;
+    return {
+      status: order.status,
+      conversion,
+      payment_type: provider,
+      transaction_id: order.orderNumber,
+      currency: order.currency || 'TRY',
+      value: num(order.total),
+      shipping: num(order.shippingFee),
+      tax: num(order.taxAmount),
+      coupon: order.couponCode || undefined,
+      items: (order.items || []).map((it) => {
+        const slug = it.product?.slug || it.productId || 'urun';
+        const itemId = it.variant
+          ? it.variant.sku?.trim() || `${slug}-${it.variant.id}`
+          : slug;
+        return {
+          item_id: itemId,
+          item_name: it.productName,
+          item_brand: 'Herbalife',
+          item_variant: it.variantLabel || undefined,
+          price: num(it.unitPrice),
+          quantity: Number(it.quantity) || 1,
+        };
+      }),
+    };
   }
 
   async findById(

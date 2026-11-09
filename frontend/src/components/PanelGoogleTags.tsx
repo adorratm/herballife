@@ -4,40 +4,37 @@ import Script from "next/script";
 import { useAnalyticsIds } from "@/lib/analytics-ids";
 
 /**
- * GA4 / Google Ads gtag — panel ID’leri + env yedek.
- * GTM panel/env’de tanımlıysa burada atlanır (AnalyticsScripts yükler).
+ * GA4 / Google Ads gtag.js — panel ID’leri + env yedek.
+ * ID'ler normalizeAnalyticsIds ile doğrulanmıştır (yalnızca G-… / AW-…).
+ * GTM ayrı olarak AnalyticsScripts içinde yüklenir; aynı GA4/Ads etiketini
+ * GTM kapsayıcısına da eklemeyin (çift sayım).
  */
 export function PanelGoogleTags() {
   const ids = useAnalyticsIds();
-  const gtmId = ids.gtmId;
-  if (gtmId) return null;
+  if (!ids.ready) return null;
 
-  const gtagId = ids.googleAdsId || ids.ga4Id;
+  const gtagId = ids.ga4Id || ids.googleAdsId;
   if (!gtagId) return null;
+
+  const configs = [
+    ids.ga4Id ? `gtag('config', ${JSON.stringify(ids.ga4Id)});` : "",
+    ids.googleAdsId
+      ? `gtag('config', ${JSON.stringify(ids.googleAdsId)}, { allow_enhanced_conversions: true });`
+      : "",
+  ].join("\n");
 
   return (
     <>
-      <Script id="gtag-consent-default" strategy="beforeInteractive">{`
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('consent', 'default', {
-          ad_storage: 'denied',
-          ad_user_data: 'denied',
-          ad_personalization: 'denied',
-          analytics_storage: 'denied',
-          wait_for_update: 500
-        });
-      `}</Script>
       <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${gtagId}`}
+        id="gtag-js"
+        src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gtagId)}`}
         strategy="afterInteractive"
       />
       <Script id="gtag-config" strategy="afterInteractive">{`
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
         gtag('js', new Date());
-        ${ids.ga4Id ? `gtag('config', '${ids.ga4Id}', { anonymize_ip: true });` : ""}
-        ${ids.googleAdsId ? `gtag('config', '${ids.googleAdsId}');` : ""}
+        ${configs}
       `}</Script>
     </>
   );

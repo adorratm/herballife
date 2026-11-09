@@ -238,7 +238,7 @@ export const CMS_SETTING_LOCALE_BLOCKS: Partial<
     en: {
       slogan: 'A healthier, happier life',
       tagline:
-        'Original Herbal Kapıda products and personalized nutrition support with independent distributor guidance.',
+        'Original Herbalife products and personalized nutrition support with independent distributor guidance.',
       established: 'Since 2024',
       location: 'Türkiye',
       distributorTitle: 'Independent Distributor',
@@ -248,7 +248,7 @@ export const CMS_SETTING_LOCALE_BLOCKS: Partial<
     de: {
       slogan: 'Ein gesünderes, glücklicheres Leben',
       tagline:
-        'Original Herbal Kapıda-Produkte und personalisierte Ernährungsberatung durch einen unabhängigen Distributor.',
+        'Original Herbalife-Produkte und personalisierte Ernährungsberatung durch einen unabhängigen Distributor.',
       established: 'Seit 2024',
       location: 'Türkei',
       distributorTitle: 'Unabhängiger Distributor',
@@ -278,9 +278,9 @@ export const CMS_SETTING_LOCALE_BLOCKS: Partial<
   },
   seo: {
     en: {
-      title: 'Herbal Kapıda | Original Herbal Kapıda Products',
+      title: 'Herbal Kapıda | Original Herbalife Products',
       description:
-        'Original Herbal Kapıda products, value bundles, and personalized nutrition coaching. Independent distributor Herbal Kapıda — herbalkapida.com.',
+        'Original Herbalife products, value bundles, and personalized nutrition coaching. Independent distributor Herbal Kapıda — herbalkapida.com.',
       keywords: [
         'Herbal Kapıda',
         'Herbal Kapıda',
@@ -292,9 +292,9 @@ export const CMS_SETTING_LOCALE_BLOCKS: Partial<
       ],
     },
     de: {
-      title: 'Herbal Kapıda | Original Herbal Kapıda Produkte',
+      title: 'Herbal Kapıda | Original Herbalife Produkte',
       description:
-        'Original Herbal Kapıda Produkte, Vorteilspakete und personalisierte Ernährungsberatung. Unabhängiger Distributor Herbal Kapıda.',
+        'Original Herbalife Produkte, Vorteilspakete und personalisierte Ernährungsberatung. Unabhängiger Distributor Herbal Kapıda.',
       keywords: [
         'Herbal Kapıda',
         'Herbal Kapıda',
@@ -337,12 +337,12 @@ export const CMS_SETTING_LOCALE_BLOCKS: Partial<
   footer: {
     en: {
       description:
-        'Original Herbal Kapıda products, value bundles, and one-to-one nutrition support with Herbal Kapıda.',
+        'Original Herbalife products, value bundles, and one-to-one nutrition support with Herbal Kapıda.',
       copyrightSuffix: 'Independent Distributor',
     },
     de: {
       description:
-        'Original Herbal Kapıda Produkte, Vorteilspakete und persönliche Ernährungsunterstützung mit Herbal Kapıda.',
+        'Original Herbalife Produkte, Vorteilspakete und persönliche Ernährungsunterstützung mit Herbal Kapıda.',
       copyrightSuffix: 'Unabhängiger Distributor',
     },
     fr: {
@@ -541,14 +541,14 @@ export const CMS_SECTION_LOCALE_BLOCKS: Record<
     en: {
       eyebrow: 'Official Independent Distributor Assurance',
       headline: 'Take a Step Toward a Healthier, Happier Life',
-      body: 'Personalized nutrition programs, sustainable weight management, and 100% original Herbal Kapıda products.',
+      body: 'Personalized nutrition programs, sustainable weight management, and 100% original Herbalife products.',
       ctaLabel: 'Explore Popular Bundles',
       secondaryCtaLabel: 'Get Free Consultation',
     },
     de: {
       eyebrow: 'Offizielle unabhängige Distributor-Garantie',
       headline: 'Ein Schritt zu einem gesünderen, glücklicheren Leben',
-      body: 'Personalisierte Ernährungsprogramme, nachhaltiges Gewichtsmanagement und 100 % original Herbal Kapıda Produkte.',
+      body: 'Personalisierte Ernährungsprogramme, nachhaltiges Gewichtsmanagement und 100 % original Herbalife Produkte.',
       ctaLabel: 'Beliebte Pakete entdecken',
       secondaryCtaLabel: 'Kostenlose Beratung',
     },
@@ -695,12 +695,12 @@ export const CMS_SECTION_LOCALE_BLOCKS: Record<
     en: {
       title: 'About us',
       seoDescription:
-        'Herbal Kapıda — original products and personalized nutrition support with an independent Herbal Kapıda distributor.',
+        'Herbal Kapıda — original products and personalized nutrition support with an independent Herbalife distributor.',
     },
     de: {
       title: 'Über uns',
       seoDescription:
-        'Herbal Kapıda — Originalprodukte und personalisierte Ernährungsunterstützung durch einen unabhängigen Herbal Kapıda Distributor.',
+        'Herbal Kapıda — Originalprodukte und personalisierte Ernährungsunterstützung durch einen unabhängigen Herbalife Distributor.',
     },
     fr: {
       title: 'À propos',
@@ -718,7 +718,7 @@ export const CMS_SECTION_LOCALE_BLOCKS: Record<
       titleLine1: 'Healthy living',
       titleLine2: 'by your side',
       paragraphs: [
-        'At Herbal Kapıda we bring together original Herbal Kapıda products, value bundles, and one-to-one nutrition coaching.',
+        'At Herbal Kapıda we bring together original Herbalife products, value bundles, and one-to-one nutrition coaching.',
         'Our goal is to provide a program suited to your target, sustainable habits, and reliable product access.',
         'Reach us via WhatsApp and contact channels for product selection or wellness tracking.',
       ],
@@ -729,7 +729,7 @@ export const CMS_SECTION_LOCALE_BLOCKS: Record<
       titleLine1: 'Gesund leben',
       titleLine2: 'an Ihrer Seite',
       paragraphs: [
-        'Bei Herbal Kapıda verbinden wir original Herbal Kapıda Produkte, Vorteilspakete und persönliches Ernährungscoaching.',
+        'Bei Herbal Kapıda verbinden wir original Herbalife Produkte, Vorteilspakete und persönliches Ernährungscoaching.',
         'Unser Ziel: ein passendes Programm, nachhaltige Gewohnheiten und zuverlässiger Produktzugang.',
         'Für Produktwahl oder Wellness-Tracking erreichen Sie uns per WhatsApp und Kontakt.',
       ],

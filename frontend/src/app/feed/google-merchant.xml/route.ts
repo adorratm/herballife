@@ -1,5 +1,7 @@
 import {
   catalogActiveVariants,
+  catalogItemId,
+  catalogProductUrl,
   catalogAvailability,
   catalogListAndSalePrice,
   catalogProductDescription,
@@ -14,13 +16,13 @@ import {
 } from "@/lib/catalog-seo";
 import { getSiteSettings } from "@/lib/cms";
 import { productImage } from "@/lib/format";
-import { SITE_URL } from "@/lib/seo";
+import { PRODUCT_BRAND, SITE_URL, withProductBrand } from "@/lib/seo";
 import type { Product, ProductVariant } from "@/lib/types";
 
 export const revalidate = 3600;
 
 function feedTitle(product: Product, variant?: ProductVariant) {
-  const base = (product.seoTitle || product.name).trim();
+  const base = withProductBrand(product.seoTitle || product.name);
   const weight = variant?.weightLabel?.trim();
   if (weight && !base.toLocaleLowerCase("tr-TR").includes(weight.toLocaleLowerCase("tr-TR"))) {
     return `${base} ${weight}`.slice(0, 150);
@@ -84,12 +86,13 @@ export async function GET() {
     getSiteSettings("tr"),
     fetchAllCatalogProducts(),
   ]);
-  const brand = escapeXml(settings.brand.name);
+  const brand = escapeXml(PRODUCT_BRAND);
+  const storeName = escapeXml(settings.brand.name);
 
   const items = products
     .filter((p) => p.isActive !== false)
     .flatMap((product) => {
-      const link = `${SITE_URL}/urunler/${product.slug}`;
+      const link = catalogProductUrl(SITE_URL, product.slug);
       const image = productImage(product.imageUrl, product.slug);
       const description = catalogProductDescription(product);
       const additional = (product.gallery || [])
@@ -113,7 +116,7 @@ export async function GET() {
             v.compareAtPrice,
           );
           return itemXml({
-            id: v.sku || `${product.slug}-${v.id}`,
+            id: catalogItemId(product, v),
             title: feedTitle(product, v),
             description,
             link,
@@ -139,7 +142,7 @@ export async function GET() {
       );
       return [
         itemXml({
-          id: product.slug,
+          id: catalogItemId(product),
           title: feedTitle(product),
           description,
           link,
@@ -161,9 +164,9 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
-    <title>${brand}</title>
+    <title>${storeName}</title>
     <link>${SITE_URL}</link>
-    <description>${escapeXml(settings.seo.description || brand)}</description>
+    <description>${escapeXml(settings.seo.description || settings.brand.name)}</description>
 ${items}
   </channel>
 </rss>`;

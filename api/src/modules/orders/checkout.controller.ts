@@ -12,6 +12,8 @@ import { Public } from '@common/decorators/public.decorator';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { User } from '@entities/user.entity';
 import type { Request } from 'express';
+import { ConfigService } from '@nestjs/config';
+import { orderAnalyticsToken } from '@modules/orders/order-analytics';
 
 @ApiTags('checkout')
 @Controller('checkout')
@@ -19,6 +21,7 @@ export class CheckoutController {
   constructor(
     private readonly ordersService: OrdersService,
     private readonly paymentsService: PaymentsService,
+    private readonly config: ConfigService,
   ) {}
 
   @Public()
@@ -50,14 +53,17 @@ export class CheckoutController {
     // Kapıda ödeme / havale-EFT: PayTR başlatılmaz, doğrudan onay sayfasına yönlendirilir
     const method = dto.paymentMethod;
     if (method === 'cod' || method === 'bank_transfer') {
+      const analyticsToken = orderAnalyticsToken(this.config, order.id);
       const qs = new URLSearchParams({
         method,
         orderId: order.id,
         orderNumber: order.orderNumber,
+        t: analyticsToken,
       });
       return {
         orderId: order.id,
         orderNumber: order.orderNumber,
+        analyticsToken,
         provider: method,
         paymentPageUrl: null,
         redirectPath: `/odeme/basarili?${qs.toString()}`,

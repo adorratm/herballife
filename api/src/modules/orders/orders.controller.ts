@@ -170,6 +170,19 @@ export class OrdersController {
     });
   }
 
+  @Public()
+  @Get(':id/analytics')
+  @ApiOperation({
+    summary:
+      'Ödeme başarı sayfası için dönüşüm verisi (imzalı token; misafir siparişlerde de çalışır)',
+  })
+  async purchaseAnalytics(
+    @Param('id') id: string,
+    @Query('t') token?: string,
+  ) {
+    return this.ordersService.getPurchaseAnalytics(id, token);
+  }
+
   @Get(':id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Sipariş detay' })

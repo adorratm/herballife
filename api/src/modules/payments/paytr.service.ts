@@ -19,6 +19,7 @@ import {
 } from '@modules/payments/dto/payments.dto';
 import { PaymentFulfillmentService } from '@modules/payments/payment-fulfillment.service';
 import { PaytrConfigService } from '@modules/payments/paytr-config.service';
+import { orderAnalyticsToken } from '@modules/orders/order-analytics';
 
 type PaytrTokenResponse = {
   status: string;
@@ -121,6 +122,7 @@ export class PaytrService {
     const qs = new URLSearchParams({
       orderId: order.id,
       orderNumber: order.orderNumber,
+      t: orderAnalyticsToken(this.config, order.id),
     });
     const merchantOkUrl = `${frontend}/odeme/basarili?${qs}`;
     const merchantFailUrl = `${frontend}/odeme/basarisiz?${qs}`;
