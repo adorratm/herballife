@@ -34,15 +34,32 @@ export class InstagramService {
   }
 
   private accessToken(): string | null {
-    return this.config.get<string>('instagram.accessToken') || null;
+    const raw = this.config.get<string>('instagram.accessToken') || '';
+    // .env'den gelen tırnak, boşluk ve \r karakterlerini temizle
+    const token = raw.trim().replace(/^['"]|['"]$/g, '').trim();
+    return token || null;
   }
 
-  private mediaBase(path: 'media' | 'stories'): string {
-    const userId = this.config.get<string>('instagram.userId');
-    if (userId) {
-      return `https://graph.instagram.com/v21.0/${userId}/${path}`;
+  /**
+   * EAA… ile başlayan token'lar Facebook Login (Instagram Graph API) token'ıdır
+   * ve yalnızca graph.facebook.com'da çalışır. IGAA… / IG… token'ları ise
+   * Instagram Login token'ıdır ve graph.instagram.com'da çalışır.
+   */
+  private isFacebookToken(token: string): boolean {
+    return token.startsWith('EAA');
+  }
+
+  private mediaBase(path: 'media' | 'stories', token: string): string {
+    const userId = (this.config.get<string>('instagram.userId') || '').trim();
+    if (this.isFacebookToken(token)) {
+      if (!userId) {
+        throw new BadRequestException(
+          'Instagram API: EAA… (Facebook) token için INSTAGRAM_USER_ID olarak Instagram Business hesap ID (17841…) girilmeli.',
+        );
+      }
+      return `https://graph.facebook.com/v21.0/${userId}/${path}`;
     }
-    return `https://graph.instagram.com/v21.0/me/${path}`;
+    return `https://graph.instagram.com/v21.0/${userId || 'me'}/${path}`;
   }
 
   async fetchRecentMedia(limit = 24): Promise<IgMedia[]> {
@@ -51,7 +68,7 @@ export class InstagramService {
 
     const fields =
       'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp';
-    const url = `${this.mediaBase('media')}?fields=${fields}&limit=${Math.min(limit, 50)}&access_token=${encodeURIComponent(token)}`;
+    const url = `${this.mediaBase('media', token)}?fields=${fields}&limit=${Math.min(limit, 50)}&access_token=${encodeURIComponent(token)}`;
     return this.paginateMedia(url, limit, true);
   }
 
@@ -61,9 +78,8 @@ export class InstagramService {
     if (!token) return [];
 
     const fields = 'id,media_type,media_url,thumbnail_url,permalink,timestamp';
-    const url = `${this.mediaBase('stories')}?fields=${fields}&access_token=${encodeURIComponent(token)}`;
-
     try {
+      const url = `${this.mediaBase('stories', token)}?fields=${fields}&access_token=${encodeURIComponent(token)}`;
       const res = await fetch(url);
       const json = (await res.json()) as IgMediaResponse;
       if (!res.ok || json.error) {
