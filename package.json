@@ -78,7 +78,7 @@
     "deepmerge": "4.1.2"
   },
   "volta": {
-    "node": "27.0.0-alpha.0.0.0",
+    "node": "27.0.0-alpha.0.1.0",
     "yarn": "4.18.1"
   },
   "packageManager": "yarn@4.18.1",
