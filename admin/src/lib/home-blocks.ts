@@ -29,21 +29,21 @@ export const HOME_BLOCK_META: Record<
 > = {
   giftedPackages: {
     label: 'En Çok Tercih Edilen Hediyeli Paketlerimiz',
-    layout: 'Kaydırmalı (slider)',
+    layout: 'Kaydırmalı (slider) — 3’lü sıra',
     defaultLimit: 12,
     maxLimit: 24,
     autoRule: 'Avantajlı Setler kategorisinde adında “hediye” geçen ürünler',
   },
   bestsellerSets: {
     label: 'En Çok Satan Setler',
-    layout: 'Kaydırmalı (slider)',
+    layout: 'Kaydırmalı (slider) — 3’lü sıra',
     defaultLimit: 12,
     maxLimit: 24,
     autoRule: 'Avantajlı Setler kategorisinde hediyesiz setler',
   },
   bestsellerProducts: {
     label: 'En Çok Satan Ürünler',
-    layout: 'Kaydırmalı (slider)',
+    layout: 'Kaydırmalı (slider) — 3’lü sıra',
     defaultLimit: 12,
     maxLimit: 24,
     autoRule: '“Öne çıkan” işaretli, set olmayan ürünler',
@@ -57,16 +57,16 @@ export const HOME_BLOCK_META: Record<
   },
   deals: {
     label: 'Fırsat Ürünleri',
-    layout: 'Yatay kart — 4’lü sıra',
-    defaultLimit: 4,
-    maxLimit: 8,
+    layout: 'Kaydırmalı (slider) — 3’lü sıra',
+    defaultLimit: 12,
+    maxLimit: 24,
     autoRule: 'İndirim oranı en yüksek ürünler',
   },
   personalCare: {
     label: 'Kişisel Bakım Ürünleri',
-    layout: 'Yatay kart — 4’lü sıra',
-    defaultLimit: 4,
-    maxLimit: 8,
+    layout: 'Kaydırmalı (slider) — 3’lü sıra',
+    defaultLimit: 12,
+    maxLimit: 24,
     autoRule: 'Kişisel Bakım kategorisindeki ürünler',
   },
 };

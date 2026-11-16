@@ -32,8 +32,8 @@ export const HOME_BLOCK_DEFS: Record<
   bestsellerSets: { layout: "carousel", defaultLimit: 12, maxLimit: 24 },
   bestsellerProducts: { layout: "carousel", defaultLimit: 12, maxLimit: 24 },
   sets: { layout: "grid", defaultLimit: 15, maxLimit: 15 },
-  deals: { layout: "horizontal", defaultLimit: 4, maxLimit: 8 },
-  personalCare: { layout: "horizontal", defaultLimit: 4, maxLimit: 8 },
+  deals: { layout: "carousel", defaultLimit: 12, maxLimit: 24 },
+  personalCare: { layout: "carousel", defaultLimit: 12, maxLimit: 24 },
 };
 
 export const HOME_BLOCK_ORDER: HomeBlockKey[] = [
