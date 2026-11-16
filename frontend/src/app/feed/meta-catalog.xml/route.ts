@@ -9,6 +9,7 @@ import {
   fetchAllCatalogProducts,
   formatCatalogMoney,
 } from "@/lib/catalog-feed";
+import { sanitizeProductSku } from "@/lib/catalog-seo";
 import { getSiteSettings } from "@/lib/cms";
 import { productImage } from "@/lib/format";
 import { PRODUCT_BRAND, SITE_URL, withProductBrand } from "@/lib/seo";
@@ -115,7 +116,7 @@ function variantItem(
     brand,
     itemGroupId: product.slug,
     size: variant.weightLabel || undefined,
-    mpn: variant.sku || undefined,
+    mpn: sanitizeProductSku(variant.sku),
     gtin: variant.barcode,
   });
 }
@@ -141,7 +142,7 @@ function productOnlyItem(product: Product, brand: string) {
     salePrice,
     currency,
     brand,
-    mpn: product.batchId || product.slug,
+    mpn: sanitizeProductSku(product.batchId, product.slug),
   });
 }
 

@@ -79,6 +79,27 @@ export function productGtin(product: Product): string | null {
   return fromVariant || null;
 }
 
+/** Google Product snippet / Merchant: sku & g:id en fazla 50 karakter; boş dize yasak. */
+export const PRODUCT_SKU_MAX_LEN = 50;
+
+/**
+ * İlk geçerli adayı döndürür (trim, 1–50 karakter).
+ * Hepsi boşsa `undefined` — şemada alanı hiç yazma.
+ */
+export function sanitizeProductSku(
+  ...candidates: Array<string | null | undefined>
+): string | undefined {
+  for (const raw of candidates) {
+    if (typeof raw !== "string") continue;
+    const s = raw.trim();
+    if (!s) continue;
+    return s.length > PRODUCT_SKU_MAX_LEN
+      ? s.slice(0, PRODUCT_SKU_MAX_LEN)
+      : s;
+  }
+  return undefined;
+}
+
 export function asBrewGuide(raw: unknown): BrewGuide | null {
   if (!raw || typeof raw !== "object") return null;
   const row = raw as BrewGuide;

@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { categoryCatalogPath } from "@/lib/catalog-paths";
-import { productGtin, productKindLabel } from "@/lib/catalog-seo";
+import {
+  productGtin,
+  productKindLabel,
+  sanitizeProductSku,
+} from "@/lib/catalog-seo";
 import type { SiteSettings } from "@/lib/cms";
 import { stripHtml } from "@/lib/format";
 import type { BlogPost, Product, ProductReview } from "@/lib/types";
@@ -794,6 +798,17 @@ export function productJsonLd(
   const low = prices.length ? Math.min(...prices) : Number(product.basePrice);
   const high = prices.length ? Math.max(...prices) : low;
 
+  const productSku = sanitizeProductSku(
+    product.batchId,
+    activeVariants[0]?.sku,
+    product.slug,
+  );
+  const singleOfferSku = sanitizeProductSku(
+    activeVariants[0]?.sku,
+    product.batchId,
+    product.slug,
+  );
+
   const offers =
     activeVariants.length > 1
       ? {
@@ -804,22 +819,28 @@ export function productJsonLd(
           offerCount: activeVariants.length,
           availability: productAvailability(inStock),
           ...shipping,
-          offers: activeVariants.map((variant) => ({
-            "@type": "Offer",
-            sku: variant.sku,
-            name: variant.weightLabel,
-            price: variant.price,
-            priceCurrency: currency,
-            availability: productAvailability(Number(variant.stock) > 0),
-            url,
-            seller,
-          })),
+          offers: activeVariants.map((variant) => {
+            const sku = sanitizeProductSku(
+              variant.sku,
+              `${product.slug}-${variant.id}`,
+            );
+            return {
+              "@type": "Offer",
+              ...(sku ? { sku } : {}),
+              name: variant.weightLabel,
+              price: variant.price,
+              priceCurrency: currency,
+              availability: productAvailability(Number(variant.stock) > 0),
+              url,
+              seller,
+            };
+          }),
         }
       : {
           "@type": "Offer",
           priceCurrency: currency,
           price: String(activeVariants[0]?.price ?? product.basePrice),
-          sku: activeVariants[0]?.sku || product.batchId || product.slug,
+          ...(singleOfferSku ? { sku: singleOfferSku } : {}),
           availability: productAvailability(inStock),
           ...shipping,
         };
@@ -862,7 +883,7 @@ export function productJsonLd(
     name: product.seoTitle || product.name,
     description,
     image: images.length ? images : settings.seo.ogImage || undefined,
-    sku: product.batchId || product.slug,
+    ...(productSku ? { sku: productSku } : {}),
     ...(gtin
       ? gtin.length === 13
         ? { gtin, gtin13: gtin }
