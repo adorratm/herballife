@@ -11,7 +11,11 @@ export type HomeBlockKey =
   | "deals"
   | "personalCare";
 
-export type HomeBlockLayout = "carousel" | "grid" | "horizontal";
+export type HomeBlockLayout =
+  | "carouselRows"
+  | "carousel"
+  | "grid"
+  | "horizontal";
 
 export type HomeBlockConfig = {
   key: HomeBlockKey;
@@ -28,12 +32,14 @@ export const HOME_BLOCK_DEFS: Record<
   HomeBlockKey,
   { layout: HomeBlockLayout; defaultLimit: number; maxLimit: number }
 > = {
-  giftedPackages: { layout: "carousel", defaultLimit: 12, maxLimit: 24 },
+  /** 3 satır × 5’li bağımsız carousel */
+  giftedPackages: { layout: "carouselRows", defaultLimit: 15, maxLimit: 30 },
+  bestsellerProducts: { layout: "carouselRows", defaultLimit: 15, maxLimit: 30 },
+  deals: { layout: "carouselRows", defaultLimit: 15, maxLimit: 30 },
+  personalCare: { layout: "carouselRows", defaultLimit: 15, maxLimit: 30 },
+  /** Diğerleri eski/normal düzen */
   bestsellerSets: { layout: "carousel", defaultLimit: 12, maxLimit: 24 },
-  bestsellerProducts: { layout: "carousel", defaultLimit: 12, maxLimit: 24 },
   sets: { layout: "grid", defaultLimit: 15, maxLimit: 15 },
-  deals: { layout: "carousel", defaultLimit: 12, maxLimit: 24 },
-  personalCare: { layout: "carousel", defaultLimit: 12, maxLimit: 24 },
 };
 
 export const HOME_BLOCK_ORDER: HomeBlockKey[] = [

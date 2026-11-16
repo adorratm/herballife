@@ -5,6 +5,7 @@ import { categoryHref } from "@/i18n/hrefs";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductCardHorizontal } from "@/components/ProductCardHorizontal";
 import { ProductCarousel } from "@/components/ProductCarousel";
+import { ProductCarouselRows } from "@/components/ProductCarouselRows";
 import { Reveal } from "@/components/Reveal";
 import {
   HOME_BLOCK_DEFS,
@@ -66,7 +67,9 @@ export async function HomeProductBlocks({
               </Reveal>
 
               <div className="mt-5 md:mt-6">
-                {layout === "carousel" ? (
+                {layout === "carouselRows" ? (
+                  <ProductCarouselRows products={block.products} />
+                ) : layout === "carousel" ? (
                   <ProductCarousel products={block.products} />
                 ) : layout === "grid" ? (
                   <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5 lg:gap-4">

@@ -11,6 +11,17 @@ type Props = {
   className?: string;
   /** Otomatik kaydırma (ms). 0 = kapalı */
   intervalMs?: number;
+  /**
+   * Masaüstünde aynı anda görünen kart sayısı.
+   * Mobilde 2, sm’de en fazla 3; lg+’ta bu değer.
+   */
+  perView?: 3 | 4 | 5;
+};
+
+const ITEM_WIDTH: Record<3 | 4 | 5, string> = {
+  3: "w-[calc((100%-0.625rem)/2)] shrink-0 snap-start sm:w-[calc((100%-1.5rem)/3)]",
+  4: "w-[calc((100%-0.625rem)/2)] shrink-0 snap-start sm:w-[calc((100%-1.5rem)/3)] lg:w-[calc((100%-2.25rem)/4)]",
+  5: "w-[calc((100%-0.625rem)/2)] shrink-0 snap-start sm:w-[calc((100%-1.5rem)/3)] lg:w-[calc((100%-3rem)/5)]",
 };
 
 export function ProductCarousel({
@@ -18,6 +29,7 @@ export function ProductCarousel({
   size = "default",
   className = "",
   intervalMs = 5500,
+  perView = 5,
 }: Props) {
   const tAria = useTranslations("aria");
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -67,10 +79,10 @@ export function ProductCarousel({
   }, [update, products.length]);
 
   useEffect(() => {
-    if (paused || intervalMs <= 0 || products.length < 3) return;
+    if (paused || intervalMs <= 0 || products.length <= perView) return;
     const id = window.setInterval(() => scrollByDir(1), intervalMs);
     return () => window.clearInterval(id);
-  }, [paused, intervalMs, products.length, scrollByDir]);
+  }, [paused, intervalMs, products.length, perView, scrollByDir]);
 
   if (!products.length) return null;
 
@@ -112,10 +124,7 @@ export function ProductCarousel({
         className="product-carousel-track flex items-stretch gap-2.5 overflow-x-auto overscroll-x-contain scroll-smooth [-ms-overflow-style:none] scrollbar-none snap-x snap-mandatory sm:gap-3 [&::-webkit-scrollbar]:hidden"
       >
         {products.map((product) => (
-          <div
-            key={product.id}
-            className="flex w-[calc((100%-0.625rem)/2)] shrink-0 snap-start sm:w-[calc((100%-1.5rem)/3)]"
-          >
+          <div key={product.id} className={`flex ${ITEM_WIDTH[perView]}`}>
             <div className="flex w-full flex-col">
               <ProductCard product={product} size={size} />
             </div>
