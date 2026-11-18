@@ -7,6 +7,7 @@ const DEFAULT_CATEGORY_LABELS: Record<string, Record<string, string>> = {
     size: 'Paket / boy',
     shake_flavor: 'Shake tadı',
     flavor: 'Lezzet seçeneği',
+    aroma: 'Aroma',
   },
   en: {
     package: 'Pack / size',
@@ -14,6 +15,7 @@ const DEFAULT_CATEGORY_LABELS: Record<string, Record<string, string>> = {
     size: 'Size',
     shake_flavor: 'Shake flavor',
     flavor: 'Flavor',
+    aroma: 'Aroma',
   },
   de: {
     package: 'Packung / Größe',
@@ -21,6 +23,7 @@ const DEFAULT_CATEGORY_LABELS: Record<string, Record<string, string>> = {
     size: 'Größe',
     shake_flavor: 'Shake-Geschmack',
     flavor: 'Geschmack',
+    aroma: 'Aroma',
   },
   fr: {
     package: 'Pack / format',
@@ -28,6 +31,7 @@ const DEFAULT_CATEGORY_LABELS: Record<string, Record<string, string>> = {
     size: 'Format',
     shake_flavor: 'Parfum shake',
     flavor: 'Parfum',
+    aroma: 'Arôme',
   },
   es: {
     package: 'Pack / tamaño',
@@ -35,6 +39,7 @@ const DEFAULT_CATEGORY_LABELS: Record<string, Record<string, string>> = {
     size: 'Tamaño',
     shake_flavor: 'Sabor del shake',
     flavor: 'Sabor',
+    aroma: 'Aroma',
   },
 };
 

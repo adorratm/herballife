@@ -138,7 +138,7 @@ type FormState = {
 
 const emptyVariant = (_kind = 'other'): VariantForm => ({
   sku: '',
-  weightLabel: '250g',
+  weightLabel: '',
   categoryKey: '',
   categoryLabel: '',
   localeLabels: {},
@@ -470,9 +470,23 @@ function ProductsPageInner() {
       }
     }
 
-    const variants = form.variants
-      .filter((v) => v.weightLabel.trim() && String(v.price).trim())
-      .map((v, i) => {
+    if (!String(form.basePrice).trim()) {
+      setError('TRY fiyatı zorunludur.');
+      setSaving(false);
+      return;
+    }
+
+    const labeledVariants = form.variants.filter((v) => v.weightLabel.trim());
+    if (form.variants.some((v) => !v.weightLabel.trim() && (v.id || v.sku.trim()))) {
+      setError(
+        'Varyant etiketi (ör. Çikolata Aromalı) boş bırakılamaz. Silmek için satırdaki Sil’i kullanın.',
+      );
+      setSaving(false);
+      return;
+    }
+
+    const variants = labeledVariants.map((v, i) => {
+        const tryPrice = String(v.price).trim() || String(form.basePrice).trim();
         const activeTranslations: Record<
           string,
           { name?: string; categoryLabel?: string }
@@ -502,7 +516,7 @@ function ProductsPageInner() {
           [...activeLocaleKeys, 'tr'],
         );
         const variantPrices: Record<string, number> = {
-          TRY: Number(v.price),
+          TRY: Number(tryPrice),
         };
         if (extraCurrencies.includes('USD') && v.priceUsd.trim()) {
           variantPrices.USD = Number(v.priceUsd);
@@ -529,17 +543,12 @@ function ProductsPageInner() {
           categoryKey: v.categoryKey.trim() || undefined,
           translations:
             Object.keys(translations).length > 0 ? translations : undefined,
-          price: String(v.price),
+          price: tryPrice,
           prices: variantPrices,
           stock: Number(v.stock) || 0,
           isActive: v.isActive,
         };
       });
-    if (!String(form.basePrice).trim()) {
-      setError('TRY fiyatı zorunludur.');
-      setSaving(false);
-      return;
-    }
 
     const prices: Record<string, number> = {
       TRY: Number(form.basePrice),
@@ -1418,15 +1427,20 @@ function ProductsPageInner() {
           </label>
           <label className="block text-sm md:col-span-2">
             <span className="mono text-[10px] uppercase text-muted">
-              Tat / lezzet seçenekleri (virgülle)
+              Tat / lezzet notları (virgülle, sadece bilgi)
             </span>
             <input
               value={form.flavorNotes}
               onChange={(e) =>
                 setForm((f) => ({ ...f, flavorNotes: e.target.value }))
               }
+              placeholder="Stoklu aroma için Varyantlar sekmesini kullanın"
               className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
             />
+            <p className="mt-1 text-[11px] text-muted">
+              Bu alan stok düşmez. Stoklu aroma seçenekleri için Varyantlar
+              sekmesine satır ekleyin.
+            </p>
           </label>
           <label className="block text-sm">
             <span className="mono text-[10px] uppercase text-muted">
@@ -1571,8 +1585,10 @@ function ProductsPageInner() {
               </button>
             </div>
             <p className="text-[11px] text-muted">
-              Her satır ayrı seçenektir. Fiyatlar aktif paralara göre; TR etiket
-              kök, aktif dillerde ad ve grup başlığı ayrıdır.
+              Her satır ayrı seçenektir (ör. Çikolata / Vanilya). Seçenek adı →
+              Etiket; vitrindeki grup yazısı (ör. Aroma) → Grup başlığı + Grup
+              anahtarı (<span className="mono">aroma</span>). TRY boşsa ürünün
+              ana TRY fiyatı kullanılır.
             </p>
             {form.variants.map((v, i) => (
               <div
@@ -1593,7 +1609,8 @@ function ProductsPageInner() {
                     className="border border-border-muted bg-background px-2 py-1.5 text-sm mono md:col-span-2 lg:col-span-2"
                   />
                   <input
-                    placeholder="Etiket TR (250g / Çikolata)"
+                    placeholder="Seçenek adı (Çikolata Aromalı)"
+                    title="Vitrinde buton olarak görünür"
                     value={v.weightLabel}
                     onChange={(e) =>
                       setForm((f) => {
@@ -1608,8 +1625,8 @@ function ProductsPageInner() {
                     className="border border-border-muted bg-background px-2 py-1.5 text-sm"
                   />
                   <input
-                    placeholder="Grup anahtarı"
-                    title="categoryKey — shake_flavor, size…"
+                    placeholder="Grup anahtarı (aroma)"
+                    title="Örn. aroma, flavor, size — aynı gruptaki satırlarda aynı yazın"
                     value={v.categoryKey}
                     onChange={(e) =>
                       setForm((f) => {
@@ -1624,7 +1641,8 @@ function ProductsPageInner() {
                     className="border border-border-muted bg-background px-2 py-1.5 text-sm mono"
                   />
                   <input
-                    placeholder="Grup başlığı (TR)"
+                    placeholder="Grup başlığı TR (Aroma)"
+                    title="Vitrinde seçeneklerin üstündeki başlık"
                     value={v.categoryLabel}
                     onChange={(e) =>
                       setForm((f) => {
@@ -1640,6 +1658,7 @@ function ProductsPageInner() {
                   />
                   <input
                     placeholder="Stok"
+                    title="Bu seçeneğin stok adedi"
                     value={v.stock}
                     onChange={(e) =>
                       setForm((f) => {
@@ -1654,12 +1673,12 @@ function ProductsPageInner() {
                 <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
                   <label className="block text-sm">
                     <span className="mono text-[10px] uppercase text-muted">
-                      TRY *
+                      TRY (boşsa ürün fiyatı)
                     </span>
                     <input
                       type="number"
                       step="0.01"
-                      placeholder="TRY *"
+                      placeholder={form.basePrice || 'TRY'}
                       value={v.price}
                       onChange={(e) =>
                         setForm((f) => {

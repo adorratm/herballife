@@ -70,9 +70,31 @@ export function ProductBuyBox({
     [product.flavorNotes],
   );
 
-  const showShaker = /shaker|paket|set/i.test(
-    `${product.name} ${product.slug} ${product.badge || ""}`,
-  );
+  /** Stoklu aroma/lezzet varyantı tanımlıysa sabit shaker renk UI'sini gösterme */
+  const hasStockedFlavorChoice = useMemo(() => {
+    if (variants.length > 1) return true;
+    return variants.some((v) => {
+      const key = (v.categoryKey || "").toLowerCase();
+      const label = (
+        v.translations?.tr?.categoryLabel ||
+        v.translations?.en?.categoryLabel ||
+        ""
+      ).toLowerCase();
+      return (
+        /^(aroma|flavor|shake_flavor|lezzet)$/.test(key) ||
+        /aroma|lezzet|flavor|tad[ıi]/.test(label)
+      );
+    });
+  }, [variants]);
+
+  const showShaker =
+    !hasStockedFlavorChoice &&
+    /shaker|paket|set/i.test(
+      `${product.name} ${product.slug} ${product.badge || ""}`,
+    );
+
+  /** Bilgi amaçlı flavorNotes; stoklu aroma varyantı varken tekrarlama */
+  const showFlavorNotes = aromas.length > 0 && !hasStockedFlavorChoice;
 
   const [variantId, setVariantId] = useState<string | null>(
     variants[0]?.id ?? null,
@@ -111,10 +133,10 @@ export function ProductBuyBox({
       selected?.weightLabel?.trim() ||
       "";
     if (variantPart) parts.push(variantPart);
-    if (aroma) parts.push(aroma);
+    if (showFlavorNotes && aroma) parts.push(aroma);
     if (showShaker && shaker) parts.push(shaker);
     return parts.join(" · ") || null;
-  }, [selected, locale, aroma, showShaker, shaker]);
+  }, [selected, locale, showFlavorNotes, aroma, showShaker, shaker]);
 
   const displayPrice =
     selected?.price ?? product.salePrice ?? product.basePrice;
@@ -204,7 +226,7 @@ export function ProductBuyBox({
         </div>
       ))}
 
-      {aromas.length > 0 ? (
+      {showFlavorNotes ? (
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
             {t("flavorNotes")}
@@ -297,9 +319,14 @@ export function ProductBuyBox({
               <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
             )}
             <span>{outOfStock ? t("stockOut") : t("stockIn")}</span>
-            {aroma ? (
+            {showFlavorNotes && aroma ? (
               <span className="font-normal text-on-surface-variant">
                 · {aroma}
+              </span>
+            ) : null}
+            {hasStockedFlavorChoice && selected?.weightLabel ? (
+              <span className="font-normal text-on-surface-variant">
+                · {selected.weightLabel}
               </span>
             ) : null}
             {showShaker ? (
