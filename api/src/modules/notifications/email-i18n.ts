@@ -198,6 +198,12 @@ export type EmailCopy = {
   discount: string;
   shipping: string;
   paymentFee: string;
+  /** Tek satır: "KDV" / "VAT" */
+  vat: string;
+  /** "KDV (%20 dahil)" */
+  vatLine: (rate: number | string, included?: boolean) => string;
+  /** Karışık oranlar: "KDV (dahil)" */
+  vatLineMixed: (included?: boolean) => string;
   total: string;
   products: string;
   orderContents: string;
@@ -339,6 +345,10 @@ function buildCopy(locale: EmailLocale): EmailCopy {
       discount: 'Discount',
       shipping: 'Shipping',
       paymentFee: 'Payment service fee',
+      vat: 'VAT',
+      vatLine: (rate, included = true) =>
+        `VAT (${rate}%${included ? ' incl.' : ''})`,
+      vatLineMixed: (included = true) => `VAT${included ? ' (incl.)' : ''}`,
       total: 'Total',
       products: 'Items',
       orderContents: 'Order contents',
@@ -467,6 +477,10 @@ function buildCopy(locale: EmailLocale): EmailCopy {
       discount: 'Rabatt',
       shipping: 'Versand',
       paymentFee: 'Zahlungsgebühr',
+      vat: 'MwSt.',
+      vatLine: (rate, included = true) =>
+        `MwSt. (${rate}%${included ? ' inkl.' : ''})`,
+      vatLineMixed: (included = true) => `MwSt.${included ? ' (inkl.)' : ''}`,
       total: 'Gesamt',
       products: 'Artikel',
       orderContents: 'Bestellinhalt',
@@ -599,6 +613,10 @@ function buildCopy(locale: EmailLocale): EmailCopy {
       discount: 'Remise',
       shipping: 'Livraison',
       paymentFee: 'Frais de paiement',
+      vat: 'TVA',
+      vatLine: (rate, included = true) =>
+        `TVA (${rate}%${included ? ' incl.' : ''})`,
+      vatLineMixed: (included = true) => `TVA${included ? ' (incl.)' : ''}`,
       total: 'Total',
       products: 'Articles',
       orderContents: 'Contenu de la commande',
@@ -732,6 +750,10 @@ function buildCopy(locale: EmailLocale): EmailCopy {
       discount: 'Descuento',
       shipping: 'Envío',
       paymentFee: 'Cargo por método de pago',
+      vat: 'IVA',
+      vatLine: (rate, included = true) =>
+        `IVA (${rate}%${included ? ' incl.' : ''})`,
+      vatLineMixed: (included = true) => `IVA${included ? ' (incl.)' : ''}`,
       total: 'Total',
       products: 'Artículos',
       orderContents: 'Contenido del pedido',
@@ -865,6 +887,10 @@ function buildCopy(locale: EmailLocale): EmailCopy {
     discount: 'İndirim',
     shipping: 'Kargo',
     paymentFee: 'Ödeme yöntemi ücreti',
+    vat: 'KDV',
+    vatLine: (rate, included = true) =>
+      `KDV (%${rate}${included ? ' dahil' : ''})`,
+    vatLineMixed: (included = true) => `KDV${included ? ' (dahil)' : ''}`,
     total: 'Toplam',
     products: 'Ürünler',
     orderContents: 'Sipariş içeriği',

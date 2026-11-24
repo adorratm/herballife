@@ -31,6 +31,7 @@ import {
 } from "@/lib/cart";
 import { formatMoney } from "@/lib/format";
 import { calculateOrderTotals } from "@/lib/pricing";
+import { resolveCartShippingFee } from "@/lib/shipping";
 import { trackBeginCheckout } from "@/lib/analytics";
 import { catalogItemId } from "@/lib/catalog-item-id";
 import { cartLineSelectionLabel } from "@/lib/variant-groups";
@@ -128,6 +129,7 @@ export default function CheckoutPage() {
     cardEnabled: true,
     card: DEFAULT_CARD_FEES,
   });
+  const [freeShippingOver, setFreeShippingOver] = useState<number | null>(null);
   const [providers, setProviders] = useState<ShippingProvider[]>([]);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [user, setUser] = useState<User | null>(null);
@@ -188,16 +190,24 @@ export default function CheckoutPage() {
               cardFeeEnabled?: boolean;
               cardFees?: Record<string, number>;
             };
+            shipping?: {
+              freeShippingOver?: number;
+            };
           } | null,
         ) => {
           const p = data?.payment;
-          if (!p || typeof p !== "object") return;
-          setFeeConfig((prev) => ({
-            codEnabled: p.codFeeEnabled !== false,
-            cod: { ...prev.cod, ...numMap(p.codFees) },
-            cardEnabled: p.cardFeeEnabled !== false,
-            card: { ...prev.card, ...numMap(p.cardFees) },
-          }));
+          if (p && typeof p === "object") {
+            setFeeConfig((prev) => ({
+              codEnabled: p.codFeeEnabled !== false,
+              cod: { ...prev.cod, ...numMap(p.codFees) },
+              cardEnabled: p.cardFeeEnabled !== false,
+              card: { ...prev.card, ...numMap(p.cardFees) },
+            }));
+          }
+          const over = Number(data?.shipping?.freeShippingOver);
+          if (Number.isFinite(over) && over > 0) {
+            setFreeShippingOver(over);
+          }
         },
       )
       .catch(() => undefined);
@@ -594,11 +604,15 @@ export default function CheckoutPage() {
   }
 
   const subtotal = cartSubtotal(cart);
-  const selected = providers.find((p) => p.code === form.shippingProvider);
-  const shippingFee = Number(selected?.fee || 0);
   const discountAmount = couponPreview?.valid
     ? Number(couponPreview.discountAmount)
     : 0;
+  const afterDiscount = Math.max(0, subtotal - discountAmount);
+  const shippingFee = resolveCartShippingFee(cart?.items, {
+    provider: form.shippingProvider,
+    subtotal: afterDiscount,
+    freeShippingOver,
+  });
   function feeFor(method: PaymentMethod): number {
     const isCod = method === "cod";
     if (method !== "cod" && method !== "paytr") return 0;
@@ -617,8 +631,23 @@ export default function CheckoutPage() {
   const totals = calculateOrderTotals(subtotal, shippingFee, {
     discountAmount,
     paymentFee,
+    items: (cart?.items || []).map((item) => ({
+      unitPrice: item.unitPrice,
+      quantity: item.quantity,
+      vatRate: item.product?.vatRate,
+    })),
   });
   const total = totals.total;
+  const vatIncludedSuffix = totals.taxIncluded
+    ? tCheckout("vatIncluded")
+    : "";
+  const vatLabel =
+    totals.rates.length > 1
+      ? tCheckout("vatLineMixed", { included: vatIncludedSuffix })
+      : tCheckout("vatLine", {
+          rate: totals.ratePercent,
+          included: vatIncludedSuffix,
+        });
 
   async function applyCoupon() {
     setCouponError(null);
@@ -1133,27 +1162,34 @@ export default function CheckoutPage() {
           <section className="panel-motion industrial-border relative z-1 min-w-0 bg-white p-4 sm:p-6 md:p-8">
             <h2 className="mb-6 font-display text-2xl">{tCheckout("shippingProviderHeading")}</h2>
             <div className="space-y-3">
-              {providers.map((p) => (
-                <label
-                  key={p.code}
-                  className={`flex cursor-pointer items-center justify-between gap-3 wrap-break-word border px-3 py-3 font-meta text-xs uppercase sm:px-4 sm:py-4 ${
-                    form.shippingProvider === p.code
-                      ? "border-primary text-primary"
-                      : "border-outline-variant/30 text-secondary"
-                  }`}
-                >
-                  <span className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      name="shipping"
-                      checked={form.shippingProvider === p.code}
-                      onChange={() => setField("shippingProvider", p.code)}
-                    />
-                    {p.name}
-                  </span>
-                  <span>{formatMoney(p.fee)}</span>
-                </label>
-              ))}
+              {providers.map((p) => {
+                const providerFee = resolveCartShippingFee(cart?.items, {
+                  provider: p.code,
+                  subtotal: afterDiscount,
+                  freeShippingOver,
+                });
+                return (
+                  <label
+                    key={p.code}
+                    className={`flex cursor-pointer items-center justify-between gap-3 wrap-break-word border px-3 py-3 font-meta text-xs uppercase sm:px-4 sm:py-4 ${
+                      form.shippingProvider === p.code
+                        ? "border-primary text-primary"
+                        : "border-outline-variant/30 text-secondary"
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="shipping"
+                        checked={form.shippingProvider === p.code}
+                        onChange={() => setField("shippingProvider", p.code)}
+                      />
+                      {p.name}
+                    </span>
+                    <span>{formatMoney(providerFee, activeCurrency)}</span>
+                  </label>
+                );
+              })}
             </div>
           </section>
           </Reveal>
@@ -1300,10 +1336,26 @@ export default function CheckoutPage() {
                   value={formatMoney(paymentFee, activeCurrency)}
                 />
               ) : null}
-              <Row
-                label={tCheckout("vatLine", { rate: totals.ratePercent, included: totals.taxIncluded ? tCheckout("vatIncluded") : "" })}
-                value={formatMoney(totals.taxAmount, activeCurrency)}
-              />
+              {totals.rates.length > 1
+                ? totals.rates.map((rate) => (
+                    <Row
+                      key={rate}
+                      label={tCheckout("vatLine", {
+                        rate,
+                        included: vatIncludedSuffix,
+                      })}
+                      value={formatMoney(
+                        totals.taxByRate[String(rate)] || 0,
+                        activeCurrency,
+                      )}
+                    />
+                  ))
+                : (
+                    <Row
+                      label={vatLabel}
+                      value={formatMoney(totals.taxAmount, activeCurrency)}
+                    />
+                  )}
               <Row
                 label={tCheckout("total")}
                 value={formatMoney(total, activeCurrency)}

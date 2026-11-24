@@ -134,6 +134,16 @@ export class Product extends BaseEntity {
   @Column({ name: 'base_price', type: 'decimal', precision: 12, scale: 2 })
   basePrice!: string;
 
+  /** Ürüne özel kargo ücreti (TRY). Sepette adet × ücret toplanır. */
+  @Column({
+    name: 'shipping_fee',
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+  })
+  shippingFee!: string;
+
   /** Para birimi başına liste fiyatları (TRY zorunlu; boşsa basePrice TRY sayılır) */
   @Column({ name: 'prices', type: 'jsonb', default: {} })
   prices!: ProductPrices;

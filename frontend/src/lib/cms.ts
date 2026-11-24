@@ -69,7 +69,6 @@ export type SiteSettings = {
     }>;
   };
   shipping?: {
-    defaultFee?: number;
     freeShippingOver?: number;
   };
   /** Kapıda ödeme ek ücreti — para birimine göre */
@@ -327,9 +326,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
       "Herbalife bağımsız distribütör kaydı yalnızca myHerbalife.com üzerinden yapılır. herbalkapida.com resmi Herbalife sitesi değildir.",
   },
   /** freeShippingOver yoksa vitrin env yedeğine düşer */
-  shipping: {
-    defaultFee: 89.9,
-  },
+  shipping: {},
   payment: {
     codFeeEnabled: true,
     cardFeeEnabled: true,

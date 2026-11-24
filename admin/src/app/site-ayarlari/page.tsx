@@ -58,7 +58,6 @@ type AnalyticsSettings = {
 };
 
 type ShippingSettings = {
-  defaultFee: string;
   freeShippingOver: string;
 };
 
@@ -310,7 +309,6 @@ const DEFAULT_ANALYTICS: AnalyticsSettings = {
 };
 
 const DEFAULT_SHIPPING: ShippingSettings = {
-  defaultFee: '89.90',
   freeShippingOver: '750',
 };
 
@@ -1021,10 +1019,6 @@ export default function SiteSettingsPage() {
         if (map.shipping) {
           const s = map.shipping as Record<string, unknown>;
           setShipping({
-            defaultFee:
-              s.defaultFee != null
-                ? String(s.defaultFee)
-                : DEFAULT_SHIPPING.defaultFee,
             freeShippingOver:
               s.freeShippingOver != null
                 ? String(s.freeShippingOver)
@@ -1291,7 +1285,6 @@ export default function SiteSettingsPage() {
             {
               key: 'shipping',
               value: {
-                defaultFee: Number(shipping.defaultFee) || 89.9,
                 freeShippingOver: Number(shipping.freeShippingOver) || 0,
               },
               group: 'shipping',
@@ -2093,42 +2086,28 @@ export default function SiteSettingsPage() {
           <legend className="mono px-2 text-xs uppercase text-muted">
             Kargo varsayılanları
           </legend>
-          <p className="text-xs text-muted">Tüm dillerde ortaktır.</p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <label className="block text-sm">
-              <span className="mono text-[10px] uppercase text-muted">
-                Varsayılan kargo ücreti (TRY)
-              </span>
-              <input
-                type="number"
-                min={0}
-                step="0.01"
-                value={shipping.defaultFee}
-                onChange={(e) =>
-                  setShipping((s) => ({ ...s, defaultFee: e.target.value }))
-                }
-                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-              />
-            </label>
-            <label className="block text-sm">
-              <span className="mono text-[10px] uppercase text-muted">
-                Ücretsiz kargo eşiği (TRY)
-              </span>
-              <input
-                type="number"
-                min={0}
-                step="1"
-                value={shipping.freeShippingOver}
-                onChange={(e) =>
-                  setShipping((s) => ({
-                    ...s,
-                    freeShippingOver: e.target.value,
-                  }))
-                }
-                className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
-              />
-            </label>
-          </div>
+          <p className="text-xs text-muted">
+            Kargo ücreti her ürünün Fiyat &amp; stok sekmesinden girilir. Burada
+            yalnızca ücretsiz kargo eşiği ayarlanır (tüm dillerde ortak).
+          </p>
+          <label className="block max-w-sm text-sm">
+            <span className="mono text-[10px] uppercase text-muted">
+              Ücretsiz kargo eşiği (TRY)
+            </span>
+            <input
+              type="number"
+              min={0}
+              step="1"
+              value={shipping.freeShippingOver}
+              onChange={(e) =>
+                setShipping((s) => ({
+                  ...s,
+                  freeShippingOver: e.target.value,
+                }))
+              }
+              className="mt-1 w-full rounded-lg border border-border-muted bg-surface-high px-3 py-2"
+            />
+          </label>
         </fieldset>
 
         <fieldset className="space-y-3 rounded-xl border border-border-muted bg-surface p-5 shadow-sm">

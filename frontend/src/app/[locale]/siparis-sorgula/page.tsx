@@ -10,6 +10,7 @@ import { Reveal } from "@/components/Reveal";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ApiError, lookupGuestOrder } from "@/lib/api";
 import { formatMoney } from "@/lib/format";
+import { calculateOrderTotals } from "@/lib/pricing";
 import {
   orderStatusHint,
   shipmentStatusLabel,
@@ -137,6 +138,10 @@ function LookupForm() {
                       {[item.variantLabel].filter(Boolean).join(" · ") ||
                         "—"}{" "}
                       × {item.quantity}
+                      {item.vatRate != null &&
+                      String(item.vatRate).trim() !== ""
+                        ? ` · ${t("vatLine", { rate: Number(item.vatRate) })}`
+                        : ""}
                     </p>
                   </div>
                   <p className="text-primary">
@@ -163,6 +168,46 @@ function LookupForm() {
                 <span>{t("shipping")}</span>
                 <span>{formatMoney(result.shippingFee, result.currency)}</span>
               </div>
+              {(() => {
+                const taxTotals = calculateOrderTotals(
+                  Number(result.subtotal) || 0,
+                  Number(result.shippingFee) || 0,
+                  {
+                    discountAmount: Number(result.discountAmount) || 0,
+                    items: result.items.map((item) => ({
+                      unitPrice: item.unitPrice,
+                      quantity: item.quantity,
+                      vatRate: item.vatRate,
+                    })),
+                  },
+                );
+                if (taxTotals.rates.length > 1) {
+                  return taxTotals.rates.map((rate) => (
+                    <div key={rate} className="flex justify-between">
+                      <span>{t("vatLine", { rate })}</span>
+                      <span>
+                        {formatMoney(
+                          taxTotals.taxByRate[String(rate)] || 0,
+                          result.currency,
+                        )}
+                      </span>
+                    </div>
+                  ));
+                }
+                const amount =
+                  taxTotals.taxAmount || Number(result.taxAmount) || 0;
+                if (amount <= 0) return null;
+                return (
+                  <div className="flex justify-between">
+                    <span>
+                      {taxTotals.rates[0] != null
+                        ? t("vatLine", { rate: taxTotals.rates[0] })
+                        : t("vat")}
+                    </span>
+                    <span>{formatMoney(amount, result.currency)}</span>
+                  </div>
+                );
+              })()}
               <div className="flex justify-between text-primary">
                 <span>{t("total")}</span>
                 <span>{formatMoney(result.total, result.currency)}</span>

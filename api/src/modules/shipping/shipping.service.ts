@@ -315,16 +315,12 @@ export class ShippingService {
         c.provider === ShippingProviderCode.DHL ||
         c.settings?.explicitlyEnabled === true,
     );
-    const feeDefault = '89.90';
+    // Sabit sağlayıcı ücreti kapalı; ücret ürün shippingFee toplamından gelir.
     return active.map((c) => ({
       id: c.provider,
       code: c.provider,
       name: c.displayName,
-      fee:
-        typeof c.settings?.fee === 'string' ||
-        typeof c.settings?.fee === 'number'
-          ? String(c.settings.fee)
-          : feeDefault,
+      fee: '0',
       estimatedDays:
         typeof c.settings?.estimatedDays === 'string'
           ? c.settings.estimatedDays

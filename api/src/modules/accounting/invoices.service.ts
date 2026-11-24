@@ -258,9 +258,11 @@ export class InvoicesService {
         unit: 'adet',
         unitPrice: parseMoney(item.unitPrice),
         vatRate:
-          item.product?.vatRate != null
-            ? parseMoney(item.product.vatRate)
-            : undefined,
+          item.vatRate != null && String(item.vatRate).trim() !== ''
+            ? parseMoney(item.vatRate)
+            : item.product?.vatRate != null
+              ? parseMoney(item.product.vatRate)
+              : undefined,
       }),
     );
     return this.create({

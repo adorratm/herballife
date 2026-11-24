@@ -303,7 +303,7 @@ export class NotificationsService {
 
     const order = await this.em.findOne(Order, {
       where: { id: payload.orderId },
-      relations: { items: true },
+      relations: { items: { product: true } },
     });
     if (!order) {
       this.logger.warn(`Order not found for notification: ${payload.orderId}`);

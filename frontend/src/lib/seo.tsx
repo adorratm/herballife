@@ -706,8 +706,6 @@ export function breadcrumbJsonLd(
   };
 }
 
-const DEFAULT_SHIPPING_FEE = "89.90";
-
 function productAvailability(inStock: boolean) {
   return inStock
     ? "https://schema.org/InStock"
@@ -727,12 +725,15 @@ function merchantReturnPolicy() {
   };
 }
 
-function offerShippingDetails() {
+function offerShippingDetails(shippingFee?: string | number | null) {
+  const fee = Number(shippingFee);
+  const value =
+    Number.isFinite(fee) && fee >= 0 ? fee.toFixed(2) : "0.00";
   return {
     "@type": "OfferShippingDetails",
     shippingRate: {
       "@type": "MonetaryAmount",
-      value: DEFAULT_SHIPPING_FEE,
+      value,
       currency: "TRY",
     },
     shippingDestination: {
@@ -783,7 +784,7 @@ export function productJsonLd(
     name: settings.brand.name,
   };
   const shipping = {
-    shippingDetails: offerShippingDetails(),
+    shippingDetails: offerShippingDetails(product.shippingFee),
     hasMerchantReturnPolicy: merchantReturnPolicy(),
     seller,
     url,

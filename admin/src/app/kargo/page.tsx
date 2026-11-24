@@ -8,7 +8,6 @@ import type { ShippingProviderConfig } from '@/lib/types';
 
 type Draft = {
   isEnabled: boolean;
-  fee: string;
   estimatedDays: string;
   credentialsJson: string;
 };
@@ -31,12 +30,10 @@ export default function ShippingPage() {
       const next: Record<string, Draft> = {};
       for (const row of list) {
         const settings = (row.settings || {}) as {
-          fee?: string | number;
           estimatedDays?: string;
         };
         next[row.id] = {
           isEnabled: row.isEnabled,
-          fee: settings.fee != null ? String(settings.fee) : '89.90',
           estimatedDays: settings.estimatedDays || '2-5 gün',
           credentialsJson: JSON.stringify(row.credentials || {}, null, 2),
         };
@@ -77,7 +74,6 @@ export default function ShippingPage() {
           isEnabled: draft.isEnabled,
           credentials,
           settings: {
-            fee: draft.fee.trim() || '89.90',
             estimatedDays: draft.estimatedDays.trim() || '2-5 gün',
           },
         },
@@ -95,8 +91,8 @@ export default function ShippingPage() {
     <div className="space-y-4">
       <p className="text-sm text-muted">
         Operasyon için yalnızca DHL önerilir; yeni kurulumlarda varsayılan olarak
-        yalnızca DHL aktiftir. Kargo ücreti ve kimlik bilgilerini buradan
-        ayarlayın.
+        yalnızca DHL aktiftir. Kargo ücreti ürün kartından (Fiyat &amp; stok)
+        belirlenir; burada yalnızca sağlayıcı ve tahmini süre ayarlanır.
       </p>
       {error ? (
         <p className="border border-danger/40 bg-surface px-3 py-2 text-sm text-danger">
@@ -119,7 +115,6 @@ export default function ShippingPage() {
           {rows.map((row) => {
             const draft = drafts[row.id] || {
               isEnabled: row.isEnabled,
-              fee: '89.90',
               estimatedDays: '2-5 gün',
               credentialsJson: '{}',
             };
@@ -147,41 +142,24 @@ export default function ShippingPage() {
                     label="Aktif"
                   />
                 </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="block text-sm">
-                    <span className="mono text-[10px] uppercase text-muted">
-                      Kargo ücreti (TRY)
-                    </span>
-                    <input
-                      value={draft.fee}
-                      onChange={(e) =>
-                        setDrafts((d) => ({
-                          ...d,
-                          [row.id]: { ...draft, fee: e.target.value },
-                        }))
-                      }
-                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-                    />
-                  </label>
-                  <label className="block text-sm">
-                    <span className="mono text-[10px] uppercase text-muted">
-                      Tahmini süre
-                    </span>
-                    <input
-                      value={draft.estimatedDays}
-                      onChange={(e) =>
-                        setDrafts((d) => ({
-                          ...d,
-                          [row.id]: {
-                            ...draft,
-                            estimatedDays: e.target.value,
-                          },
-                        }))
-                      }
-                      className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
-                    />
-                  </label>
-                </div>
+                <label className="block text-sm">
+                  <span className="mono text-[10px] uppercase text-muted">
+                    Tahmini süre
+                  </span>
+                  <input
+                    value={draft.estimatedDays}
+                    onChange={(e) =>
+                      setDrafts((d) => ({
+                        ...d,
+                        [row.id]: {
+                          ...draft,
+                          estimatedDays: e.target.value,
+                        },
+                      }))
+                    }
+                    className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+                  />
+                </label>
                 <label className="block text-sm">
                   <span className="mono text-[10px] uppercase text-muted">
                     Credentials JSON

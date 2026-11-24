@@ -329,6 +329,11 @@ export class ProductsService {
       gallery: productFields.gallery ?? [],
       badge: productFields.badge ?? null,
       basePrice: productFields.basePrice,
+      shippingFee:
+        productFields.shippingFee != null &&
+        String(productFields.shippingFee).trim() !== ''
+          ? String(Number(productFields.shippingFee) || 0)
+          : '0',
       prices: ensureProductPrices(
         productFields.basePrice,
         productFields.prices,
@@ -399,6 +404,7 @@ export class ProductsService {
       prices: _prices,
       translations: _translations,
       priceTaxIncluded: _priceTaxIncluded,
+      shippingFee: _shippingFee,
       ...rest
     } = dto;
 
@@ -449,6 +455,12 @@ export class ProductsService {
     }
     if (dto.priceTaxIncluded !== undefined) {
       product.priceTaxIncluded = dto.priceTaxIncluded;
+    }
+    if (dto.shippingFee !== undefined) {
+      product.shippingFee =
+        dto.shippingFee != null && String(dto.shippingFee).trim() !== ''
+          ? String(Math.max(0, Number(dto.shippingFee) || 0))
+          : '0';
     }
 
     Object.assign(product, {

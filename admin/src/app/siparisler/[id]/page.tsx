@@ -352,12 +352,42 @@ export default function OrderDetailPage() {
                 <span>−{formatMoney(discount, currency)}</span>
               </div>
             ) : null}
-            {Number(order.taxAmount || 0) > 0 ? (
-              <div className="flex justify-between">
-                <span className="text-muted">Vergi</span>
-                <span>{formatMoney(order.taxAmount || 0, currency)}</span>
-              </div>
-            ) : null}
+            {(() => {
+              const rates = [
+                ...new Set(
+                  (order.items || [])
+                    .map((i) => Number(i.vatRate))
+                    .filter((n) => Number.isFinite(n)),
+                ),
+              ].sort((a, b) => a - b);
+              if (rates.length > 1) {
+                return rates.map((rate) => {
+                  const share = (order.items || [])
+                    .filter((i) => Number(i.vatRate) === rate)
+                    .reduce((s, i) => s + Number(i.lineTotal || 0), 0);
+                  const gross = Number(order.subtotal) || 0;
+                  const taxTotal = Number(order.taxAmount) || 0;
+                  const amount =
+                    gross > 0 ? taxTotal * (share / gross) : taxTotal / rates.length;
+                  return (
+                    <div key={rate} className="flex justify-between">
+                      <span className="text-muted">KDV (%{rate} dahil)</span>
+                      <span>{formatMoney(amount, currency)}</span>
+                    </div>
+                  );
+                });
+              }
+              if (Number(order.taxAmount || 0) <= 0) return null;
+              const rate = rates[0];
+              return (
+                <div className="flex justify-between">
+                  <span className="text-muted">
+                    {rate != null ? `KDV (%${rate} dahil)` : 'KDV'}
+                  </span>
+                  <span>{formatMoney(order.taxAmount || 0, currency)}</span>
+                </div>
+              );
+            })()}
             <div className="flex justify-between border-t border-border-muted pt-2 font-medium">
               <span>Toplam</span>
               <span>{formatMoney(order.total, currency)}</span>
@@ -613,6 +643,12 @@ export default function OrderDetailPage() {
                     </p>
                     {item.variantLabel ? (
                       <p className="text-xs text-muted">{item.variantLabel}</p>
+                    ) : null}
+                    {item.vatRate != null &&
+                    String(item.vatRate).trim() !== '' ? (
+                      <p className="text-xs text-muted">
+                        KDV %{Number(item.vatRate)}
+                      </p>
                     ) : null}
                     </div>
                   </div>

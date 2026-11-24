@@ -239,6 +239,14 @@ export class CreateProductDto {
   @IsString()
   basePrice!: string;
 
+  @ApiPropertyOptional({
+    description: 'Ürüne özel kargo ücreti (TRY). Sepette adet × ücret.',
+    example: '49.90',
+  })
+  @IsOptional()
+  @IsString()
+  shippingFee?: string;
+
   @ApiPropertyOptional()
   @IsOptional()
   @IsObject()

@@ -105,6 +105,7 @@ type FormState = {
   priceUsd: string;
   priceEur: string;
   priceGbp: string;
+  shippingFee: string;
   priceTaxIncluded: boolean;
   translationTab: string;
   translations: Record<string, LocaleFields>;
@@ -173,6 +174,7 @@ const emptyForm = (): FormState => ({
   priceUsd: '',
   priceEur: '',
   priceGbp: '',
+  shippingFee: '0',
   priceTaxIncluded: true,
   translationTab: '',
   translations: {},
@@ -405,6 +407,10 @@ function ProductsPageInner() {
       priceUsd: p.prices?.USD != null ? String(p.prices.USD) : '',
       priceEur: p.prices?.EUR != null ? String(p.prices.EUR) : '',
       priceGbp: p.prices?.GBP != null ? String(p.prices.GBP) : '',
+      shippingFee:
+        p.shippingFee != null && String(p.shippingFee).trim() !== ''
+          ? String(p.shippingFee)
+          : '0',
       priceTaxIncluded: p.priceTaxIncluded !== false,
       translationTab: localeTabs[0]?.key || '',
       translations: tr,
@@ -615,6 +621,7 @@ function ProductsPageInner() {
       seoTitle: form.seoTitle || null,
       seoDescription: form.seoDescription || null,
       basePrice: String(form.basePrice),
+      shippingFee: String(Number(form.shippingFee) || 0),
       prices,
       translations,
       priceTaxIncluded: form.priceTaxIncluded,
@@ -1013,6 +1020,25 @@ function ProductsPageInner() {
             <p className="text-[11px] text-muted">
               Varsayılan açık. Kapatırsanız fiyat net (KDV hariç) kabul edilir;
               vitrin ve yasal metinlerde belirtin.
+            </p>
+            <label className="mt-3 block max-w-xs text-sm">
+              <span className="mono text-[10px] uppercase text-muted">
+                Kargo ücreti (TRY)
+              </span>
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                value={form.shippingFee}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, shippingFee: e.target.value }))
+                }
+                className="mt-1 w-full border border-border-muted bg-background px-3 py-2"
+              />
+            </label>
+            <p className="text-[11px] text-muted">
+              Sepette bu ürün için adet × kargo ücreti eklenir. Ücretsiz kargo
+              eşiği site ayarlarından yönetilir.
             </p>
           </div>
           <label className="block text-sm">

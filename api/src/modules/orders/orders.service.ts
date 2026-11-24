@@ -13,8 +13,6 @@ import { OrderItem } from '@entities/order-item.entity';
 import { Cart } from '@entities/cart.entity';
 import { CartItem } from '@entities/cart-item.entity';
 import { Payment, PaymentStatus } from '@entities/payment.entity';
-import { ShippingProviderConfig } from '@entities/shipping-provider-config.entity';
-import { ShippingProviderCode } from '@entities/shipment.entity';
 import {
   ReturnRequest,
   ReturnRequestStatus,
@@ -130,6 +128,7 @@ export class OrdersService {
     const shippingFee = await this.resolveShippingFee(
       dto.shippingProvider,
       afterDiscount,
+      cart.items,
     );
     const orderCurrency = normalizeOrderCurrency(dto.currency);
     const paymentFee = await this.resolvePaymentFee(provider, orderCurrency);
@@ -198,6 +197,11 @@ export class OrdersService {
               )) ?? null,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
+          vatRate:
+            item.product?.vatRate != null &&
+            String(item.product.vatRate).trim() !== ''
+              ? String(item.product.vatRate)
+              : null,
           lineTotal: (Number(item.unitPrice) * item.quantity).toFixed(2),
           imageUrl: item.product?.imageUrl?.trim() || null,
         }),
@@ -462,6 +466,7 @@ export class OrdersService {
         variantLabel: item.variantLabel,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
+        vatRate: item.vatRate ?? item.product?.vatRate ?? null,
         lineTotal: item.lineTotal,
       })),
       shipments: (order.shipments || []).map((s) => ({
@@ -832,68 +837,47 @@ export class OrdersService {
     return `${prefix}${String(seq).padStart(4, '0')}`;
   }
 
-  private async shippingPolicyFromSite(): Promise<{
-    defaultFee: number;
-    freeOver: number;
-  }> {
-    const envDefault =
-      this.config.get<number>('shipping.defaultFee') ?? 89.9;
+  private async shippingPolicyFromSite(): Promise<{ freeOver: number }> {
     const envFree = this.config.get<number>('shipping.freeOver') || 0;
     const row = await this.em.findOne(SiteSetting, {
       where: { key: 'shipping' },
     });
     const val = (row?.value || {}) as {
-      defaultFee?: number | string;
       freeShippingOver?: number | string;
     };
-    const defaultFeeRaw = val.defaultFee;
     const freeRaw = val.freeShippingOver;
-    const defaultFee =
-      defaultFeeRaw != null && String(defaultFeeRaw).trim()
-        ? Number(defaultFeeRaw)
-        : envDefault;
     const freeOver =
       freeRaw != null && String(freeRaw).trim()
         ? Number(freeRaw)
         : envFree;
     return {
-      defaultFee: Number.isFinite(defaultFee) ? defaultFee : envDefault,
       freeOver: Number.isFinite(freeOver) ? freeOver : envFree,
     };
+  }
+
+  /** Sepetteki ürünlerin shippingFee × adet toplamı */
+  private cartProductShippingFee(items: CartItem[]): number {
+    return items.reduce((sum, item) => {
+      const fee = Number(item.product?.shippingFee ?? 0);
+      const qty = Number(item.quantity) || 0;
+      return sum + (Number.isFinite(fee) ? Math.max(0, fee) : 0) * qty;
+    }, 0);
   }
 
   private async resolveShippingFee(
     providerCode: string | undefined | null,
     subtotal: number,
+    items: CartItem[],
   ): Promise<number> {
     if (isStorePickup(providerCode)) {
       return 0;
     }
 
-    const { defaultFee, freeOver } = await this.shippingPolicyFromSite();
+    const { freeOver } = await this.shippingPolicyFromSite();
     if (freeOver > 0 && subtotal >= freeOver) {
       return 0;
     }
-    if (!providerCode) return defaultFee;
-
-    const codes = Object.values(ShippingProviderCode) as string[];
-    if (!codes.includes(providerCode)) {
-      return defaultFee;
-    }
-
-    const config = await this.em.findOne(ShippingProviderConfig, {
-      where: {
-        provider: providerCode as ShippingProviderCode,
-        isEnabled: true,
-      },
-    });
-    const fee = config?.settings?.fee;
-    if (typeof fee === 'number') return fee;
-    if (typeof fee === 'string' && fee.trim()) {
-      const n = Number(fee);
-      return Number.isFinite(n) ? n : defaultFee;
-    }
-    return defaultFee;
+    return this.cartProductShippingFee(items);
   }
 
   private async buildStorePickupAddress(
@@ -984,7 +968,7 @@ export class OrdersService {
       items: items.map((item) => ({
         unitPrice: item.unitPrice,
         quantity: item.quantity,
-        vatRate: item.product?.vatRate,
+        vatRate: item.vatRate ?? item.product?.vatRate,
       })),
       subtotal,
       discountAmount,
@@ -995,16 +979,27 @@ export class OrdersService {
     });
   }
 
+  /** Eski siparişlerde boş kalan kalem KDV’sini üründen doldur (yanıt için) */
+  private hydrateItemVatRates(order: Order): void {
+    for (const item of order.items || []) {
+      if (item.vatRate != null && String(item.vatRate).trim() !== '') continue;
+      if (item.product?.vatRate != null && String(item.product.vatRate).trim() !== '') {
+        item.vatRate = String(item.product.vatRate);
+      }
+    }
+  }
+
   /** Mevcut siparişlerde gösterim — DB’deki yanlış %20 KDV’yi düzeltir */
   private applyComputedTax(order: Order): void {
     if (!order.items?.length) return;
+    this.hydrateItemVatRates(order);
     const fallback = this.config.get<number>('tax.ratePercent') ?? 20;
     const included = this.config.get<boolean>('tax.included') !== false;
     const { taxAmount } = calculateOrderTax({
       items: order.items.map((item) => ({
         unitPrice: item.unitPrice,
         quantity: item.quantity,
-        vatRate: item.product?.vatRate,
+        vatRate: item.vatRate ?? item.product?.vatRate,
       })),
       subtotal: parseMoney(order.subtotal),
       discountAmount: parseMoney(order.discountAmount),

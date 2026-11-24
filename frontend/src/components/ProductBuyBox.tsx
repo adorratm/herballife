@@ -177,7 +177,7 @@ export function ProductBuyBox({
           {badgeChips.map((b) => (
             <span
               key={`${b.tone}-${b.labelKey ?? b.text}`}
-              className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ${
+              className={`inline-flex items-center justify-center leading-none rounded-full px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wide ${
                 b.tone === "sale"
                   ? "badge-discount badge-live text-base! px-3! py-1.5!"
                   : "bg-surface-container-high text-on-surface"
@@ -280,7 +280,12 @@ export function ProductBuyBox({
             {t("price")}
             {product.priceTaxIncluded !== false ? (
               <span className="ml-1.5 font-normal normal-case text-on-surface-variant/80">
-                {t("vatIncluded")}
+                {product.vatRate != null &&
+                String(product.vatRate).trim() !== ""
+                  ? t("vatIncludedRate", {
+                      rate: Number(product.vatRate),
+                    })
+                  : t("vatIncluded")}
               </span>
             ) : null}
           </p>

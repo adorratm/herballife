@@ -43,6 +43,8 @@ export type Product = {
   gallery?: string[];
   badge?: string | null;
   basePrice: string | number;
+  /** Ürüne özel kargo ücreti (TRY) */
+  shippingFee?: string | number;
   prices?: Partial<Record<'TRY' | 'USD' | 'EUR' | 'GBP', number>>;
   translations?: Record<
     string,
@@ -91,6 +93,8 @@ export type OrderItem = {
   variantLabel?: string | null;
   quantity: number;
   unitPrice: string | number;
+  /** Sipariş anındaki KDV oranı (%) */
+  vatRate?: string | number | null;
   lineTotal: string | number;
   imageUrl?: string | null;
 };

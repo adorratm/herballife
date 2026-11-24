@@ -297,7 +297,6 @@ export const DEFAULT_SITE_SETTINGS: Record<string, Record<string, unknown>> = {
     tiktokPixelId: '',
   },
   shipping: {
-    defaultFee: 89.9,
     freeShippingOver: 750,
   },
   payment: {

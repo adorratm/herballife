@@ -44,6 +44,16 @@ export class OrderItem extends BaseEntity {
   @Column({ name: 'unit_price', type: 'decimal', precision: 12, scale: 2 })
   unitPrice!: string;
 
+  /** Sipariş anındaki ürün KDV oranı (%) — sonradan ürün değişse bile sabit kalır */
+  @Column({
+    name: 'vat_rate',
+    type: 'decimal',
+    precision: 5,
+    scale: 2,
+    nullable: true,
+  })
+  vatRate!: string | null;
+
   @Column({ name: 'line_total', type: 'decimal', precision: 12, scale: 2 })
   lineTotal!: string;
 

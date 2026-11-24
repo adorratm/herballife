@@ -38,6 +38,8 @@ export type Product = {
   gallery: string[];
   badge: string | null;
   basePrice: string;
+  /** Ürüne özel kargo ücreti (TRY) */
+  shippingFee?: string | number;
   /** Kampanya sonrası fiyat (varsa) */
   salePrice?: string | null;
   compareAtPrice?: string | null;
@@ -48,6 +50,8 @@ export type Product = {
   currency: string;
   /** Mağaza fiyatı KDV dahil mi (varsayılan true) */
   priceTaxIncluded?: boolean;
+  /** Ürün KDV oranı (%). Örn. 20 veya 1 */
+  vatRate?: string | number;
   stock: number;
   isActive: boolean;
   isFeatured: boolean;
@@ -201,6 +205,8 @@ export type OrderItem = {
   variantLabel: string | null;
   quantity: number;
   unitPrice: string;
+  /** Sipariş anındaki KDV oranı (%) */
+  vatRate?: string | number | null;
   lineTotal: string;
   imageUrl?: string | null;
 };
@@ -216,6 +222,7 @@ export type Order = {
   billingAddress: Record<string, string> | null;
   subtotal: string;
   shippingFee: string;
+  paymentFee?: string;
   discountAmount?: string;
   couponCode?: string | null;
   taxAmount: string;
@@ -424,6 +431,7 @@ export type GuestOrderLookupResult = {
     variantLabel: string | null;
     quantity: number;
     unitPrice: string;
+    vatRate?: string | number | null;
     lineTotal: string;
   }>;
   shipments: Array<{

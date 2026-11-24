@@ -18,6 +18,7 @@ import {
 import { getToken } from "@/lib/auth";
 import { shippingMethodLabel } from "@/lib/shipping";
 import { formatMoney } from "@/lib/format";
+import { calculateOrderTotals } from "@/lib/pricing";
 import {
   orderStatusHint,
   shipmentStatusLabel,
@@ -108,6 +109,19 @@ export default function OrderDetailPage() {
   const shipments = order.shipments || [];
   const hint = orderStatusHint(order.status, tStatus);
   const discount = Number(order.discountAmount || 0);
+  const taxTotals = calculateOrderTotals(
+    Number(order.subtotal) || 0,
+    Number(order.shippingFee) || 0,
+    {
+      discountAmount: discount,
+      paymentFee: Number(order.paymentFee) || 0,
+      items: (order.items || []).map((item) => ({
+        unitPrice: item.unitPrice,
+        quantity: item.quantity,
+        vatRate: item.vatRate,
+      })),
+    },
+  );
   function paymentMethodLabel(provider?: string | null): string {
     if (provider === "cod") return t("paymentMethodCod");
     if (provider === "bank_transfer") return t("paymentMethodBank");
@@ -269,6 +283,10 @@ export default function OrderDetailPage() {
                         {[item.variantLabel].filter(Boolean).join(" · ") ||
                           "—"}{" "}
                         × {item.quantity}
+                        {item.vatRate != null &&
+                        String(item.vatRate).trim() !== ""
+                          ? ` · ${t("vatLine", { rate: Number(item.vatRate) })}`
+                          : ""}
                       </div>
                       </div>
                     </div>
@@ -478,12 +496,35 @@ export default function OrderDetailPage() {
                         : formatMoney(order.shippingFee, order.currency)}
                     </span>
                   </div>
-                {order.taxAmount ? (
-                  <div className="flex justify-between">
-                    <span>{t("vat")}</span>
-                    <span>{formatMoney(order.taxAmount, order.currency)}</span>
-                  </div>
-                ) : null}
+                {taxTotals.rates.length > 1
+                  ? taxTotals.rates.map((rate) => (
+                      <div key={rate} className="flex justify-between">
+                        <span>{t("vatLine", { rate })}</span>
+                        <span>
+                          {formatMoney(
+                            taxTotals.taxByRate[String(rate)] || 0,
+                            order.currency,
+                          )}
+                        </span>
+                      </div>
+                    ))
+                  : Number(order.taxAmount) > 0 || taxTotals.taxAmount > 0
+                    ? (
+                        <div className="flex justify-between">
+                          <span>
+                            {taxTotals.rates[0] != null
+                              ? t("vatLine", { rate: taxTotals.rates[0] })
+                              : t("vat")}
+                          </span>
+                          <span>
+                            {formatMoney(
+                              taxTotals.taxAmount || order.taxAmount,
+                              order.currency,
+                            )}
+                          </span>
+                        </div>
+                      )
+                    : null}
                 <div className="flex justify-between text-primary">
                   <span>{t("total")}</span>
                   <span>{formatMoney(order.total, order.currency)}</span>

@@ -12,6 +12,8 @@ import {
   type EmailCopy,
 } from '@modules/notifications/email-i18n';
 import { formatPhoneDisplay } from '@common/utils/phone';
+import { calculateOrderTax } from '@modules/orders/order-tax';
+import { parseMoney } from '@modules/accounting/money';
 
 export type NotificationTemplateContext = {
   order: Order;
@@ -122,6 +124,73 @@ function formatMoney(
   return formatMoneyLocalized(amount, currency, locale);
 }
 
+function lineVatRate(item: {
+  vatRate?: string | number | null;
+  product?: { vatRate?: string | number | null } | null;
+}): string | null {
+  const raw = item.vatRate ?? item.product?.vatRate;
+  if (raw == null || String(raw).trim() === '') return null;
+  const n = Number(raw);
+  return Number.isFinite(n) ? String(n) : null;
+}
+
+/** Sipariş e-postası / WhatsApp için ürün bazlı KDV satırları */
+function orderVatMetaRows(
+  order: Order,
+  locale?: string | null,
+): { label: string; value: string }[] {
+  const copy = emailCopy(locale || order.locale);
+  const items = order.items || [];
+  if (!items.length) {
+    const stored = parseMoney(order.taxAmount);
+    if (stored <= 0) return [];
+    return [
+      {
+        label: copy.vatLineMixed(true),
+        value: formatMoney(order.taxAmount, order.currency, locale),
+      },
+    ];
+  }
+
+  const result = calculateOrderTax({
+    items: items.map((item) => ({
+      unitPrice: item.unitPrice,
+      quantity: item.quantity,
+      vatRate: item.vatRate ?? item.product?.vatRate,
+    })),
+    subtotal: parseMoney(order.subtotal),
+    discountAmount: parseMoney(order.discountAmount),
+    shippingFee: parseMoney(order.shippingFee),
+    paymentFee: parseMoney(order.paymentFee ?? 0),
+    fallbackRatePercent: 20,
+    taxIncluded: true,
+  });
+
+  if (result.taxAmount <= 0 && parseMoney(order.taxAmount) <= 0) return [];
+
+  if (result.rates.length > 1) {
+    return result.rates.map((rate) => ({
+      label: copy.vatLine(rate, true),
+      value: formatMoney(
+        result.taxByRate[String(rate)] || 0,
+        order.currency,
+        locale,
+      ),
+    }));
+  }
+
+  const amount =
+    result.taxAmount > 0 ? result.taxAmount : parseMoney(order.taxAmount);
+  const rate = result.rates[0];
+  return [
+    {
+      label:
+        rate != null ? copy.vatLine(rate, true) : copy.vatLineMixed(true),
+      value: formatMoney(amount, order.currency, locale),
+    },
+  ];
+}
+
 function addrField(
   addr: Record<string, string>,
   ...keys: string[]
@@ -189,13 +258,16 @@ function formatAddressOneLine(
 }
 
 function orderItemsList(order: Order, locale?: string | null): string {
+  const copy = emailCopy(locale || order.locale);
   const items = order.items || [];
   if (!items.length) return '—';
   return items
     .map((it) => {
       const parts = [it.productName];
       if (it.variantLabel) parts.push(it.variantLabel);
-      return `${parts.join(' · ')} ×${it.quantity} — ${formatMoney(it.lineTotal, order.currency, locale)}`;
+      const rate = lineVatRate(it);
+      const vatBit = rate ? ` · ${copy.vatLine(rate, true)}` : '';
+      return `${parts.join(' · ')} ×${it.quantity}${vatBit} — ${formatMoney(it.lineTotal, order.currency, locale)}`;
     })
     .join('\n');
 }
@@ -251,6 +323,11 @@ export function buildOrderDetailsHtml(
                 <td style="vertical-align:top;">
                   ${escapeHtml(name)}
                   <span style="display:inline-block;margin-left:8px;padding:2px 8px;border:1px solid ${C.line};font-size:11px;letter-spacing:0.06em;color:${C.muted};">×${it.quantity}</span>
+                  ${
+                    lineVatRate(it)
+                      ? `<div style="margin-top:4px;font-size:11px;letter-spacing:0.04em;color:${C.muted};">${escapeHtml(copy.vatLine(lineVatRate(it)!, true))}</div>`
+                      : ''
+                  }
                 </td>
               </tr></table>
             </td>
@@ -338,6 +415,7 @@ export function buildOrderDetailsText(
     Number(order.paymentFee) > 0
       ? `${copy.paymentFee}: ${formatMoney(order.paymentFee, order.currency, locale)}`
       : null,
+    ...orderVatMetaRows(order, locale).map((r) => `${r.label}: ${r.value}`),
     `${copy.total}: ${formatMoney(order.total, order.currency, locale)}`,
   ];
   if (includePersonal) {
@@ -389,6 +467,7 @@ function orderTotalMetaRows(
       value: formatMoney(order.paymentFee, order.currency, locale),
     });
   }
+  rows.push(...orderVatMetaRows(order, locale));
   rows.push({
     label: copy.total,
     value: formatMoney(order.total, order.currency, locale),
