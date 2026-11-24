@@ -315,7 +315,7 @@ export class ShippingService {
         c.provider === ShippingProviderCode.DHL ||
         c.settings?.explicitlyEnabled === true,
     );
-    // Sabit sağlayıcı ücreti kapalı; ücret ürün shippingFee toplamından gelir.
+    // Sabit sağlayıcı ücreti kapalı; ücret sepetteki en yüksek ürün shippingFee’sinden gelir.
     return active.map((c) => ({
       id: c.provider,
       code: c.provider,

@@ -1037,8 +1037,8 @@ function ProductsPageInner() {
               />
             </label>
             <p className="text-[11px] text-muted">
-              Sepette bu ürün için adet × kargo ücreti eklenir. Ücretsiz kargo
-              eşiği site ayarlarından yönetilir.
+              Sepette birden fazla ürün varsa en yüksek kargo ücreti bir kez
+              alınır. Ücretsiz kargo eşiği site ayarlarından yönetilir.
             </p>
           </div>
           <label className="block text-sm">

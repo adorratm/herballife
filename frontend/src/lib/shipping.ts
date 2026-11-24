@@ -15,16 +15,20 @@ export function freeShippingThreshold(cmsOver?: number | null): number {
   return Number.isFinite(n) && n > 0 ? n : 0;
 }
 
-/** Sepetteki ürün kargo ücretleri toplamı (adet × ürün shippingFee). */
+/**
+ * Sepet kargo ücreti: kalemlerdeki ürün kargo ücretlerinin en yükseği
+ * (tek paket; ürünler toplanmaz, adet çarpılmaz).
+ */
 export function cartProductShippingFee(
   items: CartItem[] | null | undefined,
 ): number {
   if (!items?.length) return 0;
-  return items.reduce((sum, item) => {
+  let max = 0;
+  for (const item of items) {
     const fee = Number(item.product?.shippingFee ?? 0);
-    const qty = Number(item.quantity) || 0;
-    return sum + (Number.isFinite(fee) ? Math.max(0, fee) : 0) * qty;
-  }, 0);
+    if (Number.isFinite(fee) && fee > max) max = fee;
+  }
+  return Math.max(0, max);
 }
 
 export function resolveCartShippingFee(

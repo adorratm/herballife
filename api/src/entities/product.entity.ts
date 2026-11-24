@@ -134,7 +134,7 @@ export class Product extends BaseEntity {
   @Column({ name: 'base_price', type: 'decimal', precision: 12, scale: 2 })
   basePrice!: string;
 
-  /** Ürüne özel kargo ücreti (TRY). Sepette adet × ücret toplanır. */
+  /** Ürüne özel kargo ücreti (TRY). Sepette kalemler arasından en yüksek ücret alınır. */
   @Column({
     name: 'shipping_fee',
     type: 'decimal',

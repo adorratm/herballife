@@ -855,13 +855,14 @@ export class OrdersService {
     };
   }
 
-  /** Sepetteki ürünlerin shippingFee × adet toplamı */
+  /** Sepet kargo: ürün shippingFee’lerinin en yükseği (tek paket) */
   private cartProductShippingFee(items: CartItem[]): number {
-    return items.reduce((sum, item) => {
+    let max = 0;
+    for (const item of items) {
       const fee = Number(item.product?.shippingFee ?? 0);
-      const qty = Number(item.quantity) || 0;
-      return sum + (Number.isFinite(fee) ? Math.max(0, fee) : 0) * qty;
-    }, 0);
+      if (Number.isFinite(fee) && fee > max) max = fee;
+    }
+    return Math.max(0, max);
   }
 
   private async resolveShippingFee(

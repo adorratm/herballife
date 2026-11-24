@@ -240,7 +240,8 @@ export class CreateProductDto {
   basePrice!: string;
 
   @ApiPropertyOptional({
-    description: 'Ürüne özel kargo ücreti (TRY). Sepette adet × ücret.',
+    description:
+      'Ürüne özel kargo ücreti (TRY). Sepette kalemler arasından en yüksek ücret alınır.',
     example: '49.90',
   })
   @IsOptional()
