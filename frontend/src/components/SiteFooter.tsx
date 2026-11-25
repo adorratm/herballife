@@ -358,17 +358,6 @@ export function SiteFooter({
           <p className="text-xs leading-relaxed text-on-surface-variant md:text-center">
             © {new Date().getFullYear()} {brand.name} · {tFooter("rights")}
             {footer.copyrightSuffix ? ` · ${footer.copyrightSuffix}` : ""}
-            <span className="mt-1 block text-[10px] uppercase tracking-wider text-outline">
-              Developed by{" "}
-              <a
-                href="https://emrekilic.web.tr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="normal-case tracking-normal underline underline-offset-2 hover:text-primary"
-              >
-                emrekilic.web.tr
-              </a>
-            </span>
           </p>
           <PaymentCardList className="md:justify-end" />
         </div>

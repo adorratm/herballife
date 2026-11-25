@@ -36,17 +36,6 @@ export function PaymentCardLogos() {
               </li>
             ))}
           </ul>
-          <p className="shrink-0 text-center md:text-right font-meta text-[9px] uppercase tracking-wider text-secondary/70 sm:pb-0.5">
-            Developed By{" "}
-            <a
-              href="https://emrekilic.web.tr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="normal-case tracking-normal text-secondary underline decoration-outline-variant/40 underline-offset-2 hover:text-primary"
-            >
-              https://emrekilic.web.tr
-            </a>
-          </p>
         </div>
       </div>
     </div>
